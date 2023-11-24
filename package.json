@@ -1,0 +1,78 @@
+{
+  "name": "patreon-dl",
+  "version": "1.0.0",
+  "description": "Patreon Downloader",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && npx tsc -p tsconfig.json",
+    "lint": "npx eslint ./src",
+    "lint:fix": "npx eslint ./src --fix",
+    "doc": "npx typedoc"
+  },
+  "bin": {
+    "patreon-dl": "./bin/patreon-dl.js"
+  },
+  "author": "Patrick Kan <patrickkfkan@gmail.com> (https://github.com/patrickkfkan)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrickkfkan/patreon-dl.git"
+  },
+  "license": "MIT",
+  "directories": {
+    "dist": "./dist"
+  },
+  "engines": {
+    "node": ">=16.16.0"
+  },
+  "devDependencies": {
+    "@types/capitalize": "^2.0.2",
+    "@types/cli-color": "^2.0.5",
+    "@types/command-line-args": "^5.2.2",
+    "@types/command-line-usage": "^5.0.4",
+    "@types/content-disposition": "^0.5.7",
+    "@types/dateformat": "^5.0.2",
+    "@types/deep-freeze": "^0.1.5",
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/fs-extra": "^9.0.0",
+    "@types/mime-types": "^2.1.3",
+    "@types/node": "^16.18.62",
+    "@types/progress-stream": "^2.0.3",
+    "@types/prompt-sync": "^4.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.36.0",
+    "typedoc": "^0.25.3",
+    "typedoc-plugin-markdown": "^3.17.1",
+    "typedoc-plugin-rename-defaults": "^0.7.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "bottleneck": "^2.19.5",
+    "capitalize": "^2.0.4",
+    "cli-color": "^2.0.3",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^7.0.1",
+    "configparser": "^0.3.10",
+    "content-disposition": "^0.5.4",
+    "dateformat": "^5.0.3",
+    "deep-freeze": "^0.0.1",
+    "escape-string-regexp": "^5.0.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^9.1.0",
+    "hasha": "^5.2.2",
+    "make-dir": "^4.0.0",
+    "mime-types": "^2.1.35",
+    "node-fetch": "^3.3.2",
+    "progress-stream": "^2.0.0",
+    "prompt-sync": "^4.2.0",
+    "sanitize-filename": "^1.6.3",
+    "semver": "^7.5.4"
+  },
+  "keywords": [
+    "patreon",
+    "download",
+    "downloader"
+  ]
+}

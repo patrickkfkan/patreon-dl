@@ -1,0 +1,143 @@
+[patreon-dl](../README.md) / VideoMediaItem
+
+# Interface: VideoMediaItem
+
+## Hierarchy
+
+- [`MediaLike`](MediaLike.md)
+
+  ↳ **`VideoMediaItem`**
+
+## Table of contents
+
+### Properties
+
+- [createdAt](VideoMediaItem.md#createdat)
+- [displayURLs](VideoMediaItem.md#displayurls)
+- [downloadURL](VideoMediaItem.md#downloadurl)
+- [duration](VideoMediaItem.md#duration)
+- [filename](VideoMediaItem.md#filename)
+- [id](VideoMediaItem.md#id)
+- [mimeType](VideoMediaItem.md#mimetype)
+- [size](VideoMediaItem.md#size)
+- [type](VideoMediaItem.md#type)
+
+## Properties
+
+### createdAt
+
+• **createdAt**: ``null`` \| `string`
+
+#### Defined in
+
+src/entities/MediaItem.ts:81
+
+___
+
+### displayURLs
+
+• **displayURLs**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `thumbnail` | ``null`` \| `string` |
+| `video` | ``null`` \| `string` |
+
+#### Defined in
+
+src/entities/MediaItem.ts:88
+
+___
+
+### downloadURL
+
+• **downloadURL**: ``null`` \| `string`
+
+#### Defined in
+
+src/entities/MediaItem.ts:87
+
+___
+
+### duration
+
+• **duration**: ``null`` \| `number`
+
+#### Defined in
+
+src/entities/MediaItem.ts:86
+
+___
+
+### filename
+
+• **filename**: ``null`` \| `string`
+
+#### Inherited from
+
+[MediaLike](MediaLike.md).[filename](MediaLike.md#filename)
+
+#### Defined in
+
+src/entities/MediaItem.ts:4
+
+___
+
+### id
+
+• **id**: `string`
+
+#### Inherited from
+
+[MediaLike](MediaLike.md).[id](MediaLike.md#id)
+
+#### Defined in
+
+src/entities/MediaItem.ts:3
+
+___
+
+### mimeType
+
+• **mimeType**: ``null`` \| `string`
+
+#### Inherited from
+
+[MediaLike](MediaLike.md).[mimeType](MediaLike.md#mimetype)
+
+#### Defined in
+
+src/entities/MediaItem.ts:5
+
+___
+
+### size
+
+• **size**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `height` | ``null`` \| `number` |
+| `width` | ``null`` \| `number` |
+
+#### Defined in
+
+src/entities/MediaItem.ts:82
+
+___
+
+### type
+
+• **type**: ``"video"``
+
+#### Overrides
+
+[MediaLike](MediaLike.md).[type](MediaLike.md#type)
+
+#### Defined in
+
+src/entities/MediaItem.ts:80
