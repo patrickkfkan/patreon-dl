@@ -28,17 +28,14 @@
   },
   "devDependencies": {
     "@types/capitalize": "^2.0.2",
-    "@types/cli-color": "^2.0.5",
     "@types/command-line-args": "^5.2.2",
     "@types/command-line-usage": "^5.0.4",
     "@types/content-disposition": "^0.5.7",
     "@types/dateformat": "^5.0.2",
-    "@types/deep-freeze": "^0.1.5",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/fs-extra": "^9.0.0",
     "@types/mime-types": "^2.1.3",
     "@types/node": "^16.18.62",
-    "@types/progress-stream": "^2.0.3",
     "@types/prompt-sync": "^4.2.3",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
@@ -49,6 +46,9 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@types/cli-color": "^2.0.5",
+    "@types/deep-freeze": "^0.1.5",
+    "@types/progress-stream": "^2.0.3",
     "bottleneck": "^2.19.5",
     "capitalize": "^2.0.4",
     "cli-color": "^2.0.3",
