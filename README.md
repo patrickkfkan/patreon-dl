@@ -418,5 +418,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.0.1
+- Fix missing types when importing as library
+- Fix link in this README
+
 v1.0.0
 - Initial release
