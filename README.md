@@ -343,7 +343,7 @@ abortController.abort();
     3. Downloader begins saving media belonging to target (again, subject to downloader configuration). Emits `phaseBegin` event with `phase: saveMedia`.
         1. Downloader saves files that do not need to be downloaded, e.g. embedded video / link info.
         2. Downloader proceeds to download files (images, videos, audio, attachments, etc.) belonging to the target in batches. For each batch, downloader emits `phaseBegin` event with `phase: batchDownload`. When done, downloader emits `phaseEnd` event with `phase: batchDownload`.
-            - In this `phaseBegin` event, you can attach listeners to the download batch to monitor events for each download. See Download Task Batch.
+            - In this `phaseBegin` event, you can attach listeners to the download batch to monitor events for each download. See [Download Task Batch](#download-task-batch).
     4. Downloader emits `phaseEnd` event with `phase: saveMedia`.
     5. Downloader emits `targetEnd` event with `isSkipped: false`, and proceeds to the next target.
 4. When there are no more targets to be processed, or a fatal error occurred, downloader ends with `end` event.
