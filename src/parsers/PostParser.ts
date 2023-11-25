@@ -232,15 +232,16 @@ export default class PostParser extends Parser {
         let embedType: PostEmbed['type'];
         switch (attributes.post_type) {
           case 'video_embed':
-            embedType = 'video';
+            embedType = 'videoEmbed';
             break;
           case 'link':
-            embedType = 'link';
+            embedType = 'linkEmbed';
             break;
           default:
-            embedType = 'unknown';
+            embedType = 'unknownEmbed';
         }
         embed = {
+          id: `${id}-embed`,
           type: embedType,
           description: embedJSON.descripton || null,
           html: embedJSON.html || null,

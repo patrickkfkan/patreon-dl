@@ -8,6 +8,7 @@ import { Downloadable } from '../../entities/Downloadable.js';
 import AttachmentFilenameResolver from '../../utils/AttachmentFilenameResolver.js';
 import { FileExistsAction } from '../DownloaderOptions.js';
 import Logger from '../../utils/logging/Logger.js';
+import YouTubeDownloadTask from './YouTubeDownloadTask.js';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -137,6 +138,11 @@ export default class DownloadTaskFactory {
           [`${NULL_VARIANT}`]: item.url
         };
       }
+      else if (item.type === 'videoEmbed') {
+        return {
+          [`${NULL_VARIANT}`]: item.url
+        };
+      }
       return {};
     };
 
@@ -145,23 +151,38 @@ export default class DownloadTaskFactory {
 
     const tasks: DownloadTask[] = [];
     for (const [ variant, url ] of Object.entries(srcURLs)) {
-      const destFilenameResolver = item.type === 'attachment' ?
-        new AttachmentFilenameResolver(item, url, destFilenameFormat) :
-        new MediaFilenameResolver(item, url, destFilenameFormat,
-          variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
+      if (item.type === 'videoEmbed') {
+        if (url) {
+          tasks.push(new YouTubeDownloadTask({
+            src: url,
+            maxRetries,
+            destDir,
+            fileExistsAction,
+            srcEntity: item,
+            callbacks: callbacks || null,
+            logger
+          }));
+        }
+      }
+      else {
+        const destFilenameResolver = item.type === 'attachment' ?
+          new AttachmentFilenameResolver(item, url, destFilenameFormat) :
+          new MediaFilenameResolver(item, url, destFilenameFormat,
+            variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
 
-      if (url) {
-        tasks.push(new FetcherDownloadTask<Downloadable>({
-          fetcher,
-          src: url,
-          maxRetries,
-          destDir,
-          destFilenameResolver,
-          fileExistsAction,
-          srcEntity: item,
-          callbacks: callbacks || null,
-          logger
-        }));
+        if (url) {
+          tasks.push(new FetcherDownloadTask<Downloadable>({
+            fetcher,
+            src: url,
+            maxRetries,
+            destDir,
+            destFilenameResolver,
+            fileExistsAction,
+            srcEntity: item,
+            callbacks: callbacks || null,
+            logger
+          }));
+        }
       }
     }
 

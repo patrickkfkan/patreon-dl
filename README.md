@@ -4,7 +4,7 @@
 
 A Patreon downloader written in [Node.js](https://nodejs.org).
 
-#### Features
+### Features
 - Access to patron-only content through cookie
 - Download posts by user, in a collection or single post
 - Download products (aka shop purchases)
@@ -18,13 +18,18 @@ A Patreon downloader written in [Node.js](https://nodejs.org).
 
 You can run `patreon-dl` from the command-line or use it as a library for your project. Node.js v16.16.0 or higher required.
 
-#### Limitations
+### Limitations
 
-- Embedded videos, i.e. those linked from YouTube, Vimeo, etc., are not supported. Only info about the embed is saved.
+- Embedded videos other than from YouTube are not supported (e.g. Vimeo). Only info about these embeds is saved.
 - Likewise, embedded links are not followed; only info about the embed is saved.
 
-#### FFmpeg requirement
-[FFmpeg](https://ffmpeg.org) is required for downloading videos that are provided only in streaming format. Not all video downloads require FFmpeg, but you should have it installed on your system anyway.
+### FFmpeg dependency
+
+[FFmpeg](https://ffmpeg.org) is required when downloading:
+- videos that are provided only in streaming format; and
+- embedded YouTube videos.
+
+Not all video downloads require FFmpeg, but you should have it installed on your system anyway.
 
 ## Installation
 

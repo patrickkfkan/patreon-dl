@@ -7,7 +7,7 @@ import PageParser from '../parsers/PageParser.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import PostParser from '../parsers/PostParser.js';
 import { Post } from '../entities/Post.js';
-import { Downloadable } from '../entities/Downloadable.js';
+import { Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
 import StatusCache from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
 import path from 'path';
@@ -15,7 +15,7 @@ import { TargetSkipReason } from './DownloaderEvent.js';
 
 export default class PostDownloader extends Downloader<'post'> {
 
-  static version = '1.0.0';
+  static version = '1.1.0';
 
   name = 'PostDownloader';
 
@@ -199,10 +199,10 @@ export default class PostDownloader extends Downloader<'post'> {
             const embedSummary = generatePostEmbedSummary(post.embed);
             let embedFilename;
             switch (post.embed.type) {
-              case 'video':
+              case 'videoEmbed':
                 embedFilename = 'embedded-video.txt';
                 break;
-              case 'link':
+              case 'linkEmbed':
                 embedFilename = 'embedded-link.txt';
                 break;
               default:
@@ -481,6 +481,13 @@ export default class PostDownloader extends Downloader<'post'> {
         target: post.attachments,
         targetName: `post #${post.id} -> attachments`,
         destDir: postDirs.attachments,
+        fileExistsAction: this.config.fileExistsAction.content
+      } : null,
+
+      incContent && post.embed && isYouTubeEmbed(post.embed) ? {
+        target: [ post.embed ],
+        targetName: `post #${post.id} -> embedded YouTube video`,
+        destDir: postDirs.embed,
         fileExistsAction: this.config.fileExistsAction.content
       } : null
     );

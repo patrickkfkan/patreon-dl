@@ -4,7 +4,7 @@ import Fetcher from '../../utils/Fetcher.js';
 import FetcherProgressMonitor, { FetcherProgress } from '../../utils/FetcherProgressMonitor.js';
 import FilenameResolver from '../../utils/FllenameResolver.js';
 import DownloadTask, { DownloadTaskParams, DownloadProgress, DownloadTaskSkipReason } from './DownloadTask.js';
-import FFmpegDownloadTask from './FFmpegDownloadTask.js';
+import M3U8DownloadTask from './M3U8DownloadTask.js';
 import { Downloadable } from '../../entities/Downloadable.js';
 import { AbortError } from 'node-fetch';
 import { FileExistsAction } from '../DownloaderOptions.js';
@@ -47,7 +47,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
 
     if (this.srcEntity.type === 'video' && this.#isM3U8FilePath(currentDestFilePath) && this.callbacks) {
       // Spawn FFmpeg task to download actual stream
-      const spawn = new FFmpegDownloadTask({
+      const spawn = new M3U8DownloadTask({
         src: currentDestFilePath,
         srcEntity: this.srcEntity,
         maxRetries: this.maxRetries,
