@@ -11,6 +11,7 @@ export interface CommandLineParseResult extends RecursivePropsTo<DeepPartial<CLI
 
 const COMMAND_LINE_ARGS = {
   help: 'help',
+  configureYouTube: 'configure-youtube',
   configFile: 'config-file',
   targetURL: 'target-url',
   cookie: 'cookie',
@@ -72,6 +73,11 @@ const OPT_DEFS = [
     name: COMMAND_LINE_ARGS.noPrompt,
     description: 'Do not prompt for confirmation to proceed',
     alias: 'y',
+    type: Boolean
+  },
+  {
+    name: COMMAND_LINE_ARGS.configureYouTube,
+    description: 'Configure YouTube connection',
     type: Boolean
   }
 ];
@@ -210,6 +216,17 @@ export default class CommandLineParser {
     }
 
     return false;
+  }
+
+  static configureYouTube() {
+    let opts;
+    try {
+      opts = this.#parseArgs();
+    }
+    catch (error) {
+      return false;
+    }
+    return opts['configure-youtube'];
   }
 
   static #parseArgs() {

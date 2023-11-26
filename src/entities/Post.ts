@@ -88,7 +88,8 @@ export interface Post {
 }
 
 export interface PostEmbed {
-  type: 'video' | 'link' | 'unknown';
+  id: `${string}-embed`;
+  type: 'videoEmbed' | 'linkEmbed' | 'unknownEmbed';
   description: string | null;
   html: string | null;
   provider: string | null;
@@ -96,3 +97,5 @@ export interface PostEmbed {
   subject: string | null;
   url: string | null;
 }
+
+export type YouTubePostEmbed = PostEmbed & { type: 'videoEmbed'; provider: 'YouTube' }

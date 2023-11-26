@@ -19,6 +19,7 @@ import path from 'path';
 import URLHelper from '../utils/URLHelper.js';
 import { AbortError } from 'node-fetch';
 import ffmpeg from 'fluent-ffmpeg';
+import InnertubeLoader from '../utils/InnertubeLoader.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -48,15 +49,24 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   constructor(bootstrap: DownloaderBootstrapData<T>, options?: DownloaderOptions) {
     super();
     this.#validateOptions(options);
+
     this.config = deepFreeze({
       ...bootstrap,
       ...getDownloaderInit(options)
     });
+
+    this.fetcher = new Fetcher(options?.cookie, options?.logger);
+    this.logger = options?.logger;
+
     if (this.config.pathToFFmpeg) {
       ffmpeg.setFfmpegPath(this.config.pathToFFmpeg);
     }
-    this.fetcher = new Fetcher(options?.cookie, options?.logger);
-    this.logger = options?.logger;
+
+    InnertubeLoader.setLogger(this.logger);
+    if (this.config.pathToYouTubeCredentials) {
+      InnertubeLoader.loadCredentials(this.config.pathToYouTubeCredentials);
+    }
+
     this.#hasEmittedEndEventOnAbort = false;
   }
 
@@ -417,7 +427,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
   once<T extends DownloaderEvent>(event: T, listener: (args: DownloaderEventPayloadOf<T>) => void): this;
   once(event: string | symbol, listener: (...args: any[]) => void): this {
-    return super.on(event, listener);
+    return super.once(event, listener);
   }
 
   off<T extends DownloaderEvent>(event: T, listener: (args: DownloaderEventPayloadOf<T>) => void): this;

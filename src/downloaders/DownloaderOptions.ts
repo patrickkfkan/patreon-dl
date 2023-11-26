@@ -8,6 +8,7 @@ export interface DownloaderOptions {
   cookie?: string;
   useStatusCache?: boolean;
   pathToFFmpeg?: string | null;
+  pathToYouTubeCredentials?: string | null;
   outDir?: string;
   dirNameFormat?: {
     campaign?: string;
@@ -41,6 +42,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'outDir' |
   'useStatusCache' |
   'pathToFFmpeg' |
+  'pathToYouTubeCredentials' |
   'dirNameFormat' |
   'filenameFormat' |
   'include' |
@@ -51,6 +53,7 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   outDir: process.cwd(),
   useStatusCache: true,
   pathToFFmpeg: null,
+  pathToYouTubeCredentials: null,
   dirNameFormat: {
     campaign: '{creator.vanity}[ - ]?{campaign.name}',
     content: '{content.id}[ - ]?{content.name}'
@@ -84,6 +87,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     outDir: options?.outDir ? path.resolve(options.outDir) : defaults.outDir,
     useStatusCache: pickDefined(options?.useStatusCache, defaults.useStatusCache),
     pathToFFmpeg: pickDefined(options?.pathToFFmpeg, defaults.pathToFFmpeg),
+    pathToYouTubeCredentials: pickDefined(options?.pathToYouTubeCredentials, defaults.pathToYouTubeCredentials),
     dirNameFormat: {
       campaign: options?.dirNameFormat?.campaign || defaults.dirNameFormat.campaign,
       content: options?.dirNameFormat?.content || defaults.dirNameFormat.content

@@ -1,12 +1,14 @@
 import capitalize from 'capitalize';
 import { Campaign } from '../entities/Campaign.js';
-import { DOWNLOADABLE_TYPES, Downloadable, isTypeDownloadable } from '../entities/Downloadable.js';
+import { Downloadable } from '../entities/Downloadable.js';
 import { CampaignCoverPhotoMediaItem, DefaultImageMediaItem, MediaItem, SingleImageMediaItem } from '../entities/MediaItem.js';
 import { User } from '../entities/User.js';
 import Logger, { LogLevel, commonLog } from '../utils/logging/Logger.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import { Attachment } from '../entities/Attachment.js';
 import { Reward } from '../entities/Reward.js';
+
+const DOWNLOADABLE_TYPES = [ 'media', 'attachment' ] as const;
 
 export default abstract class Parser {
 
@@ -79,7 +81,7 @@ export default abstract class Parser {
       let found = 0;
       for (const m of rData) {
         const { id, type } = m;
-        if (id && type && isTypeDownloadable(type)) {
+        if (id && type && this.isTypeDownloadable(type)) {
           total++;
           let mi;
           if (type === 'media') {
@@ -112,6 +114,10 @@ export default abstract class Parser {
     }
 
     return result;
+  }
+
+  protected isTypeDownloadable(type: string): type is typeof DOWNLOADABLE_TYPES[number] {
+    return DOWNLOADABLE_TYPES.includes(type as any);
   }
 
   /**

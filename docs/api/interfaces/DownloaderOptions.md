@@ -14,6 +14,7 @@
 - [logger](DownloaderOptions.md#logger)
 - [outDir](DownloaderOptions.md#outdir)
 - [pathToFFmpeg](DownloaderOptions.md#pathtoffmpeg)
+- [pathToYouTubeCredentials](DownloaderOptions.md#pathtoyoutubecredentials)
 - [request](DownloaderOptions.md#request)
 - [useStatusCache](DownloaderOptions.md#usestatuscache)
 
@@ -25,7 +26,7 @@
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:8
+[src/downloaders/DownloaderOptions.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L8)
 
 ___
 
@@ -42,7 +43,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:12
+[src/downloaders/DownloaderOptions.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L13)
 
 ___
 
@@ -60,7 +61,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:32
+[src/downloaders/DownloaderOptions.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L33)
 
 ___
 
@@ -76,7 +77,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:16
+[src/downloaders/DownloaderOptions.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L17)
 
 ___
 
@@ -97,7 +98,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:19
+[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L20)
 
 ___
 
@@ -107,7 +108,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:37
+[src/downloaders/DownloaderOptions.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L38)
 
 ___
 
@@ -117,7 +118,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:11
+[src/downloaders/DownloaderOptions.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L12)
 
 ___
 
@@ -127,7 +128,17 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:10
+[src/downloaders/DownloaderOptions.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L10)
+
+___
+
+### pathToYouTubeCredentials
+
+• `Optional` **pathToYouTubeCredentials**: ``null`` \| `string`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L11)
 
 ___
 
@@ -145,7 +156,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:27
+[src/downloaders/DownloaderOptions.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L28)
 
 ___
 
@@ -155,4 +166,4 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:9
+[src/downloaders/DownloaderOptions.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L9)

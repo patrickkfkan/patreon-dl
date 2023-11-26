@@ -1,5 +1,7 @@
 import { EOL } from 'os';
 import PromptSync from 'prompt-sync';
+import path from 'path';
+import fs from 'fs';
 import Downloader from '../downloaders/Downloader.js';
 import ConsoleLogger from '../utils/logging/ConsoleLogger.js';
 import { CLIOptions, getCLIOptions } from './CLIOptions.js';
@@ -8,15 +10,22 @@ import Logger, { commonLog } from '../utils/logging/Logger.js';
 import FileLogger, { FileLoggerInit } from '../utils/logging/FileLogger.js';
 import ChainLogger from '../utils/logging/ChainLogger.js';
 import { PackageInfo, getPackageInfo } from '../utils/PackageInfo.js';
+import envPaths from 'env-paths';
+import YouTubeConfigurator from './helper/YouTubeConfigurator.js';
+
+const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
 export default class PatreonDownloaderCLI {
 
   #logger: Logger | null;
   #packageInfo: PackageInfo;
+  #globalConfPath: string;
 
   constructor() {
     this.#logger = null;
     this.#packageInfo = getPackageInfo();
+    this.#globalConfPath = envPaths(
+      this.#packageInfo.name || 'patreon-dl', { suffix: '' }).config;
   }
 
   async start() {
@@ -26,6 +35,11 @@ export default class PatreonDownloaderCLI {
 
     if (this.#packageInfo.banner) {
       console.log(`${EOL}${this.#packageInfo.banner}${EOL}`);
+    }
+
+    const ytCredsPath = path.resolve(this.#globalConfPath, YT_CREDENTIALS_FILENAME);
+    if (CommandLineParser.configureYouTube()) {
+      return this.exit(await YouTubeConfigurator.start(ytCredsPath));
     }
 
     let options;
@@ -49,6 +63,7 @@ export default class PatreonDownloaderCLI {
     try {
       downloader = await Downloader.getInstance(options.targetURL, {
         ...options,
+        pathToYouTubeCredentials: fs.existsSync(ytCredsPath) ? ytCredsPath : null,
         logger
       });
     }

@@ -17,7 +17,7 @@
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:17
+[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L17)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:16
+[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L16)

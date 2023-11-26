@@ -45,7 +45,7 @@
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:54
+[src/utils/logging/ConsoleLogger.ts:54](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L54)
 
 ## Methods
 
@@ -63,7 +63,7 @@ src/utils/logging/ConsoleLogger.ts:54
 
 #### Defined in
 
-src/utils/logging/Logger.ts:12
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/Logger.ts#L12)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:83
+[src/utils/logging/ConsoleLogger.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L83)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:74
+[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L74)
 
 ___
 
@@ -121,4 +121,4 @@ ___
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:87
+[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L87)

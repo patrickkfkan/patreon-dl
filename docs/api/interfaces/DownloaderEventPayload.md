@@ -21,7 +21,7 @@
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:54
+[src/downloaders/DownloaderEvent.ts:54](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L54)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:22
+[src/downloaders/DownloaderEvent.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L22)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:40
+[src/downloaders/DownloaderEvent.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L40)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:49
+[src/downloaders/DownloaderEvent.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L49)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:26
+[src/downloaders/DownloaderEvent.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L26)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:30
+[src/downloaders/DownloaderEvent.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L30)

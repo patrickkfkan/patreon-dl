@@ -67,7 +67,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-src/downloaders/Downloader.ts:48
+[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L49)
 
 ## Properties
 
@@ -77,7 +77,7 @@ src/downloaders/Downloader.ts:48
 
 #### Defined in
 
-src/downloaders/Downloader.ts:40
+[src/downloaders/Downloader.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L41)
 
 ## Methods
 
@@ -108,7 +108,7 @@ EventEmitter.emit
 
 #### Defined in
 
-src/downloaders/Downloader.ts:426
+[src/downloaders/Downloader.ts:438](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L438)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:352
+[src/downloaders/Downloader.ts:364](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L364)
 
 ___
 
@@ -153,7 +153,7 @@ EventEmitter.off
 
 #### Defined in
 
-src/downloaders/Downloader.ts:421
+[src/downloaders/Downloader.ts:433](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L433)
 
 ___
 
@@ -184,7 +184,7 @@ EventEmitter.on
 
 #### Defined in
 
-src/downloaders/Downloader.ts:411
+[src/downloaders/Downloader.ts:423](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L423)
 
 ___
 
@@ -215,7 +215,7 @@ EventEmitter.once
 
 #### Defined in
 
-src/downloaders/Downloader.ts:416
+[src/downloaders/Downloader.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L428)
 
 ___
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:172
+[src/downloaders/Downloader.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L182)
 
 ___
 
@@ -256,4 +256,4 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:174
+[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L184)

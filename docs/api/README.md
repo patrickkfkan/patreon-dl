@@ -18,6 +18,7 @@ patreon-dl
 - [Logger](classes/Logger.md)
 - [PostDownloader](classes/PostDownloader.md)
 - [ProductDownloader](classes/ProductDownloader.md)
+- [YouTubeCredentialsCapturer](classes/YouTubeCredentialsCapturer.md)
 
 ### Interfaces
 
@@ -53,6 +54,7 @@ patreon-dl
 - [SingleImageMediaItem](interfaces/SingleImageMediaItem.md)
 - [User](interfaces/User.md)
 - [VideoMediaItem](interfaces/VideoMediaItem.md)
+- [YouTubeCredentialsPendingInfo](interfaces/YouTubeCredentialsPendingInfo.md)
 
 ### Type Aliases
 
@@ -73,6 +75,7 @@ patreon-dl
 - [ImageType](README.md#imagetype)
 - [LogLevel](README.md#loglevel)
 - [MediaItem](README.md#mediaitem)
+- [YouTubePostEmbed](README.md#youtubepostembed)
 
 ## Type Aliases
 
@@ -88,7 +91,7 @@ patreon-dl
 
 #### Defined in
 
-src/utils/Misc.ts:2
+[src/utils/Misc.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/Misc.ts#L2)
 
 ___
 
@@ -98,7 +101,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTaskBatchEvent.ts:3
+[src/downloaders/task/DownloadTaskBatchEvent.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTaskBatchEvent.ts#L3)
 
 ___
 
@@ -114,7 +117,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTaskBatchEvent.ts:50
+[src/downloaders/task/DownloadTaskBatchEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTaskBatchEvent.ts#L50)
 
 ___
 
@@ -124,7 +127,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:17
+[src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L17)
 
 ___
 
@@ -134,17 +137,17 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:55
+[src/downloaders/task/DownloadTask.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L55)
 
 ___
 
 ### Downloadable
 
-Ƭ **Downloadable**: [`MediaItem`](README.md#mediaitem) \| [`Attachment`](interfaces/Attachment.md)
+Ƭ **Downloadable**: [`MediaItem`](README.md#mediaitem) \| [`Attachment`](interfaces/Attachment.md) \| [`YouTubePostEmbed`](README.md#youtubepostembed)
 
 #### Defined in
 
-src/entities/Downloadable.ts:4
+[src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Downloadable.ts#L5)
 
 ___
 
@@ -160,7 +163,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Bootstrap.ts:31
+[src/downloaders/Bootstrap.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Bootstrap.ts#L31)
 
 ___
 
@@ -176,7 +179,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:23
+[src/downloaders/Downloader.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L24)
 
 ___
 
@@ -186,7 +189,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:6
+[src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L6)
 
 ___
 
@@ -202,17 +205,17 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderEvent.ts:63
+[src/downloaders/DownloaderEvent.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L63)
 
 ___
 
 ### DownloaderInit
 
-Ƭ **DownloaderInit**: [`DeepRequired`](README.md#deeprequired)\<`Pick`\<[`DownloaderOptions`](interfaces/DownloaderOptions.md), ``"outDir"`` \| ``"useStatusCache"`` \| ``"pathToFFmpeg"`` \| ``"dirNameFormat"`` \| ``"filenameFormat"`` \| ``"include"`` \| ``"request"`` \| ``"fileExistsAction"``\>\>
+Ƭ **DownloaderInit**: [`DeepRequired`](README.md#deeprequired)\<`Pick`\<[`DownloaderOptions`](interfaces/DownloaderOptions.md), ``"outDir"`` \| ``"useStatusCache"`` \| ``"pathToFFmpeg"`` \| ``"pathToYouTubeCredentials"`` \| ``"dirNameFormat"`` \| ``"filenameFormat"`` \| ``"include"`` \| ``"request"`` \| ``"fileExistsAction"``\>\>
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:40
+[src/downloaders/DownloaderOptions.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L41)
 
 ___
 
@@ -222,7 +225,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Bootstrap.ts:3
+[src/downloaders/Bootstrap.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Bootstrap.ts#L3)
 
 ___
 
@@ -232,7 +235,7 @@ ___
 
 #### Defined in
 
-src/downloaders/DownloaderOptions.ts:5
+[src/downloaders/DownloaderOptions.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderOptions.ts#L5)
 
 ___
 
@@ -248,7 +251,7 @@ ___
 
 #### Defined in
 
-src/entities/MediaItem.ts:71
+[src/entities/MediaItem.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/MediaItem.ts#L71)
 
 ___
 
@@ -258,7 +261,7 @@ ___
 
 #### Defined in
 
-src/entities/MediaItem.ts:8
+[src/entities/MediaItem.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/MediaItem.ts#L8)
 
 ___
 
@@ -268,7 +271,7 @@ ___
 
 #### Defined in
 
-src/utils/logging/Logger.ts:1
+[src/utils/logging/Logger.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/Logger.ts#L1)
 
 ___
 
@@ -278,4 +281,14 @@ ___
 
 #### Defined in
 
-src/entities/MediaItem.ts:118
+[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/MediaItem.ts#L118)
+
+___
+
+### YouTubePostEmbed
+
+Ƭ **YouTubePostEmbed**: [`PostEmbed`](interfaces/PostEmbed.md) & \{ `provider`: ``"YouTube"`` ; `type`: ``"videoEmbed"``  }
+
+#### Defined in
+
+[src/entities/Post.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L101)

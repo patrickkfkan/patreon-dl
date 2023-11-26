@@ -35,7 +35,7 @@ DeepRequired.color
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:24
+[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L24)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-src/utils/logging/FileLogger.ts:21
+[src/utils/logging/FileLogger.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/FileLogger.ts#L21)
 
 ___
 
@@ -59,7 +59,7 @@ DeepRequired.dateTimeFormat
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:23
+[src/utils/logging/ConsoleLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L23)
 
 ___
 
@@ -73,7 +73,7 @@ DeepRequired.enabled
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:15
+[src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L15)
 
 ___
 
@@ -87,7 +87,7 @@ DeepRequired.fileExistsAction
 
 #### Defined in
 
-src/utils/logging/FileLogger.ts:16
+[src/utils/logging/FileLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/FileLogger.ts#L16)
 
 ___
 
@@ -101,7 +101,7 @@ DeepRequired.include
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:17
+[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L17)
 
 ___
 
@@ -115,7 +115,7 @@ DeepRequired.logDir
 
 #### Defined in
 
-src/utils/logging/FileLogger.ts:14
+[src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/FileLogger.ts#L14)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-src/utils/logging/FileLogger.ts:20
+[src/utils/logging/FileLogger.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/FileLogger.ts#L20)
 
 ___
 
@@ -139,7 +139,7 @@ DeepRequired.logFilename
 
 #### Defined in
 
-src/utils/logging/FileLogger.ts:15
+[src/utils/logging/FileLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/FileLogger.ts#L15)
 
 ___
 
@@ -153,4 +153,4 @@ DeepRequired.logLevel
 
 #### Defined in
 
-src/utils/logging/ConsoleLogger.ts:16
+[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/logging/ConsoleLogger.ts#L16)
