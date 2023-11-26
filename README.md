@@ -494,6 +494,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.1.0
+- Add support for downloading embedded YouTube videos
+
 v1.0.1
 - Fix missing types when importing as library
 - Fix link in this README
