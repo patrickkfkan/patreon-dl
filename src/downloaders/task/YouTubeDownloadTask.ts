@@ -1,26 +1,27 @@
 import path from 'path';
-import Innertube, { YT, Misc, YTNodes } from 'youtubei.js';
+import { YT, Misc, YTNodes } from 'youtubei.js';
 import { YouTubePostEmbed } from '../../entities/Post.js';
 import FFmpegDownloadTaskBase, { FFmpegCommandParams, FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
 import sanitizeFilename from 'sanitize-filename';
+import InnertubeLoader from '../../utils/InnertubeLoader.js';
 
 export interface YouTubeDownloadTaskParams extends FFmpegDownloadTaskBaseParams<YouTubePostEmbed> {
   destDir: string;
 }
 
 type StreamURLBundle = {
+  quality: string;
+} & ({
   hasSeparateAVStreams: false;
-  streamURL: string;
-  streamIsAudioOnly: boolean;
+  url: string;
+  isAudioOnly: boolean;
 } | {
   hasSeparateAVStreams: true;
-  videoStreamURL: string;
-  audioStreamURL: string;
-}
+  videoURL: string;
+  audioURL: string;
+})
 
 export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubePostEmbed> {
-
-  static #innertube: Innertube;
 
   protected name = 'YouTubeDownloadTask';
 
@@ -35,11 +36,8 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     this.#ffmpegCommandParams = null;
   }
 
-  async getInnertube() {
-    if (!YouTubeDownloadTask.#innertube) {
-      YouTubeDownloadTask.#innertube = await Innertube.create();
-    }
-    return YouTubeDownloadTask.#innertube;
+  getInnertube() {
+    return InnertubeLoader.getInstance();
   }
 
   protected async getFFmpegCommandParams(): Promise<FFmpegCommandParams> {
@@ -55,8 +53,8 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     const video = await innertube.getInfo(endpoint);
 
     this.log('debug', `Choose best-quality stream for YouTube video #${video.basic_info.id}`);
-    const streamURLs = await this.#getStreamURLs(video);
-    if (!streamURLs) {
+    const stream = await this.#pickStream(video);
+    if (!stream) {
       const errMsg = `Stream not found for YouTube video #${video.basic_info.id}`;
       this.log('error', errMsg);
       throw Error(errMsg);
@@ -65,13 +63,13 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     const inputs: FFmpegCommandParams['inputs'] = [];
     const outputOptions: FFmpegCommandParams['outputOptions'] = [];
     let ext = '';
-    if (streamURLs.hasSeparateAVStreams) {
+    if (stream.hasSeparateAVStreams) {
       this.log('debug', `Obtained separate video and audio stream URLs for YouTube video #${video.basic_info.id}:`);
-      this.log('debug', `Video stream URL: ${streamURLs.videoStreamURL}`);
-      this.log('debug', `Audio stream URL: ${streamURLs.audioStreamURL}`);
+      this.log('debug', `Video stream URL: ${stream.videoURL}`);
+      this.log('debug', `Audio stream URL: ${stream.audioURL}`);
       inputs.push(
-        { input: streamURLs.videoStreamURL },
-        { input: streamURLs.audioStreamURL }
+        { input: stream.videoURL },
+        { input: stream.audioURL }
       );
       outputOptions.push(
         '-map 0:v', // Copy all video streams from videoStreamURL
@@ -83,14 +81,15 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
     else {
       this.log('debug', `Obtained single stream URL for YouTube video #${video.basic_info.id}:`);
-      this.log('debug', `${streamURLs.streamIsAudioOnly ? '(Audio only) ' : ''}Stream URL: ${streamURLs.streamURL}`);
-      inputs.push({ input: streamURLs.streamURL });
-      if (streamURLs.streamIsAudioOnly) {
+      this.log('debug', `${stream.isAudioOnly ? '(Audio only) ' : ''}Stream URL: ${stream.url}`);
+      inputs.push({ input: stream.url });
+      if (stream.isAudioOnly) {
         outputOptions.push('-f m4a');
         ext = '.m4a';
       }
     }
-    const output = path.resolve(this.#destDir, sanitizeFilename(`youtube-${video.basic_info.id}${ext}`));
+    const quality = stream.quality ? ` (${stream.quality})` : '';
+    const output = path.resolve(this.#destDir, sanitizeFilename(`youtube-${video.basic_info.id}${quality}${ext}`));
 
     this.#ffmpegCommandParams = {
       inputs,
@@ -124,7 +123,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     throw Error(`Failed to resolve YouTube URL "${url}": no videoId found`);
   }
 
-  async #getStreamURLs(video: YT.VideoInfo): Promise<StreamURLBundle | null> {
+  async #pickStream(video: YT.VideoInfo): Promise<StreamURLBundle | null> {
     const innertube = await this.getInnertube();
     let bestVideoWithAudio: Misc.Format | null;
     let bestVideo: Misc.Format | null;
@@ -155,44 +154,55 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
 
     const __decipher = (format: Misc.Format) => {
-      return format.decipher(innertube.session.player);
+      return {
+        url: format.decipher(innertube.session.player),
+        quality: {
+          video: format.quality_label || format.quality || '',
+          audio: format.audio_quality || ''
+        }
+      };
     };
 
     if (bestVideoWithAudio && (
       (bestVideo && bestVideoWithAudio.itag === bestVideo.itag) || (!bestVideo && !bestAudio))) {
 
+      const stream = __decipher(bestVideoWithAudio);
       return {
         hasSeparateAVStreams: false,
-        streamURL: __decipher(bestVideoWithAudio),
-        streamIsAudioOnly: false
+        url: stream.url,
+        isAudioOnly: false,
+        quality: stream.quality.video
       };
     }
 
-    const videoWithAudioStreamURL = bestVideoWithAudio ? __decipher(bestVideoWithAudio) : null;
-    const videoStreamURL = bestVideo ? __decipher(bestVideo) : videoWithAudioStreamURL;
-    const audioStreamURL = bestAudio ? __decipher(bestAudio) : videoWithAudioStreamURL;
+    const videoWithAudioStream = bestVideoWithAudio ? __decipher(bestVideoWithAudio) : null;
+    const videoStream = bestVideo ? __decipher(bestVideo) : videoWithAudioStream;
+    const audioStream = bestAudio ? __decipher(bestAudio) : videoWithAudioStream;
 
-    if (videoStreamURL && audioStreamURL) {
+    if (videoStream && audioStream) {
       return {
         hasSeparateAVStreams: true,
-        videoStreamURL,
-        audioStreamURL
+        videoURL: videoStream.url,
+        audioURL: audioStream.url,
+        quality: videoStream.quality.video
       };
     }
 
-    if (videoStreamURL) {
+    if (videoStream) {
       return {
         hasSeparateAVStreams: false,
-        streamURL: videoStreamURL,
-        streamIsAudioOnly: false
+        url: videoStream.url,
+        isAudioOnly: false,
+        quality: videoStream.quality.video
       };
     }
 
-    if (audioStreamURL) {
+    if (audioStream) {
       return {
         hasSeparateAVStreams: false,
-        streamURL: audioStreamURL,
-        streamIsAudioOnly: true
+        url: audioStream.url,
+        isAudioOnly: true,
+        quality: audioStream.quality.audio
       };
     }
 

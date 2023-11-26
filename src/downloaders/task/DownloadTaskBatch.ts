@@ -225,7 +225,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
 
   once<T extends DownloadTaskBatchEvent>(event: T, listener: (args: DownloadTaskBatchEventPayloadOf<T>) => void): this;
   once(event: string | symbol, listener: (...args: any[]) => void): this {
-    return super.on(event, listener);
+    return super.once(event, listener);
   }
 
   off<T extends DownloadTaskBatchEvent>(event: T, listener: (args: DownloadTaskBatchEventPayloadOf<T>) => void): this;
