@@ -30,7 +30,7 @@
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:78
+[src/downloaders/task/DownloadTask.ts:78](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L78)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:72
+[src/downloaders/task/DownloadTask.ts:72](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L72)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:76
+[src/downloaders/task/DownloadTask.ts:76](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L76)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:77
+[src/downloaders/task/DownloadTask.ts:77](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L77)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:75
+[src/downloaders/task/DownloadTask.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L75)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:73
+[src/downloaders/task/DownloadTask.ts:73](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L73)
 
 ___
 
@@ -90,4 +90,4 @@ ___
 
 #### Defined in
 
-src/downloaders/task/DownloadTask.ts:74
+[src/downloaders/task/DownloadTask.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/task/DownloadTask.ts#L74)

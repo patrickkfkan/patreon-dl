@@ -52,7 +52,7 @@
 
 #### Defined in
 
-src/downloaders/Downloader.ts:48
+[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L49)
 
 ## Properties
 
@@ -66,17 +66,17 @@ src/downloaders/Downloader.ts:48
 
 #### Defined in
 
-src/downloaders/PostDownloader.ts:20
+[src/downloaders/PostDownloader.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/PostDownloader.ts#L20)
 
 ___
 
 ### version
 
-▪ `Static` **version**: `string` = `'1.0.0'`
+▪ `Static` **version**: `string` = `'1.1.0'`
 
 #### Defined in
 
-src/downloaders/PostDownloader.ts:18
+[src/downloaders/PostDownloader.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/PostDownloader.ts#L18)
 
 ## Methods
 
@@ -107,7 +107,7 @@ src/downloaders/PostDownloader.ts:18
 
 #### Defined in
 
-src/downloaders/Downloader.ts:426
+[src/downloaders/Downloader.ts:438](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L438)
 
 ___
 
@@ -127,6 +127,7 @@ ___
 | `include` | \{ readonly lockedContent: boolean; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean; readonly contentMedia: boolean; readonly allMediaVariants: boolean; } |
 | `outDir` | `string` |
 | `pathToFFmpeg` | ``null`` \| `string` |
+| `pathToYouTubeCredentials` | ``null`` \| `string` |
 | `postFetch` | \{ readonly type: "single"; readonly postId: string; } \| \{ readonly type: "byUser"; readonly vanity: string; readonly filters?: \{ readonly [x: string]: any; } \| undefined; } \| \{ readonly type: "byCollection"; readonly collectionId: string; readonly filters?: \{ readonly [x: string]: any; } \| undefined; } |
 | `request` | \{ readonly maxRetries: number; readonly maxConcurrent: number; readonly minTime: number; } |
 | `targetURL` | `string` |
@@ -138,7 +139,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:352
+[src/downloaders/Downloader.ts:364](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L364)
 
 ___
 
@@ -169,7 +170,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:421
+[src/downloaders/Downloader.ts:433](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L433)
 
 ___
 
@@ -200,7 +201,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:411
+[src/downloaders/Downloader.ts:423](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L423)
 
 ___
 
@@ -231,7 +232,7 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:416
+[src/downloaders/Downloader.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L428)
 
 ___
 
@@ -255,7 +256,7 @@ ___
 
 #### Defined in
 
-src/downloaders/PostDownloader.ts:24
+[src/downloaders/PostDownloader.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/PostDownloader.ts#L24)
 
 ___
 
@@ -280,4 +281,4 @@ ___
 
 #### Defined in
 
-src/downloaders/Downloader.ts:174
+[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L184)

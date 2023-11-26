@@ -8,6 +8,7 @@
 
 - [description](PostEmbed.md#description)
 - [html](PostEmbed.md#html)
+- [id](PostEmbed.md#id)
 - [provider](PostEmbed.md#provider)
 - [providerURL](PostEmbed.md#providerurl)
 - [subject](PostEmbed.md#subject)
@@ -22,7 +23,7 @@
 
 #### Defined in
 
-src/entities/Post.ts:92
+[src/entities/Post.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L93)
 
 ___
 
@@ -32,7 +33,17 @@ ___
 
 #### Defined in
 
-src/entities/Post.ts:93
+[src/entities/Post.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L94)
+
+___
+
+### id
+
+• **id**: \`$\{string}-embed\`
+
+#### Defined in
+
+[src/entities/Post.ts:91](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L91)
 
 ___
 
@@ -42,7 +53,7 @@ ___
 
 #### Defined in
 
-src/entities/Post.ts:94
+[src/entities/Post.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L95)
 
 ___
 
@@ -52,7 +63,7 @@ ___
 
 #### Defined in
 
-src/entities/Post.ts:95
+[src/entities/Post.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L96)
 
 ___
 
@@ -62,17 +73,17 @@ ___
 
 #### Defined in
 
-src/entities/Post.ts:96
+[src/entities/Post.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L97)
 
 ___
 
 ### type
 
-• **type**: ``"link"`` \| ``"video"`` \| ``"unknown"``
+• **type**: ``"videoEmbed"`` \| ``"linkEmbed"`` \| ``"unknownEmbed"``
 
 #### Defined in
 
-src/entities/Post.ts:91
+[src/entities/Post.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L92)
 
 ___
 
@@ -82,4 +93,4 @@ ___
 
 #### Defined in
 
-src/entities/Post.ts:97
+[src/entities/Post.ts:98](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/Post.ts#L98)

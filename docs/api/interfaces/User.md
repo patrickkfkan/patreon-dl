@@ -26,7 +26,7 @@
 
 #### Defined in
 
-src/entities/User.ts:9
+[src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L9)
 
 ___
 
@@ -36,7 +36,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:6
+[src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L6)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:8
+[src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L8)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:5
+[src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L5)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:10
+[src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L10)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:7
+[src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L7)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:14
+[src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L14)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:11
+[src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L11)
 
 ___
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:4
+[src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L4)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:12
+[src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L12)
 
 ___
 
@@ -126,4 +126,4 @@ ___
 
 #### Defined in
 
-src/entities/User.ts:13
+[src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/entities/User.ts#L13)

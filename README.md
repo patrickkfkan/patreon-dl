@@ -20,7 +20,7 @@ You can run `patreon-dl` from the command-line or use it as a library for your p
 
 ### Limitations
 
-- Embedded videos other than from YouTube are not supported (e.g. Vimeo). Only info about these embeds is saved.
+- Embedded videos, other than those from YouTube, are not supported (e.g. Vimeo). Only info about these embeds is saved.
 - Likewise, embedded links are not followed; only info about the embed is saved.
 
 ### FFmpeg dependency
@@ -30,6 +30,16 @@ You can run `patreon-dl` from the command-line or use it as a library for your p
 - embedded YouTube videos.
 
 Not all video downloads require FFmpeg, but you should have it installed on your system anyway.
+
+### Embedded YouTube videos - Premium access
+
+`patreon-dl` supports downloading embedded YouTube videos. In addition, if you have a YouTube Premium subscription, you can connect `patreon-dl` to your account and download videos at qualities available only to Premium accounts (e.g. '1080p Premium'). For CLI users, you would configure `patreon-dl` as follows:
+
+```
+$ patreon-dl --configure-youtube
+```
+
+For library usage, see [Configuring YouTube connection](#configuring-youtube-connection).
 
 ## Installation
 
@@ -54,7 +64,8 @@ Options
   -l, --log-level <level>    Log level of the console logger: 'info', 'debug',  
                              'warn' or 'error'; set to 'none' to disable the    
                              logger.                                            
-  -y, --no-prompt            Do not prompt for confirmation to proceed
+  -y, --no-prompt            Do not prompt for confirmation to proceed          
+  --configure-youtube        Configure YouTube connection 
 ```
 
 #### Supported URL formats
@@ -133,6 +144,7 @@ An object with the following properties (all *optional*):
 | `cookie`          | Cookie to include in requests; required for accessing patron-only content. See [How to obtain Cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
 | `useStatusCache`  | Whether to use status cache to quickly determine whether a target that had been downloaded before has changed since the last download. Default: `true` |
 | `pathToFFmpeg`    | Path to `ffmpeg` executable. If not specified, `ffmpeg` will be called directly when needed, so make sure it is in the PATH. |
+| `pathToYouTubeCredentials` | Path to file storing YouTube credentials for connecting to a YouTube account when downloading embedded YouTube videos. Its purpose is to allow YouTube Premium accounts to download videos at higher than normal qualities. For more information, see [Configuring YouTube connection](#configuring-youtube-connection).
 | `outDir`          | Path to directory where content is saved. Default: current working directory |
 | `dirNameFormat`   | How to name directories: (object)<ul><li>`campaign`: see [Campaign directory name format](#campaign-directory-name-format)</li><li>`content`: see [Content directory name format](#content-directory-name-format)</li></ul> |
 | `filenameFormat`  | Naming of files: (object)<ul><li>`media`: see [Media filename format](#media-filename-format) |
@@ -207,6 +219,65 @@ Characters enclosed in square brackets followed by a question mark denote condit
 
 Default: '{media.filename}'</br>
 Fallback: '{media.type}-{media.id}'
+
+### Configuring YouTube connection
+
+In its simplest form, the process of connecting `patreon-dl` to a YouTube account is as follows:
+
+1. Obtain credentials by having the user visit a Google page that links his or her account to a 'device' (which in this case is actually `patreon-dl`).
+2. Save the credentials, as a JSON string, to a file.
+3. Pass the path of the file to `PatreonDownloader.getInstance()`
+
+To obtain credentials, you can use the `YouTubeCredentialsCapturer` class:
+
+```
+import { YouTubeCredentialsCapturer } from 'patreon-dl';
+
+// Note: you should wrap the following logic inside an async
+// process, and resolve when the credentials have been saved.
+
+const capturer = new YouTubeCredentialsCapturer();
+
+/**
+ * 'pending' event emitted when verification data is ready and waiting
+ * for user to carry out the verification process.
+ */
+capturer.on('pending', (data) => {
+  // `data` is an object: { verificationURL: <string>, code: <string> }
+  // Use `data` to provide instructions to the user:
+  console.log(
+    `In a browser, go to the following Verification URL and enter Code:
+
+    - Verification URL: ${data.verificationURL}
+    - Code: ${data.code}
+
+    Then wait for this script to complete.`);
+});
+
+/**
+ * 'capture' event emitted when the user has completed verification and the 
+ * credentials have been relayed back to the capturer.
+ */
+capturer.on('capture', (credentials) => {
+  // `credentials` is an object which you need to save to file as JSON string.
+  fs.writeFileSync('/path/to/yt-credentials.json', JSON.stringify(credentials));
+  console.log('Credentials saved!');
+});
+
+// When you have added the listeners, start the capture process.
+capturer.begin();
+```
+
+Then, pass the path of the file to `PatreonDownloader.getInstance()`:
+
+```
+const downloader = await PatreonDownloader.getInstance(url, {
+  ...
+  pathToYouTubeCredentials: '/path/to/yt-credentials.json'
+});
+```
+
+You should ensure the credentials file is writable, as it needs to be updated with new credentials when the current ones expire. The process of renewing credentials is done automatically by the downloader.
 
 ### Logger
 
