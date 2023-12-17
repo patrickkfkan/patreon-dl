@@ -494,6 +494,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.1.1
+- Fix initial data parsing following Patreon changes
+
 v1.1.0
 - Add support for downloading embedded YouTube videos
 
