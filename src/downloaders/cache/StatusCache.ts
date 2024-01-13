@@ -136,7 +136,11 @@ export default class StatusCache {
       return false;
     }
 
-    if (!this.#validateByDownloaderVer(entry.downloaderVersion, ProductDownloader.version)) {
+    const downloaderVer =
+      target.type === 'product' ? ProductDownloader.version :
+        target.type === 'post' ? PostDownloader.version :
+          null;
+    if (downloaderVer && !this.#validateByDownloaderVer(entry.downloaderVersion, downloaderVer)) {
       this.log('debug', '-> Invalidated: downloader version has changed (major / minor)');
       return false;
     }
