@@ -248,6 +248,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
     return new Promise<void>(async (resolve) => {
       if (!this.config.include.campaignInfo) {
+        resolve();
         return;
       }
 
@@ -267,6 +268,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
       if (!campaign) {
         this.log('warn', 'Skipped saving campaign info: target unavailable');
+        resolve();
         return;
       }
 
