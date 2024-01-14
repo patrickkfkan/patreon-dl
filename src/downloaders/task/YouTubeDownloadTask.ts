@@ -23,7 +23,7 @@ type StreamURLBundle = {
 
 export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubePostEmbed> {
 
-  protected name = 'YouTubeDownloadTask';
+  name = 'YouTubeDownloadTask';
 
   #destDir: string;
   #video: YT.VideoInfo | null;

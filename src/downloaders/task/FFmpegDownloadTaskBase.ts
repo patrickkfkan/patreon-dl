@@ -30,7 +30,7 @@ export interface FFmpegProgress {
 
 export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> extends DownloadTask<T> {
 
-  protected name = 'FFmpegDownloadTask';
+  abstract name: string;
 
   #fileExistsAction: FileExistsAction;
   #ffmpegCommand: FfmpegCommand | null;
@@ -56,6 +56,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
       if (this.status === 'aborted') {
         resolve();
+        return;
       }
 
       let tmpFilePath: string | null = null;

@@ -7,7 +7,7 @@ export interface M3U8DownloadTaskParams extends FFmpegDownloadTaskBaseParams<Vid
 
 export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaItem> {
 
-  protected name = 'M3U8DownloadTask';
+  name = 'M3U8DownloadTask';
 
   #destFilePath: string;
 

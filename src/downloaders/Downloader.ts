@@ -10,7 +10,6 @@ import { Campaign } from '../entities/Campaign.js';
 import FSHelper, { WriteTextFileResult } from '../utils/FSHelper.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
 import { IDownloadTask } from './task/DownloadTask.js';
-import FFmpegDownloadTask from './task/FFmpegDownloadTask.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import FilenameFormatHelper from '../utils/FilenameFormatHelper.js';
 import { Downloadable } from '../entities/Downloadable.js';
@@ -20,6 +19,7 @@ import URLHelper from '../utils/URLHelper.js';
 import { AbortError } from 'node-fetch';
 import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/InnertubeLoader.js';
+import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -89,7 +89,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     batch.on('taskStart', ({task}) => {
       const retryOrBeginStr = task.retryCount > 0 ? 'retry' : 'begin';
       this.log('info', `Download ${retryOrBeginStr} (${__getDownloadIdString(task, batch)}): [type: ${task.srcEntity.type}; ID: #${task.srcEntity.id}] -> ${task.resolvedDestFilename}`);
-      if (task instanceof FFmpegDownloadTask) {
+      if (task instanceof FFmpegDownloadTaskBase) {
         const retryOrBeginStr = task.retryCount > 0 ? 'Retry' : 'Begin';
         this.log('info', `${retryOrBeginStr} downloading through FFmpeg (${__getDownloadIdString(task, batch)}): ${task.commandLine}`);
       }
