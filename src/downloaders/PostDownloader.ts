@@ -13,7 +13,7 @@ import { generatePostEmbedSummary, generatePostSummary } from './templates/PostI
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
 
-export default class PostDownloader extends Downloader<'post'> {
+export default class PostDownloader extends Downloader<Post> {
 
   static version = '1.1.0';
 
@@ -95,6 +95,7 @@ export default class PostDownloader extends Downloader<'post'> {
       let downloaded = 0;
       let skippedUnviewable = 0;
       let skippedRedundant = 0;
+      let skippedUnmetMediaTypeCriteria = 0;
       let campaignSaved = false;
       while (json) {
         const collection = postsParser.parsePostsAPIResponse(json, postsAPIURL);
@@ -134,8 +135,10 @@ export default class PostDownloader extends Downloader<'post'> {
             continue;
           }
 
-          // Step 4.3: Check viewability
           this.log('info', `Download post #${post.id} (${post.title})`);
+
+          // Step 4.3: Check whether we should download post
+          // -- 4.3.1: Viewability
           if (!post.isViewable) {
             if (this.config.include.lockedContent) {
               this.log('warn', `Post #${post.id} is not viewable by current user`);
@@ -149,6 +152,45 @@ export default class PostDownloader extends Downloader<'post'> {
                 skipMessage: 'Target is not viewable by current user'
               });
               skippedUnviewable++;
+              continue;
+            }
+          }
+
+          // -- 4.3.2: Config option 'include.postsWithMediaType'
+          const postsWithMediaType = this.config.include.postsWithMediaType;
+          if (postsWithMediaType !== 'any') {
+            const hasAttachments = post.attachments.length > 0;
+            const hasAudio = !!post.audio || !!post.audioPreview;
+            const hasImages = post.images.length > 0;
+            const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && isYouTubeEmbed(post.embed));
+
+            let skip = false;
+            if (postsWithMediaType === 'none') {
+              skip = hasAttachments || hasAudio || hasImages || hasVideo;
+            }
+            else if (Array.isArray(postsWithMediaType)) {
+              skip = !(
+                (postsWithMediaType.includes('attachment') && hasAttachments) ||
+                (postsWithMediaType.includes('audio') && hasAudio) ||
+                (postsWithMediaType.includes('image') && hasImages) ||
+                (postsWithMediaType.includes('video') && hasVideo));
+            }
+
+            if (skip) {
+              this.log('info', `Skipped downloading post #${post.id}: target does not meet media type criteria`);
+              this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
+                hasAttachments,
+                hasAudio,
+                hasImages,
+                hasVideo
+              });
+              this.emit('targetEnd', {
+                target: post,
+                isSkipped: true,
+                skipReason: TargetSkipReason.UnmetMediaTypeCriteria,
+                skipMessage: 'Target does not meet media type criteria'
+              });
+              skippedUnmetMediaTypeCriteria++;
               continue;
             }
           }
@@ -312,6 +354,9 @@ export default class PostDownloader extends Downloader<'post'> {
         if (skippedRedundant) {
           skippedStrParts.push(`${skippedRedundant} redundant`);
         }
+        if (skippedUnmetMediaTypeCriteria) {
+          skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} not meeting media type criteria`);
+        }
         const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
         this.log('info', `Total ${downloaded} / ${total} posts processed${skippedStr}`);
       }
@@ -428,17 +473,31 @@ export default class PostDownloader extends Downloader<'post'> {
     const incPreview = this.config.include.previewMedia;
     const incContent = this.config.include.contentMedia;
 
+    const __incPreview = (mediaType: 'audio' | 'video' | 'image') => {
+      if (typeof incPreview === 'boolean') {
+        return incPreview;
+      }
+      return incPreview.includes(mediaType);
+    };
+
+    const __incContent = (mediaType: 'audio' | 'video' | 'image' | 'attachment') => {
+      if (typeof incContent === 'boolean') {
+        return incContent;
+      }
+      return incContent.includes(mediaType);
+    };
+
     const batch = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
 
-      incPreview && post.audioPreview ? {
+      __incPreview('audio') && post.audioPreview ? {
         target: [ post.audioPreview ],
         targetName: `post #${post.id} -> audio preview`,
         destDir: postDirs.audioPreview,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incPreview && post.videoPreview ? {
+      __incPreview('video') && post.videoPreview ? {
         target: [ post.videoPreview ],
         targetName: `post #${post.id} -> video preview`,
         destDir: postDirs.videoPreview,
@@ -449,42 +508,42 @@ export default class PostDownloader extends Downloader<'post'> {
        * If post is not viewable by current user, its images will be
        * blurry and we should categorize them as image previews.
        */
-      incPreview && post.images.length > 0 && !post.isViewable ? {
+      __incPreview('image') && post.images.length > 0 && !post.isViewable ? {
         target: post.images,
         targetName: `post #${post.id} -> image previews`,
         destDir: postDirs.imagePreviews,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incContent && post.audio ? {
+      __incContent('audio') && post.audio ? {
         target: [ post.audio ],
         targetName: `post #${post.id} -> audio`,
         destDir: postDirs.audio,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incContent && post.video ? {
+      __incContent('video') && post.video ? {
         target: [ post.video ],
         targetName: `post #${post.id} -> video`,
         destDir: postDirs.video,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incContent && post.images.length > 0 && post.isViewable ? {
+      __incContent('image') && post.images.length > 0 && post.isViewable ? {
         target: post.images,
         targetName: `post #${post.id} -> images`,
         destDir: postDirs.images,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incContent && post.attachments.length > 0 ? {
+      __incContent('attachment') && post.attachments.length > 0 ? {
         target: post.attachments,
         targetName: `post #${post.id} -> attachments`,
         destDir: postDirs.attachments,
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      incContent && post.embed && isYouTubeEmbed(post.embed) ? {
+      __incContent('video') && post.embed && isYouTubeEmbed(post.embed) ? {
         target: [ post.embed ],
         targetName: `post #${post.id} -> embedded YouTube video`,
         destDir: postDirs.embed,

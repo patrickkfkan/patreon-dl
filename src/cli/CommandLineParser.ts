@@ -145,6 +145,8 @@ export default class CommandLineParser {
         media: undefined
       },
       include: {
+        lockedContent: undefined,
+        postsWithMediaType: undefined,
         campaignInfo: undefined,
         contentInfo: undefined,
         previewMedia: undefined,

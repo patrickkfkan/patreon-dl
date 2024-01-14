@@ -19,10 +19,11 @@ export interface DownloaderOptions {
   }
   include?: {
     lockedContent?: boolean;
+    postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment'> | 'any' | 'none';
     campaignInfo?: boolean;
     contentInfo?: boolean;
-    previewMedia?: boolean;
-    contentMedia?: boolean;
+    previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
+    contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
     allMediaVariants?: boolean;
   };
   request?: {
@@ -63,6 +64,7 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   },
   include: {
     lockedContent: true,
+    postsWithMediaType: 'any',
     campaignInfo: true,
     contentInfo: true,
     previewMedia: true,
@@ -97,6 +99,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     },
     include: {
       lockedContent: pickDefined(options?.include?.lockedContent, defaults.include.lockedContent),
+      postsWithMediaType: pickDefined(options?.include?.postsWithMediaType, defaults.include.postsWithMediaType),
       campaignInfo: pickDefined(options?.include?.campaignInfo, defaults.include.campaignInfo),
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),

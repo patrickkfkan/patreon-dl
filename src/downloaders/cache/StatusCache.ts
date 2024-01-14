@@ -25,8 +25,8 @@ export interface StatusCacheEntry<T extends Product | Post> {
     include: {
       lockedContent: boolean;
       contentInfo: boolean;
-      previewMedia: boolean;
-      contentMedia: boolean;
+      previewMedia: DownloaderConfig<T>['include']['previewMedia'];
+      contentMedia: DownloaderConfig<T>['include']['contentMedia'];
       allMediaVariants: boolean;
     };
   };
@@ -155,14 +155,26 @@ export default class StatusCache {
       return false;
     }
 
-    const __compareConfigInclude = (prop: keyof StatusCacheEntry<T>['lastDownloadConfig']['include'] & keyof DownloaderConfig<any>['include']) => {
+    const __compareConfigInclude = (prop: keyof StatusCacheEntry<T>['lastDownloadConfig']['include'] & keyof DownloaderConfig<T>['include']) => {
       const last = entry.lastDownloadConfig.include[prop];
       const now = config.include[prop];
-      if (!last && now) { // Only check for 'false' -> 'true'
-        this.log('debug', `-> Invalidated: downloader config 'include.${prop}' has changed from '${last}' -> '${now}'`);
-        return false;
+
+      let invalidated = false;
+      // Only invalidate if 'now' scope is wider
+      if (!last && now !== false) { // 'false' -> something truthy ('true' or array of values)
+        invalidated = true;
       }
-      return true;
+      else if (Array.isArray(last) && Array.isArray(now)) {
+        // 'now' scope is wider if it contains entries not present in 'last'
+        const notInlast = now.filter((v) => !last.includes(v as any));
+        invalidated = notInlast.length > 0;
+      }
+
+      if (invalidated) {
+        this.log('debug', `-> Invalidated: downloader config 'include.${prop}' has changed from '${JSON.stringify(last)}' -> '${JSON.stringify(now)}'`);
+      }
+
+      return !invalidated;
     };
 
     const includeProps: Array<keyof StatusCacheEntry<T>['lastDownloadConfig']['include']> =

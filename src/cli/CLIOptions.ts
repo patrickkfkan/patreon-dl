@@ -26,10 +26,9 @@ export type CLIOptionParserEntry = ({
 export function getCLIOptions(): CLIOptions {
   const commandLineOptions = CommandLineParser.parse();
 
-  let configFileOptions: ReturnType<typeof ConfigFileParser['parse']> | null = null;
-  if (commandLineOptions.configFile?.value) {
-    configFileOptions = ConfigFileParser.parse(commandLineOptions.configFile.value);
-  }
+  const configFileOptions = commandLineOptions.configFile?.value ? ConfigFileParser.parse(commandLineOptions.configFile.value) : null;
+
+  configFileOptions?.include?.previewMedia;
 
   const options: CLIOptions = {
     targetURL: CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURL, configFileOptions?.targetURL), 'No target URL specified'),
@@ -46,10 +45,11 @@ export function getCLIOptions(): CLIOptions {
     },
     include: {
       lockedContent: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.lockedContent, configFileOptions?.include?.lockedContent)),
+      postsWithMediaType: CLIOptionValidator.validateIncludeContentWithMediaType(pickDefined(commandLineOptions.include?.postsWithMediaType, configFileOptions?.include?.postsWithMediaType)),
       campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
       contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
-      previewMedia: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
-      contentMedia: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
+      previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
+      contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
       allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants))
     },
     request: {

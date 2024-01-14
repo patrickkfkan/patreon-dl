@@ -23,6 +23,7 @@ const CONFIG_FILE_PROPS = {
   },
   include: {
     lockedContent: 'include:locked.content',
+    postsWithMediaType: 'include:posts.with.media.type',
     campaignInfo: 'include:campaign.info',
     contentInfo: 'include:content.info',
     previewMedia: 'include:preview.media',
@@ -91,6 +92,7 @@ export default class ConfigFileParser {
       },
       include: {
         lockedContent: __getValue(CONFIG_FILE_PROPS.include.lockedContent),
+        postsWithMediaType: __getValue(CONFIG_FILE_PROPS.include.postsWithMediaType),
         campaignInfo: __getValue(CONFIG_FILE_PROPS.include.campaignInfo),
         contentInfo: __getValue(CONFIG_FILE_PROPS.include.contentInfo),
         previewMedia: __getValue(CONFIG_FILE_PROPS.include.previewMedia),

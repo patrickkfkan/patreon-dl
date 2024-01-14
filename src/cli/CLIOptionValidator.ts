@@ -77,6 +77,56 @@ export default class CLIOptionValidator {
     return sanitized;
   }
 
+  static validateStringArray<T>(entry: CLIOptionParserEntry | undefined, match: readonly T[], delimiter = ',') {
+    const value = entry?.value || undefined;
+    if (!entry || !value) {
+      return undefined;
+    }
+    const split = value.split(delimiter).reduce<string[]>((result, v) => {
+      v = v.trim().toLowerCase();
+      if (v && !result.includes(v)) {
+        result.push(v);
+      }
+      return result;
+    }, []);
+    if (split.length === 0) {
+      return undefined;
+    }
+    for (const v of split) {
+      if (!match.includes(v as any)) {
+        throw Error(`${this.#logEntryKey(entry)} has invalid delimited value '${v}'; must be one of ${match.map((m) => `'${m}'`).join(', ')}.`);
+      }
+    }
+    return split as T[];
+  }
+
+  static validateIncludeContentWithMediaType(entry?: CLIOptionParserEntry) {
+    try {
+      return this.validateString(entry, 'any', 'none');
+    }
+    catch (error) {
+      return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment' ] as const);
+    }
+  }
+
+  static validateIncludePreviewMedia(entry?: CLIOptionParserEntry) {
+    try {
+      return this.validateBoolean(entry);
+    }
+    catch (error) {
+      return this.validateStringArray(entry, [ 'image', 'video', 'audio' ] as const);
+    }
+  }
+
+  static validateIncludeContentMedia(entry?: CLIOptionParserEntry) {
+    try {
+      return this.validateBoolean(entry);
+    }
+    catch (error) {
+      return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment', 'file' ] as const);
+    }
+  }
+
   static #logEntryKey(entry: CLIOptionParserEntry) {
     const keyStr = entry.src === 'cli' ?
       entry.key :

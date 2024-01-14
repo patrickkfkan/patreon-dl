@@ -7,8 +7,10 @@ import StatusCache from './cache/StatusCache.js';
 import { generateProductSummary } from './templates/ProductInfo.js';
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
+import { Product } from '../entities/Product.js';
+import { Downloadable } from '../entities/Downloadable.js';
 
-export default class ProductDownloader extends Downloader<'product'> {
+export default class ProductDownloader extends Downloader<Product> {
 
   static version = '1.0.0';
 
@@ -129,24 +131,37 @@ export default class ProductDownloader extends Downloader<'product'> {
       }
 
       // Step 8: Download product media items
-      this.log('info', 'Download: ' +
-          `preview items: ${this.config.include.previewMedia ? 'yes' : 'no'}; ` +
-          `content items: ${this.config.include.contentMedia ? 'yes' : 'no'}`);
+      const incPreview = this.config.include.previewMedia;
+      const incContent = this.config.include.contentMedia;
+      this.log('info', 'Download:', {
+        ['preview items']: incPreview === true ? 'yes' : incPreview === false ? 'no' : JSON.stringify(incPreview),
+        ['content items']: incContent === true ? 'yes' : incContent === false ? 'no' : JSON.stringify(incContent)
+      });
+
+      const __inc = <T>(inc: boolean | Array<T>, target: Downloadable) => {
+        if (typeof inc === 'boolean') {
+          return inc;
+        }
+        return (inc.includes(target.type as any));
+      };
+
+      const previewMedia = product.previewMedia.filter((tt) => __inc(incPreview, tt));
+      const contentMedia = product.contentMedia.filter((tt) => __inc(incContent, tt));
 
       if (this.config.include.previewMedia || this.config.include.contentMedia) {
         this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
         batch = this.createDownloadTaskBatch(
           `Product #${product.id} (${product.name})`,
 
-          this.config.include.previewMedia ? {
-            target: product.previewMedia,
+          previewMedia.length > 0 ? {
+            target: previewMedia,
             targetName: `product #${product.id} -> preview media`,
             destDir: productDirs.previewMedia,
             fileExistsAction: this.config.fileExistsAction.content
           } : null,
 
-          this.config.include.contentMedia ? {
-            target: product.contentMedia,
+          contentMedia.length > 0 ? {
+            target: contentMedia,
             targetName: `product #${product.id} -> content media`,
             destDir: productDirs.contentMedia,
             fileExistsAction: this.config.fileExistsAction.content

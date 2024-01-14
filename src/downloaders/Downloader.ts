@@ -41,7 +41,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   abstract name: string;
 
   protected fetcher: Fetcher;
-  protected config: deepFreeze.DeepReadonly<DownloaderConfig<T>>;
+  protected config: DownloaderConfig<T>;
   protected logger?: Logger | null;
 
   #hasEmittedEndEventOnAbort: boolean;
@@ -50,10 +50,10 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     super();
     this.#validateOptions(options);
 
-    this.config = deepFreeze({
+    this.config = {
       ...bootstrap,
       ...getDownloaderInit(options)
-    });
+    };
 
     this.fetcher = new Fetcher(options?.cookie, options?.logger);
     this.logger = options?.logger;
@@ -362,7 +362,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   }
 
   getConfig() {
-    return this.config;
+    return deepFreeze(this.config);
   }
 
   protected checkAbortSignal(signal: AbortSignal | undefined, resolve: () => void) {

@@ -1,6 +1,8 @@
+import { Post } from '../entities/Post.js';
+import { Product } from '../entities/Product.js';
 import URLHelper from '../utils/URLHelper.js';
 
-export type DownloaderType = 'product' | 'post';
+export type DownloaderType = Product | Post;
 
 export interface BootstrapData {
   type: string;
@@ -29,8 +31,8 @@ export interface PostDownloaderBootstrapData extends BootstrapData {
 }
 
 export type DownloaderBootstrapData<T extends DownloaderType> =
-  T extends 'product' ? ProductDownloaderBootstrapData :
-  T extends 'post' ? PostDownloaderBootstrapData :
+  T['type'] extends 'product' ? ProductDownloaderBootstrapData :
+  T['type'] extends 'post' ? PostDownloaderBootstrapData :
   never;
 
 export default class Bootstrap {

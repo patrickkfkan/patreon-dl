@@ -61,7 +61,7 @@ export default class FSHelper {
     };
   }
 
-  static getPostDirs(post: Post, config: DownloaderConfig<'post'>) {
+  static getPostDirs(post: Post, config: DownloaderConfig<Post>) {
     const dirName = FilenameFormatHelper.getContentDirName(post, config.dirNameFormat.content);
     let postRootPath: string;
     let statusCachePath: string;
@@ -90,7 +90,7 @@ export default class FSHelper {
     };
   }
 
-  static getProductDirs(product: Product, config: DownloaderConfig<'product'>) {
+  static getProductDirs(product: Product, config: DownloaderConfig<Product>) {
     const dirName = FilenameFormatHelper.getContentDirName(product, config.dirNameFormat.content);
     let productRootPath: string;
     let statusCachePath: string;
