@@ -494,6 +494,12 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.2.0
+- Add support for granular control over:
+  - posts to include in download based on type of media contained
+  - the type of media to download
+- Bug fixes
+
 v1.1.1
 - Fix initial data parsing following Patreon changes
 
