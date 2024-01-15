@@ -177,7 +177,7 @@ export default class PostDownloader extends Downloader<Post> {
             }
 
             if (skip) {
-              this.log('info', `Skipped downloading post #${post.id}: target does not meet media type criteria`);
+              this.log('warn', `Skipped downloading post #${post.id}: unmet media type criteria`);
               this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
                 hasAttachments,
                 hasAudio,
@@ -355,7 +355,7 @@ export default class PostDownloader extends Downloader<Post> {
           skippedStrParts.push(`${skippedRedundant} redundant`);
         }
         if (skippedUnmetMediaTypeCriteria) {
-          skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} not meeting media type criteria`);
+          skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
         }
         const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
         this.log('info', `Total ${downloaded} / ${total} posts processed${skippedStr}`);
