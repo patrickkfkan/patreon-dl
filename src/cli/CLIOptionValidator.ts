@@ -36,7 +36,7 @@ export default class CLIOptionValidator {
       return undefined;
     }
     const value = entry.value || undefined;
-    const trueValues = [ 'yes', '1', ' true' ];
+    const trueValues = [ 'yes', '1', 'true' ];
     const falseValues = [ 'no', '0', 'false' ];
     let sanitized: boolean | undefined;
     if (value) {
