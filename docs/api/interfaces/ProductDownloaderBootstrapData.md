@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Bootstrap.ts#L12)
+[src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Bootstrap.ts#L14)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Bootstrap.ts#L7)
+[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Bootstrap.ts#L9)
 
 ___
 
@@ -52,4 +52,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Bootstrap.ts#L11)
+[src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Bootstrap.ts#L13)

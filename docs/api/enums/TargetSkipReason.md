@@ -8,6 +8,7 @@
 
 - [AlreadyDownloaded](TargetSkipReason.md#alreadydownloaded)
 - [Inaccessible](TargetSkipReason.md#inaccessible)
+- [UnmetMediaTypeCriteria](TargetSkipReason.md#unmetmediatypecriteria)
 
 ## Enumeration Members
 
@@ -17,7 +18,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L17)
+[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L17)
 
 ___
 
@@ -27,4 +28,14 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L16)
+[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L16)
+
+___
+
+### UnmetMediaTypeCriteria
+
+• **UnmetMediaTypeCriteria** = ``2``
+
+#### Defined in
+
+[src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L18)

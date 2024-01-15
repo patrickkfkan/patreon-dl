@@ -39,7 +39,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L17)
+[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L17)
 
 ## Methods
 
@@ -53,7 +53,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L33)
+[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L33)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L26)
+[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L26)
 
 ___
 
@@ -92,7 +92,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L68)
+[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L68)
 
 ▸ **emit**(`eventName`, `credentials`): `boolean`
 
@@ -113,7 +113,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L69)
+[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L69)
 
 ___
 
@@ -138,7 +138,7 @@ EventEmitter.off
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L62)
+[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L62)
 
 ▸ **off**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
 
@@ -159,7 +159,7 @@ EventEmitter.off
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L63)
+[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L63)
 
 ___
 
@@ -184,7 +184,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L50)
+[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L50)
 
 ▸ **on**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
 
@@ -205,7 +205,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L51)
+[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L51)
 
 ___
 
@@ -230,7 +230,7 @@ EventEmitter.once
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L56)
+[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L56)
 
 ▸ **once**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
 
@@ -251,4 +251,4 @@ EventEmitter.once
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/utils/YouTubeCredentialsCapturer.ts#L57)
+[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/YouTubeCredentialsCapturer.ts#L57)

@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:54](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L54)
+[src/downloaders/DownloaderEvent.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L55)
 
 ___
 
@@ -33,11 +33,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `targetType` | ``"product"`` \| ``"post"`` \| ``"posts"`` |
+| `targetType` | ``"post"`` \| ``"product"`` \| ``"posts"`` |
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L22)
+[src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L23)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L40)
+[src/downloaders/DownloaderEvent.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L41)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L49)
+[src/downloaders/DownloaderEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L50)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L26)
+[src/downloaders/DownloaderEvent.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L27)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/DownloaderEvent.ts#L30)
+[src/downloaders/DownloaderEvent.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/DownloaderEvent.ts#L31)

@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`Downloader`](Downloader.md)\<``"product"``\>
+- [`Downloader`](Downloader.md)\<[`Product`](../interfaces/Product.md)\>
 
   ↳ **`ProductDownloader`**
 
@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L49)
+[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L49)
 
 ## Properties
 
@@ -66,7 +66,7 @@
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/ProductDownloader.ts#L15)
+[src/downloaders/ProductDownloader.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/ProductDownloader.ts#L17)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/ProductDownloader.ts#L13)
+[src/downloaders/ProductDownloader.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/ProductDownloader.ts#L15)
 
 ## Methods
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:438](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L438)
+[src/downloaders/Downloader.ts:440](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L440)
 
 ___
 
@@ -122,9 +122,9 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `dirNameFormat` | \{ readonly campaign: string; readonly content: string; } |
-| `fileExistsAction` | \{ readonly content: "overwrite" \| "skip" \| "saveAsCopy" \| "saveAsCopyIfNewer"; readonly info: "overwrite" \| "skip" \| "saveAsCopy" \| "saveAsCopyIfNewer"; readonly infoAPI: "overwrite" \| "skip" \| "saveAsCopy" \| "saveAsCopyIfNewer"; } |
+| `fileExistsAction` | \{ readonly content: FileExistsAction; readonly info: FileExistsAction; readonly infoAPI: FileExistsAction; } |
 | `filenameFormat` | \{ readonly media: string; } |
-| `include` | \{ readonly lockedContent: boolean; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean; readonly contentMedia: boolean; readonly allMediaVariants: boolean; } |
+| `include` | \{ readonly lockedContent: boolean; readonly postsWithMediaType: "none" \| "any" \| readonly ("attachment" \| "audio" \| "video" \| "image")[]; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean \| readonly ("audio" \| ... 1 more ... \| "image")[]; readonly contentMedia: boolean \| r... |
 | `outDir` | `string` |
 | `pathToFFmpeg` | ``null`` \| `string` |
 | `pathToYouTubeCredentials` | ``null`` \| `string` |
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:364](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L364)
+[src/downloaders/Downloader.ts:366](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L366)
 
 ___
 
@@ -170,7 +170,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:433](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L433)
+[src/downloaders/Downloader.ts:435](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L435)
 
 ___
 
@@ -201,7 +201,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:423](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L423)
+[src/downloaders/Downloader.ts:425](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L425)
 
 ___
 
@@ -232,7 +232,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L428)
+[src/downloaders/Downloader.ts:430](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L430)
 
 ___
 
@@ -256,7 +256,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/ProductDownloader.ts#L19)
+[src/downloaders/ProductDownloader.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/ProductDownloader.ts#L21)
 
 ___
 
@@ -281,4 +281,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/0767bc1/src/downloaders/Downloader.ts#L184)
+[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/Downloader.ts#L184)
