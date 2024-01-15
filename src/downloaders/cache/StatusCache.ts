@@ -169,6 +169,19 @@ export default class StatusCache {
         const notInlast = now.filter((v) => !last.includes(v as any));
         invalidated = notInlast.length > 0;
       }
+      else if (Array.isArray(last) && now === true) {
+        const nowEntries =
+          prop === 'contentMedia' ? [ 'image', 'video', 'audio', 'attachment', 'file' ] :
+            prop === 'previewMedia' ? [ 'image', 'video', 'audio' ] :
+              null;
+        if (nowEntries) {
+          const notInlast = nowEntries.filter((v) => !last.includes(v as any));
+          invalidated = notInlast.length > 0;
+        }
+        else {
+          invalidated = true;
+        }
+      }
 
       if (invalidated) {
         this.log('debug', `-> Invalidated: downloader config 'include.${prop}' has changed from '${JSON.stringify(last)}' -> '${JSON.stringify(now)}'`);
