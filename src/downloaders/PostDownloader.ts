@@ -15,7 +15,7 @@ import { TargetSkipReason } from './DownloaderEvent.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
-  static version = '1.1.0';
+  static version = '1.1.1';
 
   name = 'PostDownloader';
 

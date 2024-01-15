@@ -12,7 +12,7 @@ import { Downloadable } from '../entities/Downloadable.js';
 
 export default class ProductDownloader extends Downloader<Product> {
 
-  static version = '1.0.0';
+  static version = '1.0.1';
 
   name = 'ProductDownloader';
 
