@@ -54,9 +54,14 @@ export default abstract class FilenameResolver<T> {
   }
 
   protected getExtensionByContentType(type: string) {
+    const extFromURL = URLHelper.getExtensionFromURL(this.srcURL);
     // Mime-types does not recognize 'application/x-mpegURL'
-    if (type === 'application/x-mpegURL' && URLHelper.getExtensionFromURL(this.srcURL) === '.m3u8') {
+    if (type === 'application/x-mpegURL' && extFromURL === '.m3u8') {
       return '.m3u8';
+    }
+    // Mime-types returns '.mpga' for 'audio/mpeg' - we want '.mp3'
+    else if (type === 'audio/mpeg' && extFromURL === '.mp3') {
+      return '.mp3';
     }
     let ext = mimeTypes.extension(type);
     if (ext === 'jpeg') {
