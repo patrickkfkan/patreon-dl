@@ -72,7 +72,7 @@
     "prompt-sync": "^4.2.0",
     "sanitize-filename": "^1.6.3",
     "semver": "^7.5.4",
-    "youtubei.js": "^7.0.0"
+    "youtubei.js": "^9.1.0"
   },
   "keywords": [
     "patreon",
