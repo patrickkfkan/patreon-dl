@@ -494,6 +494,10 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.2.2
+- Fix wrong file extension for some content types
+- Fix YouTube API requests throwing errors due to YT changes
+
 v1.2.1
 - Bug fixes
 
