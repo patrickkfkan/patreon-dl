@@ -54,6 +54,13 @@ export default abstract class FilenameResolver<T> {
   }
 
   protected getExtensionByContentType(type: string) {
+    const undeterminable = [
+      'application/octet-stream',
+      'text/plain'
+    ];
+    if (undeterminable.includes(type)) {
+      return '';
+    }
     const extFromURL = URLHelper.getExtensionFromURL(this.srcURL);
     // Mime-types does not recognize 'application/x-mpegURL'
     if (type === 'application/x-mpegURL' && extFromURL === '.m3u8') {
