@@ -25,3 +25,7 @@ export function pickDefined<T>(value1?: T, value2?: T): T | undefined;
 export function pickDefined<T>(value1?: T, value2?: T) {
   return value1 !== undefined ? value1 : value2;
 }
+
+export function toISODate(date: string): string {
+  return new Date(date).toISOString().slice(0, 10);
+}
