@@ -1,4 +1,3 @@
-import sanitizeFilename from 'sanitize-filename';
 import { Campaign } from '../entities/Campaign.js';
 import { MediaLike } from '../entities/MediaItem.js';
 import { Product } from '../entities/Product.js';
@@ -6,6 +5,7 @@ import Formatter, { FormatFieldName, FormatFieldRules, FormatFieldValues } from 
 import URLHelper from './URLHelper.js';
 import { Attachment } from '../entities/Attachment.js';
 import { Post } from '../entities/Post.js';
+import FSHelper from './FSHelper.js';
 
 type CampaignDirNameFormatFieldName =
   'creator.vanity' |
@@ -87,7 +87,7 @@ export default class FilenameFormatHelper {
     return this.#getFilename(format, dict, CONTENT_DIR_NAME_VALIDATION_SCHEMA, CONTENT_DIR_NAME_FALLBACK_FORMAT);
   }
 
-  static getMediaFilename(media: MediaLike & { variant: string | null }, format: string): string {
+  static getMediaFilename(media: MediaLike & { variant: string | null }, format: string, ext: string): string {
     const dict: FormatFieldValues<MediaFilenameFormatFieldName> = {
       'media.id': media.id,
       'media.type': media.type,
@@ -95,10 +95,10 @@ export default class FilenameFormatHelper {
       'media.variant': media.variant
     };
 
-    return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT);
+    return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT, ext);
   }
 
-  static getAttachmentFilename(att: Attachment, format: string): string {
+  static getAttachmentFilename(att: Attachment, format: string, ext: string): string {
     const dict: FormatFieldValues<MediaFilenameFormatFieldName> = {
       'media.id': att.id,
       'media.type': att.type,
@@ -106,18 +106,24 @@ export default class FilenameFormatHelper {
       'media.variant': null
     };
 
-    return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT);
+    return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT, ext);
   }
 
-  static #getFilename<T extends FormatFieldName>(format: string, dict: FormatFieldValues<T>, rules: FormatFieldRules<T>, fallbackFormat: string) {
+  static #getFilename<T extends FormatFieldName>(
+    format: string,
+    dict: FormatFieldValues<T>,
+    rules: FormatFieldRules<T>,
+    fallbackFormat: string,
+    ext?: string
+  ) {
     const { validateOK, result } = Formatter.format(format, dict, rules);
+    let base = result;
 
     if (validateOK === false) {
-      const fallback = Formatter.format(fallbackFormat, dict).result;
-      return sanitizeFilename(fallback);
+      base = Formatter.format(fallbackFormat, dict).result;
     }
 
-    return sanitizeFilename(result);
+    return FSHelper.createFilename({ name: base, ext });
   }
 
   static validateCampaignDirNameFormat(format: string) {

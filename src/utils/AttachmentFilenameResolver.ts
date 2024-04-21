@@ -61,11 +61,6 @@ export default class AttachmentFilenameResolver<T extends Attachment> extends Fi
       name: filenameParts.name
     };
 
-    let resolvedFilename = FilenameFormatHelper.getAttachmentFilename(tmpAtt, this.#format);
-    if (filenameParts.ext) {
-      resolvedFilename += filenameParts.ext;
-    }
-
-    return resolvedFilename;
+    return FilenameFormatHelper.getAttachmentFilename(tmpAtt, this.#format, filenameParts.ext);
   }
 }

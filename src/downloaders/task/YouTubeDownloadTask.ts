@@ -2,8 +2,8 @@ import path from 'path';
 import { YT, Misc, YTNodes } from 'youtubei.js';
 import { YouTubePostEmbed } from '../../entities/Post.js';
 import FFmpegDownloadTaskBase, { FFmpegCommandParams, FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
-import sanitizeFilename from 'sanitize-filename';
 import InnertubeLoader from '../../utils/InnertubeLoader.js';
+import FSHelper from '../../utils/FSHelper.js';
 
 export interface YouTubeDownloadTaskParams extends FFmpegDownloadTaskBaseParams<YouTubePostEmbed> {
   destDir: string;
@@ -89,7 +89,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       }
     }
     const quality = stream.quality ? ` (${stream.quality})` : '';
-    const output = path.resolve(this.#destDir, sanitizeFilename(`youtube-${video.basic_info.id}${quality}${ext}`));
+    const output = path.resolve(this.#destDir, FSHelper.sanitizeFilename(`youtube-${video.basic_info.id}${quality}${ext}`));
 
     this.#ffmpegCommandParams = {
       inputs,

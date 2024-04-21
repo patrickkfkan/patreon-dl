@@ -92,7 +92,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
         }
 
         const _destFilePath = this.resolvedDestPath;
-        const _tmpFilePath = tmpFilePath = `${_destFilePath}.part`;
+        const _tmpFilePath = tmpFilePath = FSHelper.createTmpFilePath(_destFilePath);
 
         let hasError = false;
 

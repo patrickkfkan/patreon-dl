@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import fse from 'fs-extra';
 import makeDir from 'make-dir';
-import sanitizeFilename from 'sanitize-filename';
+import _sanitizeFilename from 'sanitize-filename';
 import escapeStringRegexp from 'escape-string-regexp';
 import hasha from 'hasha';
 import { Product } from '../entities/Product.js';
@@ -132,15 +132,24 @@ export default class FSHelper {
   static checkFileExistsAndIncrement(file: string) {
     const { name, base, dir, ext } = path.parse(file);
     // Regex to match filename with increment: 'filename (number).ext'
-    const regex = new RegExp(`^${escapeStringRegexp(name)} \\((\\d+?)\\)${escapeStringRegexp(ext)}$`, 'g');
+    //Const regex = new RegExp(`^${escapeStringRegexp(name)} \\((\\d+?)\\)${escapeStringRegexp(ext)}$`, 'g');
+    const regex = new RegExp(`(.+) \\((\\d+?)\\)${escapeStringRegexp(ext)}$`, 'g');
     const files = fs.readdirSync(dir);
     let currentLargestInc = -1;
     let currentLargestIncFilename = base;
-    for (const file of files) {
-      const match = regex.exec(file);
-      if (match && match[1] !== undefined && Number(match[1]) > currentLargestInc) {
-        currentLargestInc = Number(match[1]);
-        currentLargestIncFilename = file;
+    for (const _file of files) {
+      const match = regex.exec(_file);
+      if (match && match[1] !== undefined) {
+        const filename = match[0];
+        const num = Number(match[1]);
+        if (
+          (filename === base ||
+          (filename.length >= (255 - match[1].length - 1) && base.length >= 255 && base.startsWith(filename))) &&
+          num > currentLargestInc
+        ) {
+          currentLargestInc = Number(match[1]);
+          currentLargestIncFilename = _file;
+        }
       }
       regex.lastIndex = 0;
     }
@@ -157,7 +166,11 @@ export default class FSHelper {
       currentLargestInc = 0;
     }
 
-    const _filename = `${name} (${currentLargestInc + 1})${ext}`;
+    const _filename = this.createFilename({
+      name,
+      suffix: ` (${currentLargestInc + 1})`,
+      ext
+    });
     const _filePath = path.resolve(dir, _filename);
 
     return {
@@ -170,11 +183,31 @@ export default class FSHelper {
   static sanitizeFilePath(filePath: string) {
     const splitted = filePath.split(path.sep);
     const root = path.isAbsolute(filePath) ? splitted.shift() || '' : null;
-    const sanitized = splitted.map((s) => sanitizeFilename(s));
+    const sanitized = splitted.map((s) => this.sanitizeFilename(s));
     if (root !== null) {
       sanitized.unshift(root);
     }
     return sanitized.join(path.sep);
+  }
+
+  static createFilename(parts: { name: string, suffix?: string, ext?: string }) {
+    const { name, suffix = '', ext = '' } = parts;
+    const sanitizedName = _sanitizeFilename(name);
+    const sanitizedSuffix = _sanitizeFilename(suffix);
+    const sanitizedExt = _sanitizeFilename(ext);
+    const useName = sanitizedName.substring(0, 255 - sanitizedSuffix.length - sanitizedExt.length);
+    return [ useName, sanitizedSuffix, sanitizedExt ].join('');
+  }
+
+  static createTmpFilePath(filePath: string) {
+    const { dir, base } = path.parse(filePath);
+    const tmpFilename = this.createFilename({ name: base, ext: '.part' });
+    return path.resolve(dir, tmpFilename);
+  }
+
+  static sanitizeFilename(filename: string) {
+    const { name, ext } = path.parse(filename);
+    return this.createFilename({ name, ext });
   }
 
   static async compareFiles(f1: string, f2: string) {
@@ -205,7 +238,7 @@ export default class FSHelper {
           resolvedFile.incrementedFrom = checked.preceding;
         }
       }
-      const tmpFile = `${resolvedFile.final}.part`;
+      const tmpFile = this.createTmpFilePath(resolvedFile.final);
       if (typeof data === 'object') {
         fse.writeJsonSync(tmpFile, data, { spaces: 2 });
       }

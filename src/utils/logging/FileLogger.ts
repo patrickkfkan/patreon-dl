@@ -1,6 +1,5 @@
 import fs from 'fs';
 import dateFormat from 'dateformat';
-import sanitizeFilename from 'sanitize-filename';
 import { LogLevel } from '../../utils/logging/Logger.js';
 import { DeepRequired, pickDefined } from '../Misc.js';
 import ConsoleLogger, { ConsoleLoggerOptions } from './ConsoleLogger.js';
@@ -94,7 +93,7 @@ export default class FileLogger extends ConsoleLogger {
     while (urlPath.endsWith('/')) {
       urlPath = urlPath.slice(0, urlPath.length - 1);
     }
-    urlPath = sanitizeFilename(urlPath.replaceAll('/', '_'));
+    urlPath = FSHelper.sanitizeFilename(urlPath.replaceAll('/', '_'));
 
     const logDirDTValues = __getDateTimeFieldValues(this.#logDirNameFormat, {});
     const allDTValues = __getDateTimeFieldValues(this.#logFilenameFormat, logDirDTValues);
@@ -113,7 +112,7 @@ export default class FileLogger extends ConsoleLogger {
     };
 
     this.config.logDir = FSHelper.sanitizeFilePath(Formatter.format(this.#logDirNameFormat, logDirDict).result);
-    this.config.logFilename = sanitizeFilename(Formatter.format(this.#logFilenameFormat, logFilenameDict).result);
+    this.config.logFilename = FSHelper.sanitizeFilename(Formatter.format(this.#logFilenameFormat, logFilenameDict).result);
     this.config.logFilePath = path.resolve(this.config.logDir, this.config.logFilename);
     this.config.created = date;
   }
