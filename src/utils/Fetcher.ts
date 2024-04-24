@@ -9,6 +9,7 @@ import { Downloadable } from '../entities/Downloadable.js';
 import FilenameResolver from './FllenameResolver.js';
 import { pickDefined } from './Misc.js';
 import Logger, { LogLevel, commonLog } from './logging/Logger.js';
+import FSHelper from './FSHelper.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
@@ -136,8 +137,8 @@ export default class Fetcher {
 
       const _res = res;
       const start = (overrides?: StartDownloadOverrides) => {
-        const _tmpFilePath = overrides?.tmpFilePath || path.resolve(destDir, `${destFilename}.part`);
         const _destFilePath = overrides?.destFilePath || destFilePath;
+        const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath);
         return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress);
       };
       const abort = () => {

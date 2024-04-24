@@ -53,37 +53,69 @@ The `-g` option is for installing `patreon-dl` globally and have the CLI executa
 
 ```
 $ patreon-dl [OPTION]... URL
-
-Options
-
-  -h, --help                 Display this usage guide                           
-  -C, --config-file <file>   Load configuration file for setting full options   
-  -c, --cookie <string>      Cookie for accessing patron-only content           
-  -f, --ffmpeg <string>      Path to FFmpeg executable                          
-  -o, --out-dir <dir>        Path to directory where content is saved           
-  -l, --log-level <level>    Log level of the console logger: 'info', 'debug',  
-                             'warn' or 'error'; set to 'none' to disable the    
-                             logger.                                            
-  -y, --no-prompt            Do not prompt for confirmation to proceed          
-  --configure-youtube        Configure YouTube connection 
 ```
+
+### OPTION
+
+| Option    | Alias | Description |
+|-----------|-------|-------------|
+| `--help`  | `-h`  | Display usage guide |
+| <code><nobr>--config-file &lt;path&gt;</nobbr></code> | `-C` | Load configuration file at `<path>` for setting full options |
+| `--cookie <string>` | `-c` | Cookie for accessing patron-only content; [how to obtain cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
+| `--ffmpeg <path>` | `-f` | Path to FFmpeg executable |
+| `--out-dir <path>` |`-o` | Directory to save content |
+| `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
+| `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |
+| `--configure-youtube` | | <p>Configure YouTube connection.</p>`patreon-dl` supports downloading embedded YouTube videos. If you have a YouTube Premium account, you can connect `patreon-dl` to it for downloading Premium-quality streams. |
+
+### URL
 
 #### Supported URL formats
 
 ```
-// Product
+// Download a product
 https://www.patreon.com/<creator>/shop/<slug>-<product_id>
 
-// Posts
+// Download posts by creator
 https://www.patreon.com/<creator>/posts
 
-// Single post
+// Dowload a single post
 https://www.patreon.com/posts/<slug>-<post_id>
 
-// Posts in collection
+// Download posts in a collection
 https://www.patreon.com/collection/<collection_id>
 
 ```
+
+#### Multiple URLs
+
+You may specify multiple URLs by separating them with a comma. E.g.:
+
+```
+// First download posts by johndoe, followed by posts by janedoe.
+$ patreon-dl "https://www.patreon.com/johndoe/posts,https://www.patreon.com/janedoe/posts"
+```
+
+#### Supplying URLs through file
+
+You can also use a file to supply URLs to `patreon-dl`. For example, you can have a `urls.txt` that has the following content:
+
+```
+# Each URL is placed in its own line
+# Comments (lines starting with '#') will be ignored
+
+https://www.patreon.com/johndoe/posts
+https://www.patreon.com/janedoe/posts
+
+```
+
+You can then pass `urls.txt` to `patreon-dl`:
+
+```
+$ patreon-dl urls.txt
+```
+
+### Directory structure
 
 Content is saved with the following directory structure:
 ```
@@ -191,6 +223,7 @@ A format must contain at least one of the following unique identifier fields:
 In addition, a format can contain the following fields:
 - `content.name`: post title or product name
 - `content.type`: type of content ('product' or 'post')
+- `content.publishDate`: publish date (ISO UTC format)
 
 Characters enclosed in square brackets followed by a question mark denote conditional separators. If the value of a field could not be obtained or is empty, the conditional separator immediately adjacent to it will be omitted from the name.
 
@@ -493,6 +526,11 @@ Each event emitted by a download task batch has a payload, which is an object wi
 | `complete` | <p>Emitted when the batch is complete and there are no more downloads pending.</p><p>Payload properties: *none*</p> |
 
 ## Changelog
+
+v1.3.0
+- Add support for multiple target URLs
+- Add `content.publishDate` field to the content dir name format ([PR #12](https://github.com/patrickkfkan/patreon-dl/pull/12) by [kazuoteramoto](https://github.com/kazuoteramoto))
+- Bug fixes
 
 v1.2.2
 - Fix wrong file extension for some content types

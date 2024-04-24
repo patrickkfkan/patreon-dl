@@ -20,6 +20,7 @@
 - [getConfig](FileLogger.md#getconfig)
 - [log](FileLogger.md#log)
 - [setLevel](FileLogger.md#setlevel)
+- [getPathInfo](FileLogger.md#getpathinfo)
 
 ## Constructors
 
@@ -44,7 +45,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/logging/FileLogger.ts#L56)
+[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L53)
 
 ## Methods
 
@@ -62,7 +63,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:155](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/logging/FileLogger.ts#L155)
+[src/utils/logging/FileLogger.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L172)
 
 ___
 
@@ -80,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:145](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/logging/FileLogger.ts#L145)
+[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L162)
 
 ___
 
@@ -104,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/logging/ConsoleLogger.ts#L74)
+[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L74)
 
 ___
 
@@ -128,4 +129,31 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/utils/logging/ConsoleLogger.ts#L87)
+[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L87)
+
+___
+
+### getPathInfo
+
+▸ **getPathInfo**(`data`): `Object`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | [`FileLoggerInit`](../interfaces/FileLoggerInit.md) & `Pick`\<[`FileLoggerOptions`](../interfaces/FileLoggerOptions.md), ``"logLevel"`` \| ``"logDir"`` \| ``"logFilename"``\> |
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `created` | `Date` |
+| `filePath` | `string` |
+| `filename` | `string` |
+| `logDir` | `string` |
+
+#### Defined in
+
+[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L71)

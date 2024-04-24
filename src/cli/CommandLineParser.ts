@@ -132,7 +132,7 @@ export default class CommandLineParser {
 
     return {
       configFile: __getValue(COMMAND_LINE_ARGS.configFile),
-      targetURL: __getValue(COMMAND_LINE_ARGS.targetURL),
+      targetURLs: __getValue(COMMAND_LINE_ARGS.targetURL),
       cookie: __getValue(COMMAND_LINE_ARGS.cookie),
       useStatusCache: undefined,
       pathToFFmpeg: __getValue(COMMAND_LINE_ARGS.ffmpeg),

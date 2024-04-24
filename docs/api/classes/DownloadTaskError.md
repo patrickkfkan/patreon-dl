@@ -43,7 +43,7 @@ Error.constructor
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/task/DownloadTask.ts#L9)
+[src/downloaders/task/DownloadTask.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/task/DownloadTask.ts#L9)
 
 ## Properties
 
@@ -57,7 +57,7 @@ Error.cause
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/task/DownloadTask.ts#L7)
+[src/downloaders/task/DownloadTask.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/task/DownloadTask.ts#L7)
 
 ___
 
@@ -67,4 +67,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/2e8088d/src/downloaders/task/DownloadTask.ts#L6)
+[src/downloaders/task/DownloadTask.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/task/DownloadTask.ts#L6)

@@ -78,7 +78,7 @@ export default class ConfigFileParser {
     };
 
     return {
-      targetURL: __getValue(CONFIG_FILE_PROPS.targetURL),
+      targetURLs: __getValue(CONFIG_FILE_PROPS.targetURL),
       cookie: __getValue(CONFIG_FILE_PROPS.cookie),
       useStatusCache: __getValue(CONFIG_FILE_PROPS.useStatusCache),
       pathToFFmpeg: __getValue(CONFIG_FILE_PROPS.pathToFFmpeg),

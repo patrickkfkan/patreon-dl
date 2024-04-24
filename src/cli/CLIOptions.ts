@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { DownloaderOptions } from '../downloaders/DownloaderOptions.js';
 import { pickDefined } from '../utils/Misc.js';
 import { ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
@@ -5,9 +6,10 @@ import { FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
 import CommandLineParser from './CommandLineParser.js';
 import ConfigFileParser from './ConfigFileParser.js';
+import path from 'path';
 
 export interface CLIOptions extends Omit<DownloaderOptions, 'logger'> {
-  targetURL: string;
+  targetURLs: string[];
   noPrompt: boolean;
   consoleLogger: ConsoleLoggerOptions;
   fileLoggers?: FileLoggerOptions[];
@@ -28,10 +30,23 @@ export function getCLIOptions(): CLIOptions {
 
   const configFileOptions = commandLineOptions.configFile?.value ? ConfigFileParser.parse(commandLineOptions.configFile.value) : null;
 
-  configFileOptions?.include?.previewMedia;
+  let targetURLs;
+  const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
+  if (fs.existsSync(path.resolve(targetURLValue))) {
+    const fileContents = fs.readFileSync(targetURLValue).toString('utf-8');
+    // Replace Windows line breaks with Unix ones and then split
+    targetURLs = CLIOptionValidator.validateURLArray(
+      fileContents
+        .replace(/\r\n/g, '\n').split('\n')
+        .filter((v) => v.trim() !== '' && !v.startsWith('#'))
+    );
+  }
+  else {
+    targetURLs = CLIOptionValidator.validateURLArray(targetURLValue);
+  }
 
   const options: CLIOptions = {
-    targetURL: CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURL, configFileOptions?.targetURL), 'No target URL specified'),
+    targetURLs,
     cookie: CLIOptionValidator.validateString(pickDefined(commandLineOptions.cookie, configFileOptions?.cookie)),
     useStatusCache: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.useStatusCache, configFileOptions?.useStatusCache)),
     pathToFFmpeg: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToFFmpeg, configFileOptions?.pathToFFmpeg)),
