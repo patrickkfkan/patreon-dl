@@ -223,6 +223,7 @@ A format must contain at least one of the following unique identifier fields:
 In addition, a format can contain the following fields:
 - `content.name`: post title or product name
 - `content.type`: type of content ('product' or 'post')
+- `content.publishDate`: publish date (ISO UTC format)
 
 Characters enclosed in square brackets followed by a question mark denote conditional separators. If the value of a field could not be obtained or is empty, the conditional separator immediately adjacent to it will be omitted from the name.
 

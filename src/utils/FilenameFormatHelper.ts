@@ -5,6 +5,7 @@ import Formatter, { FormatFieldName, FormatFieldRules, FormatFieldValues } from 
 import URLHelper from './URLHelper.js';
 import { Attachment } from '../entities/Attachment.js';
 import { Post } from '../entities/Post.js';
+import { toISODate } from './Misc.js';
 import FSHelper from './FSHelper.js';
 
 type CampaignDirNameFormatFieldName =
@@ -26,13 +27,15 @@ type ContentDirNameFormatFieldName =
   'content.id' |
   'content.type' |
   'content.slug' |
-  'content.name';
+  'content.name' |
+  'content.publishDate';
 
 export const CONTENT_DIR_NAME_VALIDATION_SCHEMA: FormatFieldRules<ContentDirNameFormatFieldName> = [
   { name: 'content.id', atLeastOneOf: true },
   { name: 'content.type', atLeastOneOf: false },
   { name: 'content.slug', atLeastOneOf: true },
-  { name: 'content.name', atLeastOneOf: false }
+  { name: 'content.name', atLeastOneOf: false },
+  { name: 'content.publishDate', atLeastOneOf: false }
 ];
 
 type MediaFilenameFormatFieldName =
@@ -71,7 +74,8 @@ export default class FilenameFormatHelper {
       'content.id': content.id,
       'content.type': content.type,
       'content.slug': null,
-      'content.name': null
+      'content.name': null,
+      'content.publishDate': content.publishedAt ? toISODate(content.publishedAt) : null
     };
     if (content.type === 'post') {
       const urlAnalysis = content.url ? URLHelper.analyzeURL(content.url) : null;
