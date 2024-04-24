@@ -46,26 +46,37 @@ export interface FileLoggerInit {
 export default class FileLogger extends ConsoleLogger {
 
   protected config: FileLoggerConfig;
-  #logDirNameFormat: string;
-  #logFilenameFormat: string;
   #fileExistsAction: FileLoggerConfig['fileExistsAction'];
   #stream: fs.WriteStream | null;
   #firstRun: boolean;
 
   constructor(init: FileLoggerInit, options?: FileLoggerOptions) {
     super(options);
-    const defaultLogDir = DEFAULT_LOGGER_CONFIG.logDir.replaceAll('/', path.sep);
-    this.#logDirNameFormat = options?.logDir || defaultLogDir;
-    this.#logFilenameFormat = options?.logFilename || DEFAULT_LOGGER_CONFIG.logFilename;
     this.#fileExistsAction = options?.fileExistsAction || DEFAULT_LOGGER_CONFIG.fileExistsAction;
     this.#stream = null;
     this.#firstRun = true;
     this.config.color = pickDefined(options?.color, DEFAULT_LOGGER_CONFIG.color);
-    this.#init(init);
+
+    const pathInfo = FileLogger.getPathInfo({
+      ...init,
+      ...options
+    });
+
+    this.config.logDir = pathInfo.logDir;
+    this.config.logFilename = pathInfo.filename;
+    this.config.logFilePath = pathInfo.filePath;
+    this.config.created = pathInfo.created;
   }
 
-  #init(data: FileLoggerInit) {
-    const date = data.date || new Date();
+  static getPathInfo(data: FileLoggerInit & Pick<FileLoggerOptions, 'logDir' | 'logFilename' | 'logLevel'>) {
+    const defaultLogDir = DEFAULT_LOGGER_CONFIG.logDir.replaceAll('/', path.sep);
+    const {
+      date = new Date(),
+      outDir = getDefaultDownloaderOutDir(),
+      targetURL,
+      logDir: dirNameFormat = defaultLogDir,
+      logFilename: filenameFormat = DEFAULT_LOGGER_CONFIG.logFilename,
+      logLevel = DEFAULT_LOGGER_CONFIG.logLevel } = data;
 
     const __getDateTimeFieldValues = (format: string, addTo: Record<string, string>) => {
       const dateTimeRegex = /{(datetime\.(.+?))}/g;
@@ -86,7 +97,7 @@ export default class FileLogger extends ConsoleLogger {
     };
 
     // Prepare variables for generating log dir and filenames
-    let urlPath = new URL(data.targetURL).pathname.trim();
+    let urlPath = new URL(targetURL).pathname.trim();
     while (urlPath.startsWith('/')) {
       urlPath = urlPath.slice(1);
     }
@@ -95,26 +106,33 @@ export default class FileLogger extends ConsoleLogger {
     }
     urlPath = FSHelper.sanitizeFilename(urlPath.replaceAll('/', '_'));
 
-    const logDirDTValues = __getDateTimeFieldValues(this.#logDirNameFormat, {});
-    const allDTValues = __getDateTimeFieldValues(this.#logFilenameFormat, logDirDTValues);
+    const logDirDTValues = __getDateTimeFieldValues(dirNameFormat, {});
+    const allDTValues = __getDateTimeFieldValues(filenameFormat, logDirDTValues);
 
     // Pass to Formatter and get log dir and filename
     const logDirDict = {
-      'out.dir': data.outDir || getDefaultDownloaderOutDir(),
+      'out.dir': outDir,
       'target.url.path': urlPath,
       ...allDTValues
     };
 
     const logFilenameDict = {
       'target.url.path': urlPath,
-      'log.level': this.config.logLevel,
+      'log.level': logLevel,
       ...allDTValues
     };
 
-    this.config.logDir = FSHelper.sanitizeFilePath(Formatter.format(this.#logDirNameFormat, logDirDict).result);
-    this.config.logFilename = FSHelper.sanitizeFilename(Formatter.format(this.#logFilenameFormat, logFilenameDict).result);
-    this.config.logFilePath = path.resolve(this.config.logDir, this.config.logFilename);
-    this.config.created = date;
+    const logDir = FSHelper.sanitizeFilePath(Formatter.format(dirNameFormat, logDirDict).result);
+    const filename = FSHelper.sanitizeFilename(Formatter.format(filenameFormat, logFilenameDict).result);
+    const filePath = path.resolve(logDir, filename);
+    const created = date;
+
+    return {
+      logDir,
+      filename,
+      filePath,
+      created
+    };
   }
 
   #getStream() {

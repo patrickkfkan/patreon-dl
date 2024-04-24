@@ -1,3 +1,4 @@
+import URLHelper from '../utils/URLHelper.js';
 import { CLIOptionParserEntry } from './CLIOptions.js';
 
 const CLI_OPTION_SRC_NAME = {
@@ -98,6 +99,32 @@ export default class CLIOptionValidator {
       }
     }
     return split as T[];
+  }
+
+  static validateURLArray(value: string | string[], delimiter = ','): string[] {
+    if (!Array.isArray(value)) {
+      const splitted = value.split(delimiter);
+      return this.validateURLArray(splitted);
+    }
+    const trimmed = value.map((v) => v.trim());
+    for (const s of trimmed) {
+      try {
+        const type = URLHelper.analyzeURL(s);
+        if (!type) {
+          throw Error('Unknown URL');
+        }
+      }
+      catch (error) {
+        if (error instanceof Error) {
+          error.message += `: ${s}`;
+          throw error;
+        }
+        else {
+          throw Error(`${error}: ${s}`);
+        }
+      }
+    }
+    return trimmed;
   }
 
   static validateIncludeContentWithMediaType(entry?: CLIOptionParserEntry) {
