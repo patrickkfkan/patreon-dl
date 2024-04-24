@@ -527,6 +527,11 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.3.0
+- Add support for multiple target URLs
+- Add `content.publishDate` field to the content dir name format ([PR #12](https://github.com/patrickkfkan/patreon-dl/pull/12) by [kazuoteramoto](https://github.com/kazuoteramoto))
+- Bug fixes
+
 v1.2.2
 - Fix wrong file extension for some content types
 - Fix YouTube API requests throwing errors due to YT changes
