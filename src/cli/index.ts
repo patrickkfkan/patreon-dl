@@ -20,9 +20,13 @@ export default class PatreonDownloaderCLI {
   #logger: Logger | null;
   #packageInfo: PackageInfo;
   #globalConfPath: string;
+  // Keep track of file loggers created, so that we force 'append' mode if
+  // Multiple target URLs share the same log file.
+  #fileLoggers: FileLogger[];
 
   constructor() {
     this.#logger = null;
+    this.#fileLoggers = [];
     this.#packageInfo = getPackageInfo();
     this.#globalConfPath = envPaths(
       this.#packageInfo.name || 'patreon-dl', { suffix: '' }).config;
@@ -37,7 +41,7 @@ export default class PatreonDownloaderCLI {
       console.log(`${EOL}${this.#packageInfo.banner}${EOL}`);
     }
 
-    const ytCredsPath = path.resolve(this.#globalConfPath, YT_CREDENTIALS_FILENAME);
+    const ytCredsPath = this.#getYouTubeCredentialsPath();
     if (CommandLineParser.configureYouTube()) {
       return this.exit(await YouTubeConfigurator.start(ytCredsPath));
     }
@@ -55,58 +59,127 @@ export default class PatreonDownloaderCLI {
       return this.exit(1);
     }
 
-    const { chainLogger: logger, consoleLogger, fileLoggers } = this.#createLoggers(options);
+    const targetsWithError: string[] = [];
+    for (let i = 0; i < options.targetURLs.length; i++) {
+      const { hasError, aborted } = await this.#createAndStartDownloader(options.targetURLs, i, options);
+      if (aborted) {
+        return this.exit(1);
+      }
+      if (hasError) {
+        targetsWithError.push(options.targetURLs[i]);
+      }
+    }
+    if (targetsWithError.length > 0) {
+      if (options.targetURLs.length > 0) {
+        console.warn('There were errors processing the following URLs:', JSON.stringify(targetsWithError, null, 2));
+      }
+      return this.exit(1);
+    }
+    return this.exit(0);
+  }
+
+  #getYouTubeCredentialsPath() {
+    return path.resolve(this.#globalConfPath, YT_CREDENTIALS_FILENAME);
+  }
+
+  async #createAndStartDownloader(targetURLs: string[], index: number, options: CLIOptions) {
+    const targetURL = targetURLs[index];
+    // Create loggers
+    const { chainLogger: logger, consoleLogger, fileLoggers } = this.#createLoggers(targetURL, options);
     this.#logger = logger;
 
     // Create downloader
-    let downloader;
+    let downloader: Downloader<any>;
+    const ytCredsPath = this.#getYouTubeCredentialsPath();
     try {
-      downloader = await Downloader.getInstance(options.targetURL, {
+      downloader = await Downloader.getInstance(targetURL, {
         ...options,
         pathToYouTubeCredentials: fs.existsSync(ytCredsPath) ? ytCredsPath : null,
-        logger
+        logger: this.#logger
       });
     }
     catch (error) {
       commonLog(logger, 'error', null, 'Failed to get downloader instance:', error);
-      return this.exit(1);
+      return { hasError: true };
     }
 
     if (!downloader) {
       commonLog(logger, 'error', null, 'Failed to get downloader instance (unknown reason)');
-      return this.exit(1);
+      return { hasError: true };
     }
 
     const downloaderName = downloader.name;
+    const __logBegin = () => {
+      commonLog(logger, 'info', null, `*** BEGIN target URL: ${targetURL} ***`, EOL);
+    };
 
     if (!options.noPrompt) {
-      if (!consoleLogger.getConfig().enabled) {
-        console.log('Console logging disabled', EOL);
-      }
 
-      if (fileLoggers.length > 0) {
-        console.log('Log files');
-        console.log('---------');
-        for (const fl of fileLoggers) {
-          const flConf = fl.getConfig();
-          console.log(`- ${flConf.logLevel}: ${flConf.logFilePath}`);
+      const __printLoggerConfigs = () => {
+        if (!consoleLogger.getConfig().enabled) {
+          console.log('Console logging disabled', EOL);
         }
-        console.log(EOL);
+
+        if (fileLoggers.length > 0) {
+          console.log('Log files');
+          console.log('---------');
+          for (const fl of fileLoggers) {
+            const flConf = fl.getConfig();
+            console.log(`- ${flConf.logLevel}: ${flConf.logFilePath}`);
+          }
+          console.log(EOL);
+        }
+      };
+
+      const __printDownloaderCreated = () => {
+        console.log(`Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
+      };
+
+      let promptConfirm = true;
+      let postConfirm: (() => void) | null = null;
+
+      if (targetURLs.length === 1) {
+        __printLoggerConfigs();
+        __printDownloaderCreated();
       }
-
-      console.log(`Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
-
-      if (!this.#confirmProceed()) {
+      else if (index === 0) {
+        postConfirm = () => {
+          __logBegin();
+          __printLoggerConfigs();
+          __printDownloaderCreated();
+        };
+        const conf = {
+          targetURLs,
+          ...downloader.getConfig()
+        } as any;
+        delete conf.targetURL;
+        delete conf.type;
+        delete conf.postFetch;
+        delete conf.productId;
+        delete conf.outDir;
+        console.log('Downloader config:', conf, EOL);
+      }
+      else {
+        __logBegin();
+        __printLoggerConfigs();
+        __printDownloaderCreated();
+        promptConfirm = false;
+      }
+      if (promptConfirm && !this.#confirmProceed()) {
         console.log('Abort');
-        return this.exit(1);
+        return { aborted: true };
+      }
+      if (postConfirm) {
+        postConfirm();
       }
     }
     else {
+      __logBegin();
       commonLog(logger, 'debug', null, `Created ${downloaderName} instance with config: `, downloader.getConfig());
     }
 
     let hasDownloaderError = false;
-    downloader.on('end', ({aborted, error}) => {
+    downloader.on('end', ({ aborted, error }) => {
       if (aborted) {
         commonLog(logger, 'info', null, `${downloaderName} aborted`);
       }
@@ -121,15 +194,18 @@ export default class PatreonDownloaderCLI {
 
     try {
       const abortController = new AbortController();
-      process.on('SIGINT', () => {
+      const abortHandler = () => {
         abortController.abort();
-      });
+      };
+      process.on('SIGINT', abortHandler);
       await downloader.start({ signal: abortController.signal });
-      return this.exit(hasDownloaderError ? 1 : 0);
+      await logger.end();
+      process.off('SIGINT', abortHandler);
+      return { hasError: hasDownloaderError };
     }
     catch (error) {
       commonLog(logger, 'error', null, `Uncaught ${downloaderName} error:`, error);
-      return this.exit(1);
+      return { hasError: true };
     }
   }
 
@@ -148,16 +224,21 @@ export default class PatreonDownloaderCLI {
     return this.#confirmProceed(prompt);
   }
 
-  #createLoggers(options: CLIOptions) {
+  #createLoggers(targetURL: string, options: CLIOptions) {
     // Create file loggers
     const fileLoggerInit: FileLoggerInit = {
-      targetURL: options.targetURL,
+      targetURL,
       outDir: options.outDir,
       date: new Date()
     };
     const fileLoggers = options.fileLoggers?.reduce<FileLogger[]>((result, fileLoggerOptions) => {
       try {
-        const fl = new FileLogger(fileLoggerInit, fileLoggerOptions);
+        const { filePath } = FileLogger.getPathInfo({
+          ...fileLoggerInit,
+          ...fileLoggerOptions
+        });
+        const existingFileLogger = this.#fileLoggers.find((logger) => logger.getConfig().logFilePath === filePath);
+        const fl = existingFileLogger || new FileLogger(fileLoggerInit, fileLoggerOptions);
         result.push(fl);
       }
       catch (error) {

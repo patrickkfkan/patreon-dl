@@ -80,11 +80,6 @@ export default class MediaFilenameResolver<T extends MediaLike> extends Filename
       variant: this.#variant
     };
 
-    let resolvedFilename = FilenameFormatHelper.getMediaFilename(tmpMI, this.#format);
-    if (filenameParts.ext) {
-      resolvedFilename += filenameParts.ext;
-    }
-
-    return resolvedFilename;
+    return FilenameFormatHelper.getMediaFilename(tmpMI, this.#format, filenameParts.ext);
   }
 }
