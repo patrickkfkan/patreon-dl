@@ -55,9 +55,11 @@ export interface DownloaderEventPayload {
   'end': {
     aborted: true;
     error?: undefined;
+    message: string;
   } | {
     aborted: false;
     error?: any;
+    message: string;
   };
 }
 

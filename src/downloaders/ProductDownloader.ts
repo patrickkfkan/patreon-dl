@@ -56,7 +56,7 @@ export default class ProductDownloader extends Downloader<Product> {
           return;
         }
         this.log('error', 'Failed to fetch product data');
-        this.emit('end', { aborted: false, error: requestAPIError });
+        this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
         resolve();
         return;
       }
@@ -87,7 +87,7 @@ export default class ProductDownloader extends Downloader<Product> {
           skipReason: TargetSkipReason.AlreadyDownloaded,
           skipMessage: 'Target already downloaded and nothing has changed since last download'
         });
-        this.emit('end', { aborted: false });
+        this.emit('end', { aborted: false, message: 'Skipped - target already downloaded' });
         resolve();
         return;
       }
@@ -105,7 +105,7 @@ export default class ProductDownloader extends Downloader<Product> {
             skipReason: TargetSkipReason.Inaccessible,
             skipMessage: 'Target is not accessible by current user'
           });
-          this.emit('end', { aborted: false });
+          this.emit('end', { aborted: false, message: 'Skipped - not accessible' });
           resolve();
           return;
         }
@@ -192,7 +192,7 @@ export default class ProductDownloader extends Downloader<Product> {
       }
       this.log('info', `Done downloading product #${product.id}`);
       this.emit('targetEnd', { target: product, isSkipped: false });
-      this.emit('end', { aborted: false });
+      this.emit('end', { aborted: false, message: 'Done' });
       this.#startPromise = null;
       resolve();
     })

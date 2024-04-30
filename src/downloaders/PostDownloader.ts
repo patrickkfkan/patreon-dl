@@ -346,6 +346,7 @@ export default class PostDownloader extends Downloader<Post> {
       else {
         this.log('info', `Done downloading post #${postFetch.postId}`);
       }
+      let endMessage = 'Done';
       if (postFetch.type === 'byUser' || postFetch.type === 'byCollection') {
         const skippedStrParts: string[] = [];
         if (skippedUnviewable) {
@@ -358,9 +359,10 @@ export default class PostDownloader extends Downloader<Post> {
           skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
         }
         const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
-        this.log('info', `Total ${downloaded} / ${total} posts processed${skippedStr}`);
+        endMessage = `Total ${downloaded} / ${total} posts processed${skippedStr}`;
+        this.log('info', endMessage);
       }
-      this.emit('end', { aborted: false });
+      this.emit('end', { aborted: false, message: endMessage });
       this.#startPromise = null;
       resolve();
     })
@@ -401,7 +403,7 @@ export default class PostDownloader extends Downloader<Post> {
           throw Error();
         }
         this.log('error', `Error requesting page "${pageURL}": `, requestPageError);
-        this.emit('end', { aborted: false, error: requestPageError });
+        this.emit('end', { aborted: false, error: requestPageError, message: 'Request error' });
         resolveOnError();
         throw Error();
       }
@@ -416,7 +418,7 @@ export default class PostDownloader extends Downloader<Post> {
       }
       if (!initialData) {
         this.log('error', `Failed to obtain initial page data from "${pageURL}":`, parseInitialDataError);
-        this.emit('end', { aborted: false, error: parseInitialDataError });
+        this.emit('end', { aborted: false, error: parseInitialDataError, message: 'Parse error' });
         resolveOnError();
         throw Error();
       }
@@ -431,7 +433,7 @@ export default class PostDownloader extends Downloader<Post> {
       if (!campaignId) {
         const err = Error(`Campaign ID not found in initial data of "${pageURL}"`);
         this.log('error', err);
-        this.emit('end', { aborted: false, error: err });
+        this.emit('end', { aborted: false, error: err, message: 'Data error (campaign ID not found)' });
         resolveOnError();
         throw Error();
       }
@@ -461,7 +463,7 @@ export default class PostDownloader extends Downloader<Post> {
       }
       this.log('error', 'Failed to fetch posts');
       this.log('warn', 'End with error');
-      this.emit('end', { aborted: false, error: requestAPIError });
+      this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
       resolveOnError();
       throw Error();
     }

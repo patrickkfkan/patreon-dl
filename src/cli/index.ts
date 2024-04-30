@@ -60,14 +60,30 @@ export default class PatreonDownloaderCLI {
     }
 
     const targetsWithError: string[] = [];
+    const targetEndMessages: { url: string; message: string; }[] = [];
     for (let i = 0; i < options.targetURLs.length; i++) {
-      const { hasError, aborted } = await this.#createAndStartDownloader(options.targetURLs, i, options);
+      const { hasError, aborted, endMessage } = await this.#createAndStartDownloader(options.targetURLs, i, options);
       if (aborted) {
         return this.exit(1);
       }
       if (hasError) {
         targetsWithError.push(options.targetURLs[i]);
       }
+      targetEndMessages[i] = { url: options.targetURLs[i], message: endMessage };
+    }
+    if (options.targetURLs.length > 0) {
+      // Print summary
+      console.log('');
+      const heading = `Total ${options.targetURLs.length} targets processed`;
+      console.log(heading);
+      console.log('-'.repeat(heading.length));
+      console.log('');
+      targetEndMessages.forEach(({ url, message }, i) => {
+        const s = `${i}: ${url}`;
+        console.log(s);
+        console.log(message);
+        console.log('');
+      });
     }
     if (targetsWithError.length > 0) {
       if (options.targetURLs.length > 0) {
@@ -100,12 +116,12 @@ export default class PatreonDownloaderCLI {
     }
     catch (error) {
       commonLog(logger, 'error', null, 'Failed to get downloader instance:', error);
-      return { hasError: true };
+      return { hasError: true, endMessage: 'Downloader init error' };
     }
 
     if (!downloader) {
       commonLog(logger, 'error', null, 'Failed to get downloader instance (unknown reason)');
-      return { hasError: true };
+      return { hasError: true, endMessage: 'Downloader init error' };
     }
 
     const downloaderName = downloader.name;
@@ -167,7 +183,7 @@ export default class PatreonDownloaderCLI {
       }
       if (promptConfirm && !this.#confirmProceed()) {
         console.log('Abort');
-        return { aborted: true };
+        return { aborted: true, endMessage: 'Aborted' };
       }
       if (postConfirm) {
         postConfirm();
@@ -179,7 +195,8 @@ export default class PatreonDownloaderCLI {
     }
 
     let hasDownloaderError = false;
-    downloader.on('end', ({ aborted, error }) => {
+    let endMessage = '';
+    downloader.on('end', ({ aborted, error, message }) => {
       if (aborted) {
         commonLog(logger, 'info', null, `${downloaderName} aborted`);
       }
@@ -190,6 +207,7 @@ export default class PatreonDownloaderCLI {
         commonLog(logger, 'warn', null, `${downloaderName} end with error`);
         hasDownloaderError = true;
       }
+      endMessage = message;
     });
 
     try {
@@ -201,11 +219,11 @@ export default class PatreonDownloaderCLI {
       await downloader.start({ signal: abortController.signal });
       await logger.end();
       process.off('SIGINT', abortHandler);
-      return { hasError: hasDownloaderError };
+      return { hasError: hasDownloaderError, endMessage };
     }
     catch (error) {
       commonLog(logger, 'error', null, `Uncaught ${downloaderName} error:`, error);
-      return { hasError: true };
+      return { hasError: true, endMessage: 'Uncaught error' };
     }
   }
 

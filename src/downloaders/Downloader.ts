@@ -370,7 +370,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   protected checkAbortSignal(signal: AbortSignal | undefined, resolve: () => void) {
     if (signal && signal.aborted) {
       if (!this.#hasEmittedEndEventOnAbort) {
-        this.emit('end', { aborted: true });
+        this.emit('end', { aborted: true, message: 'Download aborted' });
         this.#hasEmittedEndEventOnAbort = true;
       }
       resolve();
