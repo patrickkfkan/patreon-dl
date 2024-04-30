@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L81)
+[src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L81)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L88)
+[src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L88)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L87)
+[src/entities/MediaItem.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L87)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L86)
+[src/entities/MediaItem.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L86)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L4)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L3)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L5)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L82)
+[src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L82)
 
 ___
 
@@ -140,4 +140,4 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L80)
+[src/entities/MediaItem.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L80)

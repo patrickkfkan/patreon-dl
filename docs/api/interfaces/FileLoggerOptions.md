@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L24)
+[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ConsoleLogger.ts#L24)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L23)
+[src/utils/logging/ConsoleLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ConsoleLogger.ts#L23)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L15)
+[src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ConsoleLogger.ts#L15)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L15)
+[src/utils/logging/FileLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/FileLogger.ts#L15)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L17)
+[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ConsoleLogger.ts#L17)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L13)
+[src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/FileLogger.ts#L13)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/FileLogger.ts#L14)
+[src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/FileLogger.ts#L14)
 
 ___
 
@@ -128,4 +128,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ConsoleLogger.ts#L16)
+[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ConsoleLogger.ts#L16)

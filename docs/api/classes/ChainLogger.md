@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L7)
+[src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L7)
 
 ## Methods
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L12)
+[src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L12)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L23)
+[src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L23)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L33)
+[src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L33)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L27)
+[src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L27)
 
 ___
 
@@ -140,4 +140,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/utils/logging/ChainLogger.ts#L16)
+[src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/utils/logging/ChainLogger.ts#L16)

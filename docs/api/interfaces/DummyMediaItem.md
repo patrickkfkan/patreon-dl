@@ -35,7 +35,7 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L4)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L3)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L5)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:115](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L115)
+[src/entities/MediaItem.ts:115](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L115)
 
 ___
 
@@ -87,4 +87,4 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/entities/MediaItem.ts#L113)
+[src/entities/MediaItem.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/entities/MediaItem.ts#L113)

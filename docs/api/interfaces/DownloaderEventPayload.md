@@ -17,11 +17,11 @@
 
 ### end
 
-• **end**: \{ `aborted`: ``true`` ; `error?`: `undefined`  } \| \{ `aborted`: ``false`` ; `error?`: `any`  }
+• **end**: \{ `aborted`: ``true`` ; `error?`: `undefined` ; `message`: `string`  } \| \{ `aborted`: ``false`` ; `error?`: `any` ; `message`: `string`  }
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L55)
+[src/downloaders/DownloaderEvent.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L55)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L23)
+[src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L23)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L41)
+[src/downloaders/DownloaderEvent.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L41)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L50)
+[src/downloaders/DownloaderEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L50)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L27)
+[src/downloaders/DownloaderEvent.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L27)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/e9fb122/src/downloaders/DownloaderEvent.ts#L31)
+[src/downloaders/DownloaderEvent.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L31)
