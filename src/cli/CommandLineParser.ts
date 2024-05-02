@@ -18,7 +18,8 @@ const COMMAND_LINE_ARGS = {
   ffmpeg: 'ffmpeg',
   outDir: 'out-dir',
   logLevel: 'log-level',
-  noPrompt: 'no-prompt'
+  noPrompt: 'no-prompt',
+  listTiers: 'list-tiers'
 } as const;
 
 const OPT_DEFS = [
@@ -74,6 +75,12 @@ const OPT_DEFS = [
     description: 'Do not prompt for confirmation to proceed',
     alias: 'y',
     type: Boolean
+  },
+  {
+    name: COMMAND_LINE_ARGS.listTiers,
+    description: 'List tiers for the given creator(s). Separate multiple creators with a comma.',
+    type: String,
+    typeLabel: '<creator>'
   },
   {
     name: COMMAND_LINE_ARGS.configureYouTube,
@@ -229,6 +236,28 @@ export default class CommandLineParser {
       return false;
     }
     return opts['configure-youtube'];
+  }
+
+  static listTiers() {
+    let opts;
+    try {
+      opts = this.#parseArgs();
+    }
+    catch (error) {
+      return false;
+    }
+    const listTiers = opts[COMMAND_LINE_ARGS.listTiers];
+    if (listTiers === null) {
+      throw Error('\'--list-tiers\' missing value');
+    }
+    else if (typeof listTiers === 'string') {
+      const targets = listTiers.split(',').map((v) => v.trim()).filter((v) => v);
+      if (targets.length === 0) {
+        throw Error('\'--list-tiers\' has invalid value');
+      }
+      return targets;
+    }
+    return false;
   }
 
   static #parseArgs() {

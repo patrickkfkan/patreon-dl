@@ -20,6 +20,15 @@ export default abstract class Parser {
     this.#logger = logger;
   }
 
+  parseCampaignAPIResponse(res: any) {
+    const { data, included } = res;
+    if (!included || !Array.isArray(included)) {
+      this.log('error', '\'included\' field missing in API data of campaign or has incorrect type');
+      return null;
+    }
+    return this.parseCampaignAPIDataInIncludedArray(data, included);
+  }
+
   /**
    *
    * @param relationships `data[index].relationships`, where `data[index]` corresponds

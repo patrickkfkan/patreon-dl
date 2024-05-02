@@ -196,6 +196,16 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     }
   }
 
+  static async getCampaign(vanity: string, signal?: AbortSignal, logger?: Logger | null) {
+    const url = URLHelper.constructUserPostsURL(vanity);
+    const downloader = await this.getInstance(url, { logger });
+    const PostDownloader = (await import('./PostDownloader.js')).default;
+    if (downloader instanceof PostDownloader) {
+      return downloader.__getCampaign(signal);
+    }
+    throw Error('Type mismatch: PostDownloader expected');
+  }
+
   #validateOptions(options?: DownloaderOptions) {
     if (!options) {
       return true;

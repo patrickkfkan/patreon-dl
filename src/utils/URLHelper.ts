@@ -96,6 +96,10 @@ export default class URLHelper {
     return `${SITE_URL}/${vanity}`;
   }
 
+  static constructUserPostsURL(vanity: string) {
+    return `${SITE_URL}/${vanity}/posts`;
+  }
+
   static constructCollectionURL(collectionId: string) {
     return `${COLLECTION_URL}/${collectionId}`;
   }

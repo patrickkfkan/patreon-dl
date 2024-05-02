@@ -384,60 +384,7 @@ export default class PostDownloader extends Downloader<Post> {
         postFetch.type === 'byUser' ?
           URLHelper.constructCampaignPageURL(postFetch.vanity) :
           URLHelper.constructCollectionURL(postFetch.collectionId);
-      this.log('debug', `Fetch initial data from URL "${pageURL}"`);
-      let page, requestPageError;
-      try {
-        page = await this.fetcher.get({ url: pageURL, type: 'html', maxRetries: this.config.request.maxRetries, signal });
-      }
-      catch (error) {
-        if (error instanceof AbortError) {
-          this.log('warn', 'Page request aborted');
-        }
-        else {
-          requestPageError = error;
-        }
-        page = null;
-      }
-      if (!page) {
-        if (this.checkAbortSignal(signal, resolveOnAbort)) {
-          throw Error();
-        }
-        this.log('error', `Error requesting page "${pageURL}": `, requestPageError);
-        this.emit('end', { aborted: false, error: requestPageError, message: 'Request error' });
-        resolveOnError();
-        throw Error();
-      }
-      const pageParser = new PageParser(this.logger);
-      let initialData, parseInitialDataError;
-      try {
-        initialData = pageParser.parseInitialData(page, pageURL);
-      }
-      catch (error) {
-        parseInitialDataError = error;
-        initialData = null;
-      }
-      if (!initialData) {
-        this.log('error', `Failed to obtain initial page data from "${pageURL}":`, parseInitialDataError);
-        this.emit('end', { aborted: false, error: parseInitialDataError, message: 'Parse error' });
-        resolveOnError();
-        throw Error();
-      }
-
-      /**
-       * Step 2: obtain campaign ID and current user ID (i.e. you, if available in session identified by cookie)
-       * from initial data.
-       */
-      const campaignId = ObjectHelper.getProperty(initialData, 'bootstrap.campaign.data.id');
-      const currentUserId = ObjectHelper.getProperty(initialData, 'bootstrap.currentUser.data.id');
-      this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
-      if (!campaignId) {
-        const err = Error(`Campaign ID not found in initial data of "${pageURL}"`);
-        this.log('error', err);
-        this.emit('end', { aborted: false, error: err, message: 'Data error (campaign ID not found)' });
-        resolveOnError();
-        throw Error();
-      }
-
+      const { campaignId, currentUserId } = await this.#getInitialData(pageURL, signal, resolveOnAbort, resolveOnError);
       let sort: PostSortOrder | undefined;
       if (postFetch.type === 'byCollection') {
         sort = PostSortOrder.CollectionOrder;
@@ -452,7 +399,82 @@ export default class PostDownloader extends Downloader<Post> {
     }
 
     return URLHelper.constructPostsAPIURL({ postId: postFetch.postId });
+  }
 
+  async #getInitialData(url: string, signal: AbortSignal | undefined, resolveOnAbort?: () => void, resolveOnError?: () => void) {
+    this.log('debug', `Fetch initial data from "${url}"`);
+    let page, requestPageError;
+    try {
+      page = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal });
+    }
+    catch (error) {
+      if (error instanceof AbortError) {
+        this.log('warn', 'Page request aborted');
+      }
+      else {
+        requestPageError = error;
+      }
+      page = null;
+    }
+    if (!page) {
+      if (resolveOnAbort && this.checkAbortSignal(signal, resolveOnAbort)) {
+        throw Error();
+      }
+      this.log('error', `Error requesting page "${url}": `, requestPageError);
+      this.emit('end', { aborted: false, error: requestPageError, message: 'Request error' });
+      if (resolveOnError) {
+        resolveOnError();
+      }
+      throw Error();
+    }
+    const pageParser = new PageParser(this.logger);
+    let initialData, parseInitialDataError;
+    try {
+      initialData = pageParser.parseInitialData(page, url);
+    }
+    catch (error) {
+      parseInitialDataError = error;
+      initialData = null;
+    }
+    if (!initialData) {
+      this.log('error', `Failed to obtain initial page data from "${url}":`, parseInitialDataError);
+      this.emit('end', { aborted: false, error: parseInitialDataError, message: 'Parse error' });
+      if (resolveOnError) {
+        resolveOnError();
+      }
+      throw Error();
+    }
+    const campaignId = ObjectHelper.getProperty(initialData, 'bootstrap.campaign.data.id');
+    const currentUserId = ObjectHelper.getProperty(initialData, 'bootstrap.currentUser.data.id');
+    this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
+    if (!campaignId) {
+      const err = Error(`Campaign ID not found in initial data of "${url}"`);
+      this.log('error', err);
+      this.emit('end', { aborted: false, error: err, message: 'Data error (campaign ID not found)' });
+      if (resolveOnError) {
+        resolveOnError();
+      }
+      throw Error();
+    }
+
+    return { campaignId, currentUserId };
+  }
+
+  async __getCampaign(signal?: AbortSignal) {
+    if (this.config.postFetch.type === 'byUser') {
+      const url = URLHelper.constructCampaignPageURL(this.config.postFetch.vanity);
+      const { campaignId } = await this.#getInitialData(url, signal);
+      const postsParser = new PostParser(this.logger);
+      const res = await this.fetchCampaign(campaignId);
+      if (signal?.aborted) {
+        throw new AbortError();
+      }
+      if (res.error) {
+        throw res.error;
+      }
+      return postsParser.parseCampaignAPIResponse(res.json);
+    }
+    throw Error('Internal error: invalid config');
   }
 
   async #requestPosts(url: string, signal: AbortSignal | undefined, resolveOnAbort: () => void, resolveOnError: () => void) {

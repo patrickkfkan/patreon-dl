@@ -4,7 +4,7 @@ import { pickDefined } from '../utils/Misc.js';
 import { ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
 import { FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
-import CommandLineParser from './CommandLineParser.js';
+import CommandLineParser, { CommandLineParseResult } from './CommandLineParser.js';
 import ConfigFileParser from './ConfigFileParser.js';
 import path from 'path';
 
@@ -45,6 +45,8 @@ export function getCLIOptions(): CLIOptions {
     targetURLs = CLIOptionValidator.validateURLArray(targetURLValue);
   }
 
+  const { consoleLogger, fileLoggers } = getCLILoggerOptions(commandLineOptions, configFileOptions);
+
   const options: CLIOptions = {
     targetURLs,
     cookie: CLIOptionValidator.validateString(pickDefined(commandLineOptions.cookie, configFileOptions?.cookie)),
@@ -78,22 +80,32 @@ export function getCLIOptions(): CLIOptions {
       infoAPI: CLIOptionValidator.validateString(pickDefined(commandLineOptions.fileExistsAction?.infoAPI, configFileOptions?.fileExistsAction?.infoAPI), 'overwrite', 'skip', 'saveAsCopy', 'saveAsCopyIfNewer')
     },
     noPrompt: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.noPrompt, configFileOptions?.noPrompt)) || false,
-    consoleLogger: {
-      enabled: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.enabled, configFileOptions?.consoleLogger?.enabled)),
-      logLevel: CLIOptionValidator.validateString(pickDefined(commandLineOptions.consoleLogger?.logLevel, configFileOptions?.consoleLogger?.logLevel), 'info', 'debug', 'warn', 'error'),
-      include: {
-        dateTime: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.dateTime, configFileOptions?.consoleLogger?.include?.dateTime)),
-        level: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.level, configFileOptions?.consoleLogger?.include?.level)),
-        originator: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.originator, configFileOptions?.consoleLogger?.include?.originator)),
-        errorStack: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.errorStack, configFileOptions?.consoleLogger?.include?.errorStack))
-      },
-      dateTimeFormat: CLIOptionValidator.validateString(pickDefined(commandLineOptions.consoleLogger?.dateTimeFormat, configFileOptions?.consoleLogger?.dateTimeFormat)),
-      color: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.color, configFileOptions?.consoleLogger?.color))
-    }
+    consoleLogger,
+    fileLoggers
   };
 
+  return options;
+}
+
+export function getCLILoggerOptions(commandLineOptions?: CommandLineParseResult, configFileOptions?: ReturnType<typeof ConfigFileParser['parse']> | null) {
+  if (!commandLineOptions) {
+    commandLineOptions = CommandLineParser.parse();
+  }
+  const consoleLogger = {
+    enabled: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.enabled, configFileOptions?.consoleLogger?.enabled)),
+    logLevel: CLIOptionValidator.validateString(pickDefined(commandLineOptions.consoleLogger?.logLevel, configFileOptions?.consoleLogger?.logLevel), 'info', 'debug', 'warn', 'error'),
+    include: {
+      dateTime: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.dateTime, configFileOptions?.consoleLogger?.include?.dateTime)),
+      level: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.level, configFileOptions?.consoleLogger?.include?.level)),
+      originator: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.originator, configFileOptions?.consoleLogger?.include?.originator)),
+      errorStack: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.include?.errorStack, configFileOptions?.consoleLogger?.include?.errorStack))
+    },
+    dateTimeFormat: CLIOptionValidator.validateString(pickDefined(commandLineOptions.consoleLogger?.dateTimeFormat, configFileOptions?.consoleLogger?.dateTimeFormat)),
+    color: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.consoleLogger?.color, configFileOptions?.consoleLogger?.color))
+  };
+  let fileLoggers;
   if (configFileOptions?.fileLoggers) {
-    options.fileLoggers = configFileOptions.fileLoggers.map((logger): FileLoggerOptions => ({
+    fileLoggers = configFileOptions.fileLoggers.map((logger): FileLoggerOptions => ({
       enabled: CLIOptionValidator.validateBoolean(logger.enabled),
       logDir: CLIOptionValidator.validateString(logger.logDir),
       logFilename: CLIOptionValidator.validateString(logger.logFilename),
@@ -109,6 +121,8 @@ export function getCLIOptions(): CLIOptions {
       color: CLIOptionValidator.validateBoolean(logger.color)
     }));
   }
-
-  return options;
+  return {
+    consoleLogger,
+    fileLoggers
+  };
 }

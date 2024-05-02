@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import Downloader from '../downloaders/Downloader.js';
 import ConsoleLogger from '../utils/logging/ConsoleLogger.js';
-import { CLIOptions, getCLIOptions } from './CLIOptions.js';
+import { CLIOptions, getCLILoggerOptions, getCLIOptions } from './CLIOptions.js';
 import CommandLineParser from './CommandLineParser.js';
 import Logger, { commonLog } from '../utils/logging/Logger.js';
 import FileLogger, { FileLoggerInit } from '../utils/logging/FileLogger.js';
@@ -41,9 +41,58 @@ export default class PatreonDownloaderCLI {
       console.log(`${EOL}${this.#packageInfo.banner}${EOL}`);
     }
 
+    const __printOptionError = (error: any) => {
+      console.error(
+        'Error processing options: ',
+        error instanceof Error ? error.message : error,
+        EOL,
+        'See usage with \'-h\' option.');
+      return this.exit(1);
+    };
+
     const ytCredsPath = this.#getYouTubeCredentialsPath();
     if (CommandLineParser.configureYouTube()) {
       return this.exit(await YouTubeConfigurator.start(ytCredsPath));
+    }
+
+    let listTiersTargets;
+    try {
+      listTiersTargets = CommandLineParser.listTiers();
+    }
+    catch (error) {
+      return __printOptionError(error);
+    }
+    if (Array.isArray(listTiersTargets)) {
+      let hasError = false;
+      const { consoleLogger: consoleLoggerOptions } = getCLILoggerOptions();
+      const consoleLogger = new ConsoleLogger(consoleLoggerOptions);
+      for (const target of listTiersTargets) {
+        try {
+          const campaign = await Downloader.getCampaign(target, undefined, consoleLogger);
+          if (campaign) {
+            console.log(`*** Tiers for ${target} ***${EOL}`);
+            const idColWidth = campaign.rewards.reduce<number>((len, reward) => {
+              return Math.max(len, reward.id.length);
+            }, 0);
+            const gap = '    ';
+            console.log(`ID${gap}${' '.repeat(idColWidth - 2)}Title`);
+            console.log('-'.repeat(idColWidth) + gap + '-'.repeat('title'.length));
+            campaign.rewards.forEach((reward) => {
+              console.log(`${reward.id}${' '.repeat(idColWidth - reward.id.length)}${gap}${reward.title || 'Public'}`);
+            });
+            console.log(EOL);
+          }
+          else {
+            commonLog(consoleLogger, 'error', null, 'Failed to obtain campaign info');
+            throw Error();
+          }
+        }
+        catch (error) {
+          console.error(`${EOL}Error fetching tier data for "${target}"${EOL}${EOL}`);
+          hasError = true;
+        }
+      }
+      return this.exit(hasError ? 1 : 0);
     }
 
     let options;
@@ -51,12 +100,7 @@ export default class PatreonDownloaderCLI {
       options = getCLIOptions();
     }
     catch (error) {
-      console.error(
-        'Error processing options: ',
-        error instanceof Error ? error.message : error,
-        EOL,
-        'See usage with \'-h\' option.');
-      return this.exit(1);
+      return __printOptionError(error);
     }
 
     const targetsWithError: string[] = [];
