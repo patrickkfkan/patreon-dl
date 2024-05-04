@@ -4,6 +4,17 @@ import { DeepRequired, pickDefined } from '../utils/Misc.js';
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
 
+export interface DownloaderIncludeOptions {
+  lockedContent?: boolean;
+  postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment'> | 'any' | 'none';
+  postsInTier?: Array<string> | 'any';
+  campaignInfo?: boolean;
+  contentInfo?: boolean;
+  previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
+  contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
+  allMediaVariants?: boolean;
+}
+
 export interface DownloaderOptions {
   cookie?: string;
   useStatusCache?: boolean;
@@ -17,15 +28,7 @@ export interface DownloaderOptions {
   filenameFormat?: {
     media?: string;
   }
-  include?: {
-    lockedContent?: boolean;
-    postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment'> | 'any' | 'none';
-    campaignInfo?: boolean;
-    contentInfo?: boolean;
-    previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
-    contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
-    allMediaVariants?: boolean;
-  };
+  include?: DownloaderIncludeOptions;
   request?: {
     maxRetries?: number;
     maxConcurrent?: number;
@@ -65,6 +68,7 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   include: {
     lockedContent: true,
     postsWithMediaType: 'any',
+    postsInTier: 'any',
     campaignInfo: true,
     contentInfo: true,
     previewMedia: true,
@@ -100,6 +104,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     include: {
       lockedContent: pickDefined(options?.include?.lockedContent, defaults.include.lockedContent),
       postsWithMediaType: pickDefined(options?.include?.postsWithMediaType, defaults.include.postsWithMediaType),
+      postsInTier: pickDefined(options?.include?.postsInTier, defaults.include.postsInTier),
       campaignInfo: pickDefined(options?.include?.campaignInfo, defaults.include.campaignInfo),
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),

@@ -96,6 +96,7 @@ export default class PostDownloader extends Downloader<Post> {
       let skippedUnviewable = 0;
       let skippedRedundant = 0;
       let skippedUnmetMediaTypeCriteria = 0;
+      let skippedNotInTier = 0;
       let campaignSaved = false;
       while (json) {
         const collection = postsParser.parsePostsAPIResponse(json, postsAPIURL);
@@ -192,6 +193,44 @@ export default class PostDownloader extends Downloader<Post> {
               });
               skippedUnmetMediaTypeCriteria++;
               continue;
+            }
+          }
+
+          // -- 4.3.3: Config option 'include.postsInTier'
+          const postsInTier = this.config.include.postsInTier;
+          const isAnyTier = postsInTier === 'any' || postsInTier.includes('any');
+          if (!isAnyTier) {
+            const applicableTierIds = postsInTier.filter((id) => post.campaign?.rewards.find((r) => r.id === id));
+            if (!post.campaign) {
+              this.log('warn', 'config.include.postsInTier: ignored - post missing campaign info');
+            }
+            else {
+              this.log('debug', 'config.include.postsInTier: applicable tier IDs:', applicableTierIds);
+            }
+            let skip = false;
+            if (!post.campaign) {
+              skip = false;
+            }
+            else if (applicableTierIds.length === 0) {
+              skip = true;
+            }
+            else if (!post.tiers.find((tier) => tier.id === 'patrons')) {
+              skip = applicableTierIds.every((id) => !post.tiers.find((tier) => tier.id === id));
+            }
+            if (skip) {
+              this.log('warn', `Skipped downloading post #${post.id}: not in tier`);
+              this.log('debug', 'Match criteria failed:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
+              this.emit('targetEnd', {
+                target: post,
+                isSkipped: true,
+                skipReason: TargetSkipReason.NotInTier,
+                skipMessage: 'Target not in tier'
+              });
+              skippedNotInTier++;
+              continue;
+            }
+            if (post.campaign) {
+              this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
             }
           }
 
@@ -357,6 +396,9 @@ export default class PostDownloader extends Downloader<Post> {
         }
         if (skippedUnmetMediaTypeCriteria) {
           skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
+        }
+        if (skippedNotInTier) {
+          skippedStrParts.push(`${skippedNotInTier} not in tier`);
         }
         const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
         endMessage = `Total ${downloaded} / ${total} posts processed${skippedStr}`;

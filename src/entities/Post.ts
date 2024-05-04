@@ -1,6 +1,7 @@
 import { Campaign } from './Campaign.js';
 import { Downloadable } from './Downloadable.js';
 import { PostCoverImageMediaItem, PostThumbnailMediaItem } from './MediaItem.js';
+import { Tier } from './Reward.js';
 
 export interface PostCollection {
   url: string;
@@ -36,6 +37,7 @@ export interface Post {
   editedAt: string | null;
   coverImage: PostCoverImageMediaItem | null;
   thumbnail: PostThumbnailMediaItem | null;
+  tiers: Tier[];
 
   /**
    * @privateRemarks

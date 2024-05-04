@@ -12,3 +12,5 @@ export interface Reward {
   image: Downloadable | null;
   url: string | null;
 }
+
+export type Tier = Pick<Reward, 'id' | 'title'>;

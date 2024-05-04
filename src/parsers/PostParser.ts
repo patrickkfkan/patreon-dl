@@ -2,6 +2,7 @@ import { Campaign } from '../entities/Campaign.js';
 import { Downloadable } from '../entities/Downloadable.js';
 import { MediaItem, PostCoverImageMediaItem, PostThumbnailMediaItem, VideoMediaItem } from '../entities/MediaItem.js';
 import { Post, PostCollection, PostEmbed } from '../entities/Post.js';
+import { Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
@@ -252,6 +253,26 @@ export default class PostParser extends Parser {
         };
       }
 
+      // Tiers
+      let tiers: Tier[] = [];
+      const tierData = ObjectHelper.getProperty(postJSON, 'relationships.access_rules.data');
+      if (Array.isArray(tierData) && campaign) {
+        const c = campaign;
+        tiers = tierData.reduce<Tier[]>((result, t) => {
+          const id = ObjectHelper.getProperty(t, 'id');
+          if (id) {
+            const tier = this.findInAPIResponseIncludedArray(includedJSON, id, 'tier', c);
+            if (tier) {
+              result.push(tier);
+            }
+          }
+          return result;
+        }, []);
+      }
+      if (tiers.length === 0) {
+        this.log('warn', `Could not obtain tier info for post #${id}`);
+      }
+
       const post: Post = {
         id,
         type: 'post',
@@ -265,6 +286,7 @@ export default class PostParser extends Parser {
         editedAt: attributes.edited_at || null,
         coverImage,
         thumbnail,
+        tiers,
         embed,
         attachments,
         audio,

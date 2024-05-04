@@ -78,7 +78,7 @@ export default class CLIOptionValidator {
     return sanitized;
   }
 
-  static validateStringArray<T>(entry: CLIOptionParserEntry | undefined, match: readonly T[], delimiter = ',') {
+  static validateStringArray<T>(entry: CLIOptionParserEntry | undefined, match?: readonly T[], delimiter = ',') {
     const value = entry?.value || undefined;
     if (!entry || !value) {
       return undefined;
@@ -93,38 +93,42 @@ export default class CLIOptionValidator {
     if (split.length === 0) {
       return undefined;
     }
-    for (const v of split) {
-      if (!match.includes(v as any)) {
-        throw Error(`${this.#logEntryKey(entry)} has invalid delimited value '${v}'; must be one of ${match.map((m) => `'${m}'`).join(', ')}.`);
+    if (match && match.length > 0) {
+      for (const v of split) {
+        if (!match.includes(v as any)) {
+          throw Error(`${this.#logEntryKey(entry)} has invalid delimited value '${v}'; must be one of ${match.map((m) => `'${m}'`).join(', ')}.`);
+        }
       }
     }
     return split as T[];
   }
 
-  static validateURLArray(value: string | string[], delimiter = ','): string[] {
+  static validateTargetURLs(value: string | string[], delimiter = ','): string[] {
     if (!Array.isArray(value)) {
       const splitted = value.split(delimiter);
-      return this.validateURLArray(splitted);
+      return this.validateTargetURLs(splitted);
     }
-    const trimmed = value.map((v) => v.trim());
-    for (const s of trimmed) {
-      try {
-        const type = URLHelper.analyzeURL(s);
-        if (!type) {
-          throw Error('Unknown URL');
-        }
-      }
-      catch (error) {
-        if (error instanceof Error) {
-          error.message += `: ${s}`;
-          throw error;
-        }
-        else {
-          throw Error(`${error}: ${s}`);
-        }
+    return value.map((v) => this.validateTargetURL(v));
+  }
+
+  static validateTargetURL(s: string) {
+    const _s = s.trim();
+    try {
+      const type = URLHelper.analyzeURL(_s);
+      if (!type) {
+        throw Error('Unknown URL');
       }
     }
-    return trimmed;
+    catch (error) {
+      if (error instanceof Error) {
+        error.message += `: ${_s}`;
+        throw error;
+      }
+      else {
+        throw Error(`${error}: ${_s}`);
+      }
+    }
+    return _s;
   }
 
   static validateIncludeContentWithMediaType(entry?: CLIOptionParserEntry) {
@@ -133,6 +137,15 @@ export default class CLIOptionValidator {
     }
     catch (error) {
       return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment' ] as const);
+    }
+  }
+
+  static validateIncludeContentInTier(entry?: CLIOptionParserEntry) {
+    try {
+      return this.validateString(entry, 'any');
+    }
+    catch (error) {
+      return this.validateStringArray<string>(entry);
     }
   }
 

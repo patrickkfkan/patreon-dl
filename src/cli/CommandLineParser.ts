@@ -5,7 +5,8 @@ import { EOL } from 'os';
 import { DeepPartial, RecursivePropsTo } from '../utils/Misc.js';
 import { getPackageInfo } from '../utils/PackageInfo.js';
 
-export interface CommandLineParseResult extends RecursivePropsTo<DeepPartial<CLIOptions>, CLIOptionParserEntry> {
+export interface CommandLineParseResult extends RecursivePropsTo<DeepPartial<Omit<CLIOptions, 'targetURLs'>>, CLIOptionParserEntry> {
+  targetURLs?: CLIOptionParserEntry;
   configFile?: CLIOptionParserEntry;
 }
 

@@ -8,8 +8,15 @@ import CommandLineParser, { CommandLineParseResult } from './CommandLineParser.j
 import ConfigFileParser from './ConfigFileParser.js';
 import path from 'path';
 
+export interface CLITargetURLEntry {
+  url: string;
+  include?: {
+    postsInTier?: string[] | 'any';
+  }
+}
+
 export interface CLIOptions extends Omit<DownloaderOptions, 'logger'> {
-  targetURLs: string[];
+  targetURLs: CLITargetURLEntry[];
   noPrompt: boolean;
   consoleLogger: ConsoleLoggerOptions;
   fileLoggers?: FileLoggerOptions[];
@@ -30,19 +37,16 @@ export function getCLIOptions(): CLIOptions {
 
   const configFileOptions = commandLineOptions.configFile?.value ? ConfigFileParser.parse(commandLineOptions.configFile.value) : null;
 
-  let targetURLs;
+  let targetURLs: CLITargetURLEntry[];
   const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
-  if (fs.existsSync(path.resolve(targetURLValue))) {
-    const fileContents = fs.readFileSync(targetURLValue).toString('utf-8');
-    // Replace Windows line breaks with Unix ones and then split
-    targetURLs = CLIOptionValidator.validateURLArray(
-      fileContents
-        .replace(/\r\n/g, '\n').split('\n')
-        .filter((v) => v.trim() !== '' && !v.startsWith('#'))
-    );
+  const targetsFile = path.resolve(targetURLValue);
+  if (fs.existsSync(targetsFile)) {
+    targetURLs = readTargetsFile(targetsFile, commandLineOptions.targetURLs ? 'cli' : 'cfg');
   }
   else {
-    targetURLs = CLIOptionValidator.validateURLArray(targetURLValue);
+    targetURLs = CLIOptionValidator
+      .validateTargetURLs(targetURLValue)
+      .map((url) => ({ url }));
   }
 
   const { consoleLogger, fileLoggers } = getCLILoggerOptions(commandLineOptions, configFileOptions);
@@ -63,6 +67,7 @@ export function getCLIOptions(): CLIOptions {
     include: {
       lockedContent: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.lockedContent, configFileOptions?.include?.lockedContent)),
       postsWithMediaType: CLIOptionValidator.validateIncludeContentWithMediaType(pickDefined(commandLineOptions.include?.postsWithMediaType, configFileOptions?.include?.postsWithMediaType)),
+      postsInTier: CLIOptionValidator.validateIncludeContentInTier(pickDefined(commandLineOptions.include?.postsInTier, configFileOptions?.include?.postsInTier)),
       campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
       contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
       previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
@@ -125,4 +130,52 @@ export function getCLILoggerOptions(commandLineOptions?: CommandLineParseResult,
     consoleLogger,
     fileLoggers
   };
+}
+
+function readTargetsFile(file: string, src: 'cli' | 'cfg') {
+  const postsInTierKey = 'include.posts.in.tier';
+
+  const lines = fs.readFileSync(file)
+    .toString('utf-8')
+    // Replace Windows line breaks with Unix ones and then split
+    .replace(/\r\n/g, '\n').split('\n')
+    .map((line) => line.trim());
+
+  const parsedTargets: CLITargetURLEntry[] = [];
+  for (let ln = 0; ln < lines.length; ln++) {
+    const line = lines[ln];
+    if (line === '' || line.startsWith('#')) {
+      continue;
+    }
+    try {
+      if (line.startsWith(postsInTierKey)) {
+        const eq = line.indexOf('=');
+        const postsInTierStr = (eq >= postsInTierKey.length ? line.substring(eq + 1) : '').trim();
+        const postsInTier = postsInTierStr ? CLIOptionValidator.validateIncludeContentInTier({
+          key: postsInTierKey,
+          section: 'Target URLs file',
+          src,
+          value: postsInTierStr
+        }) : undefined;
+        if (postsInTier) {
+          const target = parsedTargets.at(-1);
+          if (target) {
+            target.include = { postsInTier };
+          }
+          else {
+            throw Error();
+          }
+        }
+      }
+      else {
+        const url = CLIOptionValidator.validateTargetURL(line);
+        parsedTargets.push({ url });
+      }
+    }
+    catch (error) {
+      const errMsg = error instanceof Error ? error.message : error;
+      throw Error(`Error parsing targets file (line ${ln})${errMsg ? `: ${errMsg}` : ''}`);
+    }
+  }
+  return parsedTargets;
 }

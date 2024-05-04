@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import Downloader from '../downloaders/Downloader.js';
 import ConsoleLogger from '../utils/logging/ConsoleLogger.js';
-import { CLIOptions, getCLILoggerOptions, getCLIOptions } from './CLIOptions.js';
+import { CLIOptions, CLITargetURLEntry, getCLILoggerOptions, getCLIOptions } from './CLIOptions.js';
 import CommandLineParser from './CommandLineParser.js';
 import Logger, { commonLog } from '../utils/logging/Logger.js';
 import FileLogger, { FileLoggerInit } from '../utils/logging/FileLogger.js';
@@ -12,6 +12,7 @@ import ChainLogger from '../utils/logging/ChainLogger.js';
 import { PackageInfo, getPackageInfo } from '../utils/PackageInfo.js';
 import envPaths from 'env-paths';
 import YouTubeConfigurator from './helper/YouTubeConfigurator.js';
+import { DownloaderIncludeOptions } from '../downloaders/DownloaderOptions.js';
 
 const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
@@ -110,10 +111,11 @@ export default class PatreonDownloaderCLI {
       if (aborted) {
         return this.exit(1);
       }
+      const targetURL = options.targetURLs[i].url;
       if (hasError) {
-        targetsWithError.push(options.targetURLs[i]);
+        targetsWithError.push(targetURL);
       }
-      targetEndMessages[i] = { url: options.targetURLs[i], message: endMessage };
+      targetEndMessages[i] = { url: targetURL, message: endMessage };
     }
     if (options.targetURLs.length > 0) {
       // Print summary
@@ -142,8 +144,25 @@ export default class PatreonDownloaderCLI {
     return path.resolve(this.#globalConfPath, YT_CREDENTIALS_FILENAME);
   }
 
-  async #createAndStartDownloader(targetURLs: string[], index: number, options: CLIOptions) {
-    const targetURL = targetURLs[index];
+  #getApplicableIncludeOptions(local?: DownloaderIncludeOptions, global?: DownloaderIncludeOptions) {
+    if (!local) {
+      return global;
+    }
+    if (!global) {
+      return local;
+    }
+    const result: DownloaderIncludeOptions = { ...global };
+    if (local.postsInTier) {
+      result.postsInTier = local.postsInTier;
+    }
+
+    return result;
+  }
+
+  async #createAndStartDownloader(targetURLs: CLITargetURLEntry[], index: number, options: CLIOptions) {
+    const { url: targetURL } = targetURLs[index];
+    const includeOpts = this.#getApplicableIncludeOptions(targetURLs[index].include, options.include);
+
     // Create loggers
     const { chainLogger: logger, consoleLogger, fileLoggers } = this.#createLoggers(targetURL, options);
     this.#logger = logger;
@@ -154,6 +173,7 @@ export default class PatreonDownloaderCLI {
     try {
       downloader = await Downloader.getInstance(targetURL, {
         ...options,
+        include: includeOpts,
         pathToYouTubeCredentials: fs.existsSync(ytCredsPath) ? ytCredsPath : null,
         logger: this.#logger
       });
@@ -217,7 +237,7 @@ export default class PatreonDownloaderCLI {
         delete conf.postFetch;
         delete conf.productId;
         delete conf.outDir;
-        console.log('Downloader config:', conf, EOL);
+        console.log('Downloader config:', JSON.stringify(conf, null, 2), EOL);
       }
       else {
         __logBegin();

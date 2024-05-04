@@ -6,7 +6,7 @@ import { User } from '../entities/User.js';
 import Logger, { LogLevel, commonLog } from '../utils/logging/Logger.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import { Attachment } from '../entities/Attachment.js';
-import { Reward } from '../entities/Reward.js';
+import { Reward, Tier } from '../entities/Reward.js';
 
 const DOWNLOADABLE_TYPES = [ 'media', 'attachment' ] as const;
 
@@ -138,6 +138,7 @@ export default abstract class Parser {
    * not provided in the `data` items referencing it.
    */
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: typeof DOWNLOADABLE_TYPES[number]): Downloadable | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'tier', campaign: Campaign): Tier | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file'): MediaItem | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'reward'): Reward | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
@@ -146,28 +147,62 @@ export default abstract class Parser {
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: string, ...args: any[]): any {
     this.log('debug', `Find ${matchType} item #${id} in API response`);
     for (const inc of included) {
-      if (inc && typeof inc === 'object' && inc.id === id && inc.type === matchType) {
+      const _matchType = matchType === 'tier' ? 'access-rule' : matchType;
+      if (inc && typeof inc === 'object' && inc.id === id && inc.type === _matchType) {
         this.log('debug', 'Found - parse item data');
 
-        if (matchType === 'media') {
+        if (_matchType === 'access-rule') {
+          return this.parseTierAPIDataInIncludedArray(inc, args[0]);
+        }
+        else if (_matchType === 'media') {
           return this.parseMediaItemAPIDataInIncludedArray(inc, args[0]);
         }
-        else if (matchType === 'campaign') {
+        else if (_matchType === 'campaign') {
           return this.parseCampaignAPIDataInIncludedArray(inc, included);
         }
-        else if (matchType === 'user') {
+        else if (_matchType === 'user') {
           return this.parseUserAPIDataInIncludedArray(inc, args[0]);
         }
-        else if (matchType === 'reward') {
+        else if (_matchType === 'reward') {
           return this.parseRewardAPIDataInIncludedArray(inc);
         }
-        else if (matchType === 'attachment') {
+        else if (_matchType === 'attachment') {
           return this.parseAttachmentAPIDataInIncludedArray(inc);
         }
       }
     }
 
     this.log('warn', `Item #${id} not found in API response or has invalid data`);
+    return null;
+  }
+
+  protected parseTierAPIDataInIncludedArray(data: any, campaign: Campaign): Tier | null {
+    const { attributes, relationships } = data;
+    const accessRuleType = ObjectHelper.getProperty(attributes, 'access_rule_type');
+    switch (accessRuleType) {
+      case 'patrons':
+        return {
+          id: 'patrons',
+          title: 'Patrons'
+        };
+      case 'public':
+        return {
+          id: '-1',
+          title: 'Public'
+        };
+      default:
+        const tierId = ObjectHelper.getProperty(relationships, 'tier.data.id');
+        const tierType = ObjectHelper.getProperty(relationships, 'tier.data.type');
+        if (accessRuleType === 'tier' && tierType === 'reward' && tierId) {
+          const reward = campaign.rewards.find((r) => r.id === tierId);
+          if (reward) {
+            return {
+              id: reward.id,
+              title: reward.title
+            };
+          }
+        }
+    }
     return null;
   }
 
