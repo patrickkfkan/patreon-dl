@@ -65,7 +65,7 @@ const CONFIG_FILE_PROPS = {
   }
 };
 
-type ConfigFileParseResult = RecursivePropsTo<DeepPartial<Omit<CLIOptions, 'targetURLs'>>, CLIOptionParserEntry> & {
+export type ConfigFileParseResult = RecursivePropsTo<DeepPartial<Omit<CLIOptions, 'targetURLs'>>, CLIOptionParserEntry> & {
   targetURLs?: CLIOptionParserEntry;
 };
 

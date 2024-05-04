@@ -3,7 +3,8 @@ import { CLIOptionParserEntry } from './CLIOptions.js';
 
 const CLI_OPTION_SRC_NAME = {
   cli: 'Command-line',
-  cfg: 'Config file'
+  cfg: 'Config file',
+  tgt: 'Targets file'
 };
 
 export default class CLIOptionValidator {
@@ -168,9 +169,14 @@ export default class CLIOptionValidator {
   }
 
   static #logEntryKey(entry: CLIOptionParserEntry) {
-    const keyStr = entry.src === 'cli' ?
-      entry.key :
-      `[${entry.section}]->${entry.key}`;
-    return `${CLI_OPTION_SRC_NAME[entry.src]} option '${keyStr}'`;
+    const src = CLI_OPTION_SRC_NAME[entry.src];
+    switch (entry.src) {
+      case 'cli':
+        return `${src} option '${entry.key}'`;
+      case 'cfg':
+        return `${src} option '[${entry.section}]->${entry.key}'`;
+      case 'tgt':
+        return `Value given in ${src.toLowerCase()} on line ${entry.line} starting with '${entry.key}'`;
+    }
   }
 }

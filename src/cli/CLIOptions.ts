@@ -1,18 +1,17 @@
 import fs from 'fs';
-import { DownloaderOptions } from '../downloaders/DownloaderOptions.js';
+import { DownloaderIncludeOptions, DownloaderOptions } from '../downloaders/DownloaderOptions.js';
 import { pickDefined } from '../utils/Misc.js';
 import { ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
 import { FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
 import CommandLineParser, { CommandLineParseResult } from './CommandLineParser.js';
-import ConfigFileParser from './ConfigFileParser.js';
+import ConfigFileParser, { ConfigFileParseResult } from './ConfigFileParser.js';
 import path from 'path';
 
 export interface CLITargetURLEntry {
   url: string;
-  include?: {
-    postsInTier?: string[] | 'any';
-  }
+  // Target-specific 'include' options
+  include?: DownloaderIncludeOptions;
 }
 
 export interface CLIOptions extends Omit<DownloaderOptions, 'logger'> {
@@ -27,6 +26,9 @@ export type CLIOptionParserEntry = ({
 } | {
   src: 'cfg',
   section: string
+} | {
+  src: 'tgt',
+  line: number
 }) & {
   key: string;
   value?: string;
@@ -41,7 +43,7 @@ export function getCLIOptions(): CLIOptions {
   const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
   const targetsFile = path.resolve(targetURLValue);
   if (fs.existsSync(targetsFile)) {
-    targetURLs = readTargetsFile(targetsFile, commandLineOptions.targetURLs ? 'cli' : 'cfg');
+    targetURLs = readTargetsFile(targetsFile);
   }
   else {
     targetURLs = CLIOptionValidator
@@ -64,16 +66,7 @@ export function getCLIOptions(): CLIOptions {
     filenameFormat: {
       media: CLIOptionValidator.validateString(pickDefined(commandLineOptions.filenameFormat?.media, configFileOptions?.filenameFormat?.media))
     },
-    include: {
-      lockedContent: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.lockedContent, configFileOptions?.include?.lockedContent)),
-      postsWithMediaType: CLIOptionValidator.validateIncludeContentWithMediaType(pickDefined(commandLineOptions.include?.postsWithMediaType, configFileOptions?.include?.postsWithMediaType)),
-      postsInTier: CLIOptionValidator.validateIncludeContentInTier(pickDefined(commandLineOptions.include?.postsInTier, configFileOptions?.include?.postsInTier)),
-      campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
-      contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
-      previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
-      contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
-      allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants))
-    },
+    include: getCLIIncludeOptions(commandLineOptions, configFileOptions),
     request: {
       maxRetries: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.maxRetries, configFileOptions?.request?.maxRetries)),
       maxConcurrent: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.maxConcurrent, configFileOptions?.request?.maxConcurrent)),
@@ -132,8 +125,33 @@ export function getCLILoggerOptions(commandLineOptions?: CommandLineParseResult,
   };
 }
 
-function readTargetsFile(file: string, src: 'cli' | 'cfg') {
-  const postsInTierKey = 'include.posts.in.tier';
+function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, configFileOptions?: ConfigFileParseResult | null) {
+  if (!commandLineOptions) {
+    commandLineOptions = CommandLineParser.parse();
+  }
+  return {
+    lockedContent: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.lockedContent, configFileOptions?.include?.lockedContent)),
+    postsWithMediaType: CLIOptionValidator.validateIncludeContentWithMediaType(pickDefined(commandLineOptions.include?.postsWithMediaType, configFileOptions?.include?.postsWithMediaType)),
+    postsInTier: CLIOptionValidator.validateIncludeContentInTier(pickDefined(commandLineOptions.include?.postsInTier, configFileOptions?.include?.postsInTier)),
+    campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
+    contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
+    previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
+    contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
+    allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants))
+  };
+}
+
+function readTargetsFile(file: string) {
+  const includeKeys: Record<keyof DownloaderIncludeOptions, string> = {
+    lockedContent: 'include.locked.content',
+    postsWithMediaType: 'include.posts.with.media.type',
+    postsInTier: 'include.posts.in.tier',
+    campaignInfo: 'include.campaign.info',
+    contentInfo: 'include.content.info',
+    previewMedia: 'include.preview.media',
+    contentMedia: 'include.content.media',
+    allMediaVariants: 'include.all.media.variants'
+  };
 
   const lines = fs.readFileSync(file)
     .toString('utf-8')
@@ -141,35 +159,36 @@ function readTargetsFile(file: string, src: 'cli' | 'cfg') {
     .replace(/\r\n/g, '\n').split('\n')
     .map((line) => line.trim());
 
-  const parsedTargets: CLITargetURLEntry[] = [];
+  const currentTargets: { url: string; include?: Partial<Record<keyof DownloaderIncludeOptions, CLIOptionParserEntry>>; }[] = [];
   for (let ln = 0; ln < lines.length; ln++) {
     const line = lines[ln];
     if (line === '' || line.startsWith('#')) {
       continue;
     }
     try {
-      if (line.startsWith(postsInTierKey)) {
+      const match = Object.entries(includeKeys).find((e) => line.startsWith(e[1]));
+      if (match) {
+        const [ optName, matchKey ] = match;
         const eq = line.indexOf('=');
-        const postsInTierStr = (eq >= postsInTierKey.length ? line.substring(eq + 1) : '').trim();
-        const postsInTier = postsInTierStr ? CLIOptionValidator.validateIncludeContentInTier({
-          key: postsInTierKey,
-          section: 'Target URLs file',
-          src,
-          value: postsInTierStr
-        }) : undefined;
-        if (postsInTier) {
-          const target = parsedTargets.at(-1);
+        const propValue = (eq >= matchKey.length ? line.substring(eq + 1) : '').trim();
+        if (propValue) {
+          const target = currentTargets.at(-1);
           if (target) {
-            target.include = { postsInTier };
-          }
-          else {
-            throw Error();
+            if (!target.include) {
+              target.include = {};
+            }
+            target.include[optName as keyof DownloaderIncludeOptions] = {
+              key: matchKey,
+              line: ln,
+              src: 'tgt',
+              value: propValue
+            };
           }
         }
       }
       else {
         const url = CLIOptionValidator.validateTargetURL(line);
-        parsedTargets.push({ url });
+        currentTargets.push({ url });
       }
     }
     catch (error) {
@@ -177,5 +196,15 @@ function readTargetsFile(file: string, src: 'cli' | 'cfg') {
       throw Error(`Error parsing targets file (line ${ln})${errMsg ? `: ${errMsg}` : ''}`);
     }
   }
-  return parsedTargets;
+
+  const result: CLITargetURLEntry[] = [];
+  for (const target of currentTargets) {
+    const v: CLITargetURLEntry = { url: target.url };
+    if (target.include) {
+      v.include = getCLIIncludeOptions(target);
+    }
+    result.push(v);
+  }
+
+  return result;
 }

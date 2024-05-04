@@ -152,10 +152,11 @@ export default class PatreonDownloaderCLI {
       return local;
     }
     const result: DownloaderIncludeOptions = { ...global };
-    if (local.postsInTier) {
-      result.postsInTier = local.postsInTier;
+    for (const [ k, v ] of Object.entries(local)) {
+      if (v !== undefined) {
+        result[k as keyof DownloaderIncludeOptions] = v;
+      }
     }
-
     return result;
   }
 
