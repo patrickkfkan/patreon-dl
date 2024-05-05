@@ -13,6 +13,7 @@ import { PackageInfo, getPackageInfo } from '../utils/PackageInfo.js';
 import envPaths from 'env-paths';
 import YouTubeConfigurator from './helper/YouTubeConfigurator.js';
 import { DownloaderIncludeOptions } from '../downloaders/DownloaderOptions.js';
+import ObjectHelper from '../utils/ObjectHelper.js';
 
 const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
@@ -213,7 +214,7 @@ export default class PatreonDownloaderCLI {
       };
 
       const __printDownloaderCreated = () => {
-        console.log(`Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
+        console.log(`${EOL}Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
       };
 
       let promptConfirm = true;
@@ -230,7 +231,6 @@ export default class PatreonDownloaderCLI {
           __printDownloaderCreated();
         };
         const conf = {
-          targetURLs,
           ...downloader.getConfig()
         } as any;
         delete conf.targetURL;
@@ -238,7 +238,27 @@ export default class PatreonDownloaderCLI {
         delete conf.postFetch;
         delete conf.productId;
         delete conf.outDir;
-        console.log('Downloader config:', JSON.stringify(conf, null, 2), EOL);
+        const heading = 'Target URLs';
+        console.log(`${EOL}${heading}`);
+        console.log('-'.repeat(heading.length), EOL);
+        const hasTargetSpecificSettings = !!targetURLs.find((target) => target.include);
+        targetURLs.forEach((target, i) => {
+          console.log(`${i}: ${target.url}`);
+          if (hasTargetSpecificSettings) {
+            console.log('');
+          }
+          if (target.include) {
+            console.log('include:', ObjectHelper.clean(target.include));
+            console.log('');
+          }
+        });
+        const heading2 = 'Common settings';
+        console.log(`${EOL}${heading2}`);
+        console.log('-'.repeat(heading2.length));
+        console.log(conf, EOL);
+        if (targetURLs.find((target) => target.include)) {
+          console.log('Target-specific settings may override common settings', EOL);
+        }
       }
       else {
         __logBegin();
