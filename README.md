@@ -60,12 +60,13 @@ $ patreon-dl [OPTION]... URL
 | Option    | Alias | Description |
 |-----------|-------|-------------|
 | `--help`  | `-h`  | Display usage guide |
-| <code><nobr>--config-file &lt;path&gt;</nobbr></code> | `-C` | Load configuration file at `<path>` for setting full options |
+| <code><nobr>--config-file &lt;path&gt;</nobr></code> | `-C` | Load [configuration file](#configuration-file) at `<path>` for setting full options |
 | `--cookie <string>` | `-c` | Cookie for accessing patron-only content; [how to obtain cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
 | `--ffmpeg <path>` | `-f` | Path to FFmpeg executable |
 | `--out-dir <path>` |`-o` | Directory to save content |
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
 | `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |
+| <code><nobr>--list-tiers &lt;creator&gt;</nobr></code> | | <p>List tiers for the given creator(s). Separate multiple creators with a comma.</p>The purpose of this is to let you find out what tier IDs to set for `posts.in.tier` filtering option under `include` section of [configuration file](#configuration-file). |
 | `--configure-youtube` | | <p>Configure YouTube connection.</p>`patreon-dl` supports downloading embedded YouTube videos. If you have a YouTube Premium account, you can connect `patreon-dl` to it for downloading Premium-quality streams. |
 
 ### URL
@@ -113,6 +114,53 @@ You can then pass `urls.txt` to `patreon-dl`:
 
 ```
 $ patreon-dl urls.txt
+```
+
+In this file, you can also override `include` options provided in a [configuration file](#configuration-file) passed to `patreon-dl` (through the `-C` option). `include` options allow you specify what to include in downloads. This overriding mechanism allows you to specify different content to download for each target URL. For example, you might have the following `include` option in your configuration file:
+
+```
+...
+
+[include]
+
+# Include posts that belong only to tier ID '-1' (public tier)
+posts.in.tier = -1
+
+...
+```
+
+Then, in your `urls.txt`, you can override as follows:
+
+```
+# URL 1
+https://www.patreon.com/johndoe/posts
+
+# Override 'posts.in.tier = -1' in [include] section of configuration file.
+# This will cause downloader to download posts from URL 1 belonging to tier with
+# ID '123456' or '789100'.
+
+include.posts.in.tier = 123456, 789100
+
+# Other include options - they basically have the same name as those
+# in the configuation file, but prepended with 'include.':
+#
+# include.locked.content
+# include.posts.with.media.type
+# include.campaign.info
+# include.content.info
+# include.preview.media
+# include.content.media
+# include.all.media.variants
+
+# URL 2 
+https://www.patreon.com/janedoe/posts
+
+# If you don't place any 'include.*' statements here, the downloader will use
+# options from configuration file or default values if none provided.
+
+# URL 3
+...
+
 ```
 
 ### Directory structure
@@ -180,7 +228,7 @@ An object with the following properties (all *optional*):
 | `outDir`          | Path to directory where content is saved. Default: current working directory |
 | `dirNameFormat`   | How to name directories: (object)<ul><li>`campaign`: see [Campaign directory name format](#campaign-directory-name-format)</li><li>`content`: see [Content directory name format](#content-directory-name-format)</li></ul> |
 | `filenameFormat`  | Naming of files: (object)<ul><li>`media`: see [Media filename format](#media-filename-format) |
-| `include`         | What to include in the download: (object) <ul><li>`lockedContent`: whether to process locked content. Default: `true`</li><li>`postsWithMediaType`: sets the media type criteria for downloading posts. Values can be:<ul><li>`any`: download posts regardless of the type of media they contain. Also applies to posts that do not contain any media.</li><li>`none`: only download posts that do not contain media.</li><li>Array<`image` \| `video` \| `audio` \| `attachment`>: only download posts that contain the specified media type(s).</li></ul>Default: `any`</li><li>`campaignInfo`: whether to save campaign info. Default: `true`</li><li>`contentInfo`: whether to save content info. Default: `true`</li><li>`contentMedia`: the type of content media to download (images, videos, audio, attachments, excluding previews). Values can be:<ul><li>`true`: download all content media.</li><li>`false`: do not download content media.</li><li>Array<`image` \| `video` \| `audio` \| `attachment` \| `file`>: only download the specified media type(s).</li></ul>Default: `true`</li><li>`previewMedia`: the type of preview media to download, if available. Values can be:<ul><li>`true`: download all preview media.</li><li>`false`: do not download preview media.</li><li>Array<`image` \| `video` \| `audio`>: only download the specified media type(s).</li></ul>Default: `true`</li><li>`allMediaVariants`: whether to download all media variants, if available. If `false`, only the best quality variant will be downloaded. Default: `false`</li></ul> |
+| `include`         | What to include in the download: (object) <ul><li>`lockedContent`: whether to process locked content. Default: `true`</li><li>`postInTier`: see [Filtering posts by tier](#filtering-posts-by-tier)</li><li>`postsWithMediaType`: sets the media type criteria for downloading posts. Values can be:<ul><li>`any`: download posts regardless of the type of media they contain. Also applies to posts that do not contain any media.</li><li>`none`: only download posts that do not contain media.</li><li>Array<`image` \| `video` \| `audio` \| `attachment`>: only download posts that contain the specified media type(s).</li></ul>Default: `any`</li><li>`campaignInfo`: whether to save campaign info. Default: `true`</li><li>`contentInfo`: whether to save content info. Default: `true`</li><li>`contentMedia`: the type of content media to download (images, videos, audio, attachments, excluding previews). Values can be:<ul><li>`true`: download all content media.</li><li>`false`: do not download content media.</li><li>Array<`image` \| `video` \| `audio` \| `attachment` \| `file`>: only download the specified media type(s).</li></ul>Default: `true`</li><li>`previewMedia`: the type of preview media to download, if available. Values can be:<ul><li>`true`: download all preview media.</li><li>`false`: do not download preview media.</li><li>Array<`image` \| `video` \| `audio`>: only download the specified media type(s).</li></ul>Default: `true`</li><li>`allMediaVariants`: whether to download all media variants, if available. If `false`, only the best quality variant will be downloaded. Default: `false`</li></ul> |
 | `request`         | Rate limiting and retry on error: (object)<ul><li>`maxRetries`: maximum number of retries if a request or download fails. Default: 3</li><li>`maxConcurrent`: maximum number of concurrent downloads. Default: 10</li><li>`minTime`: minimum time to wait between starting requests or downloads (milliseconds). Default: 333</li></ul> |
 | `fileExistsAction` | What to do when a target file already exists: (object)<ul><li>`info`: in the context of saving info (such as campaign or post info), the action to take when a file belonging to the info already exists. Default: `saveAsCopyIfNewer`</li><li>`infoAPI`: API data is saved as part of info. Because it changes frequently, and usually used for debugging purpose only, you can set a different action when saving an API data file that already exists. Default: `overwrite`</li><li>`content`: in the context of downloading content, the action to take when a file belonging to the content already exists. Default: `skip`</li></ul><p>Supported actions:<ul><li>`overwrite`: overwrite existing file.</li><li>`skip`: skip saving the file.</li><li>`saveAsCopy`: save the file under incremented filename (e.g. "abc.jpg" becomes "abc (1).jpg").</li><li>`saveAsCopyIfNewer`: like `saveAsCopy`, but only do so if the contents have actually changed.</li></ul></p> |
 |`logger`           | See [Logger](#logger)                     | 
@@ -252,6 +300,26 @@ Characters enclosed in square brackets followed by a question mark denote condit
 
 Default: '{media.filename}'</br>
 Fallback: '{media.type}-{media.id}'
+
+#### Filtering posts by tier
+
+To download posts belonging to specific tier(s), set the `include.postsInTier` option. Values can be:
+- `any`: any tier (i.e. no filter)
+- Array of tier IDs (`string[]`)
+
+To obtain the IDs of tiers for a particular creator, first get the campaign through `PatreonDownloader.getCampaign()`, then inspect the `rewards` property:
+
+```
+const signal = new AbortSignal(); // optional
+const logger = new MyLogger(); // optional - see Logger section
+const campaign = await PatreonDownloader.getCampaign('johndoe', signal, logger);
+const tiers = campaign.rewards;
+tiers.forEach((tier) => {
+  console.log(`${tier.id} - ${tier.title}`);
+});
+```
+See [Campaign](./docs/api/interfaces/Campaign.md), [Reward](./docs/api/interfaces/Reward.md).
+
 
 ### Configuring YouTube connection
 

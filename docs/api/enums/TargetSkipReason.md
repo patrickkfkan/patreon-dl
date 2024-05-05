@@ -8,6 +8,7 @@
 
 - [AlreadyDownloaded](TargetSkipReason.md#alreadydownloaded)
 - [Inaccessible](TargetSkipReason.md#inaccessible)
+- [NotInTier](TargetSkipReason.md#notintier)
 - [UnmetMediaTypeCriteria](TargetSkipReason.md#unmetmediatypecriteria)
 
 ## Enumeration Members
@@ -18,7 +19,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L17)
+[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/DownloaderEvent.ts#L17)
 
 ___
 
@@ -28,7 +29,17 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L16)
+[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/DownloaderEvent.ts#L16)
+
+___
+
+### NotInTier
+
+• **NotInTier** = ``3``
+
+#### Defined in
+
+[src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/DownloaderEvent.ts#L19)
 
 ___
 
@@ -38,4 +49,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/DownloaderEvent.ts#L18)
+[src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/DownloaderEvent.ts#L18)

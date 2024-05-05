@@ -27,6 +27,7 @@
 - [on](ProductDownloader.md#on)
 - [once](ProductDownloader.md#once)
 - [start](ProductDownloader.md#start)
+- [getCampaign](ProductDownloader.md#getcampaign)
 - [getInstance](ProductDownloader.md#getinstance)
 
 ## Constructors
@@ -52,7 +53,7 @@
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L49)
+[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L49)
 
 ## Properties
 
@@ -66,7 +67,7 @@
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/ProductDownloader.ts#L17)
+[src/downloaders/ProductDownloader.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/ProductDownloader.ts#L17)
 
 ___
 
@@ -76,7 +77,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/ProductDownloader.ts#L15)
+[src/downloaders/ProductDownloader.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/ProductDownloader.ts#L15)
 
 ## Methods
 
@@ -107,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:440](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L440)
+[src/downloaders/Downloader.ts:450](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L450)
 
 ___
 
@@ -124,7 +125,7 @@ ___
 | `dirNameFormat` | \{ readonly campaign: string; readonly content: string; } |
 | `fileExistsAction` | \{ readonly content: FileExistsAction; readonly info: FileExistsAction; readonly infoAPI: FileExistsAction; } |
 | `filenameFormat` | \{ readonly media: string; } |
-| `include` | \{ readonly lockedContent: boolean; readonly postsWithMediaType: "none" \| "any" \| readonly ("attachment" \| "audio" \| "video" \| "image")[]; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean \| readonly ("audio" \| ... 1 more ... \| "image")[]; readonly contentMedia: boolean \| r... |
+| `include` | \{ readonly lockedContent: boolean; readonly postsWithMediaType: "none" \| "any" \| readonly ("attachment" \| "audio" \| "video" \| "image")[]; readonly postsInTier: readonly string[] \| "any"; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean \| readonly ("audio" \| ... 1 more ...... |
 | `outDir` | `string` |
 | `pathToFFmpeg` | ``null`` \| `string` |
 | `pathToYouTubeCredentials` | ``null`` \| `string` |
@@ -139,7 +140,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:366](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L366)
+[src/downloaders/Downloader.ts:376](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L376)
 
 ___
 
@@ -170,7 +171,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:435](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L435)
+[src/downloaders/Downloader.ts:445](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L445)
 
 ___
 
@@ -201,7 +202,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:425](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L425)
+[src/downloaders/Downloader.ts:435](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L435)
 
 ___
 
@@ -232,7 +233,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:430](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L430)
+[src/downloaders/Downloader.ts:440](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L440)
 
 ___
 
@@ -256,7 +257,33 @@ ___
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/ProductDownloader.ts#L21)
+[src/downloaders/ProductDownloader.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/ProductDownloader.ts#L21)
+
+___
+
+### getCampaign
+
+▸ **getCampaign**(`vanity`, `signal?`, `logger?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `vanity` | `string` |
+| `signal?` | `AbortSignal` |
+| `logger?` | ``null`` \| [`Logger`](Logger.md) |
+
+#### Returns
+
+`Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+
+#### Inherited from
+
+[Downloader](Downloader.md).[getCampaign](Downloader.md#getcampaign)
+
+#### Defined in
+
+[src/downloaders/Downloader.ts:199](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L199)
 
 ___
 
@@ -281,4 +308,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/980a638/src/downloaders/Downloader.ts#L184)
+[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L184)
