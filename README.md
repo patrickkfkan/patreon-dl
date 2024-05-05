@@ -43,11 +43,15 @@ For library usage, see [Configuring YouTube connection](#configuring-youtube-con
 
 ## Installation
 
-```
-npm i -g patreon-dl
-```
+1. First, install [Node.js](https://nodejs.org). 
+2. Then, install [FFmpeg](https://ffmpeg.org) (if you are going to download videos).
+3. Then, in a terminal, run the following command:
 
-The `-g` option is for installing `patreon-dl` globally and have the CLI executable added to the PATH. Depending on your usage, you might not need this.
+   ```
+   $ npm i -g patreon-dl
+   ```
+
+   The `-g` option is for installing `patreon-dl` globally and have the CLI executable added to the PATH. Depending on your usage, you might not need this.
 
 ## CLI usage
 
@@ -594,6 +598,13 @@ Each event emitted by a download task batch has a payload, which is an object wi
 | `complete` | <p>Emitted when the batch is complete and there are no more downloads pending.</p><p>Payload properties: *none*</p> |
 
 ## Changelog
+
+v1.4.0
+- Add ability to filter posts by tier ([#8](https://github.com/patrickkfkan/patreon-dl/issues/8))
+- CLI:
+  - Add `--list-tiers`
+  - Add support for target-specific `include` options
+  - Print summary at the end for multiple target URLs ([#13](https://github.com/patrickkfkan/patreon-dl/issues/13))
 
 v1.3.0
 - Add support for multiple target URLs

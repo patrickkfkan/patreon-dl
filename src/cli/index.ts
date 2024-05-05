@@ -214,7 +214,7 @@ export default class PatreonDownloaderCLI {
       };
 
       const __printDownloaderCreated = () => {
-        console.log(`${EOL}Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
+        commonLog(logger, 'info', `Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
       };
 
       let promptConfirm = true;
