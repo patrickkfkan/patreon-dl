@@ -605,6 +605,12 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.5.0
+- Add support for fetching by user ID instead of creator vanity ([#18](https://github.com/patrickkfkan/patreon-dl/issues/18)):
+  - Support URL format `https://www.patreon.com/user/posts?u=<user_id>`
+  - Overload `PatreonDownloader.getCampaign()` to take `userId` arg
+  - CLI: add `--list-tiers-uid`
+
 v1.4.0
 - Add ability to filter posts by tier ([#8](https://github.com/patrickkfkan/patreon-dl/issues/8))
 - CLI:
