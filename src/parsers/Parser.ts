@@ -190,10 +190,10 @@ export default abstract class Parser {
           id: '-1',
           title: 'Public'
         };
-      default:
+      case 'tier':
         const tierId = ObjectHelper.getProperty(relationships, 'tier.data.id');
         const tierType = ObjectHelper.getProperty(relationships, 'tier.data.type');
-        if (accessRuleType === 'tier' && tierType === 'reward' && tierId) {
+        if (tierType === 'reward' && tierId) {
           const reward = campaign.rewards.find((r) => r.id === tierId);
           if (reward) {
             return {
@@ -202,6 +202,9 @@ export default abstract class Parser {
             };
           }
         }
+        break;
+      default:
+        return null;
     }
     return null;
   }

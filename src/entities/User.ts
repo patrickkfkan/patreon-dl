@@ -10,6 +10,8 @@ export interface User {
   image: SingleImageMediaItem;
   thumbnail: SingleImageMediaItem;
   url: string;
-  vanity: string;
+  vanity: string | null;
   raw: object;
 }
+
+export type UserIdOrVanityParam = { userId: string; vanity?: undefined } | { userId?: undefined; vanity: string };

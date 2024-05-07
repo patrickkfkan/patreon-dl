@@ -24,6 +24,10 @@ export interface PostDownloaderBootstrapData extends BootstrapData {
     vanity: string;
     filters?: Record<string, any>;
   } | {
+    type: 'byUserId';
+    userId: string;
+    filters?: Record<string, any>;
+  } | {
     type: 'byCollection';
     collectionId: string;
     filters?: Record<string, any>;
@@ -58,6 +62,18 @@ export default class Bootstrap {
         postFetch: {
           type: 'byUser',
           vanity: analysis.vanity,
+          filters: analysis.filters
+        }
+      } as PostDownloaderBootstrapData;
+    }
+
+    if (analysis.type === 'postsByUserId') {
+      return {
+        type: 'post',
+        targetURL: url,
+        postFetch: {
+          type: 'byUserId',
+          userId: analysis.userId,
           filters: analysis.filters
         }
       } as PostDownloaderBootstrapData;

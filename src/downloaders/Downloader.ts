@@ -20,6 +20,7 @@ import { AbortError } from 'node-fetch';
 import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
+import { UserIdOrVanityParam } from '../entities/User.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -196,8 +197,13 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     }
   }
 
-  static async getCampaign(vanity: string, signal?: AbortSignal, logger?: Logger | null) {
-    const url = URLHelper.constructUserPostsURL(vanity);
+  static async getCampaign(
+    creator: string | UserIdOrVanityParam,
+    signal?: AbortSignal,
+    logger?: Logger | null
+  ) {
+    // Backwards compatibility - if 'creator' is string type, then it is vanity
+    const url = URLHelper.constructUserPostsURL(typeof creator === 'object' ? creator : { vanity: creator });
     const downloader = await this.getInstance(url, { logger });
     const PostDownloader = (await import('./PostDownloader.js')).default;
     if (downloader instanceof PostDownloader) {

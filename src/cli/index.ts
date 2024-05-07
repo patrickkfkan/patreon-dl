@@ -64,36 +64,49 @@ export default class PatreonDownloaderCLI {
     catch (error) {
       return __printOptionError(error);
     }
-    if (Array.isArray(listTiersTargets)) {
+    if (listTiersTargets) {
+      const { byVanity: vanities, byUserId: userIds } = listTiersTargets;
       let hasError = false;
       const { consoleLogger: consoleLoggerOptions } = getCLILoggerOptions();
       const consoleLogger = new ConsoleLogger(consoleLoggerOptions);
-      for (const target of listTiersTargets) {
-        try {
-          const campaign = await Downloader.getCampaign(target, undefined, consoleLogger);
-          if (campaign) {
-            console.log(`*** Tiers for ${target} ***${EOL}`);
-            const idColWidth = campaign.rewards.reduce<number>((len, reward) => {
-              return Math.max(len, reward.id.length);
-            }, 0);
-            const gap = '    ';
-            console.log(`ID${gap}${' '.repeat(idColWidth - 2)}Title`);
-            console.log('-'.repeat(idColWidth) + gap + '-'.repeat('title'.length));
-            campaign.rewards.forEach((reward) => {
-              console.log(`${reward.id}${' '.repeat(idColWidth - reward.id.length)}${gap}${reward.title || 'Public'}`);
-            });
-            console.log(EOL);
+
+      const __doList = async (targets: string[], targetType: 'vanity' | 'userId') => {
+        for (const target of targets) {
+          try {
+            const campaign = await Downloader.getCampaign(
+              targetType === 'vanity' ? target : { userId: target },
+              undefined,
+              consoleLogger
+            );
+            if (campaign) {
+              const p = targetType === 'userId' ? 'user #' : '';
+              console.log(`*** Tiers for ${p}${target} ***${EOL}`);
+              const idColWidth = campaign.rewards.reduce<number>((len, reward) => {
+                return Math.max(len, reward.id.length);
+              }, 0);
+              const gap = '    ';
+              console.log(`ID${gap}${' '.repeat(idColWidth - 2)}Title`);
+              console.log('-'.repeat(idColWidth) + gap + '-'.repeat('title'.length));
+              campaign.rewards.forEach((reward) => {
+                console.log(`${reward.id}${' '.repeat(idColWidth - reward.id.length)}${gap}${reward.title || 'Public'}`);
+              });
+              console.log(EOL);
+            }
+            else {
+              commonLog(consoleLogger, 'error', null, 'Failed to obtain campaign info');
+              throw Error();
+            }
           }
-          else {
-            commonLog(consoleLogger, 'error', null, 'Failed to obtain campaign info');
-            throw Error();
+          catch (error) {
+            console.error(`${EOL}Error fetching tier data for "${target}"${EOL}${EOL}`);
+            hasError = true;
           }
         }
-        catch (error) {
-          console.error(`${EOL}Error fetching tier data for "${target}"${EOL}${EOL}`);
-          hasError = true;
-        }
-      }
+      };
+
+      await __doList(vanities, 'vanity');
+      await __doList(userIds, 'userId');
+
       return this.exit(hasError ? 1 : 0);
     }
 

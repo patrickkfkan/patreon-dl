@@ -1,5 +1,6 @@
 import path from 'path';
 import { URL } from 'url';
+import { UserIdOrVanityParam } from '../entities';
 
 const SITE_URL = 'https://www.patreon.com';
 const COLLECTION_URL = `${SITE_URL}/collection`;
@@ -40,6 +41,7 @@ const POSTS_API_URL_SEARCH_PARAMS = {
   INCLUDE: [
     'campaign',
     'access_rules',
+    'access_rules.tier.null',
     'attachments',
     'audio',
     'audio_preview.null',
@@ -71,6 +73,10 @@ export type URLAnalysis = {
   vanity: string;
   filters?: Record<string, any>;
 } | {
+  type: 'postsByUserId';
+  userId: string;
+  filters?: Record<string, any>;
+} | {
   type: 'postsByCollection';
   collectionId: string;
   filters?: Record<string, any>;
@@ -92,12 +98,20 @@ export default class URLHelper {
     return urlObj.toString();
   }
 
-  static constructCampaignPageURL(vanity: string) {
-    return `${SITE_URL}/${vanity}`;
+  static constructCampaignPageURL(user: UserIdOrVanityParam) {
+    if (user.vanity) {
+      return `${SITE_URL}/${user.vanity}`;
+    }
+
+    return `${SITE_URL}/user?u=${user.userId}`;
   }
 
-  static constructUserPostsURL(vanity: string) {
-    return `${SITE_URL}/${vanity}/posts`;
+  static constructUserPostsURL(user: UserIdOrVanityParam) {
+    if (user.vanity) {
+      return `${SITE_URL}/${user.vanity}/posts`;
+    }
+
+    return `${SITE_URL}/user/posts?u=${user.userId}`;
   }
 
   static constructCollectionURL(collectionId: string) {
@@ -185,10 +199,21 @@ export default class URLHelper {
     if (postsURLMatch && postsURLMatch[1]) {
       const vanity = postsURLMatch[1];
       const filters = __getFiltersFromSearchParams(searchParams);
-      const result: URLAnalysis & { type: 'postsByUser' } = {
-        type: 'postsByUser',
-        vanity
-      };
+      let result: URLAnalysis & { type: 'postsByUser' | 'postsByUserId' };
+      // Test if match https://www.patreon.com/user/posts?u={userId}
+      const userId = searchParams.get('u')?.trim();
+      if (vanity === 'user' && userId) {
+        result = {
+          type: 'postsByUserId',
+          userId
+        };
+      }
+      else {
+        result = {
+          type: 'postsByUser',
+          vanity
+        };
+      }
       if (Object.keys(filters).length > 0) {
         result.filters = filters;
       }

@@ -20,7 +20,8 @@ const COMMAND_LINE_ARGS = {
   outDir: 'out-dir',
   logLevel: 'log-level',
   noPrompt: 'no-prompt',
-  listTiers: 'list-tiers'
+  listTiers: 'list-tiers',
+  listTiersByUserId: 'list-tiers-uid'
 } as const;
 
 const OPT_DEFS = [
@@ -82,6 +83,12 @@ const OPT_DEFS = [
     description: 'List tiers for the given creator(s). Separate multiple creators with a comma.',
     type: String,
     typeLabel: '<creator>'
+  },
+  {
+    name: COMMAND_LINE_ARGS.listTiersByUserId,
+    description: 'Same as \'--list-tiers\', but takes user ID instead of vanity.',
+    type: String,
+    typeLabel: '<user ID>'
   },
   {
     name: COMMAND_LINE_ARGS.configureYouTube,
@@ -240,25 +247,44 @@ export default class CommandLineParser {
   }
 
   static listTiers() {
-    let opts;
+    let opts: commandLineArgs.CommandLineOptions;
     try {
       opts = this.#parseArgs();
     }
     catch (error) {
-      return false;
+      return null;
     }
-    const listTiers = opts[COMMAND_LINE_ARGS.listTiers];
-    if (listTiers === null) {
-      throw Error('\'--list-tiers\' missing value');
-    }
-    else if (typeof listTiers === 'string') {
-      const targets = listTiers.split(',').map((v) => v.trim()).filter((v) => v);
-      if (targets.length === 0) {
-        throw Error('\'--list-tiers\' has invalid value');
+
+    const __getTargets = (opt: '--list-tiers' | '--list-tiers-uid') => {
+      const listTiers = opt === '--list-tiers' ? opts[COMMAND_LINE_ARGS.listTiers] : opts[COMMAND_LINE_ARGS.listTiersByUserId];
+      if (listTiers === null) { // Option provided but has empty value
+        return null;
       }
-      return targets;
+      else if (typeof listTiers === 'string') {
+        const targets = listTiers.split(',').map((v) => v.trim()).filter((v) => v);
+        if (targets.length === 0) {
+          throw Error(`'${opt}' has invalid value`);
+        }
+        return targets;
+      }
+      return false;
+    };
+
+    const vanities = __getTargets('--list-tiers');
+    const userIds = __getTargets('--list-tiers-uid');
+    if (vanities === null || userIds === null) {
+      const opt = vanities === null ? '--list-tiers' : '--list-tiers-uid';
+      throw Error(`'${opt}' missing value`);
     }
-    return false;
+
+    if (vanities === false && userIds === false) {
+      return null;
+    }
+
+    return {
+      byVanity: vanities || [],
+      byUserId: userIds || []
+    };
   }
 
   static #parseArgs() {
