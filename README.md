@@ -71,6 +71,7 @@ $ patreon-dl [OPTION]... URL
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
 | `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |
 | <code><nobr>--list-tiers &lt;creator&gt;</nobr></code> | | <p>List tiers for the given creator(s). Separate multiple creators with a comma.</p>The purpose of this is to let you find out what tier IDs to set for `posts.in.tier` filtering option under `include` section of [configuration file](#configuration-file). |
+| <code><nobr>--list-tiers-uid &lt;user ID&gt;</nobr></code> | | Same as `--list-tiers`, but takes user ID instead of vanity. |
 | `--configure-youtube` | | <p>Configure YouTube connection.</p>`patreon-dl` supports downloading embedded YouTube videos. If you have a YouTube Premium account, you can connect `patreon-dl` to it for downloading Premium-quality streams. |
 
 ### URL
@@ -83,6 +84,7 @@ https://www.patreon.com/<creator>/shop/<slug>-<product_id>
 
 // Download posts by creator
 https://www.patreon.com/<creator>/posts
+https://www.patreon.com/user/posts?u=<user_id>
 
 // Dowload a single post
 https://www.patreon.com/posts/<slug>-<post_id>
@@ -317,6 +319,10 @@ To obtain the IDs of tiers for a particular creator, first get the campaign thro
 const signal = new AbortSignal(); // optional
 const logger = new MyLogger(); // optional - see Logger section
 const campaign = await PatreonDownloader.getCampaign('johndoe', signal, logger);
+
+// Sometimes a creator is identified only by user ID, in which case you would do this:
+// const campaign = await PatreonDownloader.getCampaign({ userId: '80821958' }, signal, logger);
+
 const tiers = campaign.rewards;
 tiers.forEach((tier) => {
   console.log(`${tier.id} - ${tier.title}`);

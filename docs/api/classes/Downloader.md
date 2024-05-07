@@ -68,7 +68,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L49)
+[src/downloaders/Downloader.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L50)
 
 ## Properties
 
@@ -78,7 +78,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L41)
+[src/downloaders/Downloader.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L42)
 
 ## Methods
 
@@ -109,7 +109,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:450](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L450)
+[src/downloaders/Downloader.ts:456](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L456)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:376](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L376)
+[src/downloaders/Downloader.ts:382](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L382)
 
 ___
 
@@ -154,7 +154,7 @@ EventEmitter.off
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:445](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L445)
+[src/downloaders/Downloader.ts:451](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L451)
 
 ___
 
@@ -185,7 +185,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:435](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L435)
+[src/downloaders/Downloader.ts:441](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L441)
 
 ___
 
@@ -216,7 +216,7 @@ EventEmitter.once
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:440](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L440)
+[src/downloaders/Downloader.ts:446](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L446)
 
 ___
 
@@ -236,19 +236,19 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L182)
+[src/downloaders/Downloader.ts:183](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L183)
 
 ___
 
 ### getCampaign
 
-▸ **getCampaign**(`vanity`, `signal?`, `logger?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+▸ **getCampaign**(`creator`, `signal?`, `logger?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `vanity` | `string` |
+| `creator` | `string` \| [`UserIdOrVanityParam`](../README.md#useridorvanityparam) |
 | `signal?` | `AbortSignal` |
 | `logger?` | ``null`` \| [`Logger`](Logger.md) |
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:199](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L199)
+[src/downloaders/Downloader.ts:200](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L200)
 
 ___
 
@@ -279,4 +279,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:184](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L184)
+[src/downloaders/Downloader.ts:185](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L185)

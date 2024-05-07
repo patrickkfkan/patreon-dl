@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/utils/logging/Logger.ts#L12)
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/utils/logging/Logger.ts#L12)
 
 ___
 
@@ -63,4 +63,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/utils/logging/Logger.ts#L10)
+[src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/utils/logging/Logger.ts#L10)

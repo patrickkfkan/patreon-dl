@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Downloader.ts#L29)
+[src/downloaders/Downloader.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L30)

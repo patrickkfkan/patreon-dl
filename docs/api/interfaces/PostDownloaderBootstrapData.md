@@ -20,11 +20,11 @@
 
 ### postFetch
 
-• **postFetch**: \{ `postId`: `string` ; `type`: ``"single"``  } \| \{ `filters?`: `Record`\<`string`, `any`\> ; `type`: ``"byUser"`` ; `vanity`: `string`  } \| \{ `collectionId`: `string` ; `filters?`: `Record`\<`string`, `any`\> ; `type`: ``"byCollection"``  }
+• **postFetch**: \{ `postId`: `string` ; `type`: ``"single"``  } \| \{ `filters?`: `Record`\<`string`, `any`\> ; `type`: ``"byUser"`` ; `vanity`: `string`  } \| \{ `filters?`: `Record`\<`string`, `any`\> ; `type`: ``"byUserId"`` ; `userId`: `string`  } \| \{ `collectionId`: `string` ; `filters?`: `Record`\<`string`, `any`\> ; `type`: ``"byCollection"``  }
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Bootstrap.ts#L19)
+[src/downloaders/Bootstrap.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Bootstrap.ts#L19)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Bootstrap.ts#L9)
+[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Bootstrap.ts#L9)
 
 ___
 
@@ -52,4 +52,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7326660/src/downloaders/Bootstrap.ts#L18)
+[src/downloaders/Bootstrap.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Bootstrap.ts#L18)
