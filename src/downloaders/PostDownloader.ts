@@ -167,7 +167,7 @@ export default class PostDownloader extends Downloader<Post> {
             const hasAttachments = post.attachments.length > 0;
             const hasAudio = !!post.audio || !!post.audioPreview;
             const hasImages = post.images.length > 0;
-            const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && isYouTubeEmbed(post.embed));
+            const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && post.embed.type === 'videoEmbed');
 
             let skip = false;
             if (postsWithMediaType === 'none') {
