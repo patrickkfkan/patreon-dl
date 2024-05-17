@@ -62,6 +62,9 @@ const CONFIG_FILE_PROPS = {
     },
     dateTimeFormat: ':date.time.format',
     color: ':color'
+  },
+  embedDownloader: {
+    exec: ':exec'
   }
 };
 
@@ -126,13 +129,14 @@ export default class ConfigFileParser {
         dateTimeFormat: __getValue(CONFIG_FILE_PROPS.consoleLogger.dateTimeFormat),
         color: __getValue(CONFIG_FILE_PROPS.consoleLogger.color)
       },
-      fileLoggers: this.#parseFileLoggerOptions(parser)
+      fileLoggers: this.#parseFileLoggerOptions(parser),
+      embedDownloaders: this.#parseEmbedDownloaderOptions(parser)
     };
   }
 
   static #getValueFromConfigParser(parser: ConfigParser, prop: string): CLIOptionParserEntry | undefined {
     const [ section, key ] = prop.split(':');
-    let value = parser.get(section, key)?.trim();
+    let value = parser.get(section, key, true)?.trim();
     if (value && value.startsWith('"') && value.endsWith('"')) {
       value = value.substring(1, value.length - 1);
     }
@@ -174,5 +178,30 @@ export default class ConfigFileParser {
     }, []);
 
     return loggers.length > 0 ? loggers : undefined;
+  }
+
+  static #parseEmbedDownloaderOptions(parser: ConfigParser) {
+    const __getValue = (section: string, prop: string): CLIOptionParserEntry | undefined => {
+      return this.#getValueFromConfigParser(parser, `${section}${prop}`);
+    };
+
+    const sections = parser.sections().filter((section) => section.startsWith('embed.downloader.'));
+    const prefixLength = 'embed.downloader.'.length;
+    const embedDownloaders = sections.reduce<NonNullable<ConfigFileParseResult['embedDownloaders']>>((result, section) => {
+      const provider = section.substring(prefixLength).trim().toLowerCase();
+      if (!provider) {
+        throw Error('Config file section \'embed.downloader.<provider>\' is missing the provider name');
+      }
+      if (result.find((dl) => dl.provider?.value === provider)) {
+        throw Error(`Duplicate config file section 'embed.downloader.${provider}`);
+      }
+      result.push({
+        provider: { src: 'cfg', section: `embed.downloader.${provider}`, key: 'provider', value: provider },
+        exec: __getValue(section, CONFIG_FILE_PROPS.embedDownloader.exec)
+      });
+      return result;
+    }, []);
+
+    return embedDownloaders.length > 0 ? embedDownloaders : undefined;
   }
 }

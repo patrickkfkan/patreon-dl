@@ -266,4 +266,15 @@ export default class URLHelper {
     const urlObj = new URL(url);
     return path.extname(urlObj.pathname.split('/').pop() || '');
   }
+
+  static validateURL(url: any) {
+    let urlObj;
+    try {
+      urlObj = new URL(url);
+    }
+    catch (error) {
+      return false;
+    }
+    return !!urlObj;
+  }
 }

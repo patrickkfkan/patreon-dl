@@ -16,7 +16,7 @@ export default class Formatter {
     let result = '';
 
     const fieldRegex = this.#getFieldRegex(Object.keys(dict));
-    const emptyValuePlaceHolder = '//';
+    const emptyValuePlaceHolder = '/%NULL%/';
     const emptyValAdjCondSepRegex = /\[[^[]*?]\?\s*?\/\/\s*?\[.*?\]\?|\[[^[]*?]\?\s*?\/\/|\/\/\s*?\[.*?]\?/g;
     const condSepRegex = /\[(.*?)]\?/g;
 

@@ -12,7 +12,8 @@
     "doc": "npx typedoc"
   },
   "bin": {
-    "patreon-dl": "./bin/patreon-dl.js"
+    "patreon-dl": "./bin/patreon-dl.js",
+    "patreon-dl-vimeo": "./bin/patreon-dl-vimeo.js"
   },
   "author": "Patrick Kan <patrickkfkan@gmail.com> (https://github.com/patrickkfkan)",
   "repository": {
@@ -72,6 +73,8 @@
     "prompt-sync": "^4.2.0",
     "sanitize-filename": "^1.6.3",
     "semver": "^7.5.4",
+    "string-argv": "^0.3.2",
+    "yargs-parser": "^21.1.1",
     "youtubei.js": "^9.1.0"
   },
   "keywords": [

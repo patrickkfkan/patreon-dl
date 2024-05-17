@@ -21,6 +21,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import { UserIdOrVanityParam } from '../entities/User.js';
+import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -89,7 +90,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
     batch.on('taskStart', ({task}) => {
       const retryOrBeginStr = task.retryCount > 0 ? 'retry' : 'begin';
-      this.log('info', `Download ${retryOrBeginStr} (${__getDownloadIdString(task, batch)}): [type: ${task.srcEntity.type}; ID: #${task.srcEntity.id}] -> ${task.resolvedDestFilename}`);
+      const isExternal = task instanceof ExternalDownloaderTask;
+      const destStr = isExternal ? ' -> Unknown destination (external process)' : task.resolvedDestFilename ? ` -> ${task.resolvedDestFilename}` : '';
+      this.log('info', `Download ${retryOrBeginStr} (${__getDownloadIdString(task, batch)}): [type: ${task.srcEntity.type}; ID: #${task.srcEntity.id}]${destStr}`);
       if (task instanceof FFmpegDownloadTaskBase) {
         const retryOrBeginStr = task.retryCount > 0 ? 'Retry' : 'Begin';
         this.log('info', `${retryOrBeginStr} downloading through FFmpeg (${__getDownloadIdString(task, batch)}): ${task.commandLine}`);
@@ -97,13 +100,15 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     });
 
     batch.on('taskComplete', ({task}) => {
-      this.log('info', `Download complete (${__getDownloadIdString(task, batch)}): "${task.resolvedDestPath}"`);
+      const isExternal = task instanceof ExternalDownloaderTask;
+      const destStr = isExternal ? ': Unknown destination (external process)' : task.resolvedDestPath ? `: "${task.resolvedDestPath}"` : '';
+      this.log('info', `Download complete (${__getDownloadIdString(task, batch)})${destStr}"`);
     });
 
     batch.on('taskError', ({error, willRetry}) => {
-      const { task, cause } = error;
+      const { task, cause, message } = error;
       const retryStr = willRetry ? '- will retry' : '';
-      this.log('error', `Download error (${__getDownloadIdString(task, batch)}):`, cause, `(${task.src})`, retryStr);
+      this.log('error', `Download error (${__getDownloadIdString(task, batch)}):`, cause || message, `(${task.src})`, retryStr);
     });
 
     batch.on('taskAbort', ({task}) => {
@@ -156,6 +161,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             item: tt,
             destDir,
             fetcher: this.fetcher,
+            embedDownloaders: this.config.embedDownloaders,
             destFilenameFormat: this.config.filenameFormat.media,
             fileExistsAction: task.fileExistsAction,
             maxRetries: this.config.request.maxRetries,

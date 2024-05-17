@@ -4,11 +4,12 @@ import Fetcher from '../../utils/Fetcher.js';
 import MediaFilenameResolver from '../../utils/MediaFilenameResolver.js';
 import DownloadTask, { DownloadTaskCallbacks } from './DownloadTask.js';
 import FetcherDownloadTask from './FetcherDownloadTask.js';
-import { Downloadable } from '../../entities/Downloadable.js';
+import { Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
 import AttachmentFilenameResolver from '../../utils/AttachmentFilenameResolver.js';
-import { FileExistsAction } from '../DownloaderOptions.js';
+import { EmbedDownloader, FileExistsAction } from '../DownloaderOptions.js';
 import Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
+import ExternalDownloaderTask from './ExternalDownloaderTask.js';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -51,6 +52,7 @@ export default class DownloadTaskFactory {
     item: Downloadable,
     destDir: string,
     fetcher: Fetcher,
+    embedDownloaders: EmbedDownloader[],
     destFilenameFormat: string,
     fileExistsAction: FileExistsAction,
     downloadAllVariants: boolean,
@@ -63,6 +65,7 @@ export default class DownloadTaskFactory {
       item,
       destDir,
       fetcher,
+      embedDownloaders,
       destFilenameFormat,
       fileExistsAction,
       downloadAllVariants,
@@ -151,8 +154,17 @@ export default class DownloadTaskFactory {
 
     const tasks: DownloadTask[] = [];
     for (const [ variant, url ] of Object.entries(srcURLs)) {
-      if (item.type === 'videoEmbed') {
-        if (url) {
+      if (isEmbed(item)) {
+        // Check if external downloader configured for embed item
+        const embedDownloader = this.findEmbedDownloader(embedDownloaders, item.provider);
+        if (embedDownloader) {
+          const task = ExternalDownloaderTask.fromEmbedDownloader(embedDownloader, item, destDir, callbacks || null, logger);
+          if (task) {
+            tasks.push(task);
+          }
+        }
+        // Use our own implementation if no external downloader configured for YT embeds
+        else if (item.type === 'videoEmbed' && isYouTubeEmbed(item) && url) {
           tasks.push(new YouTubeDownloadTask({
             src: url,
             maxRetries,
@@ -207,6 +219,7 @@ export default class DownloadTaskFactory {
           item: videoThumbnailMediaItem,
           destDir,
           fetcher,
+          embedDownloaders,
           destFilenameFormat,
           fileExistsAction,
           downloadAllVariants: true, // Ensure variant name ('thumbnail') appears in dest filename
@@ -235,4 +248,7 @@ export default class DownloadTaskFactory {
     return {};
   }
 
+  static findEmbedDownloader(edl: EmbedDownloader[], provider?: string | null) {
+    return edl.find((dl) => dl.provider.toLowerCase() === provider?.trim().toLowerCase());
+  }
 }

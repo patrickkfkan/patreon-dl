@@ -77,6 +77,7 @@ export function getCLIOptions(): CLIOptions {
       info: CLIOptionValidator.validateString(pickDefined(commandLineOptions.fileExistsAction?.info, configFileOptions?.fileExistsAction?.info), 'overwrite', 'skip', 'saveAsCopy', 'saveAsCopyIfNewer'),
       infoAPI: CLIOptionValidator.validateString(pickDefined(commandLineOptions.fileExistsAction?.infoAPI, configFileOptions?.fileExistsAction?.infoAPI), 'overwrite', 'skip', 'saveAsCopy', 'saveAsCopyIfNewer')
     },
+    embedDownloaders: getEmbedDownloaderOptions(configFileOptions),
     noPrompt: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.noPrompt, configFileOptions?.noPrompt)) || false,
     consoleLogger,
     fileLoggers
@@ -139,6 +140,16 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
     contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
     allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants))
   };
+}
+
+function getEmbedDownloaderOptions(configFileOptions?: ConfigFileParseResult | null) {
+  if (configFileOptions?.embedDownloaders) {
+    return configFileOptions?.embedDownloaders.map((dl) => ({
+      provider: CLIOptionValidator.validateRequired(dl.provider),
+      exec: CLIOptionValidator.validateRequired(dl.exec)
+    }));
+  }
+  return undefined;
 }
 
 function readTargetsFile(file: string) {

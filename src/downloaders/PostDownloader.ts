@@ -12,6 +12,7 @@ import StatusCache from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
+import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -640,12 +641,14 @@ export default class PostDownloader extends Downloader<Post> {
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      __incContent('video') && post.embed && isYouTubeEmbed(post.embed) ? {
-        target: [ post.embed ],
-        targetName: `post #${post.id} -> embedded YouTube video`,
-        destDir: postDirs.embed,
-        fileExistsAction: this.config.fileExistsAction.content
-      } : null
+      __incContent('video') && post.embed &&
+        (isYouTubeEmbed(post.embed) || DownloadTaskFactory.findEmbedDownloader(this.config.embedDownloaders, post.embed.provider)) ?
+        {
+          target: [ post.embed ],
+          targetName: `post #${post.id} -> embedded ${post.embed.provider} video`,
+          destDir: postDirs.embed,
+          fileExistsAction: this.config.fileExistsAction.content
+        } : null
     );
 
     return batch;

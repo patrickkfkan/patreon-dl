@@ -15,6 +15,11 @@ export interface DownloaderIncludeOptions {
   allMediaVariants?: boolean;
 }
 
+export interface EmbedDownloader {
+  provider: string;
+  exec: string;
+}
+
 export interface DownloaderOptions {
   cookie?: string;
   useStatusCache?: boolean;
@@ -38,7 +43,8 @@ export interface DownloaderOptions {
     content?: FileExistsAction;
     info?: FileExistsAction;
     infoAPI?: FileExistsAction;
-  }
+  };
+  embedDownloaders?: EmbedDownloader[];
   logger?: Logger | null;
 }
 
@@ -51,7 +57,8 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'filenameFormat' |
   'include' |
   'request' |
-  'fileExistsAction'>>;
+  'fileExistsAction' |
+  'embedDownloaders'>>;
 
 const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   outDir: process.cwd(),
@@ -84,7 +91,8 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
     content: 'skip',
     info: 'saveAsCopyIfNewer',
     infoAPI: 'overwrite'
-  }
+  },
+  embedDownloaders: []
 };
 
 export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
@@ -120,7 +128,8 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       content: options?.fileExistsAction?.content || defaults.fileExistsAction.content,
       info: options?.fileExistsAction?.info || defaults.fileExistsAction.info,
       infoAPI: options?.fileExistsAction?.infoAPI || defaults.fileExistsAction.infoAPI
-    }
+    },
+    embedDownloaders: pickDefined(options?.embedDownloaders, defaults.embedDownloaders)
   };
 }
 
