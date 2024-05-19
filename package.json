@@ -48,6 +48,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@patrickkfkan/cross-spawn": "^7.1.0",
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
     "@types/progress-stream": "^2.0.3",

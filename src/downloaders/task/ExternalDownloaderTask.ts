@@ -1,10 +1,11 @@
+import { ChildProcess } from 'child_process';
 import { PostEmbed } from '../../entities/Post.js';
 import Formatter from '../../utils/Formatter.js';
 import URLHelper from '../../utils/URLHelper.js';
 import Logger, { LogLevel } from '../../utils/logging/Logger.js';
 import { EmbedDownloader } from '../DownloaderOptions.js';
 import DownloadTask, { DownloadTaskCallbacks, DownloadTaskParams } from './DownloadTask.js';
-import { ChildProcess, spawn } from 'child_process';
+import spawn from '@patrickkfkan/cross-spawn';
 import stringArgv from 'string-argv';
 
 export interface ExternalDownloaderTaskParams extends DownloadTaskParams {
@@ -50,11 +51,11 @@ export default class ExternalDownloaderTask extends DownloadTask {
         let resolved = false;
         let lastErrMsg: string | null = null;
 
-        proc.stdout.on('data', (data) => {
+        proc.stdout?.on('data', (data) => {
           this.log('debug', `[pid ${proc.pid}] stdout:`, data.toString());
         });
 
-        proc.stderr.on('data', (data) => {
+        proc.stderr?.on('data', (data) => {
           this.log('warn', `[pid ${proc.pid}] stderr:`, data.toString());
           lastErrMsg = data;
         });
@@ -116,6 +117,8 @@ export default class ExternalDownloaderTask extends DownloadTask {
       .finally(() => {
         if (this.#proc) {
           this.#proc.removeAllListeners();
+          this.#proc.stdout?.removeAllListeners();
+          this.#proc.stderr?.removeAllListeners();
           this.#proc = null;
         }
         this.#abortController = null;

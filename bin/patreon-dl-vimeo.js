@@ -24,7 +24,7 @@
  */
 
 import parseArgs from 'yargs-parser';
-import { spawn } from 'child_process';
+import spawn from '@patrickkfkan/cross-spawn';
 import path from 'path';
 
 function tryGetPlayerURL(html) {
@@ -70,11 +70,11 @@ async function download(url, o, videoPassword, ytdlpPath) {
       console.log(`Command: ${getCommandString(ytdlp, printArgs)}`);
       proc = spawn(ytdlp, args);
 
-      proc.stdout.on('data', (data) => {
+      proc.stdout?.on('data', (data) => {
         console.log(data.toString());
       });
 
-      proc.stderr.on('data', (data_1) => {
+      proc.stderr?.on('data', (data_1) => {
         console.error(data_1.toString());
       });
 
@@ -97,6 +97,8 @@ async function download(url, o, videoPassword, ytdlpPath) {
   } finally {
     if (proc) {
       proc.removeAllListeners();
+      proc.stdout?.removeAllListeners();
+      proc.stderr?.removeAllListeners();
     }
   }
 }

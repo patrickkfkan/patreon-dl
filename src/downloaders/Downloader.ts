@@ -102,7 +102,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     batch.on('taskComplete', ({task}) => {
       const isExternal = task instanceof ExternalDownloaderTask;
       const destStr = isExternal ? ': Unknown destination (external process)' : task.resolvedDestPath ? `: "${task.resolvedDestPath}"` : '';
-      this.log('info', `Download complete (${__getDownloadIdString(task, batch)})${destStr}"`);
+      this.log('info', `Download complete (${__getDownloadIdString(task, batch)})${destStr}`);
     });
 
     batch.on('taskError', ({error, willRetry}) => {
