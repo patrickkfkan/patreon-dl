@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/entities/Attachment.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Attachment.ts#L3)
+[src/entities/Attachment.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Attachment.ts#L3)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[src/entities/Attachment.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Attachment.ts#L4)
+[src/entities/Attachment.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Attachment.ts#L4)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/entities/Attachment.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Attachment.ts#L2)
+[src/entities/Attachment.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Attachment.ts#L2)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[src/entities/Attachment.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Attachment.ts#L5)
+[src/entities/Attachment.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Attachment.ts#L5)

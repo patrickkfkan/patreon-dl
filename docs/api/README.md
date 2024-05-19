@@ -36,6 +36,7 @@ patreon-dl
 - [DownloaderOptions](interfaces/DownloaderOptions.md)
 - [DownloaderStartParams](interfaces/DownloaderStartParams.md)
 - [DummyMediaItem](interfaces/DummyMediaItem.md)
+- [EmbedDownloader](interfaces/EmbedDownloader.md)
 - [FileLoggerConfig](interfaces/FileLoggerConfig.md)
 - [FileLoggerInit](interfaces/FileLoggerInit.md)
 - [FileLoggerOptions](interfaces/FileLoggerOptions.md)
@@ -94,7 +95,7 @@ patreon-dl
 
 #### Defined in
 
-[src/utils/Misc.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/utils/Misc.ts#L2)
+[src/utils/Misc.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/utils/Misc.ts#L2)
 
 ___
 
@@ -104,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatchEvent.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTaskBatchEvent.ts#L3)
+[src/downloaders/task/DownloadTaskBatchEvent.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatchEvent.ts#L3)
 
 ___
 
@@ -120,7 +121,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatchEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTaskBatchEvent.ts#L50)
+[src/downloaders/task/DownloadTaskBatchEvent.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatchEvent.ts#L50)
 
 ___
 
@@ -130,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L17)
+[src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L17)
 
 ___
 
@@ -140,17 +141,17 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L55)
+[src/downloaders/task/DownloadTask.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L55)
 
 ___
 
 ### Downloadable
 
-Ƭ **Downloadable**: [`MediaItem`](README.md#mediaitem) \| [`Attachment`](interfaces/Attachment.md) \| [`YouTubePostEmbed`](README.md#youtubepostembed)
+Ƭ **Downloadable**: [`MediaItem`](README.md#mediaitem) \| [`Attachment`](interfaces/Attachment.md) \| [`PostEmbed`](interfaces/PostEmbed.md)
 
 #### Defined in
 
-[src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Downloadable.ts#L5)
+[src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Downloadable.ts#L5)
 
 ___
 
@@ -166,7 +167,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Bootstrap.ts#L37)
+[src/downloaders/Bootstrap.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Bootstrap.ts#L37)
 
 ___
 
@@ -182,7 +183,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Downloader.ts#L25)
+[src/downloaders/Downloader.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L26)
 
 ___
 
@@ -192,7 +193,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/DownloaderEvent.ts#L6)
+[src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderEvent.ts#L6)
 
 ___
 
@@ -208,17 +209,17 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:67](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/DownloaderEvent.ts#L67)
+[src/downloaders/DownloaderEvent.ts:67](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderEvent.ts#L67)
 
 ___
 
 ### DownloaderInit
 
-Ƭ **DownloaderInit**: [`DeepRequired`](README.md#deeprequired)\<`Pick`\<[`DownloaderOptions`](interfaces/DownloaderOptions.md), ``"outDir"`` \| ``"useStatusCache"`` \| ``"pathToFFmpeg"`` \| ``"pathToYouTubeCredentials"`` \| ``"dirNameFormat"`` \| ``"filenameFormat"`` \| ``"include"`` \| ``"request"`` \| ``"fileExistsAction"``\>\>
+Ƭ **DownloaderInit**: [`DeepRequired`](README.md#deeprequired)\<`Pick`\<[`DownloaderOptions`](interfaces/DownloaderOptions.md), ``"outDir"`` \| ``"useStatusCache"`` \| ``"pathToFFmpeg"`` \| ``"pathToYouTubeCredentials"`` \| ``"dirNameFormat"`` \| ``"filenameFormat"`` \| ``"include"`` \| ``"request"`` \| ``"fileExistsAction"`` \| ``"embedDownloaders"``\>\>
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:45](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/DownloaderOptions.ts#L45)
+[src/downloaders/DownloaderOptions.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderOptions.ts#L51)
 
 ___
 
@@ -228,7 +229,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/Bootstrap.ts#L5)
+[src/downloaders/Bootstrap.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Bootstrap.ts#L5)
 
 ___
 
@@ -238,7 +239,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/DownloaderOptions.ts#L5)
+[src/downloaders/DownloaderOptions.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderOptions.ts#L5)
 
 ___
 
@@ -254,7 +255,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/MediaItem.ts#L71)
+[src/entities/MediaItem.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/MediaItem.ts#L71)
 
 ___
 
@@ -264,7 +265,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/MediaItem.ts#L8)
+[src/entities/MediaItem.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/MediaItem.ts#L8)
 
 ___
 
@@ -274,7 +275,7 @@ ___
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/utils/logging/Logger.ts#L1)
+[src/utils/logging/Logger.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/utils/logging/Logger.ts#L1)
 
 ___
 
@@ -284,7 +285,7 @@ ___
 
 #### Defined in
 
-[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/MediaItem.ts#L118)
+[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/MediaItem.ts#L118)
 
 ___
 
@@ -294,7 +295,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L16)
+[src/entities/Reward.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L16)
 
 ___
 
@@ -304,7 +305,7 @@ ___
 
 #### Defined in
 
-[src/entities/User.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/User.ts#L17)
+[src/entities/User.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/User.ts#L17)
 
 ___
 
@@ -314,4 +315,4 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:103](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Post.ts#L103)
+[src/entities/Post.ts:104](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L104)

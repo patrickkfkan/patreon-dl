@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L8)
+[src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L8)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L9)
+[src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L9)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L7)
+[src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L7)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L11)
+[src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L11)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L5)
+[src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L5)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L12)
+[src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L12)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L10)
+[src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L10)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L6)
+[src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L6)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L4)
+[src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L4)
 
 ___
 
@@ -115,4 +115,4 @@ ___
 
 #### Defined in
 
-[src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/entities/Reward.ts#L13)
+[src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Reward.ts#L13)

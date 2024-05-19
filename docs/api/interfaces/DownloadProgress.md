@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L28)
+[src/downloaders/task/DownloadTask.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L28)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L27)
+[src/downloaders/task/DownloadTask.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L27)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L30)
+[src/downloaders/task/DownloadTask.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L30)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L31)
+[src/downloaders/task/DownloadTask.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L31)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L29)
+[src/downloaders/task/DownloadTask.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L29)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L32)
+[src/downloaders/task/DownloadTask.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L32)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L33)
+[src/downloaders/task/DownloadTask.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L33)
 
 ___
 
@@ -93,4 +93,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/d381b32/src/downloaders/task/DownloadTask.ts#L34)
+[src/downloaders/task/DownloadTask.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTask.ts#L34)
