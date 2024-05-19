@@ -13,6 +13,9 @@ A Patreon downloader written in [Node.js](https://nodejs.org).
     - images
     - audio
     - attachments
+    - embedded videos
+      - YouTube downloader built-in
+      - Supports [external downloader](#embedded-videos---external-downloader)
 - Save campaign and content info 
 - Extensively configurable
 
@@ -20,8 +23,7 @@ You can run `patreon-dl` from the command-line or use it as a library for your p
 
 ### Limitations
 
-- Embedded videos, other than those from YouTube, are not supported (e.g. Vimeo). Only info about these embeds is saved.
-- Likewise, embedded links are not followed; only info about the embed is saved.
+- Embedded links are not followed; only info about the embed is saved.
 
 ### FFmpeg dependency
 
@@ -40,6 +42,14 @@ $ patreon-dl --configure-youtube
 ```
 
 For library usage, see [Configuring YouTube connection](#configuring-youtube-connection).
+
+> ...or you may just refer to the next section on how to download enhanecd-quality videos without a Premium account.
+
+### Embedded videos - external downloader
+
+You can specify external programs to download embedded videos. For YouTube videos, this will replace the built-in downloader. See the [example config](./example-embed.conf) on how to do this. For library usage, see [External downloaders](#external-downloaders).
+
+> The example config utilizes [yt-dlp](https://github.com/yt-dlp/yt-dlp), a popular program capable of downloading YouTube and Vimeo content. As of current release, `yt-dlp` is also able to download Premium-quality YouTube videos without a Premium account.
 
 ## Installation
 
@@ -356,6 +366,7 @@ For example usage of `exec`, see [example-embed.conf](./example-embed.conf).
 
 > External downloaders are not subject to `request.maxRetries` and `fileExistsAction` settings. This is because `patreon-dl` has no control over the downloading process nor knowledge about the outcome of it (including where and under what name the file was saved).
 
+
 ### Configuring YouTube connection
 
 In its simplest form, the process of connecting `patreon-dl` to a YouTube account is as follows:
@@ -629,6 +640,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 | `complete` | <p>Emitted when the batch is complete and there are no more downloads pending.</p><p>Payload properties: *none*</p> |
 
 ## Changelog
+
+v1.6.0
+- Add external downloader support for embedded videos
 
 v1.5.0
 - Add support for fetching by user ID instead of creator vanity ([#18](https://github.com/patrickkfkan/patreon-dl/issues/18)):
