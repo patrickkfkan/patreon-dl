@@ -641,6 +641,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.6.1
+- Fix file extension sometimes missing ([#20](https://github.com/patrickkfkan/patreon-dl/issues/20))
+
 v1.6.0
 - Add external downloader support for embedded videos
 
