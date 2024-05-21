@@ -58,7 +58,7 @@ export default abstract class FilenameResolver<T> {
       'application/octet-stream',
       'text/plain'
     ];
-    if (undeterminable.filter((v) => type.includes(v))) {
+    if (undeterminable.find((v) => type.includes(v))) {
       return '';
     }
     const extFromURL = URLHelper.getExtensionFromURL(this.srcURL);
