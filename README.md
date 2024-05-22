@@ -641,6 +641,9 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.6.2
+- Fix 'campaign ID not found' error due to Patreon changes
+
 v1.6.1
 - Fix file extension sometimes missing ([#20](https://github.com/patrickkfkan/patreon-dl/issues/20))
 
