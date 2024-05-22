@@ -507,8 +507,8 @@ export default class PostDownloader extends Downloader<Post> {
       }
       throw Error();
     }
-    const campaignId = ObjectHelper.getProperty(initialData, 'bootstrap.campaign.data.id');
-    const currentUserId = ObjectHelper.getProperty(initialData, 'bootstrap.currentUser.data.id');
+    const campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
+    const currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
     this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
     if (!campaignId) {
       const err = Error(`Campaign ID not found in initial data of "${url}"`);
