@@ -356,6 +356,7 @@ export default class PostDownloader extends Downloader<Post> {
             this.log('debug', `Request next batch of posts from API URL "${collection.nextURL}`);
             this.emit('fetchBegin', { targetType: 'posts' });
             try {
+              postsAPIURL = collection.nextURL;
               json = await this.#requestPosts(collection.nextURL, signal, resolve, resolve);
             }
             catch (error) {
