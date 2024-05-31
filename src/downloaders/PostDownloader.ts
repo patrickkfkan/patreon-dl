@@ -67,7 +67,7 @@ export default class PostDownloader extends Downloader<Post> {
         }
       }
 
-      // Step 1: Get initial posts (if by user) or target post
+      // Step 1: Get posts (if by user) or target post
       let postsAPIURL: string;
       try {
         postsAPIURL = await this.#getInitialPostsAPIUL(signal, resolve, resolve);
@@ -85,26 +85,59 @@ export default class PostDownloader extends Downloader<Post> {
         this.log('debug', `Request post #${postFetch.postId} from API URL "${postsAPIURL}`);
         this.emit('fetchBegin', { targetType: 'post' });
       }
-      let json;
-      try {
-        json = await this.#requestPosts(postsAPIURL, signal, resolve, resolve);
-      }
-      catch (error) {
+
+      const { json, error: requestAPIError } = await this.commonFetchAPI(postsAPIURL, signal);
+      if (!json) {
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+        this.log('error', 'Failed to fetch posts');
+        this.log('warn', 'End with error');
+        this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
+        resolve();
         return;
       }
 
-      // Step 2: parse, download and, if targeting posts by user, repeat for next batch
       const postsParser = new PostParser(this.logger);
-      let total: number | null = null;
+      const collections = [ postsParser.parsePostsAPIResponse(json, postsAPIURL) ];
+      const total = collections[0].total;
+      if (this.#isFetchingMultiplePosts(postFetch)) {
+        let totalFetched = collections[0].posts.length;
+        let nextURL = collections[0].nextURL;
+        while (nextURL) {
+          this.log('debug', `Request more posts from API URL "${nextURL}"`);
+          const { json } = await this.commonFetchAPI(nextURL, signal);
+          if (!json) {
+            if (this.checkAbortSignal(signal, resolve)) {
+              return;
+            }
+            nextURL = null;
+          }
+          else {
+            const collection = postsParser.parsePostsAPIResponse(json, nextURL);
+            collections.push(collection);
+            const fetched = collection.posts.length;
+            totalFetched += fetched;
+            this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
+            nextURL = collection.nextURL;
+          }
+        }
+        if (total && totalFetched < total) {
+          this.log('warn', `Some posts were not fetched - total expected: ${total}; currently fetched: ${totalFetched}`);
+        }
+        else {
+          this.log('info', `${totalFetched} posts fetched`);
+        }
+      }
+
+      // Step 2: download posts in each fetched collection
       let downloaded = 0;
       let skippedUnviewable = 0;
       let skippedRedundant = 0;
       let skippedUnmetMediaTypeCriteria = 0;
       let skippedNotInTier = 0;
       let campaignSaved = false;
-      while (json) {
-        const collection = postsParser.parsePostsAPIResponse(json, postsAPIURL);
-
+      for (const collection of collections) {
         if (!campaignSaved && collection.posts[0]?.campaign) {
           await this.saveCampaignInfo(collection.posts[0].campaign, signal);
           campaignSaved = true;
@@ -113,12 +146,37 @@ export default class PostDownloader extends Downloader<Post> {
           }
         }
 
-        total = collection.total;
-        if (this.#isFetchingMultiplePosts(postFetch)) {
-          this.log('debug', `${collection.posts.length} posts fetched`);
-        }
+        for (const _post of collection.posts) {
 
-        for (const post of collection.posts) {
+          let post = _post;
+
+          if (this.#isFetchingMultiplePosts(postFetch)) {
+            // Refresh to ensure media links have not expired
+            this.log('debug', `Refresh post #${_post.id}`);
+            const postURL = URLHelper.constructPostsAPIURL({ postId: _post.id });
+            const { json } = await this.commonFetchAPI(postURL, signal);
+            let refreshed: Post | null = null;
+            if (json) {
+              refreshed = postsParser.parsePostsAPIResponse(json, postURL).posts[0] || null;
+              if (!refreshed) {
+                this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
+              }
+              else if (refreshed.id !== _post.id) {
+                this.log('warn', `Refreshed post #${_post.id} but ID mismatch - going to use existing data`);
+                refreshed = null;
+              }
+            }
+            else if (this.checkAbortSignal(signal, resolve)) {
+              return;
+            }
+            else {
+              this.log('warn', `Failed to refresh post #${_post.id} - going to use existing data`);
+            }
+            if (refreshed) {
+              this.log('debug', `Use refreshed post data #${refreshed.id}`);
+              post = refreshed;
+            }
+          }
 
           this.emit('targetBegin', { target: post });
 
@@ -349,28 +407,6 @@ export default class PostDownloader extends Downloader<Post> {
             return;
           }
         }
-
-        if (this.#isFetchingMultiplePosts(postFetch)) {
-          if (collection.nextURL) {
-            this.log('info', 'Fetch more posts');
-            this.log('debug', `Request next batch of posts from API URL "${collection.nextURL}`);
-            this.emit('fetchBegin', { targetType: 'posts' });
-            try {
-              postsAPIURL = collection.nextURL;
-              json = await this.#requestPosts(collection.nextURL, signal, resolve, resolve);
-            }
-            catch (error) {
-              return;
-            }
-          }
-          else {
-            this.log('debug', 'No further posts to fetch');
-            json = null;
-          }
-        }
-        else {
-          json = null;
-        }
       }
 
       if (this.checkAbortSignal(signal, resolve)) {
@@ -550,21 +586,6 @@ export default class PostDownloader extends Downloader<Post> {
       throw res.error;
     }
     return postsParser.parseCampaignAPIResponse(res.json);
-  }
-
-  async #requestPosts(url: string, signal: AbortSignal | undefined, resolveOnAbort: () => void, resolveOnError: () => void) {
-    const { json, error: requestAPIError } = await this.commonFetchAPI(url, signal);
-    if (!json) {
-      if (this.checkAbortSignal(signal, resolveOnAbort)) {
-        throw Error();
-      }
-      this.log('error', 'Failed to fetch posts');
-      this.log('warn', 'End with error');
-      this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
-      resolveOnError();
-      throw Error();
-    }
-    return json;
   }
 
   #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof FSHelper['getPostDirs']>) {

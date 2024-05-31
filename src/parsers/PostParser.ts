@@ -36,23 +36,11 @@ export default class PostParser extends Parser {
       // No posts found
       postsJSONArray = [];
     }
-
-    const nextURL = ObjectHelper.getProperty(json, 'links.next') || null;
-    const nextPageCursor = ObjectHelper.getProperty(json, 'meta.pagination.cursors.next');
-    let realNextURL: string | null = null;
-    if (nextURL && nextPageCursor) {
-      const urlObj = new URL(nextURL);
-      urlObj.searchParams.set('page[cursor]', nextPageCursor);
-      realNextURL = urlObj.toString();
-    }
-    if (nextURL && !nextPageCursor) {
-      this.log('warn', `Anomaly in API response of "${_url}: (pagination) next page cursor expected but missing`);
-    }
     const collection: PostCollection = {
       url: _url,
       posts: [],
       total: ObjectHelper.getProperty(json, 'meta.pagination.total') || null,
-      nextURL: realNextURL
+      nextURL: this.parseNextURL(json, _url)
     };
 
     let hasIncludedJSON = true;
@@ -317,5 +305,20 @@ export default class PostParser extends Parser {
     this.log('debug', 'Done parsing posts');
 
     return collection;
+  }
+
+  parseNextURL(json: any, _url: string) {
+    const nextURL = ObjectHelper.getProperty(json, 'links.next') || null;
+    const nextPageCursor = ObjectHelper.getProperty(json, 'meta.pagination.cursors.next');
+    let realNextURL = null;
+    if (nextURL && nextPageCursor) {
+      const urlObj = new URL(nextURL);
+      urlObj.searchParams.set('page[cursor]', nextPageCursor);
+      realNextURL = urlObj.toString();
+    }
+    if (nextURL && !nextPageCursor) {
+      this.log('warn', `Anomaly in API response of "${_url}: (pagination) next page cursor expected but missing`);
+    }
+    return realNextURL;
   }
 }
