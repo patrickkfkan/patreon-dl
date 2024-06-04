@@ -92,19 +92,32 @@ export default class ConsoleLogger extends Logger {
     return LOG_LEVEL_ORDER.indexOf(targetLevel) <= LOG_LEVEL_ORDER.indexOf(this.config.logLevel);
   }
 
+  protected errorToStrings(m: Error, forceNoStack = false): string[] {
+    const result: string[] = [];
+    const msg = m.cause ? `${m.message}:` : m.message;
+    if (m.name !== 'Error') {
+      result.push(`(${m.name}) ${msg}`);
+    }
+    else {
+      result.push(msg);
+    }
+    if (m.cause instanceof Error) {
+      result.push(...this.errorToStrings(m.cause, true));
+    }
+    else if (m.cause) {
+      result.push(`${m.cause}`);
+    }
+    if (m.stack && this.config.include.errorStack && !forceNoStack) {
+      result.push(m.stack);
+    }
+    return result;
+  }
+
   protected toStrings(entry: LogEntry): string[] {
     const { level, originator, message } = entry;
     const strings = message.reduce<string[]>((result, m) => {
       if (m instanceof Error) {
-        if (m.name !== 'Error') {
-          result.push(`(${m.name}) ${m.message}`);
-        }
-        else {
-          result.push(m.message);
-        }
-        if (m.stack && this.config.include.errorStack) {
-          result.push(m.stack);
-        }
+        result.push(...this.errorToStrings(m));
       }
       else if (typeof m === 'object') {
         result.push(util.inspect(m, false, null, this.config.color));

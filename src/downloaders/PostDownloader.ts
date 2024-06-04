@@ -1,10 +1,8 @@
 import { AbortError } from 'node-fetch';
 import FSHelper from '../utils/FSHelper.js';
-import URLHelper, { PostSortOrder } from '../utils/URLHelper.js';
+import URLHelper from '../utils/URLHelper.js';
 import Downloader, { DownloaderConfig, DownloaderStartParams } from './Downloader.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
-import PageParser from '../parsers/PageParser.js';
-import ObjectHelper from '../utils/ObjectHelper.js';
 import PostParser from '../parsers/PostParser.js';
 import { Post } from '../entities/Post.js';
 import { Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
@@ -13,6 +11,7 @@ import { generatePostEmbedSummary, generatePostSummary } from './templates/PostI
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
+import PostsFetcher from './PostsFetcher.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -68,67 +67,18 @@ export default class PostDownloader extends Downloader<Post> {
       }
 
       // Step 1: Get posts (if by user) or target post
-      let postsAPIURL: string;
-      try {
-        postsAPIURL = await this.#getInitialPostsAPIUL(signal, resolve, resolve);
-      }
-      catch (error) {
-        return;
-      }
-      if (this.#isFetchingMultiplePosts(postFetch)) {
-        this.log('info', 'Fetch posts');
-        this.log('debug', `Request initial posts from API URL "${postsAPIURL}"`);
-        this.emit('fetchBegin', { targetType: 'posts' });
-      }
-      else {
-        this.log('info', 'Fetch target post');
-        this.log('debug', `Request post #${postFetch.postId} from API URL "${postsAPIURL}`);
-        this.emit('fetchBegin', { targetType: 'post' });
-      }
-
-      const { json, error: requestAPIError } = await this.commonFetchAPI(postsAPIURL, signal);
-      if (!json) {
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
+      const postsFetcher = new PostsFetcher({
+        config: this.config,
+        fetcher: this.fetcher,
+        logger: this.logger,
+        signal
+      });
+      postsFetcher.on('statusChange', ({current}) => {
+        if (current.status === 'running') {
+          this.emit('fetchBegin', { targetType: postsFetcher.getTargetType() });
         }
-        this.log('error', 'Failed to fetch posts');
-        this.log('warn', 'End with error');
-        this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
-        resolve();
-        return;
-      }
-
-      const postsParser = new PostParser(this.logger);
-      const collections = [ postsParser.parsePostsAPIResponse(json, postsAPIURL) ];
-      const total = collections[0].total;
-      if (this.#isFetchingMultiplePosts(postFetch)) {
-        let totalFetched = collections[0].posts.length;
-        let nextURL = collections[0].nextURL;
-        while (nextURL) {
-          this.log('debug', `Request more posts from API URL "${nextURL}"`);
-          const { json } = await this.commonFetchAPI(nextURL, signal);
-          if (!json) {
-            if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-            nextURL = null;
-          }
-          else {
-            const collection = postsParser.parsePostsAPIResponse(json, nextURL);
-            collections.push(collection);
-            const fetched = collection.posts.length;
-            totalFetched += fetched;
-            this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
-            nextURL = collection.nextURL;
-          }
-        }
-        if (total && totalFetched < total) {
-          this.log('warn', `Some posts were not fetched - total expected: ${total}; currently fetched: ${totalFetched}`);
-        }
-        else {
-          this.log('info', `${totalFetched} posts fetched`);
-        }
-      }
+      });
+      postsFetcher.begin();
 
       // Step 2: download posts in each fetched collection
       let downloaded = 0;
@@ -137,7 +87,17 @@ export default class PostDownloader extends Downloader<Post> {
       let skippedUnmetMediaTypeCriteria = 0;
       let skippedNotInTier = 0;
       let campaignSaved = false;
-      for (const collection of collections) {
+      const postsParser = new PostParser(this.logger);
+      while (postsFetcher.hasNext()) {
+        const { collection, aborted, error } = await postsFetcher.next();
+        if (!collection || aborted) {
+          break;
+        }
+        if (!collection && error) {
+          this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
+          resolve();
+          return;
+        }
         if (!campaignSaved && collection.posts[0]?.campaign) {
           await this.saveCampaignInfo(collection.posts[0].campaign, signal);
           campaignSaved = true;
@@ -445,7 +405,7 @@ export default class PostDownloader extends Downloader<Post> {
           skippedStrParts.push(`${skippedNotInTier} not in tier`);
         }
         const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
-        endMessage = `Total ${downloaded} / ${total} posts processed${skippedStr}`;
+        endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;
         this.log('info', endMessage);
       }
       this.emit('end', { aborted: false, message: endMessage });
@@ -466,100 +426,6 @@ export default class PostDownloader extends Downloader<Post> {
     return postFetch.type === 'byUser' || postFetch.type === 'byUserId' || postFetch.type === 'byCollection';
   }
 
-  async #getInitialPostsAPIUL(signal: AbortSignal | undefined, resolveOnAbort: () => void, resolveOnError: () => void) {
-    const postFetch = this.config.postFetch;
-    if (this.#isFetchingMultiplePosts(postFetch)) {
-      const pageURL = this.#getInitialDataPageURL();
-      const { campaignId, currentUserId } = await this.#getInitialData(pageURL, signal, resolveOnAbort, resolveOnError);
-      let sort: PostSortOrder | undefined;
-      if (postFetch.type === 'byCollection') {
-        sort = PostSortOrder.CollectionOrder;
-      }
-
-      return URLHelper.constructPostsAPIURL({
-        campaignId,
-        currentUserId: this.config.include.lockedContent ? undefined : currentUserId,
-        filters: postFetch.filters,
-        sort
-      });
-    }
-
-    return URLHelper.constructPostsAPIURL({ postId: postFetch.postId });
-  }
-
-  #getInitialDataPageURL() {
-    const postFetch = this.config.postFetch;
-    switch (postFetch.type) {
-      case 'byUser':
-        return URLHelper.constructCampaignPageURL({ vanity: postFetch.vanity });
-      case 'byUserId':
-        return URLHelper.constructCampaignPageURL({ userId: postFetch.userId });
-      case 'byCollection':
-        return URLHelper.constructCollectionURL(postFetch.collectionId);
-      default:
-        throw Error(`postFetch type mismatch: expecting 'byUser', 'byUserId' or 'byCollection' but got '${postFetch.type}'`);
-    }
-  }
-
-  async #getInitialData(url: string, signal: AbortSignal | undefined, resolveOnAbort?: () => void, resolveOnError?: () => void) {
-    this.log('debug', `Fetch initial data from "${url}"`);
-    let page, requestPageError;
-    try {
-      page = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal });
-    }
-    catch (error) {
-      if (error instanceof AbortError) {
-        this.log('warn', 'Page request aborted');
-      }
-      else {
-        requestPageError = error;
-      }
-      page = null;
-    }
-    if (!page) {
-      if (resolveOnAbort && this.checkAbortSignal(signal, resolveOnAbort)) {
-        throw Error();
-      }
-      this.log('error', `Error requesting page "${url}": `, requestPageError);
-      this.emit('end', { aborted: false, error: requestPageError, message: 'Request error' });
-      if (resolveOnError) {
-        resolveOnError();
-      }
-      throw Error();
-    }
-    const pageParser = new PageParser(this.logger);
-    let initialData, parseInitialDataError;
-    try {
-      initialData = pageParser.parseInitialData(page, url);
-    }
-    catch (error) {
-      parseInitialDataError = error;
-      initialData = null;
-    }
-    if (!initialData) {
-      this.log('error', `Failed to obtain initial page data from "${url}":`, parseInitialDataError);
-      this.emit('end', { aborted: false, error: parseInitialDataError, message: 'Parse error' });
-      if (resolveOnError) {
-        resolveOnError();
-      }
-      throw Error();
-    }
-    const campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
-    const currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
-    this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
-    if (!campaignId) {
-      const err = Error(`Campaign ID not found in initial data of "${url}"`);
-      this.log('error', err);
-      this.emit('end', { aborted: false, error: err, message: 'Data error (campaign ID not found)' });
-      if (resolveOnError) {
-        resolveOnError();
-      }
-      throw Error();
-    }
-
-    return { campaignId, currentUserId };
-  }
-
   async __getCampaign(signal?: AbortSignal) {
     let url: string | null;
     const postFetch = this.config.postFetch;
@@ -576,7 +442,13 @@ export default class PostDownloader extends Downloader<Post> {
     if (!url) {
       throw Error('Internal error: invalid config');
     }
-    const { campaignId } = await this.#getInitialData(url, signal);
+    const postsFetcher = new PostsFetcher({
+      config: this.config,
+      fetcher: this.fetcher,
+      logger: this.logger,
+      signal
+    });
+    const { campaignId } = await postsFetcher.getInitialData(url);
     const postsParser = new PostParser(this.logger);
     const res = await this.fetchCampaign(campaignId);
     if (signal?.aborted) {
