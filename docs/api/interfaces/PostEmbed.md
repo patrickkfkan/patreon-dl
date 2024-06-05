@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L96)
+[src/entities/Post.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L96)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L97)
+[src/entities/Post.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L97)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L93)
+[src/entities/Post.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L93)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L94)
+[src/entities/Post.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L94)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:98](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L98)
+[src/entities/Post.ts:98](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L98)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:99](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L99)
+[src/entities/Post.ts:99](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L99)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:100](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L100)
+[src/entities/Post.ts:100](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L100)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L95)
+[src/entities/Post.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L95)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/entities/Post.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/entities/Post.ts#L101)
+[src/entities/Post.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Post.ts#L101)

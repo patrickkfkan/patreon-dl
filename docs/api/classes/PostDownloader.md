@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L51)
+[src/downloaders/Downloader.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L52)
 
 ## Properties
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/PostDownloader.ts#L21)
+[src/downloaders/PostDownloader.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L19)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/PostDownloader.ts#L19)
+[src/downloaders/PostDownloader.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L17)
 
 ## Methods
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:526](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/PostDownloader.ts#L526)
+[src/downloaders/PostDownloader.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L428)
 
 ___
 
@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:462](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L462)
+[src/downloaders/Downloader.ts:461](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L461)
 
 ___
 
@@ -144,6 +144,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `dirNameFormat` | \{ readonly campaign: string; readonly content: string; } |
+| `dryRun` | `boolean` |
 | `embedDownloaders` | readonly \{ readonly provider: string; readonly exec: string; }[] |
 | `fileExistsAction` | \{ readonly content: FileExistsAction; readonly info: FileExistsAction; readonly infoAPI: FileExistsAction; } |
 | `filenameFormat` | \{ readonly media: string; } |
@@ -162,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:388](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L388)
+[src/downloaders/Downloader.ts:387](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L387)
 
 ___
 
@@ -193,7 +194,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:457](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L457)
+[src/downloaders/Downloader.ts:456](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L456)
 
 ___
 
@@ -224,7 +225,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:447](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L447)
+[src/downloaders/Downloader.ts:446](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L446)
 
 ___
 
@@ -255,7 +256,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:452](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L452)
+[src/downloaders/Downloader.ts:451](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L451)
 
 ___
 
@@ -279,7 +280,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/PostDownloader.ts#L25)
+[src/downloaders/PostDownloader.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L23)
 
 ___
 
@@ -305,7 +306,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L206)
+[src/downloaders/Downloader.ts:205](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L205)
 
 ___
 
@@ -330,4 +331,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:191](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/Downloader.ts#L191)
+[src/downloaders/Downloader.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L190)

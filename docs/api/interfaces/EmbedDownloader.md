@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderOptions.ts#L20)
+[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L20)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/DownloaderOptions.ts#L19)
+[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L19)

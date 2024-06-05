@@ -80,6 +80,7 @@ $ patreon-dl [OPTION]... URL
 | `--out-dir <path>` |`-o` | Directory to save content |
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
 | `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |
+| `--dry-run`   |      | Run without writing files to disk (except logs, if any). Intended for testing / debugging. |
 | <code><nobr>--list-tiers &lt;creator&gt;</nobr></code> | | <p>List tiers for the given creator(s). Separate multiple creators with a comma.</p>The purpose of this is to let you find out what tier IDs to set for `posts.in.tier` filtering option under `include` section of [configuration file](#configuration-file). |
 | <code><nobr>--list-tiers-uid &lt;user ID&gt;</nobr></code> | | Same as `--list-tiers`, but takes user ID instead of vanity. |
 | `--configure-youtube` | | <p>Configure YouTube connection.</p>`patreon-dl` supports downloading embedded YouTube videos. If you have a YouTube Premium account, you can connect `patreon-dl` to it for downloading Premium-quality streams. |
@@ -249,6 +250,7 @@ An object with the following properties (all *optional*):
 | `fileExistsAction` | What to do when a target file already exists: (object)<ul><li>`info`: in the context of saving info (such as campaign or post info), the action to take when a file belonging to the info already exists. Default: `saveAsCopyIfNewer`</li><li>`infoAPI`: API data is saved as part of info. Because it changes frequently, and usually used for debugging purpose only, you can set a different action when saving an API data file that already exists. Default: `overwrite`</li><li>`content`: in the context of downloading content, the action to take when a file belonging to the content already exists. Default: `skip`</li></ul><p>Supported actions:<ul><li>`overwrite`: overwrite existing file.</li><li>`skip`: skip saving the file.</li><li>`saveAsCopy`: save the file under incremented filename (e.g. "abc.jpg" becomes "abc (1).jpg").</li><li>`saveAsCopyIfNewer`: like `saveAsCopy`, but only do so if the contents have actually changed.</li></ul></p> |
 | `embedDownloaders` | External downloader for embedded videos. See [External downloaders](#external-downloaders).|
 |`logger`           | See [Logger](#logger)                     | 
+| `dryRun` | Run without writing files to disk (except logs, if any). Default: `false` |
 
 #### Campaign directory name format
 

@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L19)
+[src/downloaders/task/DownloadTaskBatch.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L19)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L23)
+[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L23)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L20)
+[src/downloaders/task/DownloadTaskBatch.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L20)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L17)
+[src/downloaders/task/DownloadTaskBatch.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L17)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L22)
+[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L22)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L21)
+[src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L21)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L18)
+[src/downloaders/task/DownloadTaskBatch.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L18)
 
 ## Methods
 
@@ -171,7 +171,7 @@ EventEmitter.off
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L26)
+[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L26)
 
 ___
 
@@ -202,7 +202,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L24)
+[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L24)
 
 ___
 
@@ -233,4 +233,4 @@ EventEmitter.once
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/53a3978/src/downloaders/task/DownloadTaskBatch.ts#L25)
+[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L25)
