@@ -20,6 +20,7 @@ const COMMAND_LINE_ARGS = {
   outDir: 'out-dir',
   logLevel: 'log-level',
   noPrompt: 'no-prompt',
+  dryRun: 'dry-run',
   listTiers: 'list-tiers',
   listTiersByUserId: 'list-tiers-uid'
 } as const;
@@ -79,6 +80,11 @@ const OPT_DEFS = [
     type: Boolean
   },
   {
+    name: COMMAND_LINE_ARGS.dryRun,
+    description: 'Run without writing files to disk (except logs, if any). For testing / debugging.',
+    type: Boolean
+  },
+  {
     name: COMMAND_LINE_ARGS.listTiers,
     description: 'List tiers for the given creator(s). Separate multiple creators with a comma.',
     type: String,
@@ -117,10 +123,16 @@ export default class CommandLineParser {
 
     const __getValue = (key: typeof COMMAND_LINE_ARGS[keyof typeof COMMAND_LINE_ARGS]): CLIOptionParserEntry | undefined => {
       let value = opts[key];
-      if (key === COMMAND_LINE_ARGS.noPrompt && value !== undefined) {
+
+      const booleanTypeArgs = [
+        COMMAND_LINE_ARGS.noPrompt,
+        COMMAND_LINE_ARGS.dryRun
+      ];
+      if (booleanTypeArgs.includes(key as any) && value !== undefined) {
         value = '1';
       }
-      else if (value === null) {
+
+      if (value === null) {
         throw Error(`Command-line option requires a value for '--${key}'`);
       }
       if (value && typeof value === 'string') {
@@ -179,6 +191,7 @@ export default class CommandLineParser {
         infoAPI: undefined
       },
       noPrompt: __getValue(COMMAND_LINE_ARGS.noPrompt),
+      dryRun: __getValue(COMMAND_LINE_ARGS.dryRun),
       consoleLogger: {
         enabled: consoleLoggerEnabled,
         logLevel: consoleLoggerLevel,

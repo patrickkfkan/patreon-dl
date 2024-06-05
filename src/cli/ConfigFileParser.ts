@@ -8,6 +8,7 @@ const CONFIG_FILE_PROPS = {
   useStatusCache: 'downloader:use.status.cache',
   noPrompt: 'downloader:no.prompt',
   pathToFFmpeg: 'downloader:path.to.ffmpeg',
+  dryRun: 'downloader:dry.run',
   outDir: 'output:out.dir',
   dirNameFormat: {
     campaign: 'output:campaign.dir.name.format',
@@ -117,6 +118,7 @@ export default class ConfigFileParser {
         infoAPI: __getValue(CONFIG_FILE_PROPS.fileExistsAction.infoAPI)
       },
       noPrompt: __getValue(CONFIG_FILE_PROPS.noPrompt),
+      dryRun: __getValue(CONFIG_FILE_PROPS.dryRun),
       consoleLogger: {
         enabled: __getValue(CONFIG_FILE_PROPS.consoleLogger.enabled),
         logLevel: __getValue(CONFIG_FILE_PROPS.consoleLogger.logLevel),

@@ -1,6 +1,8 @@
 import path from 'path';
 import { Downloadable } from '../../entities/Downloadable.js';
 import Logger, { LogLevel, commonLog } from '../../utils/logging/Logger.js';
+import FSHelper from '../../utils/FSHelper.js';
+import { DownloaderConfig } from '../Downloader.js';
 
 export class DownloadTaskError extends Error {
   task: IDownloadTask;
@@ -37,7 +39,7 @@ export interface DownloadProgress {
 export interface DownloadTaskParams<T extends Downloadable = Downloadable> {
   src: string;
   srcEntity: T,
-  maxRetries: number;
+  config: DownloaderConfig<any>;
   callbacks: DownloadTaskCallbacks | null;
   logger?: Logger | null;
 }
@@ -85,8 +87,8 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
   static #idCounter = 0;
 
   #id: number;
+  #config: DownloaderConfig<any>;
   #src: string;
-  #maxRetries: number;
   #retryCount: number;
   #resolvedDestPath: string | null;
   #srcEntity: T;
@@ -94,6 +96,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
   #logger?: Logger | null;
   #lastProgress: DownloadProgress | null;
   #status: DownloadTaskStatus;
+  #fsHelper: FSHelper;
 
   #startPromise: Promise<void> | null;
   #startingCallback: (() => void) | null;
@@ -101,8 +104,8 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
 
   constructor(params: DownloadTaskParams<T>) {
     this.#id = DownloadTask.#idCounter;
+    this.#config = params.config;
     this.#src = params.src;
-    this.#maxRetries = params.maxRetries;
     this.#retryCount = 0;
     this.#resolvedDestPath = null;
     this.#srcEntity = params.srcEntity;
@@ -113,6 +116,8 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     this.#startPromise = null;
     this.#startingCallback = null;
     this.#abortPromise = null;
+
+    this.#fsHelper = new FSHelper(params.config, params.logger);
 
     DownloadTask.#idCounter++;
   }
@@ -142,7 +147,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
       await this.doStart();
 
       // Retry on error, up to `maxRetries`
-      while (this.#status === 'pending-retry' && this.#retryCount < this.#maxRetries) {
+      while (this.#status === 'pending-retry' && this.#retryCount < this.maxRetries) {
         this.#retryCount++;
         await this.doStart();
       }
@@ -214,7 +219,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     if (error instanceof Error) {
       err.cause = error;
     }
-    const willRetry = this.#retryCount < this.#maxRetries;
+    const willRetry = this.#retryCount < this.maxRetries;
     this.#notifyEnd('error', err, willRetry);
   }
 
@@ -304,8 +309,16 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     return this.#srcEntity;
   }
 
+  protected get config() {
+    return this.#config;
+  }
+
   protected get maxRetries() {
-    return this.#maxRetries;
+    return this.#config.request.maxRetries;
+  }
+
+  protected get dryRun() {
+    return this.#config.dryRun;
   }
 
   get retryCount() {
@@ -322,6 +335,10 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
 
   protected get callbacks() {
     return this.#callbacks;
+  }
+
+  protected get fsHelper() {
+    return this.#fsHelper;
   }
 
   setCallbacks(value: DownloadTaskCallbacks | null) {

@@ -1,5 +1,4 @@
 import { AbortError } from 'node-fetch';
-import FSHelper from '../utils/FSHelper.js';
 import URLHelper from '../utils/URLHelper.js';
 import Downloader, { DownloaderConfig, DownloaderStartParams } from './Downloader.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
@@ -141,11 +140,11 @@ export default class PostDownloader extends Downloader<Post> {
           this.emit('targetBegin', { target: post });
 
           // Step 4.1: post directories
-          const postDirs = FSHelper.getPostDirs(post, this.config);
+          const postDirs = this.fsHelper.getPostDirs(post);
           this.log('debug', 'Post directories:', postDirs);
 
           // Step 4.2: Check with status cache
-          const statusCache = StatusCache.getInstance(postDirs.statusCache, this.logger, this.config.useStatusCache);
+          const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
           if (statusCache.validate(post, postDirs.root, this.config)) {
             this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
             this.emit('targetEnd', {
@@ -260,7 +259,7 @@ export default class PostDownloader extends Downloader<Post> {
           if (this.config.include.contentInfo) {
             this.log('info', `Save post info #${post.id}`);
             this.emit('phaseBegin', { target: post, phase: 'saveInfo' });
-            FSHelper.createDir(postDirs.info);
+            this.fsHelper.createDir(postDirs.info);
             // Post raw data might not be complete or consistent with other posts in the collection.
             // Fetch directly from API.
             // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
@@ -279,11 +278,11 @@ export default class PostDownloader extends Downloader<Post> {
             // Save summary and raw json
             const summary = generatePostSummary(post);
             const summaryFile = path.resolve(postDirs.info, 'info.txt');
-            const saveSummaryResult = await FSHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+            const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
             this.logWriteTextFileResult(saveSummaryResult, post, 'post summary');
 
             const postRawFile = path.resolve(postDirs.info, 'post-api.json');
-            const savePostRawResult = await FSHelper.writeTextFile(
+            const savePostRawResult = await this.fsHelper.writeTextFile(
               postRawFile, fetchedPostAPIData || post.raw, this.config.fileExistsAction.infoAPI);
             this.logWriteTextFileResult(savePostRawResult, post, 'post API data');
             this.emit('phaseEnd', { target: post, phase: 'saveInfo' });
@@ -298,7 +297,7 @@ export default class PostDownloader extends Downloader<Post> {
           // Step 4.5: save embed info
           if (post.embed && this.config.include.contentMedia) {
             this.log('info', `Save embed info of post #${post.id}`);
-            FSHelper.createDir(postDirs.embed);
+            this.fsHelper.createDir(postDirs.embed);
             const embedSummary = generatePostEmbedSummary(post.embed);
             let embedFilename;
             switch (post.embed.type) {
@@ -312,7 +311,7 @@ export default class PostDownloader extends Downloader<Post> {
                 embedFilename = 'embedded-unknown.txt';
             }
             const embedFile = path.resolve(postDirs.embed, embedFilename);
-            const saveSummaryResult = await FSHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
+            const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
             this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
           }
 
@@ -460,7 +459,7 @@ export default class PostDownloader extends Downloader<Post> {
     return postsParser.parseCampaignAPIResponse(res.json);
   }
 
-  #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof FSHelper['getPostDirs']>) {
+  #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof this.fsHelper['getPostDirs']>) {
 
     const incPreview = this.config.include.previewMedia;
     const incContent = this.config.include.contentMedia;

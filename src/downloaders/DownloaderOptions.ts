@@ -46,6 +46,7 @@ export interface DownloaderOptions {
   };
   embedDownloaders?: EmbedDownloader[];
   logger?: Logger | null;
+  dryRun?: boolean;
 }
 
 export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
@@ -58,7 +59,8 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'include' |
   'request' |
   'fileExistsAction' |
-  'embedDownloaders'>>;
+  'embedDownloaders' |
+  'dryRun'>>;
 
 const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   outDir: process.cwd(),
@@ -92,7 +94,8 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
     info: 'saveAsCopyIfNewer',
     infoAPI: 'overwrite'
   },
-  embedDownloaders: []
+  embedDownloaders: [],
+  dryRun: false
 };
 
 export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
@@ -129,7 +132,8 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       info: options?.fileExistsAction?.info || defaults.fileExistsAction.info,
       infoAPI: options?.fileExistsAction?.infoAPI || defaults.fileExistsAction.infoAPI
     },
-    embedDownloaders: pickDefined(options?.embedDownloaders, defaults.embedDownloaders)
+    embedDownloaders: pickDefined(options?.embedDownloaders, defaults.embedDownloaders),
+    dryRun: pickDefined(options?.dryRun, defaults.dryRun)
   };
 }
 

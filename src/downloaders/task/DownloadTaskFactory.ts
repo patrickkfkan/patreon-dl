@@ -10,6 +10,7 @@ import { EmbedDownloader, FileExistsAction } from '../DownloaderOptions.js';
 import Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
 import ExternalDownloaderTask from './ExternalDownloaderTask.js';
+import { DownloaderConfig } from '../Downloader.js';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -49,30 +50,28 @@ const NULL_VARIANT = '/*NULL*/';
 export default class DownloadTaskFactory {
 
   static createFromDownloadable(params: {
+    config: DownloaderConfig<any>,
     item: Downloadable,
     destDir: string,
     fetcher: Fetcher,
-    embedDownloaders: EmbedDownloader[],
-    destFilenameFormat: string,
     fileExistsAction: FileExistsAction,
-    downloadAllVariants: boolean,
-    maxRetries: number,
     callbacks?: DownloadTaskCallbacks | null,
     logger?: Logger | null;
   }) {
 
     const {
+      config,
       item,
       destDir,
       fetcher,
-      embedDownloaders,
-      destFilenameFormat,
       fileExistsAction,
-      downloadAllVariants,
-      maxRetries,
       callbacks,
       logger
     } = params;
+
+    const embedDownloaders = config.embedDownloaders;
+    const destFilenameFormat = config.filenameFormat.media;
+    const downloadAllVariants = config.include.allMediaVariants;
 
     const __getSrcURLs = () => {
       if (item.type === 'image') {
@@ -158,7 +157,7 @@ export default class DownloadTaskFactory {
         // Check if external downloader configured for embed item
         const embedDownloader = this.findEmbedDownloader(embedDownloaders, item.provider);
         if (embedDownloader) {
-          const task = ExternalDownloaderTask.fromEmbedDownloader(embedDownloader, item, destDir, callbacks || null, logger);
+          const task = ExternalDownloaderTask.fromEmbedDownloader(config, embedDownloader, item, destDir, callbacks || null, logger);
           if (task) {
             tasks.push(task);
           }
@@ -166,8 +165,8 @@ export default class DownloadTaskFactory {
         // Use our own implementation if no external downloader configured for YT embeds
         else if (item.type === 'videoEmbed' && isYouTubeEmbed(item) && url) {
           tasks.push(new YouTubeDownloadTask({
+            config,
             src: url,
-            maxRetries,
             destDir,
             fileExistsAction,
             srcEntity: item,
@@ -184,9 +183,9 @@ export default class DownloadTaskFactory {
 
         if (url) {
           tasks.push(new FetcherDownloadTask<Downloadable>({
+            config,
             fetcher,
             src: url,
-            maxRetries,
             destDir,
             destFilenameResolver,
             fileExistsAction,
@@ -214,16 +213,20 @@ export default class DownloadTaskFactory {
           thumbnail: item.displayURLs.thumbnail
         }
       };
+      const __config = {
+        ...config,
+        include: {
+          ...config.include,
+          allMediaVariants: true // Ensure variant name ('thumbnail') appears in dest filename
+        }
+      };
       tasks.push(
         ...this.createFromDownloadable({
+          config: __config,
           item: videoThumbnailMediaItem,
           destDir,
           fetcher,
-          embedDownloaders,
-          destFilenameFormat,
           fileExistsAction,
-          downloadAllVariants: true, // Ensure variant name ('thumbnail') appears in dest filename
-          maxRetries,
           callbacks,
           logger
         })

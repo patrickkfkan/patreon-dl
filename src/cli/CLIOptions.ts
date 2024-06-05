@@ -79,6 +79,7 @@ export function getCLIOptions(): CLIOptions {
     },
     embedDownloaders: getEmbedDownloaderOptions(configFileOptions),
     noPrompt: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.noPrompt, configFileOptions?.noPrompt)) || false,
+    dryRun: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.dryRun, configFileOptions?.dryRun)) || false,
     consoleLogger,
     fileLoggers
   };

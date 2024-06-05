@@ -1,5 +1,4 @@
 import ProductParser from '../parsers/ProductParser.js';
-import FSHelper from '../utils/FSHelper.js';
 import URLHelper from '../utils/URLHelper.js';
 import Downloader, { DownloaderStartParams } from './Downloader.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
@@ -74,11 +73,11 @@ export default class ProductDownloader extends Downloader<Product> {
       this.emit('targetBegin', { target: product });
 
       // Step 4: Product directories
-      const productDirs = FSHelper.getProductDirs(product, this.config);
+      const productDirs = this.fsHelper.getProductDirs(product);
       this.log('debug', 'Product directories: ', productDirs);
 
       // Step 5: Check with status cache
-      const statusCache = StatusCache.getInstance(productDirs.statusCache, this.logger, this.config.useStatusCache);
+      const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
       if (statusCache.validate(product, productDirs.root, this.config)) {
         this.log('info', `Skipped downloading product #${product.id}: already downloaded and nothing has changed since last download`);
         this.emit('targetEnd', {
@@ -111,20 +110,20 @@ export default class ProductDownloader extends Downloader<Product> {
         }
       }
 
-      FSHelper.createDir(productDirs.root);
+      this.fsHelper.createDir(productDirs.root);
 
       // Step 7: save product info
       if (this.config.include.contentInfo) {
         this.log('info', 'Save product info');
         this.emit('phaseBegin', { target: product, phase: 'saveInfo' });
-        FSHelper.createDir(productDirs.info);
+        this.fsHelper.createDir(productDirs.info);
         const summary = generateProductSummary(product);
         const summaryFile = path.resolve(productDirs.info, 'info.txt');
-        const saveSummaryResult = await FSHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
         this.logWriteTextFileResult(saveSummaryResult, product, 'product summary');
 
         const productRawFile = path.resolve(productDirs.info, 'product-api.json');
-        const saveProductRawResult = await FSHelper.writeTextFile(
+        const saveProductRawResult = await this.fsHelper.writeTextFile(
           productRawFile, product.raw, this.config.fileExistsAction.infoAPI);
         this.logWriteTextFileResult(saveProductRawResult, product, 'product API data');
         this.emit('phaseEnd', { target: product, phase: 'saveInfo' });

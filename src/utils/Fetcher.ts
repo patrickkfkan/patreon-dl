@@ -10,6 +10,7 @@ import FilenameResolver from './FllenameResolver.js';
 import { pickDefined } from './Misc.js';
 import Logger, { LogLevel, commonLog } from './logging/Logger.js';
 import FSHelper from './FSHelper.js';
+import { DownloaderConfig } from '../downloaders/Downloader.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
@@ -49,10 +50,14 @@ export default class Fetcher {
 
   #cookie?: string;
   #logger?: Logger | null;
+  #dryRun: boolean;
+  #fsHelper: FSHelper;
 
-  constructor(cookie?: string, logger?: Logger | null) {
+  constructor(config: DownloaderConfig<any>, cookie?: string, logger?: Logger | null) {
     this.#cookie = cookie;
     this.#logger = logger;
+    this.#dryRun = config.dryRun;
+    this.#fsHelper = new FSHelper(config, logger);
   }
 
   async get<T extends FetcherGetType>(args: {
@@ -163,15 +168,29 @@ export default class Fetcher {
     progress: progressStream.ProgressStream) {
 
     try {
-      this.log('debug', `Pipe "${response.url}" to "${tmpFilePath}"`);
-      await pipeline(
-        response.body,
-        progress,
-        fs.createWriteStream(tmpFilePath)
-      );
+      let size = 0;
+      if (this.#dryRun) {
+        try {
+          for await (const chunk of response.body) {
+            size += chunk.length;
+          }
+        }
+        catch (error) {
+          // Do nothing
+        }
+      }
+      else {
+        this.log('debug', `Pipe "${response.url}" to "${tmpFilePath}"`);
+        await pipeline(
+          response.body,
+          progress,
+          fs.createWriteStream(tmpFilePath)
+        );
+        size = fs.lstatSync(tmpFilePath).size;
+      }
 
       const commit = () => {
-        this.#commitDownload(tmpFilePath, destFilePath);
+        this.#commitDownload(tmpFilePath, destFilePath, size);
       };
 
       const discard = () => {
@@ -190,10 +209,10 @@ export default class Fetcher {
     }
   }
 
-  #commitDownload(tmpFilePath: string, destFilePath: string) {
+  #commitDownload(tmpFilePath: string, destFilePath: string, size: number) {
     try {
-      this.log('debug', `Commit "${tmpFilePath}" to "${destFilePath}; filesize: ${fs.lstatSync(tmpFilePath).size} bytes`);
-      fs.renameSync(tmpFilePath, destFilePath);
+      this.log('debug', `Commit "${tmpFilePath}" to "${destFilePath}; filesize: ${size} bytes`);
+      this.#fsHelper.rename(tmpFilePath, destFilePath);
     }
     finally {
       this.#cleanupDownload(tmpFilePath);
@@ -202,9 +221,9 @@ export default class Fetcher {
 
   #cleanupDownload(tmpFilePath: string) {
     try {
-      if (fs.existsSync(tmpFilePath)) {
+      if (this.#dryRun || fs.existsSync(tmpFilePath)) {
         this.log('debug', `Clean up "${tmpFilePath}"`);
-        fs.unlinkSync(tmpFilePath);
+        this.#fsHelper.unlink(tmpFilePath);
       }
     }
     catch (error) {

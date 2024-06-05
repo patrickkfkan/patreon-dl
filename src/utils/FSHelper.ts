@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import fse from 'fs-extra';
 import makeDir from 'make-dir';
 import _sanitizeFilename from 'sanitize-filename';
@@ -11,6 +10,7 @@ import { DownloaderConfig } from '../downloaders/Downloader.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
 import { Post } from '../entities/Post.js';
 import { FileExistsAction } from '../downloaders/DownloaderOptions.js';
+import Logger, { LogLevel, commonLog } from './logging/Logger.js';
 
 const CAMPAIGN_FIXED_DIR_NAMES = {
   INFO: 'campaign_info'
@@ -52,27 +52,37 @@ export type WriteTextFileResult = {
 
 export default class FSHelper {
 
-  static getCampaignDirs(campaign: Campaign, config: DownloaderConfig<any>) {
-    const dirName = FilenameFormatHelper.getCampaignDirName(campaign, config.dirNameFormat.campaign);
-    const root = path.resolve(config.outDir, dirName);
+  name = 'FSHelper';
+
+  protected config: DownloaderConfig<any>;
+  protected logger?: Logger | null;
+
+  constructor(config: DownloaderConfig<any>, logger?: Logger | null) {
+    this.config = config;
+    this.logger = logger;
+  }
+
+  getCampaignDirs(campaign: Campaign) {
+    const dirName = FilenameFormatHelper.getCampaignDirName(campaign, this.config.dirNameFormat.campaign);
+    const root = path.resolve(this.config.outDir, dirName);
     return {
       root,
       info: path.resolve(root, CAMPAIGN_FIXED_DIR_NAMES.INFO)
     };
   }
 
-  static getPostDirs(post: Post, config: DownloaderConfig<Post>) {
-    const dirName = FilenameFormatHelper.getContentDirName(post, config.dirNameFormat.content);
+  getPostDirs(post: Post) {
+    const dirName = FilenameFormatHelper.getContentDirName(post, this.config.dirNameFormat.content);
     let postRootPath: string;
     let statusCachePath: string;
     if (post.campaign) {
-      const campaignRootDir = this.getCampaignDirs(post.campaign, config).root;
+      const campaignRootDir = this.getCampaignDirs(post.campaign).root;
       const postsDir = this.createDir(path.resolve(campaignRootDir, POST_FIXED_DIR_NAMES.POSTS));
       postRootPath = path.resolve(postsDir, dirName);
       statusCachePath = path.resolve(campaignRootDir, INTERNAL_DATA_DIR_NAME);
     }
     else {
-      postRootPath = path.resolve(config.outDir, dirName);
+      postRootPath = path.resolve(this.config.outDir, dirName);
       statusCachePath = path.resolve(postRootPath, INTERNAL_DATA_DIR_NAME);
     }
     return {
@@ -90,18 +100,18 @@ export default class FSHelper {
     };
   }
 
-  static getProductDirs(product: Product, config: DownloaderConfig<Product>) {
-    const dirName = FilenameFormatHelper.getContentDirName(product, config.dirNameFormat.content);
+  getProductDirs(product: Product) {
+    const dirName = FilenameFormatHelper.getContentDirName(product, this.config.dirNameFormat.content);
     let productRootPath: string;
     let statusCachePath: string;
     if (product.campaign) {
-      const campaignRootDir = this.getCampaignDirs(product.campaign, config).root;
+      const campaignRootDir = this.getCampaignDirs(product.campaign).root;
       const shopDir = this.createDir(path.resolve(campaignRootDir, PRODUCT_FIXED_DIR_NAMES.SHOP));
       productRootPath = path.resolve(shopDir, dirName);
       statusCachePath = path.resolve(campaignRootDir, INTERNAL_DATA_DIR_NAME);
     }
     else {
-      productRootPath = path.resolve(config.outDir, dirName);
+      productRootPath = path.resolve(this.config.outDir, dirName);
       statusCachePath = path.resolve(productRootPath, INTERNAL_DATA_DIR_NAME);
     }
     return {
@@ -113,30 +123,38 @@ export default class FSHelper {
     };
   }
 
-  static createDir(dir: string, parents = true) {
-    if (fs.existsSync(dir)) {
-      if (!fs.lstatSync(dir).isDirectory()) {
+  createDir(dir: string, parents = true) {
+    if (fse.existsSync(dir)) {
+      if (!fse.lstatSync(dir).isDirectory()) {
         throw Error(`"${dir}" exists but is not a directory`);
       }
       return dir;
     }
-    if (!parents) {
-      fs.mkdirSync(dir);
+
+    if (this.config.dryRun) {
+      this.log('debug', `(dry-run) Create directory "${dir}"`);
       return dir;
     }
 
-    return makeDir.sync(dir);
-
+    return FSHelper.createDir(dir, parents);
   }
 
-  static checkFileExistsAndIncrement(file: string) {
+  static createDir(dir: string, parents = true) {
+    if (!parents) {
+      fse.mkdirSync(dir);
+      return dir;
+    }
+    return makeDir.sync(dir);
+  }
+
+  checkFileExistsAndIncrement(file: string) {
     const { name, base, dir, ext } = path.parse(file);
     // Regex to match filename with increment: 'filename (number).ext'
     //Const regex = new RegExp(`^${escapeStringRegexp(name)} \\((\\d+?)\\)${escapeStringRegexp(ext)}$`, 'g');
     const regex = new RegExp(`(.+) \\((\\d+?)\\)${escapeStringRegexp(ext)}$`, 'g');
-    const files = fs.readdirSync(dir);
     let currentLargestInc = -1;
     let currentLargestIncFilename = base;
+    const files = this.readdir(dir);
     for (const _file of files) {
       const match = regex.exec(_file);
       if (match && match[1] !== undefined) {
@@ -155,7 +173,7 @@ export default class FSHelper {
     }
 
     if (currentLargestInc === -1) {
-      if (!fs.existsSync(file)) {
+      if (!fse.existsSync(file)) {
         const fileParts = path.parse(file);
         return {
           filename: fileParts.base,
@@ -166,7 +184,7 @@ export default class FSHelper {
       currentLargestInc = 0;
     }
 
-    const _filename = this.createFilename({
+    const _filename = FSHelper.createFilename({
       name,
       suffix: ` (${currentLargestInc + 1})`,
       ext
@@ -210,7 +228,11 @@ export default class FSHelper {
     return this.createFilename({ name, ext });
   }
 
-  static async compareFiles(f1: string, f2: string) {
+  async compareFiles(f1: string, f2: string) {
+    if (this.config.dryRun) {
+      this.log('debug', '(dry-run) Compare files: return true');
+      return true;
+    }
     const [ checksum1, checksum2 ] = await Promise.all([
       hasha.fromFile(f1, { algorithm: 'md5' }),
       hasha.fromFile(f2, { algorithm: 'md5' })
@@ -218,14 +240,14 @@ export default class FSHelper {
     return checksum1 === checksum2;
   }
 
-  static async writeTextFile(file: string, data: string | object, fileExistsAction: FileExistsAction): Promise<WriteTextFileResult> {
+  async writeTextFile(file: string, data: string | object, fileExistsAction: FileExistsAction): Promise<WriteTextFileResult> {
     const resolvedFile = {
       original: file,
       final: file,
       incrementedFrom: null as string | null
     };
     try {
-      if (fs.existsSync(file)) {
+      if (fse.existsSync(file)) {
         if (fileExistsAction === 'skip') {
           return {
             status: 'skipped',
@@ -238,19 +260,19 @@ export default class FSHelper {
           resolvedFile.incrementedFrom = checked.preceding;
         }
       }
-      const tmpFile = this.createTmpFilePath(resolvedFile.final);
+      const tmpFile = FSHelper.createTmpFilePath(resolvedFile.final);
       if (typeof data === 'object') {
-        fse.writeJsonSync(tmpFile, data, { spaces: 2 });
+        this.writeJSON(tmpFile, data);
       }
       else {
-        fs.writeFileSync(tmpFile, data);
+        this.writeFile(tmpFile, data);
       }
       if (fileExistsAction === 'saveAsCopyIfNewer' &&
-        resolvedFile.incrementedFrom && fs.existsSync(resolvedFile.incrementedFrom)) {
+        resolvedFile.incrementedFrom && fse.existsSync(resolvedFile.incrementedFrom)) {
 
         const filesMatch = await this.compareFiles(tmpFile, resolvedFile.incrementedFrom);
         if (filesMatch) {
-          fs.unlinkSync(tmpFile);
+          this.unlink(tmpFile);
           return {
             status: 'skipped',
             message: `Destination file exists with same content (${resolvedFile.incrementedFrom})`
@@ -258,7 +280,7 @@ export default class FSHelper {
         }
       }
 
-      fs.renameSync(tmpFile, resolvedFile.final);
+      this.rename(tmpFile, resolvedFile.final);
       return {
         status: 'completed',
         filePath: resolvedFile.final
@@ -273,12 +295,75 @@ export default class FSHelper {
     }
   }
 
-  static changeFilePathExtension(filePath: string, extension: `.${string}`) {
+  changeFilePathExtension(filePath: string, extension: `.${string}`) {
     const filePathParts = {
       ...path.parse(filePath),
       base: undefined,
       ext: extension
     };
     return path.format(filePathParts);
+  }
+
+  readdir(dir: string) {
+    if (!this.config.dryRun || fse.existsSync(dir)) {
+      return fse.readdirSync(dir);
+    }
+    return [];
+  }
+
+  writeFile(file: string, data: string) {
+    if (!this.config.dryRun) {
+      FSHelper.writeFile(file, data);
+    }
+    else {
+      this.log('debug', `(dry-run) Write text "${file}"`);
+    }
+  }
+
+  static writeFile(file: string, data: string) {
+    fse.writeFileSync(file, data);
+  }
+
+  writeJSON(file: string, data: any) {
+    if (!this.config.dryRun) {
+      FSHelper.writeJSON(file, data);
+    }
+    else {
+      this.log('debug', `(dry-run) Write JSON "${file}"`);
+    }
+  }
+
+  static writeJSON(file: string, data: any) {
+    fse.writeJsonSync(file, data, { spaces: 2 });
+  }
+
+  unlink(file: string) {
+    if (!this.config.dryRun) {
+      FSHelper.unlink(file);
+    }
+    else {
+      this.log('debug', `(dry-run) Unlink "${file}"`);
+    }
+  }
+
+  static unlink(file: string) {
+    fse.unlinkSync(file);
+  }
+
+  rename(oldPath: string, newPath: string) {
+    if (!this.config.dryRun) {
+      FSHelper.rename(oldPath, newPath);
+    }
+    else {
+      this.log('debug', `(dry-run) Rename "${oldPath}" -> "${newPath}"`);
+    }
+  }
+
+  static rename(oldPath: string, newPath: string) {
+    fse.renameSync(oldPath, newPath);
+  }
+
+  protected log(level: LogLevel, ...msg: Array<any>) {
+    commonLog(this.logger, level, this.name, ...msg);
   }
 }

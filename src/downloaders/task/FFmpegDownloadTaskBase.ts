@@ -2,8 +2,8 @@ import fs from 'fs';
 import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import DownloadTask, { DownloadProgress, DownloadTaskParams } from './DownloadTask.js';
 import { FileExistsAction } from './../DownloaderOptions.js';
-import FSHelper from '../../utils/FSHelper.js';
 import { Downloadable } from '../../entities/Downloadable.js';
+import FSHelper from '../../utils/FSHelper.js';
 
 export interface FFmpegDownloadTaskBaseParams<T extends Downloadable> extends DownloadTaskParams<T> {
   fileExistsAction: FileExistsAction;
@@ -61,9 +61,9 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
       let tmpFilePath: string | null = null;
       const __cleanup = () => {
-        if (tmpFilePath && fs.existsSync(tmpFilePath)) {
+        if (tmpFilePath && (this.dryRun || fs.existsSync(tmpFilePath))) {
           this.log('debug', `Clean up ${tmpFilePath}`);
-          fs.unlinkSync(tmpFilePath);
+          this.fsHelper.unlink(tmpFilePath);
         }
       };
 
@@ -77,7 +77,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
         let lastDownloadedFilePath: string | null = null;
         if (this.#fileExistsAction === 'saveAsCopy' || this.#fileExistsAction === 'saveAsCopyIfNewer') {
-          const { filePath, preceding } = FSHelper.checkFileExistsAndIncrement(destFilePath);
+          const { filePath, preceding } = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
           this.resolvedDestPath = filePath;
           lastDownloadedFilePath = preceding;
         }
@@ -113,7 +113,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
             if (this.#fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
               // Compare checksum of downloaded file with that of last downloaded
               const compareMsg = `(saveAsCopyIfNewer) Compare "${_tmpFilePath}" with "${lastDownloadedFilePath}"`;
-              proceedWithCommit = !(await FSHelper.compareFiles(_tmpFilePath, lastDownloadedFilePath));
+              proceedWithCommit = !(await this.fsHelper.compareFiles(_tmpFilePath, lastDownloadedFilePath));
               if (!proceedWithCommit) {
                 this.log('debug', `${compareMsg}: Files match`);
                 this.notifySkip({
@@ -127,8 +127,9 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
               }
             }
             if (proceedWithCommit) {
-              this.log('debug', `Commit "${_tmpFilePath}" to "${_destFilePath}; filesize: ${fs.lstatSync(_tmpFilePath).size} bytes`);
-              fs.renameSync(_tmpFilePath, _destFilePath);
+              const filesizeStr = !this.dryRun ? `; filesize: ${fs.lstatSync(_tmpFilePath).size} bytes` : '';
+              this.log('debug', `Commit "${_tmpFilePath}" to "${_destFilePath}${filesizeStr}`);
+              this.fsHelper.rename(_tmpFilePath, _destFilePath);
               this.notifyComplete();
             }
             __cleanup();
@@ -208,7 +209,14 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
     }
     outputOptions?.forEach((opt) => command.outputOption(opt));
 
-    command.output(tmpFilePath);
+    if (this.dryRun) {
+      const output = process.platform === 'win32' ? 'NUL' : '/dev/null';
+      this.log('debug', `(dry-run) FFmpeg output to "${output}"`);
+      command.output(output);
+    }
+    else {
+      command.output(tmpFilePath);
+    }
 
     this.log('debug', 'FFmpeg command args:', command._getArguments());
 

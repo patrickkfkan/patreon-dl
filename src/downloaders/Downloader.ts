@@ -43,6 +43,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   abstract name: string;
 
   protected fetcher: Fetcher;
+  protected fsHelper: FSHelper;
   protected config: DownloaderConfig<T>;
   protected logger?: Logger | null;
 
@@ -57,7 +58,8 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       ...getDownloaderInit(options)
     };
 
-    this.fetcher = new Fetcher(options?.cookie, options?.logger);
+    this.fetcher = new Fetcher(this.config, options?.cookie, options?.logger);
+    this.fsHelper = new FSHelper(this.config, this.logger);
     this.logger = options?.logger;
 
     if (this.config.pathToFFmpeg) {
@@ -158,14 +160,11 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       for (const tt of target) {
         try {
           const tasks = DownloadTaskFactory.createFromDownloadable({
+            config: this.config,
             item: tt,
             destDir,
             fetcher: this.fetcher,
-            embedDownloaders: this.config.embedDownloaders,
-            destFilenameFormat: this.config.filenameFormat.media,
             fileExistsAction: task.fileExistsAction,
-            maxRetries: this.config.request.maxRetries,
-            downloadAllVariants: this.config.include.allMediaVariants,
             logger: this.logger
           });
           batch.addTasks(tasks);
@@ -177,7 +176,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         }
       }
       if (createdCount > 0) {
-        FSHelper.createDir(destDir);
+        this.fsHelper.createDir(destDir);
       }
     }
     if (failedCreateTaskCount > 0) {
@@ -299,15 +298,15 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       this.emit('phaseBegin', { target: campaign, phase: 'saveInfo' });
 
       // Step 1: create campaign directories
-      const campaignDirs = FSHelper.getCampaignDirs(campaign, this.config);
+      const campaignDirs = this.fsHelper.getCampaignDirs(campaign);
       this.log('debug', 'Campaign directories: ', campaignDirs);
-      FSHelper.createDir(campaignDirs.root);
-      FSHelper.createDir(campaignDirs.info);
+      this.fsHelper.createDir(campaignDirs.root);
+      this.fsHelper.createDir(campaignDirs.info);
 
       // Step 2: save summary and raw json
       const summary = generateCampaignSummary(campaign);
       const summaryFile = path.resolve(campaignDirs.info, 'info.txt');
-      const saveSummaryResult = await FSHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+      const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
       this.logWriteTextFileResult(saveSummaryResult, campaign, 'campaign summary');
 
       // Campaign / creator raw data might not be complete. Fetch directly from API.
@@ -320,13 +319,13 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       }
 
       const campaignRawFile = path.resolve(campaignDirs.info, 'campaign-api.json');
-      const saveCampaignRawResult = await FSHelper.writeTextFile(
+      const saveCampaignRawResult = await this.fsHelper.writeTextFile(
         campaignRawFile, fetchedCampaignAPIData || campaign.raw, this.config.fileExistsAction.infoAPI);
       this.logWriteTextFileResult(saveCampaignRawResult, campaign, 'campaign API data');
 
       if (campaign.creator) {
         const creatorRawFile = path.resolve(campaignDirs.info, 'creator-api.json');
-        const saveCreatorRawResult = await FSHelper.writeTextFile(
+        const saveCreatorRawResult = await this.fsHelper.writeTextFile(
           creatorRawFile, fetchedCreatorAPIData || campaign.creator.raw, this.config.fileExistsAction.infoAPI);
         this.logWriteTextFileResult(saveCreatorRawResult, campaign.creator, 'creator API data');
       }

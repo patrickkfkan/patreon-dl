@@ -8,7 +8,6 @@ import M3U8DownloadTask from './M3U8DownloadTask.js';
 import { Downloadable } from '../../entities/Downloadable.js';
 import { AbortError } from 'node-fetch';
 import { FileExistsAction } from '../DownloaderOptions.js';
-import FSHelper from '../../utils/FSHelper.js';
 
 export interface FetcherDownloadTaskParams<T extends Downloadable> extends DownloadTaskParams {
   fetcher: Fetcher;
@@ -48,12 +47,12 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
     if (this.srcEntity.type === 'video' && this.#isM3U8FilePath(currentDestFilePath) && this.callbacks) {
       // Spawn FFmpeg task to download actual stream
       const spawn = new M3U8DownloadTask({
+        config: this.config,
         src: currentDestFilePath,
         srcEntity: this.srcEntity,
-        maxRetries: this.maxRetries,
         callbacks: this.callbacks,
         logger: this.logger,
-        destFilePath: FSHelper.changeFilePathExtension(preferredOutputFilePath, '.mp4'),
+        destFilePath: this.fsHelper.changeFilePathExtension(preferredOutputFilePath, '.mp4'),
         fileExistsAction: this.#fileExistsAction
       });
       this.callbacks.onSpawn(this, spawn);
@@ -95,13 +94,13 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         let skipDownload: { skip: false; } | { skip: true; reason: DownloadTaskSkipReason } = { skip: false };
         let lastDownloadedFilePath: string | null = null;
         if (fileExistsAction === 'saveAsCopy' || fileExistsAction === 'saveAsCopyIfNewer') {
-          const inc = FSHelper.checkFileExistsAndIncrement(destFilePath);
+          const inc = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
           this.resolvedDestPath = inc.filePath;
           lastDownloadedFilePath = inc.preceding;
         }
         else if (fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
           const isM3U8 = this.srcEntity.type === 'video' && this.#isM3U8FilePath(destFilePath);
-          const mp4FilePath = FSHelper.changeFilePathExtension(destFilePath, '.mp4');
+          const mp4FilePath = this.fsHelper.changeFilePathExtension(destFilePath, '.mp4');
           if (isM3U8 && !fs.existsSync(mp4FilePath)) {
             this.log('debug', `Ignoring 'fileExistsAction: skip' for URL "${this.src}": target download is M3U8 playlist and its ` +
               `associated media file "${mp4FilePath}" does not exist`);
@@ -148,7 +147,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         if (fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
           // Compare checksum of downloaded file with that of last download
           const compareMsg = `(saveAsCopyIfNewer) Compare "${tmpFilePath}" with "${lastDownloadedFilePath}"`;
-          proceedWithCommit = !(await FSHelper.compareFiles(tmpFilePath, lastDownloadedFilePath));
+          proceedWithCommit = !(await this.fsHelper.compareFiles(tmpFilePath, lastDownloadedFilePath));
           if (!proceedWithCommit) {
             this.log('debug', `${compareMsg}: Files match`);
             skipDownload = {

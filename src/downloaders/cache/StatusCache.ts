@@ -62,9 +62,11 @@ export default class StatusCache {
   #data: StatusCacheData;
   #logger?: Logger | null;
   #enabled: boolean;
+  #fsHelper: FSHelper;
 
-  constructor(statusCacheDir: string, logger: Logger | null | undefined, enabled: boolean) {
+  constructor(config: DownloaderConfig<any>, statusCacheDir: string, logger?: Logger | null) {
     this.#logger = logger;
+    this.#fsHelper = new FSHelper(config, logger);
 
     const file = path.resolve(statusCacheDir, STATUS_CACHE_FILENAME);
     let data: StatusCacheData;
@@ -73,13 +75,15 @@ export default class StatusCache {
       this.log('debug', `Loaded status cache file "${file}"`);
     }
     else {
-      FSHelper.createDir(statusCacheDir);
+      this.#fsHelper.createDir(statusCacheDir);
       this.log('debug', `"${file}" does not exist. Start with empty data`);
       data = {
         products: {},
         posts: {}
       };
     }
+
+    const enabled = config.useStatusCache;
     if (!enabled) {
       this.log('debug', 'Status cache entry validation disabled');
     }
@@ -90,13 +94,14 @@ export default class StatusCache {
     this.#enabled = enabled;
   }
 
-  static getInstance(statusCacheDir: string, logger?: Logger | null, enabled = true) {
+  static getInstance(config: DownloaderConfig<any>, statusCacheDir: string, logger?: Logger | null) {
+    const enabled = config.useStatusCache;
     const cachedInstance = this.#instances.find(
       (sc) => sc.#dir === statusCacheDir && sc.#logger === logger && sc.#enabled === enabled);
     if (cachedInstance) {
       return cachedInstance;
     }
-    const instance = new StatusCache(statusCacheDir, logger, enabled);
+    const instance = new StatusCache(config, statusCacheDir, logger);
     this.#instances.push(instance);
     if (this.#instances.length > INSTANCE_CACHE_SIZE) {
       this.#instances.shift();
@@ -289,7 +294,7 @@ export default class StatusCache {
       };
     }
     this.log('debug', `Update status cache for ${target.type} #${target.id}`);
-    fse.writeJsonSync(this.#file, this.#data, { spaces: 2 });
+    this.#fsHelper.writeJSON(this.#file, this.#data);
   }
 
   protected log(level: LogLevel, ...msg: any[]) {

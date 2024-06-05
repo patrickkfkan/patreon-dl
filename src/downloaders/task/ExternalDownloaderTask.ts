@@ -7,6 +7,7 @@ import { EmbedDownloader } from '../DownloaderOptions.js';
 import DownloadTask, { DownloadTaskCallbacks, DownloadTaskParams } from './DownloadTask.js';
 import spawn from '@patrickkfkan/cross-spawn';
 import stringArgv from 'string-argv';
+import { DownloaderConfig } from '../Downloader.js';
 
 export interface ExternalDownloaderTaskParams extends DownloadTaskParams {
   name: string;
@@ -45,6 +46,15 @@ export default class ExternalDownloaderTask extends DownloadTask {
       try {
         this.#abortController = new AbortController();
         const commandStr = this.#getCommandString();
+
+        if (this.dryRun) {
+          this.notifyStart();
+          this.log('debug', `(dry-run) -> Skip command "${commandStr}"`);
+          this.notifyComplete();
+          resolve();
+          return;
+        }
+
         this.log('debug', `Going to execute "${commandStr}"`);
         const proc = spawn(this.#exec.command, this.#exec.args);
         this.log('debug', `[pid: ${proc.pid}] Exec "${commandStr}"`);
@@ -159,11 +169,12 @@ export default class ExternalDownloaderTask extends DownloadTask {
   }
 
   static fromEmbedDownloader(
+    config: DownloaderConfig<any>,
     dl: EmbedDownloader,
     embed: PostEmbed,
     destDir: string,
     callbacks: DownloadTaskCallbacks | null,
-    logger?: Logger | null
+    logger: Logger | null | undefined
   ) {
     if (!embed.url) {
       return null;
@@ -212,11 +223,11 @@ export default class ExternalDownloaderTask extends DownloadTask {
         command: cmd,
         args
       },
+      config,
       callbacks,
       logger,
       src: embed.url,
-      srcEntity: embed,
-      maxRetries: 0
+      srcEntity: embed
     });
   }
 }

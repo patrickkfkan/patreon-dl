@@ -83,7 +83,7 @@ Then wait for this script to complete.
       capturer.on('capture', (credentials) => {
         try {
           FSHelper.createDir(path.parse(ytCredsPath).dir);
-          fs.writeFileSync(ytCredsPath, JSON.stringify(credentials));
+          FSHelper.writeFile(ytCredsPath, JSON.stringify(credentials));
           console.log(`YouTube connected; credentials saved to "${ytCredsPath}"`, EOL);
           resolve(0);
         }
@@ -100,7 +100,7 @@ Then wait for this script to complete.
   static #revokeCredentials(ytCredsPath: string) {
     if (fs.existsSync(ytCredsPath)) {
       try {
-        fs.unlinkSync(ytCredsPath);
+        FSHelper.unlink(ytCredsPath);
         console.log(`Deleted "${ytCredsPath}"`);
         return 0;
       }
