@@ -644,6 +644,11 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v1.7.0
+- Download next batch of posts before expiry of 'next' URL (fixes [#22](https://github.com/patrickkfkan/patreon-dl/issues/22))
+- Add `--dry-run` / `dryRun` option
+- Support URL format `https://www.patreon.com/posts/<post_id>`
+
 v1.6.2
 - Fix 'campaign ID not found' error due to Patreon changes
 
