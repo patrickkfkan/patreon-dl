@@ -13,6 +13,7 @@ const PRODUCT_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop\/(([^/]+)
 const POSTS_BY_USER_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/posts$/;
 const COLLECTION_URL_REGEX = /https:\/\/www\.patreon\.com\/collection\/(\d+)$/;
 const POST_URL_REGEX = /https:\/\/www\.patreon\.com\/posts\/(([^/]+)-(\d+))$/;
+const POST_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/posts\/(\d+)$/; // No slug
 
 const PRODUCT_API_URL_SEARCH_PARAMS = {
   PRODUCT_VARIANT: [
@@ -83,7 +84,7 @@ export type URLAnalysis = {
 } | {
   type: 'post';
   postId: string;
-  slug: string;
+  slug?: string;
 }
 
 export default class URLHelper {
@@ -247,6 +248,15 @@ export default class URLHelper {
         type: 'post',
         postId,
         slug
+      };
+    }
+
+    const postURLMatch2 = POST_URL_REGEX_2.exec(base);
+    if (postURLMatch2?.length === 2) {
+      const postId = postURLMatch2[1];
+      return {
+        type: 'post',
+        postId
       };
     }
 

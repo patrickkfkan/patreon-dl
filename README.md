@@ -98,6 +98,7 @@ https://www.patreon.com/<creator>/posts
 https://www.patreon.com/user/posts?u=<user_id>
 
 // Dowload a single post
+https://www.patreon.com/posts/<post_id>
 https://www.patreon.com/posts/<slug>-<post_id>
 
 // Download posts in a collection
