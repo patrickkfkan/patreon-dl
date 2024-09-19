@@ -1,4 +1,3 @@
-import { AbortError } from 'node-fetch';
 import URLHelper from '../utils/URLHelper.js';
 import Downloader, { DownloaderConfig, DownloaderStartParams } from './Downloader.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
@@ -451,7 +450,7 @@ export default class PostDownloader extends Downloader<Post> {
     const postsParser = new PostParser(this.logger);
     const res = await this.fetchCampaign(campaignId);
     if (signal?.aborted) {
-      throw new AbortError();
+      throw new Error('Aborted');
     }
     if (res.error) {
       throw res.error;

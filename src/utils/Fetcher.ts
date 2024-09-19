@@ -1,6 +1,5 @@
 import progressStream from 'progress-stream';
 import * as fs from 'fs';
-import fetch, { AbortError, Request, Response } from 'node-fetch';
 import { pipeline } from 'stream/promises';
 import { URL } from 'url';
 import path from 'path';
@@ -83,7 +82,7 @@ export default class Fetcher {
       return await (type === 'html' ? res.text() : res.json()) as Promise<FetcherGetResultOf<T>>;
     }
     catch (error) {
-      if (error instanceof AbortError) {
+      if (signal?.aborted) {
         throw error;
       }
       if (rt < maxRetries) {
@@ -144,7 +143,7 @@ export default class Fetcher {
       const start = (overrides?: StartDownloadOverrides) => {
         const _destFilePath = overrides?.destFilePath || destFilePath;
         const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath);
-        return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress);
+        return this.#startDownload(_res, _tmpFilePath, _destFilePath/*, progress*/);
       };
       const abort = () => {
         internalAbortController.abort();
@@ -162,10 +161,10 @@ export default class Fetcher {
   }
 
   async #startDownload(
-    response: Response & { body: NonNullable<Response['body']> },
+    response: Response & { body: NodeJS.ReadableStream },
     tmpFilePath: string,
-    destFilePath: string,
-    progress: progressStream.ProgressStream) {
+    destFilePath: string
+    /*Progress: progressStream.ProgressStream*/) {
 
     try {
       let size = 0;
@@ -183,7 +182,12 @@ export default class Fetcher {
         this.log('debug', `Pipe "${response.url}" to "${tmpFilePath}"`);
         await pipeline(
           response.body,
-          progress,
+          /**
+           * Disable progress for this commit: causes exit possibly due to:
+           * - https://github.com/freeall/progress-stream/issues/35
+           * - https://github.com/nodejs/node/issues/34219
+           */
+          // Progress,
           fs.createWriteStream(tmpFilePath)
         );
         size = fs.lstatSync(tmpFilePath).size;
@@ -250,7 +254,7 @@ export default class Fetcher {
   }
 
   #assertResponseOK(response: Response | null, originURL: string, requireBody: false): response is Response;
-  #assertResponseOK(response: Response | null, originURL: string, requireBody?: true): response is Response & { body: NonNullable<Response['body']> };
+  #assertResponseOK(response: Response | null, originURL: string, requireBody?: true): response is Response & { body: NodeJS.ReadableStream };
   #assertResponseOK(response: Response | null, originURL: string, requireBody = true) {
     if (!response) {
       throw new FetcherError('No response', originURL);

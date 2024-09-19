@@ -6,7 +6,6 @@ import FilenameResolver from '../../utils/FllenameResolver.js';
 import DownloadTask, { DownloadTaskParams, DownloadProgress, DownloadTaskSkipReason } from './DownloadTask.js';
 import M3U8DownloadTask from './M3U8DownloadTask.js';
 import { Downloadable } from '../../entities/Downloadable.js';
-import { AbortError } from 'node-fetch';
 import { FileExistsAction } from '../DownloaderOptions.js';
 
 export interface FetcherDownloadTaskParams<T extends Downloadable> extends DownloadTaskParams {
@@ -178,7 +177,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         }
       }
       catch (error: any) {
-        if (error instanceof AbortError) {
+        if (this.#abortController.signal.aborted) {
           if (!skipped) {
             this.notifyAbort();
             if (this.#abortingCallback) {

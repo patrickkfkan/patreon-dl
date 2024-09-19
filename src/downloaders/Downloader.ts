@@ -16,7 +16,6 @@ import { Downloadable } from '../entities/Downloadable.js';
 import { generateCampaignSummary } from './templates/CampaignInfo.js';
 import path from 'path';
 import URLHelper from '../utils/URLHelper.js';
-import { AbortError } from 'node-fetch';
 import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
@@ -419,7 +418,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       json = await this.fetcher.get({ url, type: 'json', maxRetries: this.config.request.maxRetries, signal });
     }
     catch (error) {
-      if (error instanceof AbortError) {
+      if (signal?.aborted) {
         this.log('warn', 'API request aborted');
       }
       else {

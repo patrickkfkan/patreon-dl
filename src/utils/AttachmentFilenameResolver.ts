@@ -1,5 +1,4 @@
 import path from 'path';
-import { Response } from 'node-fetch';
 import FilenameResolver from './FllenameResolver.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
 import { Attachment } from '../entities/Attachment.js';

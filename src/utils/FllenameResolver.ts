@@ -1,6 +1,5 @@
 import contentDisposition from 'content-disposition';
 import mimeTypes from 'mime-types';
-import { Response } from 'node-fetch';
 import path from 'path';
 import URLHelper from './URLHelper.js';
 

@@ -7,7 +7,6 @@ import URLHelper, { PostSortOrder } from '../utils/URLHelper.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import PageParser from '../parsers/PageParser.js';
 import Fetcher from '../utils/Fetcher.js';
-import { AbortError } from 'node-fetch';
 import PostParser from '../parsers/PostParser.js';
 import { PostCollection } from '../entities/Post.js';
 import Sleeper from '../utils/Sleeper.js';
@@ -218,7 +217,7 @@ export default class PostsFetcher extends EventEmitter {
     if (statusName === 'aborted' || statusName === 'completed') {
       return;
     }
-    if (error instanceof AbortError) {
+    if (this.signal?.aborted) {
       this.log('warn', 'Abort');
       this.#setStatus({ status: 'aborted' });
       return;
@@ -273,7 +272,7 @@ export default class PostsFetcher extends EventEmitter {
       page = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal: this.signal });
     }
     catch (error) {
-      if (error instanceof AbortError) {
+      if (this.signal?.aborted) {
         throw error;
       }
       const e = Error(`Error requesting "${url}"`);

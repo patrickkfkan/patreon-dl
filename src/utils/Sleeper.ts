@@ -1,5 +1,3 @@
-import { AbortError } from 'node-fetch';
-
 export default class Sleeper {
 
   #timeout: NodeJS.Timeout | null;
@@ -26,7 +24,7 @@ export default class Sleeper {
     return new Promise<void>((resolve, reject) => {
       if (signal) {
         this.#signal = signal;
-        this.#abortHandler = () => reject(new AbortError());
+        this.#abortHandler = () => reject(new Error('Aborted'));
         signal.addEventListener('abort', this.#abortHandler, { once: true });
       }
       this.#resolve = resolve;
