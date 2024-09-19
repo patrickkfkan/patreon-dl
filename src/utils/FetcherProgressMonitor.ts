@@ -1,24 +1,31 @@
-import { Progress, ProgressStream } from 'progress-stream';
 import { EventEmitter } from 'events';
+import Progress from './Progress';
 
-export type FetcherProgress = Progress & {
+export type FetcherProgress = {
+  speed: number;
+  percentage?: number;
+  transferred: number;
+  length?: number;
+  remaining?: number;
+  eta?: number;
+  runtime: number;
   destFilename: string;
   destFilePath: string;
 };
 
 export default class FetcherProgressMonitor extends EventEmitter {
 
-  #progressStream: ProgressStream;
+  #progress: Progress;
   #destFilename: string;
   #destFilePath: string;
 
-  constructor(progressStream: ProgressStream, destFilename: string, destFilePath: string) {
+  constructor(progress: Progress, destFilename: string, destFilePath: string) {
     super();
-    this.#progressStream = progressStream;
+    this.#progress = progress;
     this.#destFilename = destFilename;
     this.#destFilePath = destFilePath;
 
-    this.#progressStream.on('progress', this.#handleProgressStreamProgressEvent.bind(this));
+    this.#progress.on('progress', this.#handleProgressStreamProgressEvent.bind(this));
   }
 
   getDestFilename() {
@@ -31,18 +38,20 @@ export default class FetcherProgressMonitor extends EventEmitter {
 
   getProgress(): FetcherProgress {
     return {
-      ...this.#progressStream.progress(),
+      speed: this.#progress.speed,
+      percentage: this.#progress.percentage,
+      transferred: this.#progress.transferred,
+      length: this.#progress.length,
+      remaining: this.#progress.remaining,
+      eta: this.#progress.eta,
+      runtime: this.#progress.runtime,
       destFilename: this.#destFilename,
       destFilePath: this.#destFilePath
     };
   }
 
-  #handleProgressStreamProgressEvent(progress: Progress) {
-    this.emit('progress', {
-      ...progress,
-      destFilename: this.#destFilename,
-      destFilePath: this.#destFilePath
-    });
+  #handleProgressStreamProgressEvent() {
+    this.emit('progress', this.getProgress());
   }
 
   emit(event: 'progress', progress: FetcherProgress): boolean;

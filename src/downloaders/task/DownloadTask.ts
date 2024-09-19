@@ -29,9 +29,9 @@ export interface DownloadProgress {
   destFilename: string;
   destFilePath: string;
   lengthUnit: string;
-  length: number; // Measured in `lengthUnit`
+  length?: number; // Measured in `lengthUnit`
   lengthDownloaded: number; // Measured in `lengthUnit`
-  percent: number;
+  percent?: number;
   sizeDownloaded: number; // Kb
   speed: number; // Kb/s
 }

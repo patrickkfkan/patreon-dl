@@ -124,6 +124,25 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       this.log('info', `Download spawned: #${batch.id}.${origin.id} -> #${batch.id}.${spawn.id}`);
     });
 
+    /**
+     * Uncomment this block to log download progress
+
+    batch.on('taskProgress', ({task, progress}) => {
+      if (progress) {
+        if (progress.length) {
+          this.log('info', `Download progress (${__getDownloadIdString(task, batch)}): ${progress.lengthDownloaded} / ${progress.length} ${progress.lengthUnit}s / ${progress.percent}% (${progress.speed} kB/s)`,);
+        }
+        else {
+          this.log('info', `Download progress (${__getDownloadIdString(task, batch)}): ${progress.lengthDownloaded} / ? ${progress.lengthUnit}s (${progress.speed} kB/s)`,);
+        }
+      }
+      else {
+        this.log('warn', `Download progress not available (${__getDownloadIdString(task, batch)})`);
+      }
+    });
+
+     */
+
     batch.on('complete', () => {
       const total = batch.getTasks().length;
       const completed = batch.getTasks('completed').length;

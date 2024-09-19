@@ -1,4 +1,3 @@
-import progressStream from 'progress-stream';
 import * as fs from 'fs';
 import { pipeline } from 'stream/promises';
 import { URL } from 'url';
@@ -10,6 +9,7 @@ import { pickDefined } from './Misc.js';
 import Logger, { LogLevel, commonLog } from './logging/Logger.js';
 import FSHelper from './FSHelper.js';
 import { DownloaderConfig } from '../downloaders/Downloader.js';
+import Progress from './Progress.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
@@ -132,10 +132,8 @@ export default class Fetcher {
       const destFilename = destFilenameResolver.resolve(res);
       const destFilePath = path.resolve(destDir, destFilename);
 
-      const contentLength = res.headers.get('content-length');
-      const progress = progressStream({
-        length: contentLength ? parseInt(contentLength, 10) : 0,
-        time: 300
+      const progress = new Progress(res, {
+        reportInterval: 300
       });
       const monitor = new FetcherProgressMonitor(progress, destFilename, destFilePath);
 
@@ -143,7 +141,7 @@ export default class Fetcher {
       const start = (overrides?: StartDownloadOverrides) => {
         const _destFilePath = overrides?.destFilePath || destFilePath;
         const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath);
-        return this.#startDownload(_res, _tmpFilePath, _destFilePath/*, progress*/);
+        return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress);
       };
       const abort = () => {
         internalAbortController.abort();
@@ -163,8 +161,8 @@ export default class Fetcher {
   async #startDownload(
     response: Response & { body: NodeJS.ReadableStream },
     tmpFilePath: string,
-    destFilePath: string
-    /*Progress: progressStream.ProgressStream*/) {
+    destFilePath: string,
+    progress: Progress) {
 
     try {
       let size = 0;
@@ -182,12 +180,7 @@ export default class Fetcher {
         this.log('debug', `Pipe "${response.url}" to "${tmpFilePath}"`);
         await pipeline(
           response.body,
-          /**
-           * Disable progress for this commit: causes exit possibly due to:
-           * - https://github.com/freeall/progress-stream/issues/35
-           * - https://github.com/nodejs/node/issues/34219
-           */
-          // Progress,
+          progress.stream,
           fs.createWriteStream(tmpFilePath)
         );
         size = fs.lstatSync(tmpFilePath).size;
