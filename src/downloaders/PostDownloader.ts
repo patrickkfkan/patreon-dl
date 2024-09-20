@@ -1,9 +1,9 @@
 import URLHelper from '../utils/URLHelper.js';
-import Downloader, { DownloaderConfig, DownloaderStartParams } from './Downloader.js';
-import DownloadTaskBatch from './task/DownloadTaskBatch.js';
+import Downloader, { type DownloaderConfig, type DownloaderStartParams } from './Downloader.js';
+import type DownloadTaskBatch from './task/DownloadTaskBatch.js';
 import PostParser from '../parsers/PostParser.js';
-import { Post } from '../entities/Post.js';
-import { Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
+import { type Post } from '../entities/Post.js';
+import { type Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
 import StatusCache from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
 import path from 'path';
@@ -25,397 +25,402 @@ export default class PostDownloader extends Downloader<Post> {
       throw Error('Downloader already running');
     }
 
-    this.#startPromise = new Promise<void>(async (resolve) => {
-
-      const { signal } = params || {};
-      const postFetch = this.config.postFetch;
-      let batch: DownloadTaskBatch | null = null;
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      const abortHandler = async () => {
-        this.log('info', 'Abort signal received');
-        if (batch) {
-          await batch.abort();
-        }
-      };
-      if (signal) {
-        signal.addEventListener('abort', abortHandler, { once: true });
-      }
-
-      if (postFetch.type === 'byUser') {
-        this.log('info', `Targeting posts by '${postFetch.vanity}'`);
-      }
-      else if (postFetch.type === 'byUserId') {
-        this.log('info', `Targeting posts by user #${postFetch.userId}`);
-      }
-      else if (postFetch.type === 'byCollection') {
-        this.log('info', `Targeting posts in collection #${postFetch.collectionId}`);
-      }
-      else { // Single
-        this.log('info', `Targeting post #${postFetch.postId}`);
-      }
-      if (this.#isFetchingMultiplePosts(postFetch) && postFetch.filters) {
-        const filterStr = Object.entries(postFetch.filters).map(([ key, value ]) => `${key}=${value}`).join('; ');
-        if (filterStr) {
-          this.log('info', `Filters: ${filterStr}`);
-        }
-      }
-
-      // Step 1: Get posts (if by user) or target post
-      const postsFetcher = new PostsFetcher({
-        config: this.config,
-        fetcher: this.fetcher,
-        logger: this.logger,
-        signal
-      });
-      postsFetcher.on('statusChange', ({current}) => {
-        if (current.status === 'running') {
-          this.emit('fetchBegin', { targetType: postsFetcher.getTargetType() });
-        }
-      });
-      postsFetcher.begin();
-
-      // Step 2: download posts in each fetched collection
-      let downloaded = 0;
-      let skippedUnviewable = 0;
-      let skippedRedundant = 0;
-      let skippedUnmetMediaTypeCriteria = 0;
-      let skippedNotInTier = 0;
-      let campaignSaved = false;
-      const postsParser = new PostParser(this.logger);
-      while (postsFetcher.hasNext()) {
-        const { collection, aborted, error } = await postsFetcher.next();
-        if (!collection || aborted) {
-          break;
-        }
-        if (!collection && error) {
-          this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
-          resolve();
+    this.#startPromise = new Promise<void>((resolve) => {
+      void (async () => {
+        const { signal } = params || {};
+        const postFetch = this.config.postFetch;
+        let batch: DownloadTaskBatch | null = null;
+  
+        if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
-        if (!campaignSaved && collection.posts[0]?.campaign) {
-          await this.saveCampaignInfo(collection.posts[0].campaign, signal);
-          campaignSaved = true;
-          if (this.checkAbortSignal(signal, resolve)) {
-            return;
+  
+        const abortHandler = () => {
+          void (async () => {
+            this.log('info', 'Abort signal received');
+            if (batch) {
+              await batch.abort();
+            }
+          })();
+        };
+        if (signal) {
+          signal.addEventListener('abort', abortHandler, { once: true });
+        }
+  
+        if (postFetch.type === 'byUser') {
+          this.log('info', `Targeting posts by '${postFetch.vanity}'`);
+        }
+        else if (postFetch.type === 'byUserId') {
+          this.log('info', `Targeting posts by user #${postFetch.userId}`);
+        }
+        else if (postFetch.type === 'byCollection') {
+          this.log('info', `Targeting posts in collection #${postFetch.collectionId}`);
+        }
+        else { // Single
+          this.log('info', `Targeting post #${postFetch.postId}`);
+        }
+        if (this.#isFetchingMultiplePosts(postFetch) && postFetch.filters) {
+          const filterStr = Object.entries(postFetch.filters).map(([ key, value ]) => `${key}=${value}`).join('; ');
+          if (filterStr) {
+            this.log('info', `Filters: ${filterStr}`);
           }
         }
-
-        for (const _post of collection.posts) {
-
-          let post = _post;
-
-          if (this.#isFetchingMultiplePosts(postFetch)) {
-            // Refresh to ensure media links have not expired
-            this.log('debug', `Refresh post #${_post.id}`);
-            const postURL = URLHelper.constructPostsAPIURL({ postId: _post.id });
-            const { json } = await this.commonFetchAPI(postURL, signal);
-            let refreshed: Post | null = null;
-            if (json) {
-              refreshed = postsParser.parsePostsAPIResponse(json, postURL).posts[0] || null;
-              if (!refreshed) {
-                this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
-              }
-              else if (refreshed.id !== _post.id) {
-                this.log('warn', `Refreshed post #${_post.id} but ID mismatch - going to use existing data`);
-                refreshed = null;
-              }
-            }
-            else if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-            else {
-              this.log('warn', `Failed to refresh post #${_post.id} - going to use existing data`);
-            }
-            if (refreshed) {
-              this.log('debug', `Use refreshed post data #${refreshed.id}`);
-              post = refreshed;
-            }
+  
+        // Step 1: Get posts (if by user) or target post
+        const postsFetcher = new PostsFetcher({
+          config: this.config,
+          fetcher: this.fetcher,
+          logger: this.logger,
+          signal
+        });
+        postsFetcher.on('statusChange', ({current}) => {
+          if (current.status === 'running') {
+            this.emit('fetchBegin', { targetType: postsFetcher.getTargetType() });
           }
-
-          this.emit('targetBegin', { target: post });
-
-          // Step 4.1: post directories
-          const postDirs = this.fsHelper.getPostDirs(post);
-          this.log('debug', 'Post directories:', postDirs);
-
-          // Step 4.2: Check with status cache
-          const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
-          if (statusCache.validate(post, postDirs.root, this.config)) {
-            this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
-            this.emit('targetEnd', {
-              target: post,
-              isSkipped: true,
-              skipReason: TargetSkipReason.AlreadyDownloaded,
-              skipMessage: 'Target already downloaded and nothing has changed since last download'
-            });
-            skippedRedundant++;
-            continue;
+        });
+        postsFetcher.begin();
+  
+        // Step 2: download posts in each fetched collection
+        let downloaded = 0;
+        let skippedUnviewable = 0;
+        let skippedRedundant = 0;
+        let skippedUnmetMediaTypeCriteria = 0;
+        let skippedNotInTier = 0;
+        let campaignSaved = false;
+        const postsParser = new PostParser(this.logger);
+        while (postsFetcher.hasNext()) {
+          const { collection, aborted, error } = await postsFetcher.next();
+          if (!collection || aborted) {
+            break;
           }
-
-          this.log('info', `Download post #${post.id} (${post.title})`);
-
-          // Step 4.3: Check whether we should download post
-          // -- 4.3.1: Viewability
-          if (!post.isViewable) {
-            if (this.config.include.lockedContent) {
-              this.log('warn', `Post #${post.id} is not viewable by current user`);
-            }
-            else {
-              this.log('warn', `Skipped downloading post #${post.id}: not viewable by current user`);
-              this.emit('targetEnd', {
-                target: post,
-                isSkipped: true,
-                skipReason: TargetSkipReason.Inaccessible,
-                skipMessage: 'Target is not viewable by current user'
-              });
-              skippedUnviewable++;
-              continue;
-            }
+          if (!collection && error) {
+            this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
+            resolve();
+            return;
           }
-
-          // -- 4.3.2: Config option 'include.postsWithMediaType'
-          const postsWithMediaType = this.config.include.postsWithMediaType;
-          if (postsWithMediaType !== 'any') {
-            const hasAttachments = post.attachments.length > 0;
-            const hasAudio = !!post.audio || !!post.audioPreview;
-            const hasImages = post.images.length > 0;
-            const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && post.embed.type === 'videoEmbed');
-
-            let skip = false;
-            if (postsWithMediaType === 'none') {
-              skip = hasAttachments || hasAudio || hasImages || hasVideo;
-            }
-            else if (Array.isArray(postsWithMediaType)) {
-              skip = !(
-                (postsWithMediaType.includes('attachment') && hasAttachments) ||
-                (postsWithMediaType.includes('audio') && hasAudio) ||
-                (postsWithMediaType.includes('image') && hasImages) ||
-                (postsWithMediaType.includes('video') && hasVideo));
-            }
-
-            if (skip) {
-              this.log('warn', `Skipped downloading post #${post.id}: unmet media type criteria`);
-              this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
-                hasAttachments,
-                hasAudio,
-                hasImages,
-                hasVideo
-              });
-              this.emit('targetEnd', {
-                target: post,
-                isSkipped: true,
-                skipReason: TargetSkipReason.UnmetMediaTypeCriteria,
-                skipMessage: 'Target does not meet media type criteria'
-              });
-              skippedUnmetMediaTypeCriteria++;
-              continue;
-            }
-          }
-
-          // -- 4.3.3: Config option 'include.postsInTier'
-          const postsInTier = this.config.include.postsInTier;
-          const isAnyTier = postsInTier === 'any' || postsInTier.includes('any');
-          if (!isAnyTier) {
-            const applicableTierIds = postsInTier.filter((id) => post.campaign?.rewards.find((r) => r.id === id));
-            if (!post.campaign) {
-              this.log('warn', 'config.include.postsInTier: ignored - post missing campaign info');
-            }
-            else {
-              this.log('debug', 'config.include.postsInTier: applicable tier IDs:', applicableTierIds);
-            }
-            let skip = false;
-            if (!post.campaign) {
-              skip = false;
-            }
-            else if (applicableTierIds.length === 0) {
-              skip = true;
-            }
-            else if (!post.tiers.find((tier) => tier.id === 'patrons')) {
-              skip = applicableTierIds.every((id) => !post.tiers.find((tier) => tier.id === id));
-            }
-            if (skip) {
-              this.log('warn', `Skipped downloading post #${post.id}: not in tier`);
-              this.log('debug', 'Match criteria failed:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
-              this.emit('targetEnd', {
-                target: post,
-                isSkipped: true,
-                skipReason: TargetSkipReason.NotInTier,
-                skipMessage: 'Target not in tier'
-              });
-              skippedNotInTier++;
-              continue;
-            }
-            if (post.campaign) {
-              this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
-            }
-          }
-
-          // Step 4.4: Save post info
-          if (this.config.include.contentInfo) {
-            this.log('info', `Save post info #${post.id}`);
-            this.emit('phaseBegin', { target: post, phase: 'saveInfo' });
-            this.fsHelper.createDir(postDirs.info);
-            // Post raw data might not be complete or consistent with other posts in the collection.
-            // Fetch directly from API.
-            // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
-            const { json: fetchedPostAPIData } = await this.commonFetchAPI(
-              URLHelper.constructPostsAPIURL({
-                postId: post.id,
-                campaignId: post.campaign?.id
-              }),
-              signal
-            );
-
+          if (!campaignSaved && collection.posts[0]?.campaign) {
+            await this.saveCampaignInfo(collection.posts[0].campaign, signal);
+            campaignSaved = true;
             if (this.checkAbortSignal(signal, resolve)) {
               return;
             }
-
-            // Save summary and raw json
-            const summary = generatePostSummary(post);
-            const summaryFile = path.resolve(postDirs.info, 'info.txt');
-            const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-            this.logWriteTextFileResult(saveSummaryResult, post, 'post summary');
-
-            const postRawFile = path.resolve(postDirs.info, 'post-api.json');
-            const savePostRawResult = await this.fsHelper.writeTextFile(
-              postRawFile, fetchedPostAPIData || post.raw, this.config.fileExistsAction.infoAPI);
-            this.logWriteTextFileResult(savePostRawResult, post, 'post API data');
-            this.emit('phaseEnd', { target: post, phase: 'saveInfo' });
-
-            // (Downloading of info media items deferred to the next step)
           }
-
-          if (this.config.include.previewMedia || this.config.include.contentMedia) {
-            this.emit('phaseBegin', { target: post, phase: 'saveMedia' });
-          }
-
-          // Step 4.5: save embed info
-          if (post.embed && this.config.include.contentMedia) {
-            this.log('info', `Save embed info of post #${post.id}`);
-            this.fsHelper.createDir(postDirs.embed);
-            const embedSummary = generatePostEmbedSummary(post.embed);
-            let embedFilename;
-            switch (post.embed.type) {
-              case 'videoEmbed':
-                embedFilename = 'embedded-video.txt';
-                break;
-              case 'linkEmbed':
-                embedFilename = 'embedded-link.txt';
-                break;
-              default:
-                embedFilename = 'embedded-unknown.txt';
+  
+          for (const _post of collection.posts) {
+  
+            let post = _post;
+  
+            if (this.#isFetchingMultiplePosts(postFetch)) {
+              // Refresh to ensure media links have not expired
+              this.log('debug', `Refresh post #${_post.id}`);
+              const postURL = URLHelper.constructPostsAPIURL({ postId: _post.id });
+              const { json } = await this.commonFetchAPI(postURL, signal);
+              let refreshed: Post | null = null;
+              if (json) {
+                refreshed = postsParser.parsePostsAPIResponse(json, postURL).posts[0] || null;
+                if (!refreshed) {
+                  this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
+                }
+                else if (refreshed.id !== _post.id) {
+                  this.log('warn', `Refreshed post #${_post.id} but ID mismatch - going to use existing data`);
+                  refreshed = null;
+                }
+              }
+              else if (this.checkAbortSignal(signal, resolve)) {
+                return;
+              }
+              else {
+                this.log('warn', `Failed to refresh post #${_post.id} - going to use existing data`);
+              }
+              if (refreshed) {
+                this.log('debug', `Use refreshed post data #${refreshed.id}`);
+                post = refreshed;
+              }
             }
-            const embedFile = path.resolve(postDirs.embed, embedFilename);
-            const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
-            this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
-          }
-
-          // Step 4.6: create download tasks
-          if (this.config.include.previewMedia ||
-            this.config.include.contentMedia ||
-            this.config.include.contentInfo) {
-
-            batch = this.#createDownloadTaskBatchForPost(post, postDirs);
-
+  
+            this.emit('targetBegin', { target: post });
+  
+            // Step 4.1: post directories
+            const postDirs = this.fsHelper.getPostDirs(post);
+            this.log('debug', 'Post directories:', postDirs);
+  
+            // Step 4.2: Check with status cache
+            const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
+            if (statusCache.validate(post, postDirs.root, this.config)) {
+              this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
+              this.emit('targetEnd', {
+                target: post,
+                isSkipped: true,
+                skipReason: TargetSkipReason.AlreadyDownloaded,
+                skipMessage: 'Target already downloaded and nothing has changed since last download'
+              });
+              skippedRedundant++;
+              continue;
+            }
+  
+            this.log('info', `Download post #${post.id} (${post.title})`);
+  
+            // Step 4.3: Check whether we should download post
+            // -- 4.3.1: Viewability
+            if (!post.isViewable) {
+              if (this.config.include.lockedContent) {
+                this.log('warn', `Post #${post.id} is not viewable by current user`);
+              }
+              else {
+                this.log('warn', `Skipped downloading post #${post.id}: not viewable by current user`);
+                this.emit('targetEnd', {
+                  target: post,
+                  isSkipped: true,
+                  skipReason: TargetSkipReason.Inaccessible,
+                  skipMessage: 'Target is not viewable by current user'
+                });
+                skippedUnviewable++;
+                continue;
+              }
+            }
+  
+            // -- 4.3.2: Config option 'include.postsWithMediaType'
+            const postsWithMediaType = this.config.include.postsWithMediaType;
+            if (postsWithMediaType !== 'any') {
+              const hasAttachments = post.attachments.length > 0;
+              const hasAudio = !!post.audio || !!post.audioPreview;
+              const hasImages = post.images.length > 0;
+              const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && post.embed.type === 'videoEmbed');
+  
+              let skip = false;
+              if (postsWithMediaType === 'none') {
+                skip = hasAttachments || hasAudio || hasImages || hasVideo;
+              }
+              else if (Array.isArray(postsWithMediaType)) {
+                skip = !(
+                  (postsWithMediaType.includes('attachment') && hasAttachments) ||
+                  (postsWithMediaType.includes('audio') && hasAudio) ||
+                  (postsWithMediaType.includes('image') && hasImages) ||
+                  (postsWithMediaType.includes('video') && hasVideo));
+              }
+  
+              if (skip) {
+                this.log('warn', `Skipped downloading post #${post.id}: unmet media type criteria`);
+                this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
+                  hasAttachments,
+                  hasAudio,
+                  hasImages,
+                  hasVideo
+                });
+                this.emit('targetEnd', {
+                  target: post,
+                  isSkipped: true,
+                  skipReason: TargetSkipReason.UnmetMediaTypeCriteria,
+                  skipMessage: 'Target does not meet media type criteria'
+                });
+                skippedUnmetMediaTypeCriteria++;
+                continue;
+              }
+            }
+  
+            // -- 4.3.3: Config option 'include.postsInTier'
+            const postsInTier = this.config.include.postsInTier;
+            const isAnyTier = postsInTier === 'any' || postsInTier.includes('any');
+            if (!isAnyTier) {
+              const applicableTierIds = postsInTier.filter((id) => post.campaign?.rewards.find((r) => r.id === id));
+              if (!post.campaign) {
+                this.log('warn', 'config.include.postsInTier: ignored - post missing campaign info');
+              }
+              else {
+                this.log('debug', 'config.include.postsInTier: applicable tier IDs:', applicableTierIds);
+              }
+              let skip = false;
+              if (!post.campaign) {
+                skip = false;
+              }
+              else if (applicableTierIds.length === 0) {
+                skip = true;
+              }
+              else if (!post.tiers.find((tier) => tier.id === 'patrons')) {
+                skip = applicableTierIds.every((id) => !post.tiers.find((tier) => tier.id === id));
+              }
+              if (skip) {
+                this.log('warn', `Skipped downloading post #${post.id}: not in tier`);
+                this.log('debug', 'Match criteria failed:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
+                this.emit('targetEnd', {
+                  target: post,
+                  isSkipped: true,
+                  skipReason: TargetSkipReason.NotInTier,
+                  skipMessage: 'Target not in tier'
+                });
+                skippedNotInTier++;
+                continue;
+              }
+              if (post.campaign) {
+                this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
+              }
+            }
+  
+            // Step 4.4: Save post info
             if (this.config.include.contentInfo) {
-              const infoElements: Downloadable[] = [];
-              if (post.coverImage) {
-                infoElements.push(post.coverImage);
+              this.log('info', `Save post info #${post.id}`);
+              this.emit('phaseBegin', { target: post, phase: 'saveInfo' });
+              this.fsHelper.createDir(postDirs.info);
+              // Post raw data might not be complete or consistent with other posts in the collection.
+              // Fetch directly from API.
+              // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
+              const { json: fetchedPostAPIData } = await this.commonFetchAPI(
+                URLHelper.constructPostsAPIURL({
+                  postId: post.id,
+                  campaignId: post.campaign?.id
+                }),
+                signal
+              );
+  
+              if (this.checkAbortSignal(signal, resolve)) {
+                return;
               }
-              if (post.thumbnail) {
-                infoElements.push(post.thumbnail);
-              }
-              if (infoElements.length > 0) {
-                this.addToDownloadTaskBatch(batch,
-                  {
-                    target: infoElements,
-                    targetName: `post #${post.id} -> info elements`,
-                    destDir: postDirs.info,
-                    fileExistsAction: this.config.fileExistsAction.info
-                  }
-                );
-              }
+  
+              // Save summary and raw json
+              const summary = generatePostSummary(post);
+              const summaryFile = path.resolve(postDirs.info, 'info.txt');
+              const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+              this.logWriteTextFileResult(saveSummaryResult, post, 'post summary');
+  
+              const postRawFile = path.resolve(postDirs.info, 'post-api.json');
+              const savePostRawResult = await this.fsHelper.writeTextFile(
+                postRawFile, fetchedPostAPIData || post.raw, this.config.fileExistsAction.infoAPI);
+              this.logWriteTextFileResult(savePostRawResult, post, 'post API data');
+              this.emit('phaseEnd', { target: post, phase: 'saveInfo' });
+  
+              // (Downloading of info media items deferred to the next step)
             }
-
-            this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
-            this.emit('phaseBegin', { target: post, phase: 'batchDownload', batch });
-
-            await batch.start();
-
-            // Step 4.7: Update status cache
-            statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0, this.config);
-
-            await batch.destroy();
-            batch = null;
-            this.emit('phaseEnd', { target: post, phase: 'batchDownload'});
+  
+            if (this.config.include.previewMedia || this.config.include.contentMedia) {
+              this.emit('phaseBegin', { target: post, phase: 'saveMedia' });
+            }
+  
+            // Step 4.5: save embed info
+            if (post.embed && this.config.include.contentMedia) {
+              this.log('info', `Save embed info of post #${post.id}`);
+              this.fsHelper.createDir(postDirs.embed);
+              const embedSummary = generatePostEmbedSummary(post.embed);
+              let embedFilename;
+              switch (post.embed.type) {
+                case 'videoEmbed':
+                  embedFilename = 'embedded-video.txt';
+                  break;
+                case 'linkEmbed':
+                  embedFilename = 'embedded-link.txt';
+                  break;
+                default:
+                  embedFilename = 'embedded-unknown.txt';
+              }
+              const embedFile = path.resolve(postDirs.embed, embedFilename);
+              const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
+              this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
+            }
+  
+            // Step 4.6: create download tasks
+            if (this.config.include.previewMedia ||
+              this.config.include.contentMedia ||
+              this.config.include.contentInfo) {
+  
+              batch = this.#createDownloadTaskBatchForPost(post, postDirs);
+  
+              if (this.config.include.contentInfo) {
+                const infoElements: Downloadable[] = [];
+                if (post.coverImage) {
+                  infoElements.push(post.coverImage);
+                }
+                if (post.thumbnail) {
+                  infoElements.push(post.thumbnail);
+                }
+                if (infoElements.length > 0) {
+                  this.addToDownloadTaskBatch(batch,
+                    {
+                      target: infoElements,
+                      targetName: `post #${post.id} -> info elements`,
+                      destDir: postDirs.info,
+                      fileExistsAction: this.config.fileExistsAction.info
+                    }
+                  );
+                }
+              }
+  
+              this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
+              this.emit('phaseBegin', { target: post, phase: 'batchDownload', batch });
+  
+              await batch.start();
+  
+              // Step 4.7: Update status cache
+              statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0, this.config);
+  
+              await batch.destroy();
+              batch = null;
+              this.emit('phaseEnd', { target: post, phase: 'batchDownload'});
+            }
+  
+            if (this.config.include.previewMedia || this.config.include.contentMedia) {
+              this.emit('phaseEnd', { target: post, phase: 'saveMedia' });
+            }
+  
+            downloaded++;
+            this.emit('targetEnd', { target: post, isSkipped: false });
+  
+            if (this.checkAbortSignal(signal, resolve)) {
+              return;
+            }
           }
-
-          if (this.config.include.previewMedia || this.config.include.contentMedia) {
-            this.emit('phaseEnd', { target: post, phase: 'saveMedia' });
+        }
+  
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        // Done
+        if (signal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        if (postFetch.type === 'byUser') {
+          this.log('info', `Done downloading posts by '${postFetch.vanity}'`);
+        }
+        else if (postFetch.type === 'byUserId') {
+          this.log('info', `Done downloading posts by user #${postFetch.userId}`);
+        }
+        else if (postFetch.type === 'byCollection') {
+          this.log('info', `Done downloading posts in collection #${postFetch.collectionId}`);
+        }
+        else {
+          this.log('info', `Done downloading post #${postFetch.postId}`);
+        }
+        let endMessage = 'Done';
+        if (this.#isFetchingMultiplePosts(postFetch)) {
+          const skippedStrParts: string[] = [];
+          if (skippedUnviewable) {
+            skippedStrParts.push(`${skippedUnviewable} unviewable`);
           }
-
-          downloaded++;
-          this.emit('targetEnd', { target: post, isSkipped: false });
-
-          if (this.checkAbortSignal(signal, resolve)) {
-            return;
+          if (skippedRedundant) {
+            skippedStrParts.push(`${skippedRedundant} redundant`);
           }
+          if (skippedUnmetMediaTypeCriteria) {
+            skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
+          }
+          if (skippedNotInTier) {
+            skippedStrParts.push(`${skippedNotInTier} not in tier`);
+          }
+          const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
+          endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;
+          this.log('info', endMessage);
         }
-      }
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      // Done
-      if (signal) {
-        signal.removeEventListener('abort', abortHandler);
-      }
-      if (postFetch.type === 'byUser') {
-        this.log('info', `Done downloading posts by '${postFetch.vanity}'`);
-      }
-      else if (postFetch.type === 'byUserId') {
-        this.log('info', `Done downloading posts by user #${postFetch.userId}`);
-      }
-      else if (postFetch.type === 'byCollection') {
-        this.log('info', `Done downloading posts in collection #${postFetch.collectionId}`);
-      }
-      else {
-        this.log('info', `Done downloading post #${postFetch.postId}`);
-      }
-      let endMessage = 'Done';
-      if (this.#isFetchingMultiplePosts(postFetch)) {
-        const skippedStrParts: string[] = [];
-        if (skippedUnviewable) {
-          skippedStrParts.push(`${skippedUnviewable} unviewable`);
-        }
-        if (skippedRedundant) {
-          skippedStrParts.push(`${skippedRedundant} redundant`);
-        }
-        if (skippedUnmetMediaTypeCriteria) {
-          skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
-        }
-        if (skippedNotInTier) {
-          skippedStrParts.push(`${skippedNotInTier} not in tier`);
-        }
-        const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
-        endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;
-        this.log('info', endMessage);
-      }
-      this.emit('end', { aborted: false, message: endMessage });
-      this.#startPromise = null;
-      resolve();
+        this.emit('end', { aborted: false, message: endMessage });
+        this.#startPromise = null;
+        resolve();
+      })();
     })
-      .finally(async () => {
+    .finally(() => {
+      void (async () => {
         if (this.logger) {
           await this.logger.end();
         }
         this.#startPromise = null;
-      });
+      })();
+    });
 
     return this.#startPromise;
   }

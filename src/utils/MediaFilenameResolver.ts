@@ -1,5 +1,5 @@
 import path from 'path';
-import { MediaLike } from '../entities/MediaItem.js';
+import { type MediaLike } from '../entities/MediaItem.js';
 import FilenameResolver from './FllenameResolver.js';
 import URLHelper from './URLHelper.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';

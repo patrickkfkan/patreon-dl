@@ -1,6 +1,6 @@
-import { Downloadable } from './Downloadable.js';
-import { Reward } from './Reward.js';
-import { User } from './User.js';
+import { type Downloadable } from './Downloadable.js';
+import { type Reward } from './Reward.js';
+import { type User } from './User.js';
 
 export interface Campaign {
   type: 'campaign';

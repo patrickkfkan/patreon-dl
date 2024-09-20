@@ -1,8 +1,8 @@
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
-import { CLIOptionParserEntry, CLIOptions } from './CLIOptions.js';
+import { type CLIOptionParserEntry, type CLIOptions } from './CLIOptions.js';
 import { EOL } from 'os';
-import { DeepPartial, RecursivePropsTo } from '../utils/Misc.js';
+import { type DeepPartial, type RecursivePropsTo } from '../utils/Misc.js';
 import { getPackageInfo } from '../utils/PackageInfo.js';
 
 export interface CommandLineParseResult extends RecursivePropsTo<DeepPartial<Omit<CLIOptions, 'targetURLs'>>, CLIOptionParserEntry> {

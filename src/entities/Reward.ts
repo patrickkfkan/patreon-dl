@@ -1,4 +1,4 @@
-import { Downloadable } from './Downloadable.js';
+import { type Downloadable } from './Downloadable.js';
 
 export interface Reward {
   type: 'reward';

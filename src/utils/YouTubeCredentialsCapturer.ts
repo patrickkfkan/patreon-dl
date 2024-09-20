@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import Innertube, { Credentials } from 'youtubei.js';
+import Innertube, { type OAuth2Tokens } from 'youtubei.js';
 
 export interface YouTubeCredentialsPendingInfo {
   verificationURL: string;
@@ -27,7 +27,7 @@ export default class YouTubeCredentialsCapturer extends EventEmitter {
     const innertube = await Innertube.create();
     innertube.session.on('auth-pending', this.#innertubeAuthListeners.authPending);
     innertube.session.on('auth', this.#innertubeAuthListeners.auth);
-    innertube.session.signIn();
+    void innertube.session.signIn();
   }
 
   abort() {
@@ -43,7 +43,7 @@ export default class YouTubeCredentialsCapturer extends EventEmitter {
     this.emit('pending', ({ verificationURL, code }));
   }
 
-  #handleInnertubeAuthEvent(data: { credentials: Credentials }) {
+  #handleInnertubeAuthEvent(data: { credentials: OAuth2Tokens }) {
     this.emit('capture', data.credentials);
   }
 

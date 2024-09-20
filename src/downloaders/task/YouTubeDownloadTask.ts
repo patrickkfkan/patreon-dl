@@ -1,7 +1,7 @@
 import path from 'path';
-import { YT, Misc, YTNodes } from 'youtubei.js';
-import { YouTubePostEmbed } from '../../entities/Post.js';
-import FFmpegDownloadTaskBase, { FFmpegCommandParams, FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
+import { type YT, type Misc, type YTNodes } from 'youtubei.js';
+import { type YouTubePostEmbed } from '../../entities/Post.js';
+import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
 import InnertubeLoader from '../../utils/InnertubeLoader.js';
 import FSHelper from '../../utils/FSHelper.js';
 
@@ -51,7 +51,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     this.log('debug', `Fetch video info from "${videoURL}"`);
     const endpoint = await this.#resolveURL(videoURL);
     const video = await innertube.getInfo(endpoint);
-
+    
     this.log('debug', `Choose best-quality stream for YouTube video #${video.basic_info.id}`);
     const stream = await this.#pickStream(video);
     if (!stream) {
@@ -59,7 +59,8 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       this.log('error', errMsg);
       throw Error(errMsg);
     }
-
+    
+    this.#video = video;
     const inputs: FFmpegCommandParams['inputs'] = [];
     const outputOptions: FFmpegCommandParams['outputOptions'] = [];
     let ext = '';

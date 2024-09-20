@@ -1,4 +1,4 @@
-import { SingleImageMediaItem } from './MediaItem.js';
+import { type SingleImageMediaItem } from './MediaItem.js';
 
 export interface User {
   type: 'user';

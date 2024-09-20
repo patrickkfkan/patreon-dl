@@ -1,8 +1,8 @@
 import fs from 'fs';
-import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
-import DownloadTask, { DownloadProgress, DownloadTaskParams } from './DownloadTask.js';
-import { FileExistsAction } from './../DownloaderOptions.js';
-import { Downloadable } from '../../entities/Downloadable.js';
+import ffmpeg, { type FfmpegCommand } from 'fluent-ffmpeg';
+import DownloadTask, { type DownloadProgress, type DownloadTaskParams } from './DownloadTask.js';
+import { type FileExistsAction } from './../DownloaderOptions.js';
+import { type Downloadable } from '../../entities/Downloadable.js';
 import FSHelper from '../../utils/FSHelper.js';
 
 export interface FFmpegDownloadTaskBaseParams<T extends Downloadable> extends DownloadTaskParams<T> {
@@ -52,129 +52,132 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
   protected abstract getTargetDuration(): number | null;
 
   protected doStart() {
-    return new Promise<void>(async (resolve) => {
-
-      if (this.status === 'aborted') {
-        resolve();
-        return;
-      }
-
-      let tmpFilePath: string | null = null;
-      const __cleanup = () => {
-        if (tmpFilePath && (this.dryRun || fs.existsSync(tmpFilePath))) {
-          this.log('debug', `Clean up ${tmpFilePath}`);
-          this.fsHelper.unlink(tmpFilePath);
-        }
-      };
-
-      try {
-        this.#abortController = new AbortController();
-
-        const ffmpegCommandParams = await this.getFFmpegCommandParams();
-
-        const destFilePath = ffmpegCommandParams.output;
-        this.resolvedDestPath = destFilePath;
-
-        let lastDownloadedFilePath: string | null = null;
-        if (this.#fileExistsAction === 'saveAsCopy' || this.#fileExistsAction === 'saveAsCopyIfNewer') {
-          const { filePath, preceding } = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
-          this.resolvedDestPath = filePath;
-          lastDownloadedFilePath = preceding;
-        }
-        else if (this.#fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
-          this.notifySkip({
-            name: 'destFileExists',
-            message: `Destination file exists (${destFilePath})`,
-            existingDestFilePath: destFilePath
-          });
+    return new Promise<void>((resolve) => {
+      void (async () => {
+        if (this.status === 'aborted') {
           resolve();
           return;
         }
-
-        const _destFilePath = this.resolvedDestPath;
-        const _tmpFilePath = tmpFilePath = FSHelper.createTmpFilePath(_destFilePath);
-
-        let hasError = false;
-
-        this.#ffmpegCommand = this.#constructFFmpegCommand(_tmpFilePath, ffmpegCommandParams);
-
-        this.#ffmpegCommand.on('start', (commandLine: string) => {
-          this.#commandLine = commandLine;
-          this.notifyStart();
-        });
-
-        this.#ffmpegCommand.on('progress', (progress: FFmpegProgress) => {
-          this.notifyProgress(this.#convertFFmpegProgress(progress));
-        });
-
-        this.#ffmpegCommand.on('end', async () => {
-          if (!hasError) {
-            let proceedWithCommit = true;
-            if (this.#fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
-              // Compare checksum of downloaded file with that of last downloaded
-              const compareMsg = `(saveAsCopyIfNewer) Compare "${_tmpFilePath}" with "${lastDownloadedFilePath}"`;
-              proceedWithCommit = !(await this.fsHelper.compareFiles(_tmpFilePath, lastDownloadedFilePath));
-              if (!proceedWithCommit) {
-                this.log('debug', `${compareMsg}: Files match`);
-                this.notifySkip({
-                  name: 'destFileExists',
-                  message: `Destination file exists with same content (${lastDownloadedFilePath})`,
-                  existingDestFilePath: lastDownloadedFilePath
-                });
-              }
-              else {
-                this.log('debug', `${compareMsg}: Files do not match`);
-              }
-            }
-            if (proceedWithCommit) {
-              const filesizeStr = !this.dryRun ? `; filesize: ${fs.lstatSync(_tmpFilePath).size} bytes` : '';
-              this.log('debug', `Commit "${_tmpFilePath}" to "${_destFilePath}${filesizeStr}`);
-              this.fsHelper.rename(_tmpFilePath, _destFilePath);
-              this.notifyComplete();
-            }
-            __cleanup();
-            resolve();
-          }
-        });
-
-        this.#ffmpegCommand.on('error', (error: any) => {
-          if (this.#abortingCallback) {
-            this.#abortingCallback();
-          }
-          else {
-            hasError = true;
-            this.notifyError(error);
-          }
-          __cleanup();
-          resolve();
-        });
-
-        this.#abortController.signal.onabort = () => {
-          if (this.#ffmpegCommand) {
-            this.#ffmpegCommand.kill('SIGKILL');
-          }
-          else if (this.#abortingCallback) {
-            this.#abortingCallback();
-            __cleanup();
-            resolve();
+  
+        let tmpFilePath: string | null = null;
+        const __cleanup = () => {
+          if (tmpFilePath && (this.dryRun || fs.existsSync(tmpFilePath))) {
+            this.log('debug', `Clean up ${tmpFilePath}`);
+            this.fsHelper.unlink(tmpFilePath);
           }
         };
+  
+        try {
+          this.#abortController = new AbortController();
+  
+          const ffmpegCommandParams = await this.getFFmpegCommandParams();
+  
+          const destFilePath = ffmpegCommandParams.output;
+          this.resolvedDestPath = destFilePath;
+  
+          let lastDownloadedFilePath: string | null = null;
+          if (this.#fileExistsAction === 'saveAsCopy' || this.#fileExistsAction === 'saveAsCopyIfNewer') {
+            const { filePath, preceding } = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
+            this.resolvedDestPath = filePath;
+            lastDownloadedFilePath = preceding;
+          }
+          else if (this.#fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
+            this.notifySkip({
+              name: 'destFileExists',
+              message: `Destination file exists (${destFilePath})`,
+              existingDestFilePath: destFilePath
+            });
+            resolve();
+            return;
+          }
+  
+          const _destFilePath = this.resolvedDestPath;
+          const _tmpFilePath = tmpFilePath = FSHelper.createTmpFilePath(_destFilePath);
+  
+          let hasError = false;
+  
+          this.#ffmpegCommand = this.#constructFFmpegCommand(_tmpFilePath, ffmpegCommandParams);
 
-        this.#ffmpegCommand.run();
-      }
-      catch (error: any) {
-        this.notifyError(error);
-        __cleanup();
-        resolve();
-      }
-    })
-      .finally(() => {
-        if (this.#ffmpegCommand) {
-          this.#ffmpegCommand.removeAllListeners();
-          this.#ffmpegCommand = null;
+          this.#ffmpegCommand.on('start', (commandLine: string) => {
+            this.#commandLine = commandLine;
+            this.notifyStart();
+          });
+  
+          this.#ffmpegCommand.on('progress', (progress: FFmpegProgress) => {
+            this.notifyProgress(this.#convertFFmpegProgress(progress));
+          });
+  
+          this.#ffmpegCommand.on('end', () => {
+            void (async () => {
+              if (!hasError) {
+                let proceedWithCommit = true;
+                if (this.#fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
+                  // Compare checksum of downloaded file with that of last downloaded
+                  const compareMsg = `(saveAsCopyIfNewer) Compare "${_tmpFilePath}" with "${lastDownloadedFilePath}"`;
+                  proceedWithCommit = !(await this.fsHelper.compareFiles(_tmpFilePath, lastDownloadedFilePath));
+                  if (!proceedWithCommit) {
+                    this.log('debug', `${compareMsg}: Files match`);
+                    this.notifySkip({
+                      name: 'destFileExists',
+                      message: `Destination file exists with same content (${lastDownloadedFilePath})`,
+                      existingDestFilePath: lastDownloadedFilePath
+                    });
+                  }
+                  else {
+                    this.log('debug', `${compareMsg}: Files do not match`);
+                  }
+                }
+                if (proceedWithCommit) {
+                  const filesizeStr = !this.dryRun ? `; filesize: ${fs.lstatSync(_tmpFilePath).size} bytes` : '';
+                  this.log('debug', `Commit "${_tmpFilePath}" to "${_destFilePath}${filesizeStr}`);
+                  this.fsHelper.rename(_tmpFilePath, _destFilePath);
+                  this.notifyComplete();
+                }
+                __cleanup();
+                resolve();
+              }
+            })();
+          });
+  
+          this.#ffmpegCommand.on('error', (error: any) => {
+            if (this.#abortingCallback) {
+              this.#abortingCallback();
+            }
+            else {
+              hasError = true;
+              this.notifyError(error);
+            }
+            __cleanup();
+            resolve();
+          });
+  
+          this.#abortController.signal.onabort = () => {
+            if (this.#ffmpegCommand) {
+              this.#ffmpegCommand.kill('SIGKILL');
+            }
+            else if (this.#abortingCallback) {
+              this.#abortingCallback();
+              __cleanup();
+              resolve();
+            }
+          };
+  
+          this.#ffmpegCommand.run();
         }
-        this.#abortController = null;
-      });
+        catch (error: any) {
+          this.notifyError(error);
+          __cleanup();
+          resolve();
+        }
+      })();
+    })
+    .finally(() => {
+      if (this.#ffmpegCommand) {
+        this.#ffmpegCommand.removeAllListeners();
+        this.#ffmpegCommand = null;
+      }
+      this.#abortController = null;
+    });
   }
 
   #constructFFmpegCommand(tmpFilePath: string, params: FFmpegCommandParams) {
@@ -241,6 +244,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
   protected async doDestroy() {
     this.#commandLine = null;
+    return Promise.resolve();
   }
 
   protected doGetProgress() {
@@ -252,16 +256,16 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
   }
 
   #convertFFmpegProgress(progress: FFmpegProgress): DownloadProgress | null {
-    const targetDuration = this.getTargetDuration();
-    if (targetDuration && this.resolvedDestFilename && this.resolvedDestPath) {
+    if (this.resolvedDestFilename && this.resolvedDestPath) {
+      const targetDuration = this.getTargetDuration();
       const downloaded = this.#timemarkToSeconds(progress.timemark);
       return {
         destFilename: this.resolvedDestFilename,
         destFilePath: this.resolvedDestPath,
         lengthUnit: 'second',
-        length: Number(targetDuration.toFixed(2)),
+        length: targetDuration !== null ? Number(targetDuration.toFixed(2)) : undefined,
         lengthDownloaded: Number(downloaded.toFixed(2)),
-        percent: Number((downloaded / targetDuration * 100).toFixed(2)),
+        percent: targetDuration !== null ? Number((downloaded / targetDuration * 100).toFixed(2)) : undefined,
         sizeDownloaded: Number(progress.targetSize.toFixed(2)),
         speed: Number(progress.currentKbps.toFixed(2))
       };

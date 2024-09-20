@@ -1,5 +1,5 @@
-import { VideoMediaItem } from '../../entities/MediaItem.js';
-import FFmpegDownloadTaskBase, { FFmpegCommandParams, FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
+import { type VideoMediaItem } from '../../entities/MediaItem.js';
+import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
 
 export interface M3U8DownloadTaskParams extends FFmpegDownloadTaskBaseParams<VideoMediaItem> {
   destFilePath: string;
@@ -17,7 +17,7 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
   }
 
   protected async getFFmpegCommandParams(): Promise<FFmpegCommandParams> {
-    return {
+    return Promise.resolve({
       inputs: [
         {
           input: this.src,
@@ -25,7 +25,7 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
         }
       ],
       output: this.#destFilePath
-    };
+    });
   }
 
   protected getTargetDuration(): number | null {

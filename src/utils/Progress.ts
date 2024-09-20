@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Transform, TransformCallback } from 'stream';
+import { Transform, type TransformCallback } from 'stream';
 import speedometer from 'speedometer';
 
 export default class Progress extends EventEmitter {
@@ -52,7 +52,7 @@ export default class Progress extends EventEmitter {
   #update(chunk?: any, forceReport = false) {
     if (chunk) {
       const chunkSize = chunk.length;
-      this.#transferred += chunkSize;
+      this.#transferred += chunkSize as number;
       this.#speed = this.#speedometer(chunkSize);
       if (this.#length) {
         this.#remaining = Math.max(this.#length - this.#transferred, 0);

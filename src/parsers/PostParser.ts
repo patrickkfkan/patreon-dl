@@ -1,8 +1,8 @@
-import { Campaign } from '../entities/Campaign.js';
-import { Downloadable } from '../entities/Downloadable.js';
-import { MediaItem, PostCoverImageMediaItem, PostThumbnailMediaItem, VideoMediaItem } from '../entities/MediaItem.js';
-import { Post, PostCollection, PostEmbed } from '../entities/Post.js';
-import { Tier } from '../entities/Reward.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type Downloadable } from '../entities/Downloadable.js';
+import { type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
+import { type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
+import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';

@@ -1,14 +1,14 @@
 import EventEmitter from 'events';
-import { Post } from '../entities/index.js';
-import { Logger } from '../utils/logging/index.js';
-import { LogLevel, commonLog } from '../utils/logging/Logger.js';
-import { DownloaderConfig } from './Downloader.js';
+import { type Post } from '../entities/index.js';
+import { type Logger } from '../utils/logging/index.js';
+import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
+import { type DownloaderConfig } from './Downloader.js';
 import URLHelper, { PostSortOrder } from '../utils/URLHelper.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import PageParser from '../parsers/PageParser.js';
-import Fetcher from '../utils/Fetcher.js';
+import type Fetcher from '../utils/Fetcher.js';
 import PostParser from '../parsers/PostParser.js';
-import { PostCollection } from '../entities/Post.js';
+import { type PostCollection } from '../entities/Post.js';
 import Sleeper from '../utils/Sleeper.js';
 
 export type PostsFetcherStatus = {
@@ -57,7 +57,7 @@ export default class PostsFetcher extends EventEmitter {
   };
   #fetched: PostCollection[];
   #total: number | null;
-  #nextPromises: Promise<PostsFetcherResult>[];
+  #nextPromises: Array<Promise<PostsFetcherResult> | undefined>;
   #sleeper: Sleeper | null;
   #noSleep: boolean;
 
@@ -109,7 +109,7 @@ export default class PostsFetcher extends EventEmitter {
   }
 
   begin() {
-    this.#doBegin();
+    void this.#doBegin();
   }
 
   async #doBegin() {
@@ -343,9 +343,10 @@ export default class PostsFetcher extends EventEmitter {
       return { collection, aborted, error };
     };
     if (this.#isRunning() && !this.#fetched[ptr]) {
-      if (!this.#nextPromises[ptr]) {
+      let result = this.#nextPromises[ptr];
+      if (!result) {
         let resolved = false;
-        this.#nextPromises[ptr] = new Promise<PostsFetcherResult>((resolve) => {
+        result = new Promise<PostsFetcherResult>((resolve) => {
           const fetchedListener = () => {
             if (resolved) {
               this.off('fetched', fetchedListener);
@@ -383,7 +384,7 @@ export default class PostsFetcher extends EventEmitter {
           }
         })
           .finally(() => {
-            delete this.#nextPromises[ptr];
+            this.#nextPromises[ptr] = undefined;
             this.#noSleep = false;
             this.#pointers.lastReturned = this.#pointers.returning;
             this.#pointers.returning = null;
@@ -394,8 +395,9 @@ export default class PostsFetcher extends EventEmitter {
               this.log('debug', `next() handled (${ptr}) - no resolve`);
             }
           });
+        this.#nextPromises[ptr] = result;
       }
-      return this.#nextPromises[ptr];
+      return result;
     }
     this.#pointers.lastReturned = this.#pointers.returning;
     this.#pointers.returning = null;

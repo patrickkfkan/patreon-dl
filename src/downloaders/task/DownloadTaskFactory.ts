@@ -1,16 +1,17 @@
 import path from 'path';
-import { DummyMediaItem } from '../../entities/MediaItem.js';
-import Fetcher from '../../utils/Fetcher.js';
+import { type DummyMediaItem } from '../../entities/MediaItem.js';
+import type Fetcher from '../../utils/Fetcher.js';
 import MediaFilenameResolver from '../../utils/MediaFilenameResolver.js';
-import DownloadTask, { DownloadTaskCallbacks } from './DownloadTask.js';
+import {type DownloadTaskCallbacks} from './DownloadTask.js';
+import type DownloadTask from './DownloadTask.js';
 import FetcherDownloadTask from './FetcherDownloadTask.js';
-import { Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
+import { type Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
 import AttachmentFilenameResolver from '../../utils/AttachmentFilenameResolver.js';
-import { EmbedDownloader, FileExistsAction } from '../DownloaderOptions.js';
-import Logger from '../../utils/logging/Logger.js';
+import { type EmbedDownloader, type FileExistsAction } from '../DownloaderOptions.js';
+import type Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
 import ExternalDownloaderTask from './ExternalDownloaderTask.js';
-import { DownloaderConfig } from '../Downloader.js';
+import { type DownloaderConfig } from '../Downloader.js';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -80,7 +81,7 @@ export default class DownloadTaskFactory {
         switch (item.imageType) {
           case 'single':
             return {
-              [`${NULL_VARIANT}`]: item.imageURL
+              [NULL_VARIANT]: item.imageURL
             };
           case 'default':
             urls = {
@@ -114,7 +115,7 @@ export default class DownloadTaskFactory {
         }
         const urls = {
           download: item.downloadURL,
-          [`${videoVariantName}`]: item.displayURLs.video
+          [videoVariantName]: item.displayURLs.video
         };
         if (downloadAllVariants) {
           return urls;
@@ -124,12 +125,12 @@ export default class DownloadTaskFactory {
       }
       else if (item.type === 'audio') {
         return {
-          [`${NULL_VARIANT}`]: item.url
+          [NULL_VARIANT]: item.url
         };
       }
       else if (item.type === 'file') {
         return {
-          [`${NULL_VARIANT}`]: item.downloadURL
+          [NULL_VARIANT]: item.downloadURL
         };
       }
       else if (item.type === 'dummy') {
@@ -137,12 +138,12 @@ export default class DownloadTaskFactory {
       }
       else if (item.type === 'attachment') {
         return {
-          [`${NULL_VARIANT}`]: item.url
+          [NULL_VARIANT]: item.url
         };
       }
       else if (item.type === 'videoEmbed') {
         return {
-          [`${NULL_VARIANT}`]: item.url
+          [NULL_VARIANT]: item.url
         };
       }
       return {};
@@ -244,7 +245,7 @@ export default class DownloadTaskFactory {
     for (const variant of priority) {
       if (urls[variant]) {
         return {
-          [`${variant}`]: urls[variant]
+          [variant]: urls[variant]
         };
       }
     }

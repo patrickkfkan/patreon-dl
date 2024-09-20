@@ -1,12 +1,14 @@
 import capitalize from 'capitalize';
-import { Campaign } from '../entities/Campaign.js';
-import { Downloadable } from '../entities/Downloadable.js';
-import { CampaignCoverPhotoMediaItem, DefaultImageMediaItem, MediaItem, SingleImageMediaItem } from '../entities/MediaItem.js';
-import { User } from '../entities/User.js';
-import Logger, { LogLevel, commonLog } from '../utils/logging/Logger.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type Downloadable } from '../entities/Downloadable.js';
+import { type CampaignCoverPhotoMediaItem, type DefaultImageMediaItem, type MediaItem, type SingleImageMediaItem } from '../entities/MediaItem.js';
+import { type User } from '../entities/User.js';
+import {type LogLevel} from '../utils/logging/Logger.js';
+import type Logger from '../utils/logging/Logger.js';
+import { commonLog } from '../utils/logging/Logger.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
-import { Attachment } from '../entities/Attachment.js';
-import { Reward, Tier } from '../entities/Reward.js';
+import { type Attachment } from '../entities/Attachment.js';
+import { type Reward, type Tier } from '../entities/Reward.js';
 
 const DOWNLOADABLE_TYPES = [ 'media', 'attachment' ] as const;
 
@@ -190,7 +192,7 @@ export default abstract class Parser {
           id: '-1',
           title: 'Public'
         };
-      case 'tier':
+      case 'tier': {
         const tierId = ObjectHelper.getProperty(relationships, 'tier.data.id');
         const tierType = ObjectHelper.getProperty(relationships, 'tier.data.type');
         if (tierType === 'reward' && tierId) {
@@ -203,6 +205,7 @@ export default abstract class Parser {
           }
         }
         break;
+      }
       default:
         return null;
     }

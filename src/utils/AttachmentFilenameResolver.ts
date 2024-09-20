@@ -1,7 +1,7 @@
 import path from 'path';
 import FilenameResolver from './FllenameResolver.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
-import { Attachment } from '../entities/Attachment.js';
+import { type Attachment } from '../entities/Attachment.js';
 
 export default class AttachmentFilenameResolver<T extends Attachment> extends FilenameResolver<T> {
 

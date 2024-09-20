@@ -1,5 +1,5 @@
 import URLHelper from '../utils/URLHelper.js';
-import { CLIOptionParserEntry } from './CLIOptions.js';
+import { type CLIOptionParserEntry } from './CLIOptions.js';
 
 const CLI_OPTION_SRC_NAME = {
   cli: 'Command-line',
@@ -97,7 +97,7 @@ export default class CLIOptionValidator {
     if (match && match.length > 0) {
       for (const v of split) {
         if (!match.includes(v as any)) {
-          throw Error(`${this.#logEntryKey(entry)} has invalid delimited value '${v}'; must be one of ${match.map((m) => `'${m}'`).join(', ')}.`);
+          throw Error(`${this.#logEntryKey(entry)} has invalid delimited value '${v}'; must be one of ${match.map((m) => `'${m as string}'`).join(', ')}.`);
         }
       }
     }
@@ -120,7 +120,7 @@ export default class CLIOptionValidator {
         throw Error('Unknown URL');
       }
     }
-    catch (error) {
+    catch (error: any) {
       if (error instanceof Error) {
         error.message += `: ${_s}`;
         throw error;

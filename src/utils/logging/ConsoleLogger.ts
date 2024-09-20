@@ -1,8 +1,8 @@
 import util from 'util';
 import clc from 'cli-color';
 import dateFormat from 'dateformat';
-import Logger, { LogEntry, LogLevel } from '../../utils/logging/Logger.js';
-import { DeepRequired, pickDefined } from '../../utils/Misc.js';
+import Logger, { type LogEntry, type LogLevel } from '../../utils/logging/Logger.js';
+import { type DeepRequired, pickDefined } from '../../utils/Misc.js';
 
 const LOG_LEVEL_ORDER = [
   'error',
@@ -105,7 +105,7 @@ export default class ConsoleLogger extends Logger {
       result.push(...this.errorToStrings(m.cause, true));
     }
     else if (m.cause) {
-      result.push(`${m.cause}`);
+      result.push(m.cause as string);
     }
     if (m.stack && this.config.include.errorStack && !forceNoStack) {
       result.push(m.stack);

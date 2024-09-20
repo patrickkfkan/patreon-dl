@@ -17,7 +17,7 @@ export default class PageParser extends Parser {
       try {
         return JSON.parse(match[1]);
       }
-      catch (error) {
+      catch (error: any) {
         throw Error(`Parse error: ${error instanceof Error ? error.message : error}`);
       }
     }
@@ -30,7 +30,7 @@ export default class PageParser extends Parser {
         const parsed = JSON.parse(match2[1]);
         return ObjectHelper.getProperty(parsed, 'props.pageProps.bootstrapEnvelope');
       }
-      catch (error) {
+      catch (error: any) {
         throw Error(`Parse error: ${error instanceof Error ? error.message : error}`);
       }
     }

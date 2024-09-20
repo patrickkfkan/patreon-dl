@@ -1,6 +1,6 @@
 import ConfigParser from 'configparser';
-import { CLIOptionParserEntry, CLIOptions } from './CLIOptions.js';
-import { DeepPartial, RecursivePropsTo } from '../utils/Misc.js';
+import { type CLIOptionParserEntry, type CLIOptions } from './CLIOptions.js';
+import { type DeepPartial, type RecursivePropsTo } from '../utils/Misc.js';
 
 const CONFIG_FILE_PROPS = {
   targetURL: 'downloader:target.url',

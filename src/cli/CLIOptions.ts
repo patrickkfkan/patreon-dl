@@ -1,11 +1,11 @@
 import fs from 'fs';
-import { DownloaderIncludeOptions, DownloaderOptions } from '../downloaders/DownloaderOptions.js';
+import { type DownloaderIncludeOptions, type DownloaderOptions } from '../downloaders/DownloaderOptions.js';
 import { pickDefined } from '../utils/Misc.js';
-import { ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
-import { FileLoggerOptions } from '../utils/logging/FileLogger.js';
+import { type ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
+import { type FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
-import CommandLineParser, { CommandLineParseResult } from './CommandLineParser.js';
-import ConfigFileParser, { ConfigFileParseResult } from './ConfigFileParser.js';
+import CommandLineParser, { type CommandLineParseResult } from './CommandLineParser.js';
+import ConfigFileParser, { type ConfigFileParseResult } from './ConfigFileParser.js';
 import path from 'path';
 
 export interface CLITargetURLEntry {
@@ -203,7 +203,7 @@ function readTargetsFile(file: string) {
         currentTargets.push({ url });
       }
     }
-    catch (error) {
+    catch (error: any) {
       const errMsg = error instanceof Error ? error.message : error;
       throw Error(`Error parsing targets file (line ${ln})${errMsg ? `: ${errMsg}` : ''}`);
     }

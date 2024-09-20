@@ -1,5 +1,5 @@
-import { Post } from '../entities/Post.js';
-import { Product } from '../entities/Product.js';
+import { type Post } from '../entities/Post.js';
+import { type Product } from '../entities/Product.js';
 import URLHelper from '../utils/URLHelper.js';
 
 export type DownloaderType = Product | Post;

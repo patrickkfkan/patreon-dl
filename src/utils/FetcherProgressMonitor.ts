@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import Progress from './Progress';
+import type Progress from './Progress';
 
 export type FetcherProgress = {
   speed: number;

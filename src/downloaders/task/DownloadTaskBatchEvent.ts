@@ -1,4 +1,4 @@
-import { DownloadProgress, DownloadTaskError, IDownloadTask, DownloadTaskSkipReason } from './DownloadTask.js';
+import { type DownloadProgress, type DownloadTaskError, type IDownloadTask, type DownloadTaskSkipReason } from './DownloadTask.js';
 
 export type DownloadTaskBatchEvent =
   'taskStart' |

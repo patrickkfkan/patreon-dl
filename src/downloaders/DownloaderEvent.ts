@@ -1,7 +1,7 @@
-import { Campaign } from '../entities/Campaign.js';
-import { Post } from '../entities/Post.js';
-import { Product } from '../entities/Product.js';
-import { IDownloadTaskBatch } from './task/DownloadTaskBatch.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type Post } from '../entities/Post.js';
+import { type Product } from '../entities/Product.js';
+import { type IDownloadTaskBatch } from './task/DownloadTaskBatch.js';
 
 export type DownloaderEvent =
   'fetchBegin' |

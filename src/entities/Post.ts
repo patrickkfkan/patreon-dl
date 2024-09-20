@@ -1,7 +1,7 @@
-import { Campaign } from './Campaign.js';
-import { Downloadable } from './Downloadable.js';
-import { PostCoverImageMediaItem, PostThumbnailMediaItem } from './MediaItem.js';
-import { Tier } from './Reward.js';
+import { type Campaign } from './Campaign.js';
+import { type Downloadable } from './Downloadable.js';
+import { type PostCoverImageMediaItem, type PostThumbnailMediaItem } from './MediaItem.js';
+import { type Tier } from './Reward.js';
 
 export interface PostCollection {
   url: string;

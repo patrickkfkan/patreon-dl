@@ -1,5 +1,5 @@
-import { Campaign } from './Campaign.js';
-import { Downloadable } from './Downloadable.js';
+import { type Campaign } from './Campaign.js';
+import { type Downloadable } from './Downloadable.js';
 
 export interface Product {
   type: 'product';

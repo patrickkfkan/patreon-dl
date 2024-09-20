@@ -1,13 +1,13 @@
 import ProductParser from '../parsers/ProductParser.js';
 import URLHelper from '../utils/URLHelper.js';
-import Downloader, { DownloaderStartParams } from './Downloader.js';
-import DownloadTaskBatch from './task/DownloadTaskBatch.js';
+import Downloader, { type DownloaderStartParams } from './Downloader.js';
+import type DownloadTaskBatch from './task/DownloadTaskBatch.js';
 import StatusCache from './cache/StatusCache.js';
 import { generateProductSummary } from './templates/ProductInfo.js';
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
-import { Product } from '../entities/Product.js';
-import { Downloadable } from '../entities/Downloadable.js';
+import { type Product } from '../entities/Product.js';
+import { type Downloadable } from '../entities/Downloadable.js';
 
 export default class ProductDownloader extends Downloader<Product> {
 
@@ -23,184 +23,189 @@ export default class ProductDownloader extends Downloader<Product> {
       throw Error('Downloader already running');
     }
 
-    this.#startPromise = new Promise<void>(async (resolve) => {
-
-      const { signal } = params || {};
-      let batch: DownloadTaskBatch | null = null;
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      const abortHandler = async () => {
-        this.log('info', 'Abort signal received');
-        if (batch) {
-          await batch.abort();
-        }
-      };
-      if (signal) {
-        signal.addEventListener('abort', abortHandler, { once: true });
-      }
-
-      this.log('info', `Target product ID '${this.config.productId}'`);
-
-      // Step 1: get product API data
-      const url = URLHelper.constructProductAPIURL(this.config.productId);
-      this.log('debug', `Fetch product data from API URL "${url}"`);
-      this.emit('fetchBegin', { targetType: 'product' });
-
-      const { json, error: requestAPIError } = await this.commonFetchAPI(url, signal);
-      if (!json) {
+    this.#startPromise = new Promise<void>((resolve) => {
+      void (async () => {
+        const { signal } = params || {};
+        let batch: DownloadTaskBatch | null = null;
+  
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
-        this.log('error', 'Failed to fetch product data');
-        this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
-        resolve();
-        return;
-      }
-
-      // Step 2: parse product API data
-      const productParser = new ProductParser(this.logger);
-      const product = productParser.parseProductAPIResponse(json, url, this.config.productId);
-
-      // Step 3: Save campaign info
-      await this.saveCampaignInfo(product.campaign, signal);
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      this.emit('targetBegin', { target: product });
-
-      // Step 4: Product directories
-      const productDirs = this.fsHelper.getProductDirs(product);
-      this.log('debug', 'Product directories: ', productDirs);
-
-      // Step 5: Check with status cache
-      const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
-      if (statusCache.validate(product, productDirs.root, this.config)) {
-        this.log('info', `Skipped downloading product #${product.id}: already downloaded and nothing has changed since last download`);
-        this.emit('targetEnd', {
-          target: product,
-          isSkipped: true,
-          skipReason: TargetSkipReason.AlreadyDownloaded,
-          skipMessage: 'Target already downloaded and nothing has changed since last download'
-        });
-        this.emit('end', { aborted: false, message: 'Skipped - target already downloaded' });
-        resolve();
-        return;
-      }
-
-      // Step 6: Check accessibility
-      if (!product.isAccessible) {
-        if (this.config.include.lockedContent) {
-          this.log('warn', `Product #${product.id} is not accessible by current user`);
+  
+        const abortHandler = () => {
+          void (async () => {
+            this.log('info', 'Abort signal received');
+            if (batch) {
+              await batch.abort();
+            }
+          })();
+        };
+        if (signal) {
+          signal.addEventListener('abort', abortHandler, { once: true });
         }
-        else {
-          this.log('warn', `Skipped downloading product #${product.id}: not accessible by current user`);
-          this.emit('targetEnd', {
-            target: product,
-            isSkipped: true,
-            skipReason: TargetSkipReason.Inaccessible,
-            skipMessage: 'Target is not accessible by current user'
-          });
-          this.emit('end', { aborted: false, message: 'Skipped - not accessible' });
+  
+        this.log('info', `Target product ID '${this.config.productId}'`);
+  
+        // Step 1: get product API data
+        const url = URLHelper.constructProductAPIURL(this.config.productId);
+        this.log('debug', `Fetch product data from API URL "${url}"`);
+        this.emit('fetchBegin', { targetType: 'product' });
+  
+        const { json, error: requestAPIError } = await this.commonFetchAPI(url, signal);
+        if (!json) {
+          if (this.checkAbortSignal(signal, resolve)) {
+            return;
+          }
+          this.log('error', 'Failed to fetch product data');
+          this.emit('end', { aborted: false, error: requestAPIError, message: 'API request error' });
           resolve();
           return;
         }
-      }
-
-      this.fsHelper.createDir(productDirs.root);
-
-      // Step 7: save product info
-      if (this.config.include.contentInfo) {
-        this.log('info', 'Save product info');
-        this.emit('phaseBegin', { target: product, phase: 'saveInfo' });
-        this.fsHelper.createDir(productDirs.info);
-        const summary = generateProductSummary(product);
-        const summaryFile = path.resolve(productDirs.info, 'info.txt');
-        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-        this.logWriteTextFileResult(saveSummaryResult, product, 'product summary');
-
-        const productRawFile = path.resolve(productDirs.info, 'product-api.json');
-        const saveProductRawResult = await this.fsHelper.writeTextFile(
-          productRawFile, product.raw, this.config.fileExistsAction.infoAPI);
-        this.logWriteTextFileResult(saveProductRawResult, product, 'product API data');
-        this.emit('phaseEnd', { target: product, phase: 'saveInfo' });
-      }
-
-      // Step 8: Download product media items
-      const incPreview = this.config.include.previewMedia;
-      const incContent = this.config.include.contentMedia;
-      this.log('info', 'Download:', {
-        ['preview items']: incPreview === true ? 'yes' : incPreview === false ? 'no' : JSON.stringify(incPreview),
-        ['content items']: incContent === true ? 'yes' : incContent === false ? 'no' : JSON.stringify(incContent)
-      });
-
-      const __inc = <T>(inc: boolean | Array<T>, target: Downloadable) => {
-        if (typeof inc === 'boolean') {
-          return inc;
+  
+        // Step 2: parse product API data
+        const productParser = new ProductParser(this.logger);
+        const product = productParser.parseProductAPIResponse(json, url, this.config.productId);
+  
+        // Step 3: Save campaign info
+        await this.saveCampaignInfo(product.campaign, signal);
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
         }
-        return (inc.includes(target.type as any));
-      };
-
-      const previewMedia = product.previewMedia.filter((tt) => __inc(incPreview, tt));
-      const contentMedia = product.contentMedia.filter((tt) => __inc(incContent, tt));
-
-      if (this.config.include.previewMedia || this.config.include.contentMedia) {
-        this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
-        batch = this.createDownloadTaskBatch(
-          `Product #${product.id} (${product.name})`,
-
-          previewMedia.length > 0 ? {
-            target: previewMedia,
-            targetName: `product #${product.id} -> preview media`,
-            destDir: productDirs.previewMedia,
-            fileExistsAction: this.config.fileExistsAction.content
-          } : null,
-
-          contentMedia.length > 0 ? {
-            target: contentMedia,
-            targetName: `product #${product.id} -> content media`,
-            destDir: productDirs.contentMedia,
-            fileExistsAction: this.config.fileExistsAction.content
-          } : null
-        );
-
-        this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
-        this.emit('phaseBegin', { target: product, phase: 'batchDownload', batch });
-
-        await batch.start();
-
-        // Step 9: Update status cache
-        statusCache.updateOnDownload(product, productDirs.root, batch.getTasks('error').length > 0, this.config);
-
-        await batch.destroy();
-        batch = null;
-        this.emit('phaseEnd', { target: product, phase: 'batchDownload' });
-        this.emit('phaseEnd', { target: product, phase: 'saveMedia' });
-      }
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      // Done
-      if (signal) {
-        signal.removeEventListener('abort', abortHandler);
-      }
-      this.log('info', `Done downloading product #${product.id}`);
-      this.emit('targetEnd', { target: product, isSkipped: false });
-      this.emit('end', { aborted: false, message: 'Done' });
-      this.#startPromise = null;
-      resolve();
+  
+        this.emit('targetBegin', { target: product });
+  
+        // Step 4: Product directories
+        const productDirs = this.fsHelper.getProductDirs(product);
+        this.log('debug', 'Product directories: ', productDirs);
+  
+        // Step 5: Check with status cache
+        const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
+        if (statusCache.validate(product, productDirs.root, this.config)) {
+          this.log('info', `Skipped downloading product #${product.id}: already downloaded and nothing has changed since last download`);
+          this.emit('targetEnd', {
+            target: product,
+            isSkipped: true,
+            skipReason: TargetSkipReason.AlreadyDownloaded,
+            skipMessage: 'Target already downloaded and nothing has changed since last download'
+          });
+          this.emit('end', { aborted: false, message: 'Skipped - target already downloaded' });
+          resolve();
+          return;
+        }
+  
+        // Step 6: Check accessibility
+        if (!product.isAccessible) {
+          if (this.config.include.lockedContent) {
+            this.log('warn', `Product #${product.id} is not accessible by current user`);
+          }
+          else {
+            this.log('warn', `Skipped downloading product #${product.id}: not accessible by current user`);
+            this.emit('targetEnd', {
+              target: product,
+              isSkipped: true,
+              skipReason: TargetSkipReason.Inaccessible,
+              skipMessage: 'Target is not accessible by current user'
+            });
+            this.emit('end', { aborted: false, message: 'Skipped - not accessible' });
+            resolve();
+            return;
+          }
+        }
+  
+        this.fsHelper.createDir(productDirs.root);
+  
+        // Step 7: save product info
+        if (this.config.include.contentInfo) {
+          this.log('info', 'Save product info');
+          this.emit('phaseBegin', { target: product, phase: 'saveInfo' });
+          this.fsHelper.createDir(productDirs.info);
+          const summary = generateProductSummary(product);
+          const summaryFile = path.resolve(productDirs.info, 'info.txt');
+          const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+          this.logWriteTextFileResult(saveSummaryResult, product, 'product summary');
+  
+          const productRawFile = path.resolve(productDirs.info, 'product-api.json');
+          const saveProductRawResult = await this.fsHelper.writeTextFile(
+            productRawFile, product.raw, this.config.fileExistsAction.infoAPI);
+          this.logWriteTextFileResult(saveProductRawResult, product, 'product API data');
+          this.emit('phaseEnd', { target: product, phase: 'saveInfo' });
+        }
+  
+        // Step 8: Download product media items
+        const incPreview = this.config.include.previewMedia;
+        const incContent = this.config.include.contentMedia;
+        this.log('info', 'Download:', {
+          ['preview items']: incPreview === true ? 'yes' : incPreview === false ? 'no' : JSON.stringify(incPreview),
+          ['content items']: incContent === true ? 'yes' : incContent === false ? 'no' : JSON.stringify(incContent)
+        });
+  
+        const __inc = <T>(inc: boolean | Array<T>, target: Downloadable) => {
+          if (typeof inc === 'boolean') {
+            return inc;
+          }
+          return (inc.includes(target.type as any));
+        };
+  
+        const previewMedia = product.previewMedia.filter((tt) => __inc(incPreview, tt));
+        const contentMedia = product.contentMedia.filter((tt) => __inc(incContent, tt));
+  
+        if (this.config.include.previewMedia || this.config.include.contentMedia) {
+          this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
+          batch = this.createDownloadTaskBatch(
+            `Product #${product.id} (${product.name})`,
+  
+            previewMedia.length > 0 ? {
+              target: previewMedia,
+              targetName: `product #${product.id} -> preview media`,
+              destDir: productDirs.previewMedia,
+              fileExistsAction: this.config.fileExistsAction.content
+            } : null,
+  
+            contentMedia.length > 0 ? {
+              target: contentMedia,
+              targetName: `product #${product.id} -> content media`,
+              destDir: productDirs.contentMedia,
+              fileExistsAction: this.config.fileExistsAction.content
+            } : null
+          );
+  
+          this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
+          this.emit('phaseBegin', { target: product, phase: 'batchDownload', batch });
+  
+          await batch.start();
+  
+          // Step 9: Update status cache
+          statusCache.updateOnDownload(product, productDirs.root, batch.getTasks('error').length > 0, this.config);
+  
+          await batch.destroy();
+          batch = null;
+          this.emit('phaseEnd', { target: product, phase: 'batchDownload' });
+          this.emit('phaseEnd', { target: product, phase: 'saveMedia' });
+        }
+  
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        // Done
+        if (signal) {
+          signal.removeEventListener('abort', abortHandler);
+        }
+        this.log('info', `Done downloading product #${product.id}`);
+        this.emit('targetEnd', { target: product, isSkipped: false });
+        this.emit('end', { aborted: false, message: 'Done' });
+        this.#startPromise = null;
+        resolve();
+      })();
     })
-      .finally(async () => {
+    .finally(() => {
+      void (async () => {
         if (this.logger) {
           await this.logger.end();
         }
         this.#startPromise = null;
-      });
+      })();
+    });
 
     return this.#startPromise;
   }

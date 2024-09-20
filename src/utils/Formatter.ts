@@ -48,7 +48,7 @@ export default class Formatter {
       result += format.substring(0, placeholderPosition);
       const fieldValue = dict[field];
       if (fieldValue) {
-        result += fieldValue;
+        result += fieldValue as string;
         if (!consumedFields.includes(field)) {
           consumedFields.push(field);
         }

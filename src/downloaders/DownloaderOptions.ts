@@ -1,6 +1,6 @@
 import path from 'path';
-import Logger from '../utils/logging/Logger.js';
-import { DeepRequired, pickDefined } from '../utils/Misc.js';
+import type Logger from '../utils/logging/Logger.js';
+import { type DeepRequired, pickDefined } from '../utils/Misc.js';
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
 

@@ -1,8 +1,9 @@
 import Bottleneck from 'bottleneck';
-import DownloadTask, { DownloadTaskError, DownloadProgress, DownloadTaskStatus, DownloadTaskSkipReason, IDownloadTask } from './DownloadTask.js';
-import Fetcher from '../../utils/Fetcher.js';
+import {type DownloadTaskError, type DownloadProgress, type DownloadTaskStatus, type DownloadTaskSkipReason, type IDownloadTask} from './DownloadTask.js';
+import type DownloadTask from './DownloadTask.js';
+import type Fetcher from '../../utils/Fetcher.js';
 import EventEmitter from 'events';
-import { DownloadTaskBatchEvent, DownloadTaskBatchEventPayloadOf } from './DownloadTaskBatchEvent.js';
+import { type DownloadTaskBatchEvent, type DownloadTaskBatchEventPayloadOf } from './DownloadTaskBatchEvent.js';
 
 export interface DownloadTaskBatchParams {
   name: string;
@@ -99,9 +100,9 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
           if (!this.isAborted() && !this.isDestroyed()) {
             this.#reassignTaskId(spawn);
             this.#tasks.push(spawn);
-            this.#limiter.schedule(() => spawn.start());
+            void this.#limiter.schedule(() => spawn.start());
             this.emit('taskSpawn', { origin, spawn });
-            spawn.start();
+            void spawn.start();
           }
         }
       });
@@ -129,7 +130,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
       };
       if (this.#tasks.length > 0) {
         for (const task of this.#tasks) {
-          this.#limiter.schedule(() => task.start());
+          void this.#limiter.schedule(() => task.start());
         }
       }
       else {
@@ -155,13 +156,15 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
       return this.#destroyPromise;
     }
 
-    this.#destroyPromise = new Promise<void>(async (resolve) => {
-      await this.abort();
-      this.removeAllListeners();
-      this.#tasks = [];
-      this.#destroyPromise = null;
-      this.#destroyed = true;
-      resolve();
+    this.#destroyPromise = new Promise<void>((resolve) => {
+      void (async () => {
+        await this.abort();
+        this.removeAllListeners();
+        this.#tasks = [];
+        this.#destroyPromise = null;
+        this.#destroyed = true;
+        resolve();
+      })();
     });
 
     return this.#destroyPromise;
@@ -199,12 +202,14 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
       return Promise.resolve();
     }
 
-    this.#abortPromise = new Promise(async (resolve) => {
-      const abortPromises = this.#tasks.map((task) => task.abort());
-      await Promise.all(abortPromises);
-      this.#aborted = true;
-      this.#abortPromise = null;
-      resolve();
+    this.#abortPromise = new Promise((resolve) => {
+      void (async () => {
+        const abortPromises = this.#tasks.map((task) => task.abort());
+        await Promise.all(abortPromises);
+        this.#aborted = true;
+        this.#abortPromise = null;
+        resolve();
+      })();
     });
 
     return this.#abortPromise;

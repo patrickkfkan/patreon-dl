@@ -4,13 +4,15 @@ import makeDir from 'make-dir';
 import _sanitizeFilename from 'sanitize-filename';
 import escapeStringRegexp from 'escape-string-regexp';
 import hasha from 'hasha';
-import { Product } from '../entities/Product.js';
-import { Campaign } from '../entities/Campaign.js';
-import { DownloaderConfig } from '../downloaders/Downloader.js';
+import { type Product } from '../entities/Product.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
-import { Post } from '../entities/Post.js';
-import { FileExistsAction } from '../downloaders/DownloaderOptions.js';
-import Logger, { LogLevel, commonLog } from './logging/Logger.js';
+import { type Post } from '../entities/Post.js';
+import { type FileExistsAction } from '../downloaders/DownloaderOptions.js';
+import {type LogLevel} from './logging/Logger.js';
+import type Logger from './logging/Logger.js';
+import { commonLog } from './logging/Logger.js';
 
 const CAMPAIGN_FIXED_DIR_NAMES = {
   INFO: 'campaign_info'

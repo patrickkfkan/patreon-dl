@@ -1,10 +1,10 @@
-import { Campaign } from '../entities/Campaign.js';
-import { MediaLike } from '../entities/MediaItem.js';
-import { Product } from '../entities/Product.js';
-import Formatter, { FormatFieldName, FormatFieldRules, FormatFieldValues } from './Formatter.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type MediaLike } from '../entities/MediaItem.js';
+import { type Product } from '../entities/Product.js';
+import Formatter, { type FormatFieldName, type FormatFieldRules, type FormatFieldValues } from './Formatter.js';
 import URLHelper from './URLHelper.js';
-import { Attachment } from '../entities/Attachment.js';
-import { Post } from '../entities/Post.js';
+import { type Attachment } from '../entities/Attachment.js';
+import { type Post } from '../entities/Post.js';
 import { toISODate } from './Misc.js';
 import FSHelper from './FSHelper.js';
 

@@ -1,13 +1,14 @@
-import { ChildProcess } from 'child_process';
-import { PostEmbed } from '../../entities/Post.js';
+import { type ChildProcess } from 'child_process';
+import { type PostEmbed } from '../../entities/Post.js';
 import Formatter from '../../utils/Formatter.js';
 import URLHelper from '../../utils/URLHelper.js';
-import Logger, { LogLevel } from '../../utils/logging/Logger.js';
-import { EmbedDownloader } from '../DownloaderOptions.js';
-import DownloadTask, { DownloadTaskCallbacks, DownloadTaskParams } from './DownloadTask.js';
+import {type LogLevel} from '../../utils/logging/Logger.js';
+import type Logger from '../../utils/logging/Logger.js';
+import { type EmbedDownloader } from '../DownloaderOptions.js';
+import DownloadTask, { type DownloadTaskCallbacks, type DownloadTaskParams } from './DownloadTask.js';
 import spawn from '@patrickkfkan/cross-spawn';
 import stringArgv from 'string-argv';
-import { DownloaderConfig } from '../Downloader.js';
+import { type DownloaderConfig } from '../Downloader.js';
 
 export interface ExternalDownloaderTaskParams extends DownloadTaskParams {
   name: string;
@@ -36,7 +37,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
   }
 
   protected doStart() {
-    return new Promise<void>(async (resolve) => {
+    return new Promise<void>((resolve) => {
 
       if (this.status === 'aborted') {
         resolve();
@@ -154,6 +155,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
   protected async doDestroy() {
     this.#proc?.removeAllListeners();
     this.#proc = null;
+    return Promise.resolve();
   }
 
   protected doGetProgress() {

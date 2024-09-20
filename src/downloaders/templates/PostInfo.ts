@@ -1,4 +1,4 @@
-import { Post, PostEmbed } from '../../entities/Post.js';
+import { type Post, type PostEmbed } from '../../entities/Post.js';
 
 const POST_INFO_TEMPLATE =
 `Post

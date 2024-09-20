@@ -1,4 +1,4 @@
-import Logger, { LogEntry } from '../../utils/logging/Logger.js';
+import Logger, { type LogEntry } from '../../utils/logging/Logger.js';
 
 export default class ChainLogger extends Logger {
 

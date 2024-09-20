@@ -1,22 +1,26 @@
 import fse from 'fs-extra';
-import { Post } from '../../entities/Post.js';
+import { type Post } from '../../entities/Post.js';
 import { major as semverMajor, minor as semverMinor } from 'semver';
 import dateFormat from 'dateformat';
-import { Product } from '../../entities/Product.js';
-import Logger, { LogLevel, commonLog } from '../../utils/logging/Logger.js';
+import { type Product } from '../../entities/Product.js';
+import {type LogLevel} from '../../utils/logging/Logger.js';
+import type Logger from '../../utils/logging/Logger.js';
+import { commonLog } from '../../utils/logging/Logger.js';
 import ObjectHelper from '../../utils/ObjectHelper.js';
 import ProductDownloader from '../ProductDownloader.js';
 import PostDownloader from '../PostDownloader.js';
 import path from 'path';
 import FSHelper from '../../utils/FSHelper.js';
-import { DownloaderConfig } from '../Downloader.js';
+import { type DownloaderConfig } from '../Downloader.js';
 
 export interface StatusCacheData {
   products: Record<string, StatusCacheEntry<Product>>;
   posts: Record<string, StatusCacheEntry<Post>>;
 }
 
-export interface StatusCacheEntry<T extends Product | Post> {
+export type StatusCacheTarget = Product | Post;
+
+export interface StatusCacheEntry<T extends StatusCacheTarget = StatusCacheTarget> {
   type: T['type'];
   downloaderVersion: string;
   lastDownloaded: string;
@@ -109,7 +113,7 @@ export default class StatusCache {
     return instance;
   }
 
-  validate<T extends Product | Post>(target: T, destDir: string, config: DownloaderConfig<any>) {
+  validate(target: Product | Post, destDir: string, config: DownloaderConfig<any>) {
     if (!this.#enabled) {
       return false;
     }
@@ -160,7 +164,7 @@ export default class StatusCache {
       return false;
     }
 
-    const __compareConfigInclude = (prop: keyof StatusCacheEntry<T>['lastDownloadConfig']['include'] & keyof DownloaderConfig<T>['include']) => {
+    const __compareConfigInclude = (prop: keyof StatusCacheEntry['lastDownloadConfig']['include'] & keyof DownloaderConfig<StatusCacheTarget>['include']) => {
       const last = entry.lastDownloadConfig.include[prop];
       const now = config.include[prop];
 
@@ -195,7 +199,7 @@ export default class StatusCache {
       return !invalidated;
     };
 
-    const includeProps: Array<keyof StatusCacheEntry<T>['lastDownloadConfig']['include']> =
+    const includeProps: Array<keyof StatusCacheEntry['lastDownloadConfig']['include']> =
       [ 'lockedContent', 'contentInfo', 'previewMedia', 'contentMedia', 'allMediaVariants' ];
     for (const prop of includeProps) {
       if (!__compareConfigInclude(prop)) {
@@ -254,7 +258,7 @@ export default class StatusCache {
       semverMinor(entryValue) === semverMinor(currentValue);
   }
 
-  updateOnDownload<T extends Product | Post>(target: T, destDir: string, downloadHasErrors: boolean, config: DownloaderConfig<any>) {
+  updateOnDownload(target: Product | Post, destDir: string, downloadHasErrors: boolean, config: DownloaderConfig<any>) {
     const commonData = {
       lastDownloaded: dateFormat('isoDateTime'),
       lastDownloadHasErrors: downloadHasErrors,

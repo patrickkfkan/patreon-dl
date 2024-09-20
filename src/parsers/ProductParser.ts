@@ -1,6 +1,6 @@
-import { Campaign } from '../entities/Campaign.js';
-import { Downloadable } from '../entities/Downloadable.js';
-import { Product } from '../entities/Product.js';
+import { type Campaign } from '../entities/Campaign.js';
+import { type Downloadable } from '../entities/Downloadable.js';
+import { type Product } from '../entities/Product.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
 

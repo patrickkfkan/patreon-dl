@@ -1,8 +1,8 @@
 import fs from 'fs';
 import dateFormat from 'dateformat';
-import { LogLevel } from '../../utils/logging/Logger.js';
-import { DeepRequired, pickDefined } from '../Misc.js';
-import ConsoleLogger, { ConsoleLoggerOptions } from './ConsoleLogger.js';
+import { type LogLevel } from '../../utils/logging/Logger.js';
+import { type DeepRequired, pickDefined } from '../Misc.js';
+import ConsoleLogger, { type ConsoleLoggerOptions } from './ConsoleLogger.js';
 import Formatter from '../Formatter.js';
 import path from 'path';
 import FSHelper from '../FSHelper.js';

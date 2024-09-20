@@ -3,12 +3,14 @@ import { pipeline } from 'stream/promises';
 import { URL } from 'url';
 import path from 'path';
 import FetcherProgressMonitor from './FetcherProgressMonitor.js';
-import { Downloadable } from '../entities/Downloadable.js';
-import FilenameResolver from './FllenameResolver.js';
+import { type Downloadable } from '../entities/Downloadable.js';
+import type FilenameResolver from './FllenameResolver.js';
 import { pickDefined } from './Misc.js';
-import Logger, { LogLevel, commonLog } from './logging/Logger.js';
+import {type LogLevel} from './logging/Logger.js';
+import type Logger from './logging/Logger.js';
+import { commonLog } from './logging/Logger.js';
 import FSHelper from './FSHelper.js';
-import { DownloaderConfig } from '../downloaders/Downloader.js';
+import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import Progress from './Progress.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
@@ -79,9 +81,9 @@ export default class Fetcher {
     this.#setHeaders(request, type);
     try {
       const res = await fetch(request, { signal });
-      return await (type === 'html' ? res.text() : res.json()) as Promise<FetcherGetResultOf<T>>;
+      return await (type === 'html' ? res.text() : res.json()) as FetcherGetResultOf<T>;
     }
-    catch (error) {
+    catch (error: any) {
       if (signal?.aborted) {
         throw error;
       }

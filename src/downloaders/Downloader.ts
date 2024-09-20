@@ -2,24 +2,26 @@ import fs from 'fs';
 import { EventEmitter } from 'events';
 import deepFreeze from 'deep-freeze';
 import Fetcher from '../utils/Fetcher.js';
-import Bootstrap, { DownloaderBootstrapData, DownloaderType } from './Bootstrap.js';
-import { DownloaderInit, DownloaderOptions, FileExistsAction, getDownloaderInit } from './DownloaderOptions.js';
-import { DownloaderEvent, DownloaderEventPayloadOf } from './DownloaderEvent.js';
-import Logger, { LogLevel, commonLog } from '../utils/logging/Logger.js';
-import { Campaign } from '../entities/Campaign.js';
-import FSHelper, { WriteTextFileResult } from '../utils/FSHelper.js';
+import Bootstrap, { type DownloaderBootstrapData, type DownloaderType } from './Bootstrap.js';
+import { type DownloaderInit, type DownloaderOptions, type FileExistsAction, getDownloaderInit } from './DownloaderOptions.js';
+import { type DownloaderEvent, type DownloaderEventPayloadOf } from './DownloaderEvent.js';
+import {type LogLevel} from '../utils/logging/Logger.js';
+import type Logger from '../utils/logging/Logger.js';
+import { commonLog } from '../utils/logging/Logger.js';
+import { type Campaign } from '../entities/Campaign.js';
+import FSHelper, { type WriteTextFileResult } from '../utils/FSHelper.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
-import { IDownloadTask } from './task/DownloadTask.js';
+import { type IDownloadTask } from './task/DownloadTask.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import FilenameFormatHelper from '../utils/FilenameFormatHelper.js';
-import { Downloadable } from '../entities/Downloadable.js';
+import { type Downloadable } from '../entities/Downloadable.js';
 import { generateCampaignSummary } from './templates/CampaignInfo.js';
 import path from 'path';
 import URLHelper from '../utils/URLHelper.js';
 import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
-import { UserIdOrVanityParam } from '../entities/User.js';
+import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
@@ -141,7 +143,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       }
     });
 
-     */
+    */
 
     batch.on('complete', () => {
       const total = batch.getTasks().length;
@@ -211,12 +213,14 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       throw Error('Could not determine downloader type from URL');
     }
     switch (bootstrap.type) {
-      case 'product':
+      case 'product': {
         const ProductDownloader = (await import('./ProductDownloader.js')).default;
         return new ProductDownloader(bootstrap, options);
-      case 'post':
+      }
+      case 'post': {
         const PostDownloader = (await import('./PostDownloader.js')).default;
         return new PostDownloader(bootstrap, options);
+      }
     }
   }
 
@@ -285,115 +289,119 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
   protected saveCampaignInfo(campaign: Campaign | null, signal?: AbortSignal) {
 
-    return new Promise<void>(async (resolve) => {
-      if (!this.config.include.campaignInfo) {
-        resolve();
-        return;
-      }
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      let batch: DownloadTaskBatch | null = null;
-      const abortHandler = async () => {
-        if (batch) {
-          await batch.abort();
+    return new Promise<void>((resolve) => {
+      void (async () => {
+        if (!this.config.include.campaignInfo) {
+          resolve();
+          return;
         }
-      };
-      if (signal) {
-        signal.addEventListener('abort', abortHandler, { once: true });
-      }
-
-      if (!campaign) {
-        this.log('warn', 'Skipped saving campaign info: target unavailable');
-        resolve();
-        return;
-      }
-
-      this.log('info', `Save campaign info #${campaign.id}`);
-      this.emit('targetBegin', { target: campaign });
-      this.emit('phaseBegin', { target: campaign, phase: 'saveInfo' });
-
-      // Step 1: create campaign directories
-      const campaignDirs = this.fsHelper.getCampaignDirs(campaign);
-      this.log('debug', 'Campaign directories: ', campaignDirs);
-      this.fsHelper.createDir(campaignDirs.root);
-      this.fsHelper.createDir(campaignDirs.info);
-
-      // Step 2: save summary and raw json
-      const summary = generateCampaignSummary(campaign);
-      const summaryFile = path.resolve(campaignDirs.info, 'info.txt');
-      const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-      this.logWriteTextFileResult(saveSummaryResult, campaign, 'campaign summary');
-
-      // Campaign / creator raw data might not be complete. Fetch directly from API.
-      // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
-      const { json: fetchedCampaignAPIData } = await this.fetchCampaign(campaign.id, signal);
-      const { json: fetchedCreatorAPIData } = campaign.creator ? await this.fetchUser(campaign.creator.id, signal) : { json: null };
-
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      const campaignRawFile = path.resolve(campaignDirs.info, 'campaign-api.json');
-      const saveCampaignRawResult = await this.fsHelper.writeTextFile(
-        campaignRawFile, fetchedCampaignAPIData || campaign.raw, this.config.fileExistsAction.infoAPI);
-      this.logWriteTextFileResult(saveCampaignRawResult, campaign, 'campaign API data');
-
-      if (campaign.creator) {
-        const creatorRawFile = path.resolve(campaignDirs.info, 'creator-api.json');
-        const saveCreatorRawResult = await this.fsHelper.writeTextFile(
-          creatorRawFile, fetchedCreatorAPIData || campaign.creator.raw, this.config.fileExistsAction.infoAPI);
-        this.logWriteTextFileResult(saveCreatorRawResult, campaign.creator, 'creator API data');
-      }
-
-      this.emit('phaseEnd', { target: campaign, phase: 'saveInfo' });
-
-      // Step 3: download campaign media items
-      this.emit('phaseBegin', { target: campaign, phase: 'saveMedia' });
-      const campaignMedia: Downloadable[] = [
-        campaign.avatarImage,
-        campaign.coverPhoto
-      ];
-      if (campaign.creator) {
-        campaignMedia.push(
-          campaign.creator.image,
-          campaign.creator.thumbnail
+  
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        let batch: DownloadTaskBatch | null = null;
+        const abortHandler = () => {
+          void (async () => {
+            if (batch) {
+              await batch.abort();
+            }
+          })();
+        };
+        if (signal) {
+          signal.addEventListener('abort', abortHandler, { once: true });
+        }
+  
+        if (!campaign) {
+          this.log('warn', 'Skipped saving campaign info: target unavailable');
+          resolve();
+          return;
+        }
+  
+        this.log('info', `Save campaign info #${campaign.id}`);
+        this.emit('targetBegin', { target: campaign });
+        this.emit('phaseBegin', { target: campaign, phase: 'saveInfo' });
+  
+        // Step 1: create campaign directories
+        const campaignDirs = this.fsHelper.getCampaignDirs(campaign);
+        this.log('debug', 'Campaign directories: ', campaignDirs);
+        this.fsHelper.createDir(campaignDirs.root);
+        this.fsHelper.createDir(campaignDirs.info);
+  
+        // Step 2: save summary and raw json
+        const summary = generateCampaignSummary(campaign);
+        const summaryFile = path.resolve(campaignDirs.info, 'info.txt');
+        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+        this.logWriteTextFileResult(saveSummaryResult, campaign, 'campaign summary');
+  
+        // Campaign / creator raw data might not be complete. Fetch directly from API.
+        // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
+        const { json: fetchedCampaignAPIData } = await this.fetchCampaign(campaign.id, signal);
+        const { json: fetchedCreatorAPIData } = campaign.creator ? await this.fetchUser(campaign.creator.id, signal) : { json: null };
+  
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        const campaignRawFile = path.resolve(campaignDirs.info, 'campaign-api.json');
+        const saveCampaignRawResult = await this.fsHelper.writeTextFile(
+          campaignRawFile, fetchedCampaignAPIData || campaign.raw, this.config.fileExistsAction.infoAPI);
+        this.logWriteTextFileResult(saveCampaignRawResult, campaign, 'campaign API data');
+  
+        if (campaign.creator) {
+          const creatorRawFile = path.resolve(campaignDirs.info, 'creator-api.json');
+          const saveCreatorRawResult = await this.fsHelper.writeTextFile(
+            creatorRawFile, fetchedCreatorAPIData || campaign.creator.raw, this.config.fileExistsAction.infoAPI);
+          this.logWriteTextFileResult(saveCreatorRawResult, campaign.creator, 'creator API data');
+        }
+  
+        this.emit('phaseEnd', { target: campaign, phase: 'saveInfo' });
+  
+        // Step 3: download campaign media items
+        this.emit('phaseBegin', { target: campaign, phase: 'saveMedia' });
+        const campaignMedia: Downloadable[] = [
+          campaign.avatarImage,
+          campaign.coverPhoto
+        ];
+        if (campaign.creator) {
+          campaignMedia.push(
+            campaign.creator.image,
+            campaign.creator.thumbnail
+          );
+        }
+        for (const reward of campaign.rewards) {
+          if (reward.image) {
+            campaignMedia.push(reward.image);
+          }
+        }
+        batch = this.createDownloadTaskBatch(
+          `Campaign #${campaign.id} (${campaign.name})`,
+          {
+            target: campaignMedia,
+            targetName: `campaign #${campaign.id} -> images`,
+            destDir: campaignDirs.info,
+            fileExistsAction: this.config.fileExistsAction.info
+          }
         );
-      }
-      for (const reward of campaign.rewards) {
-        if (reward.image) {
-          campaignMedia.push(reward.image);
+        this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
+        await batch.start();
+        await batch.destroy();
+        this.emit('phaseEnd', { target: campaign, phase: 'batchDownload' });
+        this.emit('phaseEnd', { target: campaign, phase: 'saveMedia' });
+  
+        if (signal) {
+          signal.removeEventListener('abort', abortHandler);
         }
-      }
-      batch = this.createDownloadTaskBatch(
-        `Campaign #${campaign.id} (${campaign.name})`,
-        {
-          target: campaignMedia,
-          targetName: `campaign #${campaign.id} -> images`,
-          destDir: campaignDirs.info,
-          fileExistsAction: this.config.fileExistsAction.info
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
         }
-      );
-      this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
-      await batch.start();
-      await batch.destroy();
-      this.emit('phaseEnd', { target: campaign, phase: 'batchDownload' });
-      this.emit('phaseEnd', { target: campaign, phase: 'saveMedia' });
-
-      if (signal) {
-        signal.removeEventListener('abort', abortHandler);
-      }
-      if (this.checkAbortSignal(signal, resolve)) {
-        return;
-      }
-
-      // Done
-      this.log('info', 'Done saving campaign info');
-      this.emit('targetEnd', { target: campaign, isSkipped: false });
-
-      resolve();
+  
+        // Done
+        this.log('info', 'Done saving campaign info');
+        this.emit('targetEnd', { target: campaign, isSkipped: false });
+  
+        resolve();
+      })();
     });
 
   }
@@ -418,7 +426,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return false;
   }
 
-  protected logWriteTextFileResult<T>(result: WriteTextFileResult, target: T & {id: string}, targetName: string) {
+  protected logWriteTextFileResult(result: WriteTextFileResult, target: {id: string}, targetName: string) {
     switch (result.status) {
       case 'completed':
         this.log('info', `Saved ${targetName} to "${result.filePath}"`);

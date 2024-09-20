@@ -1,12 +1,13 @@
 import path from 'path';
 import fs from 'fs';
-import Fetcher from '../../utils/Fetcher.js';
-import FetcherProgressMonitor, { FetcherProgress } from '../../utils/FetcherProgressMonitor.js';
-import FilenameResolver from '../../utils/FllenameResolver.js';
-import DownloadTask, { DownloadTaskParams, DownloadProgress, DownloadTaskSkipReason } from './DownloadTask.js';
+import type Fetcher from '../../utils/Fetcher.js';
+import {type FetcherProgress} from '../../utils/FetcherProgressMonitor.js';
+import type FetcherProgressMonitor from '../../utils/FetcherProgressMonitor.js';
+import type FilenameResolver from '../../utils/FllenameResolver.js';
+import DownloadTask, { type DownloadTaskParams, type DownloadProgress, type DownloadTaskSkipReason } from './DownloadTask.js';
 import M3U8DownloadTask from './M3U8DownloadTask.js';
-import { Downloadable } from '../../entities/Downloadable.js';
-import { FileExistsAction } from '../DownloaderOptions.js';
+import { type Downloadable } from '../../entities/Downloadable.js';
+import { type FileExistsAction } from '../DownloaderOptions.js';
 
 export interface FetcherDownloadTaskParams<T extends Downloadable> extends DownloadTaskParams {
   fetcher: Fetcher;
@@ -63,141 +64,142 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
   }
 
   protected doStart() {
-    return new Promise<void>(async (resolve) => {
-
-      if (this.status === 'aborted') {
-        resolve();
-      }
-
-      this.#abortController = new AbortController();
-
-      /**
-       * Change status to downloading ahead of notifyStart(), so that task can be
-       * aborted even though we have not yet obtained progress monitor from `Fetcher.download()`.
-       */
-      this.status = 'downloading';
-      let skipped = false;
-      const fileExistsAction = this.#fileExistsAction;
-      try {
-        const { destFilePath, monitor, start, abort } = await this.#fetcher.prepareDownload({
-          url: this.src,
-          destDir: this.#destDir,
-          srcEntity: this.srcEntity,
-          destFilenameResolver: this.#destFilenameResolver,
-          signal: this.#abortController.signal
-        });
-
-        this.resolvedDestPath = destFilePath;
-
-        // Skip download?
-        let skipDownload: { skip: false; } | { skip: true; reason: DownloadTaskSkipReason } = { skip: false };
-        let lastDownloadedFilePath: string | null = null;
-        if (fileExistsAction === 'saveAsCopy' || fileExistsAction === 'saveAsCopyIfNewer') {
-          const inc = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
-          this.resolvedDestPath = inc.filePath;
-          lastDownloadedFilePath = inc.preceding;
-        }
-        else if (fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
-          const isM3U8 = this.srcEntity.type === 'video' && this.#isM3U8FilePath(destFilePath);
-          const mp4FilePath = this.fsHelper.changeFilePathExtension(destFilePath, '.mp4');
-          if (isM3U8 && !fs.existsSync(mp4FilePath)) {
-            this.log('debug', `Ignoring 'fileExistsAction: skip' for URL "${this.src}": target download is M3U8 playlist and its ` +
-              `associated media file "${mp4FilePath}" does not exist`);
-          }
-          else {
-            skipDownload = {
-              skip: true,
-              reason: {
-                name: 'destFileExists',
-                message: `Destination file exists (${destFilePath})`,
-                existingDestFilePath: destFilePath
-              }
-            };
-          }
-        }
-
-        const __handleSkip = (skipAction: () => void) => {
-          if (skipDownload.skip) {
-            skipped = true;
-            skipAction();
-            const reason = skipDownload.reason;
-            this.notifySkip(reason);
-            resolve();
-            return true;
-          }
-          return false;
-        };
-
-        if (__handleSkip(abort)) {
-          return;
-        }
-
-        monitor.on('progress', (progress) => {
-          this.notifyProgress(this.#convertFetcherProgress(progress));
-        });
-
-        this.#progressMonitor = monitor;
-
-        this.notifyStart();
-
-        const { tmpFilePath, commit, discard } = await start({ destFilePath: this.resolvedDestPath });
-
-        let proceedWithCommit = true;
-        if (fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
-          // Compare checksum of downloaded file with that of last download
-          const compareMsg = `(saveAsCopyIfNewer) Compare "${tmpFilePath}" with "${lastDownloadedFilePath}"`;
-          proceedWithCommit = !(await this.fsHelper.compareFiles(tmpFilePath, lastDownloadedFilePath));
-          if (!proceedWithCommit) {
-            this.log('debug', `${compareMsg}: Files match`);
-            skipDownload = {
-              skip: true,
-              reason: {
-                name: 'destFileExists',
-                message: `Destination file exists with same content (${lastDownloadedFilePath})`,
-                existingDestFilePath: lastDownloadedFilePath
-              }
-            };
-            this.resolvedDestPath = lastDownloadedFilePath;
-            __handleSkip(discard);
-          }
-          else {
-            this.log('debug', `${compareMsg}: Files do not match`);
-          }
-        }
-
-        if (proceedWithCommit) {
-          commit();
-        }
-
-        this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
-
-        if (proceedWithCommit) {
-          this.notifyComplete();
+    return new Promise<void>((resolve) => {
+      void (async () => {
+        if (this.status === 'aborted') {
           resolve();
         }
-      }
-      catch (error: any) {
-        if (this.#abortController.signal.aborted) {
-          if (!skipped) {
-            this.notifyAbort();
-            if (this.#abortingCallback) {
-              this.#abortingCallback();
+  
+        this.#abortController = new AbortController();
+  
+        /**
+         * Change status to downloading ahead of notifyStart(), so that task can be
+         * aborted even though we have not yet obtained progress monitor from `Fetcher.download()`.
+         */
+        this.status = 'downloading';
+        let skipped = false;
+        const fileExistsAction = this.#fileExistsAction;
+        try {
+          const { destFilePath, monitor, start, abort } = await this.#fetcher.prepareDownload({
+            url: this.src,
+            destDir: this.#destDir,
+            srcEntity: this.srcEntity,
+            destFilenameResolver: this.#destFilenameResolver,
+            signal: this.#abortController.signal
+          });
+  
+          this.resolvedDestPath = destFilePath;
+  
+          // Skip download?
+          let skipDownload: { skip: false; } | { skip: true; reason: DownloadTaskSkipReason } = { skip: false };
+          let lastDownloadedFilePath: string | null = null;
+          if (fileExistsAction === 'saveAsCopy' || fileExistsAction === 'saveAsCopyIfNewer') {
+            const inc = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
+            this.resolvedDestPath = inc.filePath;
+            lastDownloadedFilePath = inc.preceding;
+          }
+          else if (fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
+            const isM3U8 = this.srcEntity.type === 'video' && this.#isM3U8FilePath(destFilePath);
+            const mp4FilePath = this.fsHelper.changeFilePathExtension(destFilePath, '.mp4');
+            if (isM3U8 && !fs.existsSync(mp4FilePath)) {
+              this.log('debug', `Ignoring 'fileExistsAction: skip' for URL "${this.src}": target download is M3U8 playlist and its ` +
+                `associated media file "${mp4FilePath}" does not exist`);
+            }
+            else {
+              skipDownload = {
+                skip: true,
+                reason: {
+                  name: 'destFileExists',
+                  message: `Destination file exists (${destFilePath})`,
+                  existingDestFilePath: destFilePath
+                }
+              };
             }
           }
+  
+          const __handleSkip = (skipAction: () => void) => {
+            if (skipDownload.skip) {
+              skipped = true;
+              skipAction();
+              const reason = skipDownload.reason;
+              this.notifySkip(reason);
+              resolve();
+              return true;
+            }
+            return false;
+          };
+  
+          if (__handleSkip(abort)) {
+            return;
+          }
+  
+          monitor.on('progress', (progress) => {
+            this.notifyProgress(this.#convertFetcherProgress(progress));
+          });
+  
+          this.#progressMonitor = monitor;
+  
+          this.notifyStart();
+  
+          const { tmpFilePath, commit, discard } = await start({ destFilePath: this.resolvedDestPath });
+  
+          let proceedWithCommit = true;
+          if (fileExistsAction === 'saveAsCopyIfNewer' && lastDownloadedFilePath && fs.existsSync(lastDownloadedFilePath)) {
+            // Compare checksum of downloaded file with that of last download
+            const compareMsg = `(saveAsCopyIfNewer) Compare "${tmpFilePath}" with "${lastDownloadedFilePath}"`;
+            proceedWithCommit = !(await this.fsHelper.compareFiles(tmpFilePath, lastDownloadedFilePath));
+            if (!proceedWithCommit) {
+              this.log('debug', `${compareMsg}: Files match`);
+              skipDownload = {
+                skip: true,
+                reason: {
+                  name: 'destFileExists',
+                  message: `Destination file exists with same content (${lastDownloadedFilePath})`,
+                  existingDestFilePath: lastDownloadedFilePath
+                }
+              };
+              this.resolvedDestPath = lastDownloadedFilePath;
+              __handleSkip(discard);
+            }
+            else {
+              this.log('debug', `${compareMsg}: Files do not match`);
+            }
+          }
+  
+          if (proceedWithCommit) {
+            commit();
+          }
+  
+          this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
+  
+          if (proceedWithCommit) {
+            this.notifyComplete();
+            resolve();
+          }
         }
-        else {
-          this.notifyError(error);
+        catch (error: any) {
+          if (this.#abortController.signal.aborted) {
+            if (!skipped) {
+              this.notifyAbort();
+              if (this.#abortingCallback) {
+                this.#abortingCallback();
+              }
+            }
+          }
+          else {
+            this.notifyError(error);
+          }
+          resolve();
         }
-        resolve();
-      }
+      })();
     })
-      .finally(() => {
-        if (this.#progressMonitor) {
-          this.#progressMonitor.removeAllListeners();
-          this.#progressMonitor = null;
-        }
-        this.#abortController = null;
-      });
+    .finally(() => {
+      if (this.#progressMonitor) {
+        this.#progressMonitor.removeAllListeners();
+        this.#progressMonitor = null;
+      }
+      this.#abortController = null;
+    });
   }
 
   protected async doAbort() {
@@ -217,6 +219,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
 
   protected async doDestroy() {
     this.#destDir = '';
+    return Promise.resolve();
   }
 
   protected doGetProgress() {

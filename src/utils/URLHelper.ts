@@ -1,6 +1,6 @@
 import path from 'path';
 import { URL } from 'url';
-import { UserIdOrVanityParam } from '../entities';
+import { type UserIdOrVanityParam } from '../entities';
 
 const SITE_URL = 'https://www.patreon.com';
 const COLLECTION_URL = `${SITE_URL}/collection`;

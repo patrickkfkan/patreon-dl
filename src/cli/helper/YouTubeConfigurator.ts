@@ -68,32 +68,34 @@ What would you like to do?
   }
 
   static #doConnectAndSaveCredentials(ytCredsPath: string) {
-    return new Promise<number>(async (resolve) => {
-      const capturer = new YouTubeCredentialsCapturer();
-      capturer.on('pending', (data) => {
-        console.log(`In a browser, go to the following Verification URL and enter Code:
+    return new Promise<number>((resolve) => {
+      void (async () => {
+        const capturer = new YouTubeCredentialsCapturer();
+        capturer.on('pending', (data) => {
+          console.log(`In a browser, go to the following Verification URL and enter Code:
 
 - Verification URL: ${data.verificationURL}
 - Code: ${data.code}
 
 Then wait for this script to complete.
 `);
-      });
+        });
 
-      capturer.on('capture', (credentials) => {
-        try {
-          FSHelper.createDir(path.parse(ytCredsPath).dir);
-          FSHelper.writeFile(ytCredsPath, JSON.stringify(credentials));
-          console.log(`YouTube connected; credentials saved to "${ytCredsPath}"`, EOL);
-          resolve(0);
-        }
-        catch (error) {
-          console.error(`Error saving credentials to "${ytCredsPath}": `, error instanceof Error ? error.message : error, EOL);
-          resolve(1);
-        }
-      });
-
-      await capturer.begin();
+        capturer.on('capture', (credentials) => {
+          try {
+            FSHelper.createDir(path.parse(ytCredsPath).dir);
+            FSHelper.writeFile(ytCredsPath, JSON.stringify(credentials));
+            console.log(`YouTube connected; credentials saved to "${ytCredsPath}"`, EOL);
+            resolve(0);
+          }
+          catch (error) {
+            console.error(`Error saving credentials to "${ytCredsPath}": `, error instanceof Error ? error.message : error, EOL);
+            resolve(1);
+          }
+        });
+  
+        await capturer.begin();
+      })();
     });
   }
 

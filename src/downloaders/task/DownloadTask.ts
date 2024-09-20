@@ -1,8 +1,10 @@
 import path from 'path';
-import { Downloadable } from '../../entities/Downloadable.js';
-import Logger, { LogLevel, commonLog } from '../../utils/logging/Logger.js';
+import { type Downloadable } from '../../entities/Downloadable.js';
+import {type LogLevel} from '../../utils/logging/Logger.js';
+import type Logger from '../../utils/logging/Logger.js';
+import { commonLog } from '../../utils/logging/Logger.js';
 import FSHelper from '../../utils/FSHelper.js';
-import { DownloaderConfig } from '../Downloader.js';
+import { type DownloaderConfig } from '../Downloader.js';
 
 export class DownloadTaskError extends Error {
   task: IDownloadTask;
@@ -137,20 +139,22 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
       return Promise.resolve();
     }
 
-    this.#startPromise = new Promise<void>(async (resolve) => {
-      this.#startingCallback = () => {
-        this.#startPromise = null;
-        this.#startingCallback = null;
-        resolve();
-      };
-
-      await this.doStart();
-
-      // Retry on error, up to `maxRetries`
-      while (this.#status === 'pending-retry' && this.#retryCount < this.maxRetries) {
-        this.#retryCount++;
+    this.#startPromise = new Promise<void>((resolve) => {
+      void (async () => {
+        this.#startingCallback = () => {
+          this.#startPromise = null;
+          this.#startingCallback = null;
+          resolve();
+        };
+  
         await this.doStart();
-      }
+  
+        // Retry on error, up to `maxRetries`
+        while (this.#status === 'pending-retry' && this.#retryCount < this.maxRetries) {
+          this.#retryCount++;
+          await this.doStart();
+        }
+      })();
     });
 
     return this.#startPromise;
@@ -161,18 +165,20 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
       return this.#abortPromise;
     }
 
-    this.#abortPromise = new Promise<void>(async (resolve) => {
-      if (this.isRunning()) {
-        await this.doAbort();
-      }
-      else if (this.#status === 'pending' || this.#status === 'pending-retry') {
-        this.notifyAbort();
-      }
-      resolve();
+    this.#abortPromise = new Promise<void>((resolve) => {
+      void (async () => {
+        if (this.isRunning()) {
+          await this.doAbort();
+        }
+        else if (this.#status === 'pending' || this.#status === 'pending-retry') {
+          this.notifyAbort();
+        }
+        resolve();
+      })();
     })
-      .finally(() => {
-        this.#abortPromise = null;
-      });
+    .finally(() => {
+      this.#abortPromise = null;
+    });
 
     return this.#abortPromise;
   }
@@ -248,7 +254,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
           this.callbacks.onSkip(this, reason);
         }
         break;
-      case 'error':
+      case 'error': {
         const [ err, willRetry ] = cbPayload;
         if (willRetry) {
           this.#status = 'pending-retry';
@@ -258,6 +264,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
         if (this.callbacks?.onError) {
           this.callbacks.onError(err, willRetry);
         }
+      }
     }
 
     if (this.#startingCallback && callStartingCallback) {

@@ -1,6 +1,6 @@
-import { Attachment } from './Attachment.js';
-import { MediaItem } from './MediaItem.js';
-import { PostEmbed, YouTubePostEmbed } from './Post.js';
+import { type Attachment } from './Attachment.js';
+import { type MediaItem } from './MediaItem.js';
+import { type PostEmbed, type YouTubePostEmbed } from './Post.js';
 
 export type Downloadable = MediaItem | Attachment | PostEmbed;
 

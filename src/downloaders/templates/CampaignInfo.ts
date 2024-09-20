@@ -1,4 +1,4 @@
-import { Campaign } from '../../entities/Campaign.js';
+import { type Campaign } from '../../entities/Campaign.js';
 
 const CAMPAIGN_INFO_TEMPLATE =
 `Campaign

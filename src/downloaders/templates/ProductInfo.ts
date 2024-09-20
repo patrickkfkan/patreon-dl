@@ -1,4 +1,4 @@
-import { Product } from '../../entities/Product.js';
+import { type Product } from '../../entities/Product.js';
 
 const PRODUCT_INFO_TEMPLATE =
 `Product
