@@ -210,6 +210,10 @@ export default class PostsFetcher extends EventEmitter {
         }
       }
     }
+    // Set 'completed' if not fetching multiple posts
+    else if (!this.checkAbortSignal() && this.#isRunning()) {
+      this.#setStatus({ status: 'completed' });
+    }
   }
 
   #handleError(error: any) {
