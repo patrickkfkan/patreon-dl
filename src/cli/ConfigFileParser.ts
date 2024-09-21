@@ -1,6 +1,7 @@
 import ConfigParser from 'configparser';
 import { type CLIOptionParserEntry, type CLIOptions } from './CLIOptions.js';
 import { type DeepPartial, type RecursivePropsTo } from '../utils/Misc.js';
+import DateTime from '../utils/DateTime.js';
 
 const CONFIG_FILE_PROPS = {
   targetURL: 'downloader:target.url',
@@ -26,6 +27,8 @@ const CONFIG_FILE_PROPS = {
     lockedContent: 'include:locked.content',
     postsWithMediaType: 'include:posts.with.media.type',
     postsInTier: 'include:posts.in.tier',
+    postsPublishedAfter: 'include:posts.published.after',
+    postsPublishedBefore: 'include:posts.published.before',
     campaignInfo: 'include:campaign.info',
     contentInfo: 'include:content.info',
     previewMedia: 'include:preview.media',
@@ -101,6 +104,10 @@ export default class ConfigFileParser {
         lockedContent: __getValue(CONFIG_FILE_PROPS.include.lockedContent),
         postsWithMediaType: __getValue(CONFIG_FILE_PROPS.include.postsWithMediaType),
         postsInTier: __getValue(CONFIG_FILE_PROPS.include.postsInTier),
+        postsPublished: {
+          after: __getValue(CONFIG_FILE_PROPS.include.postsPublishedAfter),
+          before: __getValue(CONFIG_FILE_PROPS.include.postsPublishedBefore),
+        },
         campaignInfo: __getValue(CONFIG_FILE_PROPS.include.campaignInfo),
         contentInfo: __getValue(CONFIG_FILE_PROPS.include.contentInfo),
         previewMedia: __getValue(CONFIG_FILE_PROPS.include.previewMedia),

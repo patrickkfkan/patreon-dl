@@ -2,7 +2,7 @@ import { EOL } from 'os';
 import PromptSync from 'prompt-sync';
 import path from 'path';
 import fs from 'fs';
-import Downloader from '../downloaders/Downloader.js';
+import Downloader, { type DownloaderConfig } from '../downloaders/Downloader.js';
 import ConsoleLogger from '../utils/logging/ConsoleLogger.js';
 import { type CLIOptions, type CLITargetURLEntry, getCLILoggerOptions, getCLIOptions } from './CLIOptions.js';
 import CommandLineParser from './CommandLineParser.js';
@@ -15,6 +15,9 @@ import envPaths from 'env-paths';
 import YouTubeConfigurator from './helper/YouTubeConfigurator.js';
 import { type DownloaderIncludeOptions } from '../downloaders/DownloaderOptions.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
+import copy from 'fast-copy';
+import type deepFreeze from 'deep-freeze';
+import { type DeepPartial } from '../utils/Misc.js';
 
 const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
@@ -175,6 +178,17 @@ export default class PatreonDownloaderCLI {
     return result;
   }
 
+  #getDisplayConfig(config: DeepPartial<DownloaderConfig<any>> | deepFreeze.DeepReadonly<DownloaderConfig<any>>) {
+    const displayConfig = copy(config) as any;
+    if (config.include?.postsPublished?.after) {
+      displayConfig.include.postsPublished.after = config.include.postsPublished.after.toString();
+    }
+    if (config.include?.postsPublished?.before) {
+      displayConfig.include.postsPublished.before = config.include.postsPublished.before.toString();
+    }
+    return displayConfig;
+  }
+
   async #createAndStartDownloader(targetURLs: CLITargetURLEntry[], index: number, options: CLIOptions) {
     const { url: targetURL } = targetURLs[index];
     const includeOpts = this.#getApplicableIncludeOptions(targetURLs[index].include, options.include);
@@ -228,7 +242,7 @@ export default class PatreonDownloaderCLI {
       };
 
       const __printDownloaderCreated = () => {
-        commonLog(logger, 'info', `Created ${downloaderName} instance with config: `, downloader.getConfig(), EOL);
+        commonLog(logger, 'info', `Created ${downloaderName} instance with config: `, this.#getDisplayConfig(downloader.getConfig()), EOL);
       };
 
       let promptConfirm = true;
@@ -244,9 +258,11 @@ export default class PatreonDownloaderCLI {
           __printLoggerConfigs();
           __printDownloaderCreated();
         };
-        const conf = {
-          ...downloader.getConfig()
-        } as any;
+        const displayConfSrc = await Downloader.getInstance(targetURL, {
+          ...options,
+          pathToYouTubeCredentials: fs.existsSync(ytCredsPath) ? ytCredsPath : null
+        });
+        const conf = {...displayConfSrc.getConfig()} as any;
         delete conf.targetURL;
         delete conf.type;
         delete conf.postFetch;
@@ -262,14 +278,14 @@ export default class PatreonDownloaderCLI {
             console.log('');
           }
           if (target.include) {
-            console.log('include:', ObjectHelper.clean(target.include));
+            console.log('include:', this.#getDisplayConfig({include: ObjectHelper.clean(target.include)}).include);
             console.log('');
           }
         });
         const heading2 = 'Common settings';
         console.log(`${EOL}${heading2}`);
         console.log('-'.repeat(heading2.length));
-        console.log(conf, EOL);
+        console.log(this.#getDisplayConfig(conf), EOL);
         if (targetURLs.find((target) => target.include)) {
           console.log('Target-specific settings may override common settings', EOL);
         }

@@ -68,6 +68,7 @@
     "deep-freeze": "^0.0.1",
     "env-paths": "^3.0.0",
     "escape-string-regexp": "^5.0.0",
+    "fast-copy": "^3.0.2",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^9.1.0",
     "hasha": "^5.2.2",

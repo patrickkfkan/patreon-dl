@@ -1,6 +1,7 @@
 import path from 'path';
 import type Logger from '../utils/logging/Logger.js';
 import { type DeepRequired, pickDefined } from '../utils/Misc.js';
+import type DateTime from '../utils/DateTime.js';
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
 
@@ -8,6 +9,10 @@ export interface DownloaderIncludeOptions {
   lockedContent?: boolean;
   postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment'> | 'any' | 'none';
   postsInTier?: Array<string> | 'any';
+  postsPublished?: {
+    after?: DateTime | null;
+    before?: DateTime | null;
+  };
   campaignInfo?: boolean;
   contentInfo?: boolean;
   previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
@@ -78,6 +83,10 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
     lockedContent: true,
     postsWithMediaType: 'any',
     postsInTier: 'any',
+    postsPublished: {
+      after: null,
+      before: null
+    },
     campaignInfo: true,
     contentInfo: true,
     previewMedia: true,
@@ -116,6 +125,10 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       lockedContent: pickDefined(options?.include?.lockedContent, defaults.include.lockedContent),
       postsWithMediaType: pickDefined(options?.include?.postsWithMediaType, defaults.include.postsWithMediaType),
       postsInTier: pickDefined(options?.include?.postsInTier, defaults.include.postsInTier),
+      postsPublished: {
+        after: pickDefined(options?.include?.postsPublished?.after, defaults.include.postsPublished.after),
+        before: pickDefined(options?.include?.postsPublished?.before, defaults.include.postsPublished.before)
+      },
       campaignInfo: pickDefined(options?.include?.campaignInfo, defaults.include.campaignInfo),
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),

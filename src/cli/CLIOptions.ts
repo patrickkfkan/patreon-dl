@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { type DownloaderIncludeOptions, type DownloaderOptions } from '../downloaders/DownloaderOptions.js';
-import { pickDefined } from '../utils/Misc.js';
+import { type DeepPartial, type RecursivePropsTo, pickDefined } from '../utils/Misc.js';
 import { type ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
 import { type FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
@@ -135,6 +135,10 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
     lockedContent: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.lockedContent, configFileOptions?.include?.lockedContent)),
     postsWithMediaType: CLIOptionValidator.validateIncludeContentWithMediaType(pickDefined(commandLineOptions.include?.postsWithMediaType, configFileOptions?.include?.postsWithMediaType)),
     postsInTier: CLIOptionValidator.validateIncludeContentInTier(pickDefined(commandLineOptions.include?.postsInTier, configFileOptions?.include?.postsInTier)),
+    postsPublished: {
+      after: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.postsPublished?.after, configFileOptions?.include?.postsPublished?.after)) || null,
+      before: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.postsPublished?.before, configFileOptions?.include?.postsPublished?.before)) || null,
+    },
     campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
     contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
     previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
@@ -154,10 +158,12 @@ function getEmbedDownloaderOptions(configFileOptions?: ConfigFileParseResult | n
 }
 
 function readTargetsFile(file: string) {
-  const includeKeys: Record<keyof DownloaderIncludeOptions, string> = {
+  const includeKeys = {
     lockedContent: 'include.locked.content',
     postsWithMediaType: 'include.posts.with.media.type',
     postsInTier: 'include.posts.in.tier',
+    postsPublishedAfter: 'include.posts.published.after',
+    postsPublishedBefore: 'include.posts.published.before',
     campaignInfo: 'include.campaign.info',
     contentInfo: 'include.content.info',
     previewMedia: 'include.preview.media',
@@ -171,7 +177,7 @@ function readTargetsFile(file: string) {
     .replace(/\r\n/g, '\n').split('\n')
     .map((line) => line.trim());
 
-  const currentTargets: { url: string; include?: Partial<Record<keyof DownloaderIncludeOptions, CLIOptionParserEntry>>; }[] = [];
+  const currentTargets: { url: string; include?: RecursivePropsTo<DeepPartial<DownloaderIncludeOptions>, CLIOptionParserEntry>; }[] = [];
   for (let ln = 0; ln < lines.length; ln++) {
     const line = lines[ln];
     if (line === '' || line.startsWith('#')) {
@@ -186,15 +192,32 @@ function readTargetsFile(file: string) {
         if (propValue) {
           const target = currentTargets.at(-1);
           if (target) {
-            if (!target.include) {
-              target.include = {};
-            }
-            target.include[optName as keyof DownloaderIncludeOptions] = {
+            const entry: CLIOptionParserEntry = {
               key: matchKey,
               line: ln,
               src: 'tgt',
               value: propValue
             };
+            if (!target.include) {
+              target.include = {};
+            }
+            if (matchKey === includeKeys.postsPublishedAfter || matchKey === includeKeys.postsPublishedBefore) {
+              if (!target.include.postsPublished) {
+                target.include.postsPublished = {
+                  after: undefined,
+                  before: undefined
+                };
+              }
+              if (matchKey === includeKeys.postsPublishedAfter) {
+                target.include.postsPublished.after = entry;
+              }
+              else {
+                target.include.postsPublished.before = entry;
+              }
+            }
+            else {
+              target.include[optName as keyof DownloaderIncludeOptions] = entry;
+            }
           }
         }
       }

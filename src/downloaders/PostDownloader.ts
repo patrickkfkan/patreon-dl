@@ -86,6 +86,7 @@ export default class PostDownloader extends Downloader<Post> {
         let skippedRedundant = 0;
         let skippedUnmetMediaTypeCriteria = 0;
         let skippedNotInTier = 0;
+        let skippedPublishDateOutOfRange = 0;
         let campaignSaved = false;
         const postsParser = new PostParser(this.logger);
         while (postsFetcher.hasNext()) {
@@ -255,6 +256,62 @@ export default class PostDownloader extends Downloader<Post> {
                 this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
               }
             }
+
+            // -- 4.3.4: Config option 'include.postsPublished'
+            const postsPublishedAfter = this.config.include.postsPublished.after;
+            const postsPublishedBefore = this.config.include.postsPublished.before;
+            if (postsPublishedAfter || postsPublishedBefore) {
+              const targetPublishedAt = post.publishedAt;
+              let parsedPublishedAt: Date | null = null;
+              if (!targetPublishedAt) {
+                this.log('warn', `config.include.postsPublished: ignored - post #${post.id} missing publish date`);
+              }
+              else {
+                try {
+                  parsedPublishedAt = new Date(targetPublishedAt);
+                }
+                catch (error: any) {
+                  this.log('error', `Failed to parse publish date of post #${post.id} ("${targetPublishedAt}"): `, error);
+                  this.log('warn', `config.include.postsPublished: ignored - publish date of post #${post.id} could not be parsed`);
+                }
+              }
+              let skip = false;
+              if (parsedPublishedAt) {
+                const isAfter = postsPublishedAfter ? parsedPublishedAt.getTime() >= postsPublishedAfter.valueOf().getTime() : true;
+                const isBefore = postsPublishedBefore ? parsedPublishedAt.getTime() < postsPublishedBefore.valueOf().getTime() : true;
+                skip = !isAfter || !isBefore;
+                let eq: string | null = null;
+                if (postsPublishedAfter && postsPublishedBefore) {
+                  eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
+                }
+                else if (postsPublishedAfter) {
+                  eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}*`;
+                }
+                else if (postsPublishedBefore) {
+                  eq = `*${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
+                }
+                if (eq) {
+                  if (skip) {
+                    this.log('warn', `Skipped downloading post #${post.id}: publish date out of range`);
+                    this.log('debug', `Publish date test failed for post #${post.id}: ${eq}`);
+                  }
+                  else {
+                    this.log('debug', `Publish date test OK for post #${post.id}: ${eq}`);
+                  }
+                }
+                if (skip) {
+                  this.emit('targetEnd', {
+                    target: post,
+                    isSkipped: true,
+                    skipReason: TargetSkipReason.PublishDateOutOfRange,
+                    skipMessage: 'Publish date out of range'
+                  });
+                  skippedPublishDateOutOfRange++;
+                  continue;
+                }
+              }
+            }
+
   
             // Step 4.4: Save post info
             if (this.config.include.contentInfo) {
@@ -403,6 +460,9 @@ export default class PostDownloader extends Downloader<Post> {
           }
           if (skippedNotInTier) {
             skippedStrParts.push(`${skippedNotInTier} not in tier`);
+          }
+          if (skippedPublishDateOutOfRange) {
+            skippedStrParts.push(`${skippedPublishDateOutOfRange} with publish date out of range`);
           }
           const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
           endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;

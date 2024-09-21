@@ -1,3 +1,4 @@
+import DateTime from '../utils/DateTime.js';
 import URLHelper from '../utils/URLHelper.js';
 import { type CLIOptionParserEntry } from './CLIOptions.js';
 
@@ -165,6 +166,19 @@ export default class CLIOptionValidator {
     }
     catch (error) {
       return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment', 'file' ] as const);
+    }
+  }
+
+  static validateDateTime(entry?: CLIOptionParserEntry) {
+    if (!entry || !entry.value) {
+      return undefined;
+    }
+    const v = entry.value.trim();
+    try {
+      return DateTime.from(v);
+    }
+    catch (error) {
+      throw Error(`${this.#logEntryKey(entry)} has invalid datetime string "${v}"; must be in this format: ${DateTime.FORMAT}`);
     }
   }
 
