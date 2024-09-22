@@ -19,7 +19,7 @@ A Patreon downloader written in [Node.js](https://nodejs.org).
 - Save campaign and content info 
 - Extensively configurable
 
-You can run `patreon-dl` from the command-line or use it as a library for your project. Node.js v16.16.0 or higher required.
+You can run `patreon-dl` from the command-line or use it as a library for your project. Node.js v18 or higher required.
 
 ### Limitations
 
@@ -648,6 +648,16 @@ Each event emitted by a download task batch has a payload, which is an object wi
 | `complete` | <p>Emitted when the batch is complete and there are no more downloads pending.</p><p>Payload properties: *none*</p> |
 
 ## Changelog
+
+v2.0.0
+- Replace [node-fetch](https://github.com/node-fetch/node-fetch) with Fetch API; required Node.js version bumped to v18 or higher.
+- Update dependencies and libraries
+- New `include` options:
+  - `include.postsPublished` ([#29](https://github.com/patrickkfkan/patreon-dl/issues/29))
+  - `include.mediaByFilename` ([#33](https://github.com/patrickkfkan/patreon-dl/issues/33))
+- Bug fixes:
+  - 403 error when downloading YouTube embeds
+  - Only first of multiple targets downloaded ([#26](https://github.com/patrickkfkan/patreon-dl/issues/26))
 
 v1.7.0
 - Download next batch of posts before expiry of 'next' URL (fixes [#22](https://github.com/patrickkfkan/patreon-dl/issues/22))
