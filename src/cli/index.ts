@@ -312,10 +312,12 @@ export default class PatreonDownloaderCLI {
     }
 
     let hasDownloaderError = false;
+    let isAborted = false;
     let endMessage = '';
     downloader.on('end', ({ aborted, error, message }) => {
       if (aborted) {
         commonLog(logger, 'info', null, `${downloaderName} aborted`);
+        isAborted = true;
       }
       else if (!error) {
         commonLog(logger, 'info', null, `${downloaderName} end`);
@@ -336,11 +338,11 @@ export default class PatreonDownloaderCLI {
       await downloader.start({ signal: abortController.signal });
       await logger.end();
       process.off('SIGINT', abortHandler);
-      return { hasError: hasDownloaderError, endMessage };
+      return { hasError: hasDownloaderError, aborted: isAborted, endMessage };
     }
     catch (error) {
       commonLog(logger, 'error', null, `Uncaught ${downloaderName} error:`, error);
-      return { hasError: true, endMessage: 'Uncaught error' };
+      return { hasError: true, aborted: isAborted, endMessage: 'Uncaught error' };
     }
   }
 
