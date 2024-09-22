@@ -1,3 +1,7 @@
+import DateTime from "./DateTime.js";
+
+const NO_CLEAN = [ DateTime ];
+
 export default class ObjectHelper {
 
   static getProperty(obj: any, prop: string, required = false) {
@@ -21,14 +25,31 @@ export default class ObjectHelper {
     return v;
   }
 
-  static clean(obj: any) {
+  static clean(obj: any, opts?: {
+    deep?: boolean;
+    cleanNulls?: boolean;
+    cleanEmptyObjects?: boolean;
+  }) {
+    const deep = opts?.deep || false;
+    const cleanNulls = opts?.cleanNulls || false;
+    const cleanEmptyObjects = opts?.cleanEmptyObjects || false;
+
     if (!obj || typeof obj !== 'object') {
       return obj;
     }
     const result: any = {};
     for (const [ k, v ] of Object.entries(obj)) {
-      if (v !== undefined) {
-        result[k] = v;
+      const skip = v === undefined || (v === null && cleanNulls);
+      if (!skip) {
+        if (v !== null && typeof v === 'object' && !NO_CLEAN.find((nc) => v instanceof nc)) {
+          const c = deep ? this.clean(v, opts) : v;
+          if (Object.entries(c).length > 0 || !cleanEmptyObjects) {
+            result[k] = c;
+          }
+        }
+        else {
+          result[k] = v;
+        }
       }
     }
     return result;

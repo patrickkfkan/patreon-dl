@@ -18,6 +18,11 @@ export interface DownloaderIncludeOptions {
   previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
   contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
   allMediaVariants?: boolean;
+  mediaByFilename?: {
+    images?: string | null;
+    audio?: string | null;
+    attachments?: string | null;
+  }
 }
 
 export interface EmbedDownloader {
@@ -91,7 +96,12 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
     contentInfo: true,
     previewMedia: true,
     contentMedia: true,
-    allMediaVariants: false
+    allMediaVariants: false,
+    mediaByFilename: {
+      images: null,
+      audio: null,
+      attachments: null
+    }
   },
   request: {
     maxRetries: 3,
@@ -133,7 +143,12 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),
       contentMedia: pickDefined(options?.include?.contentMedia, defaults.include.contentMedia),
-      allMediaVariants: pickDefined(options?.include?.allMediaVariants, defaults.include.allMediaVariants)
+      allMediaVariants: pickDefined(options?.include?.allMediaVariants, defaults.include.allMediaVariants),
+      mediaByFilename: {
+        images: pickDefined(options?.include?.mediaByFilename?.images, defaults.include.mediaByFilename.images),
+        audio: pickDefined(options?.include?.mediaByFilename?.audio, defaults.include.mediaByFilename.audio),
+        attachments: pickDefined(options?.include?.mediaByFilename?.attachments, defaults.include.mediaByFilename.attachments)
+      }
     },
     request: {
       maxRetries: pickDefined(options?.request?.maxRetries, defaults.request.maxRetries),

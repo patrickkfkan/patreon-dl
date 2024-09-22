@@ -33,7 +33,10 @@ const CONFIG_FILE_PROPS = {
     contentInfo: 'include:content.info',
     previewMedia: 'include:preview.media',
     contentMedia: 'include:content.media',
-    allMediaVariants: 'include:all.media.variants'
+    allMediaVariants: 'include:all.media.variants',
+    imagesByFilename: 'include:images.by.filename',
+    audioByFilename: 'include.audio.by.filename',
+    attachmentsByFilename: 'include:attachments.by.filename'
   },
   request: {
     maxRetries: 'request:max.retries',
@@ -112,7 +115,12 @@ export default class ConfigFileParser {
         contentInfo: __getValue(CONFIG_FILE_PROPS.include.contentInfo),
         previewMedia: __getValue(CONFIG_FILE_PROPS.include.previewMedia),
         contentMedia: __getValue(CONFIG_FILE_PROPS.include.contentMedia),
-        allMediaVariants: __getValue(CONFIG_FILE_PROPS.include.allMediaVariants)
+        allMediaVariants: __getValue(CONFIG_FILE_PROPS.include.allMediaVariants),
+        mediaByFilename: {
+          images: __getValue(CONFIG_FILE_PROPS.include.imagesByFilename),
+          audio: __getValue(CONFIG_FILE_PROPS.include.audioByFilename),
+          attachments: __getValue(CONFIG_FILE_PROPS.include.attachmentsByFilename)
+        }
       },
       request: {
         maxRetries: __getValue(CONFIG_FILE_PROPS.request.maxRetries),

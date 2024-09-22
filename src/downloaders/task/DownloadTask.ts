@@ -24,6 +24,11 @@ export type DownloadTaskSkipReason = {
   name: 'destFileExists';
   existingDestFilePath: string;
 } | {
+  name: 'includeMediaByFilenameUnfulfilled';
+  itemType: 'image' | 'audio' | 'attachment';
+  pattern: string;
+  destFilename: string;
+} | {
   name: 'other';
 })
 

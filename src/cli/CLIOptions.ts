@@ -7,6 +7,7 @@ import CLIOptionValidator from './CLIOptionValidator.js';
 import CommandLineParser, { type CommandLineParseResult } from './CommandLineParser.js';
 import ConfigFileParser, { type ConfigFileParseResult } from './ConfigFileParser.js';
 import path from 'path';
+import ObjectHelper from '../utils/ObjectHelper.js';
 
 export interface CLITargetURLEntry {
   url: string;
@@ -143,7 +144,12 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
     contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
     previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
     contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
-    allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants))
+    allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants)),
+    mediaByFilename: {
+      images: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.images, configFileOptions?.include?.mediaByFilename?.images)) || null,
+      audio: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.audio, configFileOptions?.include?.mediaByFilename?.audio)) || null,
+      attachments: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.attachments, configFileOptions?.include?.mediaByFilename?.attachments)) || null
+    }
   };
 }
 
@@ -168,7 +174,10 @@ function readTargetsFile(file: string) {
     contentInfo: 'include.content.info',
     previewMedia: 'include.preview.media',
     contentMedia: 'include.content.media',
-    allMediaVariants: 'include.all.media.variants'
+    allMediaVariants: 'include.all.media.variants',
+    imagesByFilename: 'include.images.by.filename',
+    audioByFilename: 'include.audio.by.filename',
+    attachmentsByFilename: 'include.attachments.by.filename'
   };
 
   const lines = fs.readFileSync(file)
@@ -203,10 +212,7 @@ function readTargetsFile(file: string) {
             }
             if (matchKey === includeKeys.postsPublishedAfter || matchKey === includeKeys.postsPublishedBefore) {
               if (!target.include.postsPublished) {
-                target.include.postsPublished = {
-                  after: undefined,
-                  before: undefined
-                };
+                target.include.postsPublished = {};
               }
               if (matchKey === includeKeys.postsPublishedAfter) {
                 target.include.postsPublished.after = entry;
@@ -215,6 +221,23 @@ function readTargetsFile(file: string) {
                 target.include.postsPublished.before = entry;
               }
             }
+            else if (matchKey === includeKeys.imagesByFilename || matchKey === includeKeys.audioByFilename ||
+              matchKey === includeKeys.attachmentsByFilename) {
+                if (!target.include.mediaByFilename) {
+                  target.include.mediaByFilename = {};
+                }
+                switch (matchKey) {
+                  case includeKeys.imagesByFilename:
+                    target.include.mediaByFilename.images = entry;
+                    break;
+                  case includeKeys.audioByFilename:
+                    target.include.mediaByFilename.audio = entry;
+                    break;
+                  case includeKeys.attachmentsByFilename:
+                    target.include.mediaByFilename.attachments = entry;
+                    break;
+                }
+              }
             else {
               target.include[optName as keyof DownloaderIncludeOptions] = entry;
             }
@@ -236,7 +259,12 @@ function readTargetsFile(file: string) {
   for (const target of currentTargets) {
     const v: CLITargetURLEntry = { url: target.url };
     if (target.include) {
-      v.include = getCLIIncludeOptions(target);
+      const includeOpts = ObjectHelper.clean(getCLIIncludeOptions(target), {
+        deep: true, cleanNulls: true, cleanEmptyObjects: true
+      });
+      if (Object.entries(includeOpts).length > 0) {
+        v.include = includeOpts;
+      }
     }
     result.push(v);
   }

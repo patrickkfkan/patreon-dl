@@ -186,7 +186,9 @@ export default class PatreonDownloaderCLI {
     if (config.include?.postsPublished?.before) {
       displayConfig.include.postsPublished.before = config.include.postsPublished.before.toString();
     }
-    return displayConfig;
+    return  ObjectHelper.clean(displayConfig, {
+      deep: true, cleanNulls: true, cleanEmptyObjects: true
+    });
   }
 
   async #createAndStartDownloader(targetURLs: CLITargetURLEntry[], index: number, options: CLIOptions) {
@@ -278,7 +280,7 @@ export default class PatreonDownloaderCLI {
             console.log('');
           }
           if (target.include) {
-            console.log('include:', this.#getDisplayConfig({include: ObjectHelper.clean(target.include)}).include);
+            console.log('include:', this.#getDisplayConfig({include: target.include}).include);
             console.log('');
           }
         });

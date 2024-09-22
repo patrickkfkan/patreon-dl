@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { minimatch } from 'minimatch';
 import type Fetcher from '../../utils/Fetcher.js';
 import {type FetcherProgress} from '../../utils/FetcherProgressMonitor.js';
 import type FetcherProgressMonitor from '../../utils/FetcherProgressMonitor.js';
@@ -93,7 +94,14 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
           // Skip download?
           let skipDownload: { skip: false; } | { skip: true; reason: DownloadTaskSkipReason } = { skip: false };
           let lastDownloadedFilePath: string | null = null;
-          if (fileExistsAction === 'saveAsCopy' || fileExistsAction === 'saveAsCopyIfNewer') {
+          const includeByFilename = this.#checkIncludeMediaByFilenameOption();
+          if (!includeByFilename.ok) {
+            skipDownload = {
+              skip: true,
+              reason: includeByFilename.reason
+            };
+          }
+          else if (fileExistsAction === 'saveAsCopy' || fileExistsAction === 'saveAsCopyIfNewer') {
             const inc = this.fsHelper.checkFileExistsAndIncrement(destFilePath);
             this.resolvedDestPath = inc.filePath;
             lastDownloadedFilePath = inc.preceding;
@@ -240,5 +248,49 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
       sizeDownloaded: Number((progress.transferred / 1000).toFixed(2)),
       speed: Number((progress.speed / 1000).toFixed(2))
     };
+  }
+
+  #checkIncludeMediaByFilenameOption(): { ok: true; } | { ok: false; reason: DownloadTaskSkipReason; } {
+    const itemType = this.srcEntity.type;
+    let prop: keyof typeof this.config.include.mediaByFilename | null;
+    switch (itemType) {
+      case 'image':
+        prop = 'images';
+        break;
+      case 'audio':
+        prop = 'audio';
+        break;
+      case 'attachment':
+        prop = 'attachments';
+        break;
+      default:
+        prop = null;
+    }
+    const pattern = prop ? this.config.include.mediaByFilename[prop] : null;
+    const dest = this.resolvedDestFilename?.toLowerCase();
+    if (prop && pattern) {
+      const confName = `include.mediaByFilename.${prop}`;
+      if (!dest) {
+        this.log('warn', `Skipped config '${confName}': destination filename unavailable`);
+        return { ok: true };
+      }
+      const patternMatched = minimatch(dest, pattern);
+      const matchString = patternMatched ? 'OK' : 'failed';
+      this.log('debug', `Config '${confName}': test "${pattern}" <-> "${dest}" ${matchString}`);
+      if (patternMatched) {
+        return { ok: true };
+      }
+      return {
+        ok: false,
+        reason: {
+          name: 'includeMediaByFilenameUnfulfilled',
+          itemType,
+          pattern,
+          destFilename: dest,
+          message: `Media filename does not match pattern provided in config->${confName}`
+        } as DownloadTaskSkipReason
+      };
+    }
+    return { ok: true };
   }
 }
