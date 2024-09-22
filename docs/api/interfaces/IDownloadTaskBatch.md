@@ -1,236 +1,257 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / IDownloadTaskBatch
 
 # Interface: IDownloadTaskBatch
 
-## Hierarchy
+## Extends
 
 - `EventEmitter`
 
-  ↳ **`IDownloadTaskBatch`**
-
-## Table of contents
-
-### Properties
-
-- [allTasksEnded](IDownloadTaskBatch.md#alltasksended)
-- [getTasks](IDownloadTaskBatch.md#gettasks)
-- [hasErrors](IDownloadTaskBatch.md#haserrors)
-- [id](IDownloadTaskBatch.md#id)
-- [isAborted](IDownloadTaskBatch.md#isaborted)
-- [isDestroyed](IDownloadTaskBatch.md#isdestroyed)
-- [name](IDownloadTaskBatch.md#name)
-
-### Methods
-
-- [off](IDownloadTaskBatch.md#off)
-- [on](IDownloadTaskBatch.md#on)
-- [once](IDownloadTaskBatch.md#once)
-
 ## Properties
 
-### allTasksEnded
+### allTasksEnded()
 
-• **allTasksEnded**: () => `boolean`
+> **allTasksEnded**: () => `boolean`
 
-#### Type declaration
-
-▸ (): `boolean`
-
-##### Returns
+#### Returns
 
 `boolean`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L19)
+[src/downloaders/task/DownloadTaskBatch.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L20)
 
-___
+***
 
-### getTasks
+### getTasks()
 
-• **getTasks**: (`status?`: [`DownloadTaskStatus`](../README.md#downloadtaskstatus)) => [`IDownloadTask`](IDownloadTask.md)[]
+> **getTasks**: (`status`?) => [`IDownloadTask`](IDownloadTask.md)[]
 
-#### Type declaration
+#### Parameters
 
-▸ (`status?`): [`IDownloadTask`](IDownloadTask.md)[]
+• **status?**: [`DownloadTaskStatus`](../type-aliases/DownloadTaskStatus.md)
 
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `status?` | [`DownloadTaskStatus`](../README.md#downloadtaskstatus) |
-
-##### Returns
+#### Returns
 
 [`IDownloadTask`](IDownloadTask.md)[]
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L23)
+[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L24)
 
-___
+***
 
-### hasErrors
+### hasErrors()
 
-• **hasErrors**: () => `boolean`
+> **hasErrors**: () => `boolean`
 
-#### Type declaration
-
-▸ (): `boolean`
-
-##### Returns
+#### Returns
 
 `boolean`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L20)
+[src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L21)
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L17)
+[src/downloaders/task/DownloadTaskBatch.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L18)
 
-___
+***
 
-### isAborted
+### isAborted()
 
-• **isAborted**: () => `boolean`
+> **isAborted**: () => `boolean`
 
-#### Type declaration
-
-▸ (): `boolean`
-
-##### Returns
+#### Returns
 
 `boolean`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L22)
+[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L23)
 
-___
+***
 
-### isDestroyed
+### isDestroyed()
 
-• **isDestroyed**: () => `boolean`
+> **isDestroyed**: () => `boolean`
 
-#### Type declaration
-
-▸ (): `boolean`
-
-##### Returns
+#### Returns
 
 `boolean`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L21)
+[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L22)
 
-___
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L18)
+[src/downloaders/task/DownloadTaskBatch.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L19)
 
 ## Methods
 
-### off
+### off()
 
-▸ **off**\<`T`\>(`event`, `listener`): [`IDownloadTaskBatch`](IDownloadTaskBatch.md)
+> **off**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Alias for `emitter.removeListener()`.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloadTaskBatchEvent`](../README.md#downloadtaskbatchevent) |
+#### Type Parameters
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloadTaskBatchEventPayloadOf`](../README.md#downloadtaskbatcheventpayloadof)\<`T`\>) => `void` |
-
-#### Returns
-
-[`IDownloadTaskBatch`](IDownloadTaskBatch.md)
-
-#### Overrides
-
-EventEmitter.off
-
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L26)
-
-___
-
-### on
-
-▸ **on**\<`T`\>(`event`, `listener`): [`IDownloadTaskBatch`](IDownloadTaskBatch.md)
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloadTaskBatchEvent`](../README.md#downloadtaskbatchevent) |
+• **T** *extends* [`DownloadTaskBatchEvent`](../type-aliases/DownloadTaskBatchEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloadTaskBatchEventPayloadOf`](../README.md#downloadtaskbatcheventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
 
 #### Returns
 
-[`IDownloadTaskBatch`](IDownloadTaskBatch.md)
+`this`
+
+#### Since
+
+v10.0.0
 
 #### Overrides
 
-EventEmitter.on
+`EventEmitter.off`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L24)
+[src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L27)
 
-___
+***
 
-### once
+### on()
 
-▸ **once**\<`T`\>(`event`, `listener`): [`IDownloadTaskBatch`](IDownloadTaskBatch.md)
+> **on**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Adds the `listener` function to the end of the listeners array for the
+event named `eventName`. No checks are made to see if the `listener` has
+already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
+times.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloadTaskBatchEvent`](../README.md#downloadtaskbatchevent) |
+```js
+server.on('connection', (stream) => {
+  console.log('someone connected!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.on('foo', () => console.log('a'));
+myEE.prependListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloadTaskBatchEvent`](../type-aliases/DownloadTaskBatchEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloadTaskBatchEventPayloadOf`](../README.md#downloadtaskbatcheventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
+
+The callback function
 
 #### Returns
 
-[`IDownloadTaskBatch`](IDownloadTaskBatch.md)
+`this`
+
+#### Since
+
+v0.1.101
 
 #### Overrides
 
-EventEmitter.once
+`EventEmitter.on`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTaskBatch.ts#L25)
+[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L25)
+
+***
+
+### once()
+
+> **once**\<`T`\>(`event`, `listener`): `this`
+
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
+
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloadTaskBatchEvent`](../type-aliases/DownloadTaskBatchEvent.md)
+
+#### Parameters
+
+• **event**: `T`
+
+• **listener**
+
+The callback function
+
+#### Returns
+
+`this`
+
+#### Since
+
+v0.3.0
+
+#### Overrides
+
+`EventEmitter.once`
+
+#### Defined in
+
+[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTaskBatch.ts#L26)

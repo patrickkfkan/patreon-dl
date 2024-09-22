@@ -1,96 +1,127 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / DownloaderIncludeOptions
 
 # Interface: DownloaderIncludeOptions
 
-## Table of contents
-
-### Properties
-
-- [allMediaVariants](DownloaderIncludeOptions.md#allmediavariants)
-- [campaignInfo](DownloaderIncludeOptions.md#campaigninfo)
-- [contentInfo](DownloaderIncludeOptions.md#contentinfo)
-- [contentMedia](DownloaderIncludeOptions.md#contentmedia)
-- [lockedContent](DownloaderIncludeOptions.md#lockedcontent)
-- [postsInTier](DownloaderIncludeOptions.md#postsintier)
-- [postsWithMediaType](DownloaderIncludeOptions.md#postswithmediatype)
-- [previewMedia](DownloaderIncludeOptions.md#previewmedia)
-
 ## Properties
 
-### allMediaVariants
+### allMediaVariants?
 
-• `Optional` **allMediaVariants**: `boolean`
-
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L15)
-
-___
-
-### campaignInfo
-
-• `Optional` **campaignInfo**: `boolean`
+> `optional` **allMediaVariants**: `boolean`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L11)
+[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L20)
 
-___
+***
 
-### contentInfo
+### campaignInfo?
 
-• `Optional` **contentInfo**: `boolean`
-
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L12)
-
-___
-
-### contentMedia
-
-• `Optional` **contentMedia**: `boolean` \| (``"attachment"`` \| ``"file"`` \| ``"audio"`` \| ``"video"`` \| ``"image"``)[]
+> `optional` **campaignInfo**: `boolean`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L14)
+[src/downloaders/DownloaderOptions.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L16)
 
-___
+***
 
-### lockedContent
+### contentInfo?
 
-• `Optional` **lockedContent**: `boolean`
-
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L8)
-
-___
-
-### postsInTier
-
-• `Optional` **postsInTier**: `string`[] \| ``"any"``
+> `optional` **contentInfo**: `boolean`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L10)
+[src/downloaders/DownloaderOptions.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L17)
 
-___
+***
 
-### postsWithMediaType
+### contentMedia?
 
-• `Optional` **postsWithMediaType**: ``"none"`` \| ``"any"`` \| (``"attachment"`` \| ``"audio"`` \| ``"video"`` \| ``"image"``)[]
-
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L9)
-
-___
-
-### previewMedia
-
-• `Optional` **previewMedia**: `boolean` \| (``"audio"`` \| ``"video"`` \| ``"image"``)[]
+> `optional` **contentMedia**: `boolean` \| (`"attachment"` \| `"file"` \| `"audio"` \| `"video"` \| `"image"`)[]
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L13)
+[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L19)
+
+***
+
+### lockedContent?
+
+> `optional` **lockedContent**: `boolean`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L9)
+
+***
+
+### mediaByFilename?
+
+> `optional` **mediaByFilename**: `object`
+
+#### attachments?
+
+> `optional` **attachments**: `null` \| `string`
+
+#### audio?
+
+> `optional` **audio**: `null` \| `string`
+
+#### images?
+
+> `optional` **images**: `null` \| `string`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L21)
+
+***
+
+### postsInTier?
+
+> `optional` **postsInTier**: `string`[] \| `"any"`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L11)
+
+***
+
+### postsPublished?
+
+> `optional` **postsPublished**: `object`
+
+#### after?
+
+> `optional` **after**: `null` \| [`DateTime`](../classes/DateTime.md)
+
+#### before?
+
+> `optional` **before**: `null` \| [`DateTime`](../classes/DateTime.md)
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L12)
+
+***
+
+### postsWithMediaType?
+
+> `optional` **postsWithMediaType**: `"none"` \| (`"attachment"` \| `"audio"` \| `"video"` \| `"image"`)[] \| `"any"`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L10)
+
+***
+
+### previewMedia?
+
+> `optional` **previewMedia**: `boolean` \| (`"audio"` \| `"video"` \| `"image"`)[]
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L18)

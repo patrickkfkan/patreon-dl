@@ -1,38 +1,32 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / BootstrapData
 
 # Interface: BootstrapData
 
-## Hierarchy
+## Extended by
 
-- **`BootstrapData`**
-
-  ↳ [`ProductDownloaderBootstrapData`](ProductDownloaderBootstrapData.md)
-
-  ↳ [`PostDownloaderBootstrapData`](PostDownloaderBootstrapData.md)
-
-## Table of contents
-
-### Properties
-
-- [targetURL](BootstrapData.md#targeturl)
-- [type](BootstrapData.md#type)
+- [`ProductDownloaderBootstrapData`](ProductDownloaderBootstrapData.md)
+- [`PostDownloaderBootstrapData`](PostDownloaderBootstrapData.md)
 
 ## Properties
 
 ### targetURL
 
-• **targetURL**: `string`
+> **targetURL**: `string`
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Bootstrap.ts#L9)
+[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Bootstrap.ts#L9)
 
-___
+***
 
 ### type
 
-• **type**: `string`
+> **type**: `string`
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Bootstrap.ts#L8)
+[src/downloaders/Bootstrap.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Bootstrap.ts#L8)

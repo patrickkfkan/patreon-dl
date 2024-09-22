@@ -1,180 +1,173 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / DownloaderOptions
 
 # Interface: DownloaderOptions
 
-## Table of contents
-
-### Properties
-
-- [cookie](DownloaderOptions.md#cookie)
-- [dirNameFormat](DownloaderOptions.md#dirnameformat)
-- [dryRun](DownloaderOptions.md#dryrun)
-- [embedDownloaders](DownloaderOptions.md#embeddownloaders)
-- [fileExistsAction](DownloaderOptions.md#fileexistsaction)
-- [filenameFormat](DownloaderOptions.md#filenameformat)
-- [include](DownloaderOptions.md#include)
-- [logger](DownloaderOptions.md#logger)
-- [outDir](DownloaderOptions.md#outdir)
-- [pathToFFmpeg](DownloaderOptions.md#pathtoffmpeg)
-- [pathToYouTubeCredentials](DownloaderOptions.md#pathtoyoutubecredentials)
-- [request](DownloaderOptions.md#request)
-- [useStatusCache](DownloaderOptions.md#usestatuscache)
-
 ## Properties
 
-### cookie
+### cookie?
 
-• `Optional` **cookie**: `string`
-
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L24)
-
-___
-
-### dirNameFormat
-
-• `Optional` **dirNameFormat**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `campaign?` | `string` |
-| `content?` | `string` |
+> `optional` **cookie**: `string`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L29)
+[src/downloaders/DownloaderOptions.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L34)
 
-___
+***
 
-### dryRun
+### dirNameFormat?
 
-• `Optional` **dryRun**: `boolean`
+> `optional` **dirNameFormat**: `object`
 
-#### Defined in
+#### campaign?
 
-[src/downloaders/DownloaderOptions.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L49)
+> `optional` **campaign**: `string`
 
-___
+#### content?
 
-### embedDownloaders
-
-• `Optional` **embedDownloaders**: [`EmbedDownloader`](EmbedDownloader.md)[]
+> `optional` **content**: `string`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L47)
+[src/downloaders/DownloaderOptions.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L39)
 
-___
+***
 
-### fileExistsAction
+### dryRun?
 
-• `Optional` **fileExistsAction**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `content?` | [`FileExistsAction`](../README.md#fileexistsaction) |
-| `info?` | [`FileExistsAction`](../README.md#fileexistsaction) |
-| `infoAPI?` | [`FileExistsAction`](../README.md#fileexistsaction) |
+> `optional` **dryRun**: `boolean`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L42)
+[src/downloaders/DownloaderOptions.ts:59](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L59)
 
-___
+***
 
-### filenameFormat
+### embedDownloaders?
 
-• `Optional` **filenameFormat**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `media?` | `string` |
+> `optional` **embedDownloaders**: [`EmbedDownloader`](EmbedDownloader.md)[]
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L33)
+[src/downloaders/DownloaderOptions.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L57)
 
-___
+***
 
-### include
+### fileExistsAction?
 
-• `Optional` **include**: [`DownloaderIncludeOptions`](DownloaderIncludeOptions.md)
+> `optional` **fileExistsAction**: `object`
 
-#### Defined in
+#### content?
 
-[src/downloaders/DownloaderOptions.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L36)
+> `optional` **content**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
 
-___
+#### info?
 
-### logger
+> `optional` **info**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
 
-• `Optional` **logger**: ``null`` \| [`Logger`](../classes/Logger.md)
+#### infoAPI?
 
-#### Defined in
-
-[src/downloaders/DownloaderOptions.ts:48](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L48)
-
-___
-
-### outDir
-
-• `Optional` **outDir**: `string`
+> `optional` **infoAPI**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L28)
+[src/downloaders/DownloaderOptions.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L52)
 
-___
+***
 
-### pathToFFmpeg
+### filenameFormat?
 
-• `Optional` **pathToFFmpeg**: ``null`` \| `string`
+> `optional` **filenameFormat**: `object`
 
-#### Defined in
+#### media?
 
-[src/downloaders/DownloaderOptions.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L26)
-
-___
-
-### pathToYouTubeCredentials
-
-• `Optional` **pathToYouTubeCredentials**: ``null`` \| `string`
+> `optional` **media**: `string`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L27)
+[src/downloaders/DownloaderOptions.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L43)
 
-___
+***
 
-### request
+### include?
 
-• `Optional` **request**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `maxConcurrent?` | `number` |
-| `maxRetries?` | `number` |
-| `minTime?` | `number` |
+> `optional` **include**: [`DownloaderIncludeOptions`](DownloaderIncludeOptions.md)
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L37)
+[src/downloaders/DownloaderOptions.ts:46](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L46)
 
-___
+***
 
-### useStatusCache
+### logger?
 
-• `Optional` **useStatusCache**: `boolean`
+> `optional` **logger**: `null` \| [`Logger`](../classes/Logger.md)
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L25)
+[src/downloaders/DownloaderOptions.ts:58](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L58)
+
+***
+
+### outDir?
+
+> `optional` **outDir**: `string`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L38)
+
+***
+
+### pathToFFmpeg?
+
+> `optional` **pathToFFmpeg**: `null` \| `string`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L36)
+
+***
+
+### pathToYouTubeCredentials?
+
+> `optional` **pathToYouTubeCredentials**: `null` \| `string`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L37)
+
+***
+
+### request?
+
+> `optional` **request**: `object`
+
+#### maxConcurrent?
+
+> `optional` **maxConcurrent**: `number`
+
+#### maxRetries?
+
+> `optional` **maxRetries**: `number`
+
+#### minTime?
+
+> `optional` **minTime**: `number`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L47)
+
+***
+
+### useStatusCache?
+
+> `optional` **useStatusCache**: `boolean`
+
+#### Defined in
+
+[src/downloaders/DownloaderOptions.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L35)

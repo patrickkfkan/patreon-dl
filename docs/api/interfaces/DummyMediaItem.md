@@ -1,3 +1,7 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / DummyMediaItem
 
 # Interface: DummyMediaItem
@@ -7,84 +11,72 @@ as video thumbnails and campaign avatar / cover photos.
 As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to create
 `MediaFilenameResolver` and `DownloadTask` instances.
 
-## Hierarchy
+## Extends
 
 - [`MediaLike`](MediaLike.md)
-
-  ↳ **`DummyMediaItem`**
-
-## Table of contents
-
-### Properties
-
-- [filename](DummyMediaItem.md#filename)
-- [id](DummyMediaItem.md#id)
-- [mimeType](DummyMediaItem.md#mimetype)
-- [srcURLs](DummyMediaItem.md#srcurls)
-- [type](DummyMediaItem.md#type)
 
 ## Properties
 
 ### filename
 
-• **filename**: ``null`` \| `string`
+> **filename**: `null` \| `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[filename](MediaLike.md#filename)
+[`MediaLike`](MediaLike.md).[`filename`](MediaLike.md#filename)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L4)
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[id](MediaLike.md#id)
+[`MediaLike`](MediaLike.md).[`id`](MediaLike.md#id)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L3)
 
-___
+***
 
 ### mimeType
 
-• **mimeType**: ``null`` \| `string`
+> **mimeType**: `null` \| `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[mimeType](MediaLike.md#mimetype)
+[`MediaLike`](MediaLike.md).[`mimeType`](MediaLike.md#mimetype)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L5)
 
-___
+***
 
 ### srcURLs
 
-• **srcURLs**: `Record`\<`string`, ``null`` \| `string`\>
+> **srcURLs**: `Record`\<`string`, `null` \| `string`\>
 
 #### Defined in
 
-[src/entities/MediaItem.ts:115](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L115)
+[src/entities/MediaItem.ts:115](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L115)
 
-___
+***
 
 ### type
 
-• **type**: ``"dummy"``
+> **type**: `"dummy"`
 
 #### Overrides
 
-[MediaLike](MediaLike.md).[type](MediaLike.md#type)
+[`MediaLike`](MediaLike.md).[`type`](MediaLike.md#type)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L113)
+[src/entities/MediaItem.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L113)

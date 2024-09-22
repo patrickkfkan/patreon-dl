@@ -1,96 +1,87 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / SingleImageMediaItem
 
 # Interface: SingleImageMediaItem
 
-## Hierarchy
+## Extends
 
 - [`MediaLike`](MediaLike.md)
-
-  ↳ **`SingleImageMediaItem`**
-
-## Table of contents
-
-### Properties
-
-- [filename](SingleImageMediaItem.md#filename)
-- [id](SingleImageMediaItem.md#id)
-- [imageType](SingleImageMediaItem.md#imagetype)
-- [imageURL](SingleImageMediaItem.md#imageurl)
-- [mimeType](SingleImageMediaItem.md#mimetype)
-- [type](SingleImageMediaItem.md#type)
 
 ## Properties
 
 ### filename
 
-• **filename**: ``null`` \| `string`
+> **filename**: `null` \| `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[filename](MediaLike.md#filename)
+[`MediaLike`](MediaLike.md).[`filename`](MediaLike.md#filename)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L4)
 
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[id](MediaLike.md#id)
+[`MediaLike`](MediaLike.md).[`id`](MediaLike.md#id)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L3)
 
-___
+***
 
 ### imageType
 
-• **imageType**: ``"single"``
+> **imageType**: `"single"`
 
 #### Defined in
 
-[src/entities/MediaItem.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L17)
+[src/entities/MediaItem.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L17)
 
-___
+***
 
 ### imageURL
 
-• **imageURL**: ``null`` \| `string`
+> **imageURL**: `null` \| `string`
 
 #### Defined in
 
-[src/entities/MediaItem.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L18)
+[src/entities/MediaItem.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L18)
 
-___
+***
 
 ### mimeType
 
-• **mimeType**: ``null`` \| `string`
+> **mimeType**: `null` \| `string`
 
 #### Inherited from
 
-[MediaLike](MediaLike.md).[mimeType](MediaLike.md#mimetype)
+[`MediaLike`](MediaLike.md).[`mimeType`](MediaLike.md#mimetype)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L5)
 
-___
+***
 
 ### type
 
-• **type**: ``"image"``
+> **type**: `"image"`
 
 #### Overrides
 
-[MediaLike](MediaLike.md).[type](MediaLike.md#type)
+[`MediaLike`](MediaLike.md).[`type`](MediaLike.md#type)
 
 #### Defined in
 
-[src/entities/MediaItem.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/MediaItem.ts#L16)
+[src/entities/MediaItem.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/MediaItem.ts#L16)

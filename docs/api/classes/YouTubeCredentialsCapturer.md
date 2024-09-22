@@ -1,33 +1,20 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / YouTubeCredentialsCapturer
 
 # Class: YouTubeCredentialsCapturer
 
-## Hierarchy
+## Extends
 
 - `EventEmitter`
 
-  ↳ **`YouTubeCredentialsCapturer`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](YouTubeCredentialsCapturer.md#constructor)
-
-### Methods
-
-- [abort](YouTubeCredentialsCapturer.md#abort)
-- [begin](YouTubeCredentialsCapturer.md#begin)
-- [emit](YouTubeCredentialsCapturer.md#emit)
-- [off](YouTubeCredentialsCapturer.md#off)
-- [on](YouTubeCredentialsCapturer.md#on)
-- [once](YouTubeCredentialsCapturer.md#once)
-
 ## Constructors
 
-### constructor
+### new YouTubeCredentialsCapturer()
 
-• **new YouTubeCredentialsCapturer**(): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+> **new YouTubeCredentialsCapturer**(): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
 
 #### Returns
 
@@ -35,17 +22,17 @@
 
 #### Overrides
 
-EventEmitter.constructor
+`EventEmitter.constructor`
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L17)
+[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L17)
 
 ## Methods
 
-### abort
+### abort()
 
-▸ **abort**(): `void`
+> **abort**(): `void`
 
 #### Returns
 
@@ -53,13 +40,13 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L33)
+[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L33)
 
-___
+***
 
-### begin
+### begin()
 
-▸ **begin**(): `Promise`\<`void`\>
+> **begin**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -67,188 +54,424 @@ ___
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L26)
+[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L26)
 
-___
+***
 
-### emit
+### emit()
 
-▸ **emit**(`eventName`, `data`): `boolean`
+#### emit(eventName, data)
 
-#### Parameters
+> **emit**(`eventName`, `data`): `boolean`
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"pending"`` |
-| `data` | [`YouTubeCredentialsPendingInfo`](../interfaces/YouTubeCredentialsPendingInfo.md) |
+Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+to each.
 
-#### Returns
+Returns `true` if the event had listeners, `false` otherwise.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// First listener
+myEmitter.on('event', function firstListener() {
+  console.log('Helloooo! first listener');
+});
+// Second listener
+myEmitter.on('event', function secondListener(arg1, arg2) {
+  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
+});
+// Third listener
+myEmitter.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`event with parameters ${parameters} in third listener`);
+});
+
+console.log(myEmitter.listeners('event'));
+
+myEmitter.emit('event', 1, 2, 3, 4, 5);
+
+// Prints:
+// [
+//   [Function: firstListener],
+//   [Function: secondListener],
+//   [Function: thirdListener]
+// ]
+// Helloooo! first listener
+// event with parameters 1, 2 in second listener
+// event with parameters 1, 2, 3, 4, 5 in third listener
+```
+
+##### Parameters
+
+• **eventName**: `"pending"`
+
+• **data**: [`YouTubeCredentialsPendingInfo`](../interfaces/YouTubeCredentialsPendingInfo.md)
+
+##### Returns
 
 `boolean`
 
-#### Overrides
+##### Since
 
-EventEmitter.emit
+v0.1.26
 
-#### Defined in
+##### Overrides
 
-[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L68)
+`EventEmitter.emit`
 
-▸ **emit**(`eventName`, `credentials`): `boolean`
+##### Defined in
 
-#### Parameters
+[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L68)
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"capture"`` |
-| `credentials` | `object` |
+#### emit(eventName, credentials)
 
-#### Returns
+> **emit**(`eventName`, `credentials`): `boolean`
+
+Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+to each.
+
+Returns `true` if the event had listeners, `false` otherwise.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// First listener
+myEmitter.on('event', function firstListener() {
+  console.log('Helloooo! first listener');
+});
+// Second listener
+myEmitter.on('event', function secondListener(arg1, arg2) {
+  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
+});
+// Third listener
+myEmitter.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`event with parameters ${parameters} in third listener`);
+});
+
+console.log(myEmitter.listeners('event'));
+
+myEmitter.emit('event', 1, 2, 3, 4, 5);
+
+// Prints:
+// [
+//   [Function: firstListener],
+//   [Function: secondListener],
+//   [Function: thirdListener]
+// ]
+// Helloooo! first listener
+// event with parameters 1, 2 in second listener
+// event with parameters 1, 2, 3, 4, 5 in third listener
+```
+
+##### Parameters
+
+• **eventName**: `"capture"`
+
+• **credentials**: `object`
+
+##### Returns
 
 `boolean`
 
-#### Overrides
+##### Since
 
-EventEmitter.emit
+v0.1.26
 
-#### Defined in
+##### Overrides
 
-[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L69)
+`EventEmitter.emit`
 
-___
+##### Defined in
 
-### off
+[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L69)
 
-▸ **off**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+***
 
-#### Parameters
+### off()
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"pending"`` |
-| `listener` | (`data`: [`YouTubeCredentialsPendingInfo`](../interfaces/YouTubeCredentialsPendingInfo.md)) => `void` |
+#### off(eventName, listener)
 
-#### Returns
+> **off**(`eventName`, `listener`): `this`
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+Alias for `emitter.removeListener()`.
 
-#### Overrides
+##### Parameters
 
-EventEmitter.off
+• **eventName**: `"pending"`
 
-#### Defined in
+• **listener**
 
-[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L62)
+##### Returns
 
-▸ **off**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+`this`
 
-#### Parameters
+##### Since
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"capture"`` |
-| `listener` | (`credentials`: `object`) => `void` |
+v10.0.0
 
-#### Returns
+##### Overrides
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+`EventEmitter.off`
 
-#### Overrides
+##### Defined in
 
-EventEmitter.off
+[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L62)
 
-#### Defined in
+#### off(eventName, listener)
 
-[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L63)
+> **off**(`eventName`, `listener`): `this`
 
-___
+Alias for `emitter.removeListener()`.
 
-### on
+##### Parameters
 
-▸ **on**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+• **eventName**: `"capture"`
 
-#### Parameters
+• **listener**
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"pending"`` |
-| `listener` | (`data`: [`YouTubeCredentialsPendingInfo`](../interfaces/YouTubeCredentialsPendingInfo.md)) => `void` |
+##### Returns
 
-#### Returns
+`this`
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+##### Since
 
-#### Overrides
+v10.0.0
 
-EventEmitter.on
+##### Overrides
 
-#### Defined in
+`EventEmitter.off`
 
-[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L50)
+##### Defined in
 
-▸ **on**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L63)
 
-#### Parameters
+***
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"capture"`` |
-| `listener` | (`credentials`: `object`) => `void` |
+### on()
 
-#### Returns
+#### on(eventName, listener)
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+> **on**(`eventName`, `listener`): `this`
 
-#### Overrides
+Adds the `listener` function to the end of the listeners array for the
+event named `eventName`. No checks are made to see if the `listener` has
+already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
+times.
 
-EventEmitter.on
+```js
+server.on('connection', (stream) => {
+  console.log('someone connected!');
+});
+```
 
-#### Defined in
+Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L51)
+By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
 
-___
+```js
+const myEE = new EventEmitter();
+myEE.on('foo', () => console.log('a'));
+myEE.prependListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
 
-### once
+##### Parameters
 
-▸ **once**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+• **eventName**: `"pending"`
 
-#### Parameters
+The name of the event.
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"pending"`` |
-| `listener` | (`data`: [`YouTubeCredentialsPendingInfo`](../interfaces/YouTubeCredentialsPendingInfo.md)) => `void` |
+• **listener**
 
-#### Returns
+The callback function
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+##### Returns
 
-#### Overrides
+`this`
 
-EventEmitter.once
+##### Since
 
-#### Defined in
+v0.1.101
 
-[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L56)
+##### Overrides
 
-▸ **once**(`eventName`, `listener`): [`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+`EventEmitter.on`
 
-#### Parameters
+##### Defined in
 
-| Name | Type |
-| :------ | :------ |
-| `eventName` | ``"capture"`` |
-| `listener` | (`credentials`: `object`) => `void` |
+[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L50)
 
-#### Returns
+#### on(eventName, listener)
 
-[`YouTubeCredentialsCapturer`](YouTubeCredentialsCapturer.md)
+> **on**(`eventName`, `listener`): `this`
 
-#### Overrides
+Adds the `listener` function to the end of the listeners array for the
+event named `eventName`. No checks are made to see if the `listener` has
+already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
+times.
 
-EventEmitter.once
+```js
+server.on('connection', (stream) => {
+  console.log('someone connected!');
+});
+```
 
-#### Defined in
+Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/YouTubeCredentialsCapturer.ts#L57)
+By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.on('foo', () => console.log('a'));
+myEE.prependListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+##### Parameters
+
+• **eventName**: `"capture"`
+
+The name of the event.
+
+• **listener**
+
+The callback function
+
+##### Returns
+
+`this`
+
+##### Since
+
+v0.1.101
+
+##### Overrides
+
+`EventEmitter.on`
+
+##### Defined in
+
+[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L51)
+
+***
+
+### once()
+
+#### once(eventName, listener)
+
+> **once**(`eventName`, `listener`): `this`
+
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
+
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+##### Parameters
+
+• **eventName**: `"pending"`
+
+The name of the event.
+
+• **listener**
+
+The callback function
+
+##### Returns
+
+`this`
+
+##### Since
+
+v0.3.0
+
+##### Overrides
+
+`EventEmitter.once`
+
+##### Defined in
+
+[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L56)
+
+#### once(eventName, listener)
+
+> **once**(`eventName`, `listener`): `this`
+
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
+
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+##### Parameters
+
+• **eventName**: `"capture"`
+
+The name of the event.
+
+• **listener**
+
+The callback function
+
+##### Returns
+
+`this`
+
+##### Since
+
+v0.3.0
+
+##### Overrides
+
+`EventEmitter.once`
+
+##### Defined in
+
+[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/YouTubeCredentialsCapturer.ts#L57)

@@ -1,165 +1,159 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / FileLoggerConfig
 
 # Interface: FileLoggerConfig
 
-## Hierarchy
+## Extends
 
-- [`DeepRequired`](../README.md#deeprequired)\<[`FileLoggerOptions`](FileLoggerOptions.md)\>
-
-  ↳ **`FileLoggerConfig`**
-
-## Table of contents
-
-### Properties
-
-- [color](FileLoggerConfig.md#color)
-- [created](FileLoggerConfig.md#created)
-- [dateTimeFormat](FileLoggerConfig.md#datetimeformat)
-- [enabled](FileLoggerConfig.md#enabled)
-- [fileExistsAction](FileLoggerConfig.md#fileexistsaction)
-- [include](FileLoggerConfig.md#include)
-- [logDir](FileLoggerConfig.md#logdir)
-- [logFilePath](FileLoggerConfig.md#logfilepath)
-- [logFilename](FileLoggerConfig.md#logfilename)
-- [logLevel](FileLoggerConfig.md#loglevel)
+- [`DeepRequired`](../type-aliases/DeepRequired.md)\<[`FileLoggerOptions`](FileLoggerOptions.md)\>
 
 ## Properties
 
 ### color
 
-• **color**: `boolean`
+> **color**: `boolean`
 
 #### Inherited from
 
-DeepRequired.color
+`DeepRequired.color`
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L24)
+[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L24)
 
-___
+***
 
 ### created
 
-• **created**: `Date`
+> **created**: `Date`
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/FileLogger.ts#L20)
+[src/utils/logging/FileLogger.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L20)
 
-___
+***
 
 ### dateTimeFormat
 
-• **dateTimeFormat**: `string`
+> **dateTimeFormat**: `string`
 
 #### Inherited from
 
-DeepRequired.dateTimeFormat
+`DeepRequired.dateTimeFormat`
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L23)
+[src/utils/logging/ConsoleLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L23)
 
-___
+***
 
 ### enabled
 
-• **enabled**: `boolean`
+> **enabled**: `boolean`
 
 #### Inherited from
 
-DeepRequired.enabled
+`DeepRequired.enabled`
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L15)
+[src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L15)
 
-___
+***
 
 ### fileExistsAction
 
-• **fileExistsAction**: ``"append"`` \| ``"overwrite"``
+> **fileExistsAction**: `"append"` \| `"overwrite"`
 
 #### Inherited from
 
-DeepRequired.fileExistsAction
+`DeepRequired.fileExistsAction`
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/FileLogger.ts#L15)
+[src/utils/logging/FileLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L15)
 
-___
+***
 
 ### include
 
-• **include**: `Object`
+> **include**: `object`
 
-#### Type declaration
+#### dateTime
 
-| Name | Type |
-| :------ | :------ |
-| `dateTime` | `boolean` |
-| `errorStack` | `boolean` |
-| `level` | `boolean` |
-| `originator` | `boolean` |
+> **dateTime**: `boolean`
+
+#### errorStack
+
+> **errorStack**: `boolean`
+
+#### level
+
+> **level**: `boolean`
+
+#### originator
+
+> **originator**: `boolean`
 
 #### Inherited from
 
-DeepRequired.include
+`DeepRequired.include`
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L17)
+[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L17)
 
-___
+***
 
 ### logDir
 
-• **logDir**: `string`
+> **logDir**: `string`
 
 #### Inherited from
 
-DeepRequired.logDir
+`DeepRequired.logDir`
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/FileLogger.ts#L13)
+[src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L13)
 
-___
-
-### logFilePath
-
-• **logFilePath**: `string`
-
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/FileLogger.ts#L19)
-
-___
+***
 
 ### logFilename
 
-• **logFilename**: `string`
+> **logFilename**: `string`
 
 #### Inherited from
 
-DeepRequired.logFilename
+`DeepRequired.logFilename`
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/FileLogger.ts#L14)
+[src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L14)
 
-___
+***
+
+### logFilePath
+
+> **logFilePath**: `string`
+
+#### Defined in
+
+[src/utils/logging/FileLogger.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L19)
+
+***
 
 ### logLevel
 
-• **logLevel**: [`LogLevel`](../README.md#loglevel)
+> **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Inherited from
 
-DeepRequired.logLevel
+`DeepRequired.logLevel`
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L16)
+[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L16)

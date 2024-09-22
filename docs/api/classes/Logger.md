@@ -1,31 +1,21 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / Logger
 
-# Class: Logger
+# Class: `abstract` Logger
 
-## Hierarchy
+## Extended by
 
-- **`Logger`**
-
-  ↳ [`ChainLogger`](ChainLogger.md)
-
-  ↳ [`ConsoleLogger`](ConsoleLogger.md)
-
-## Table of contents
-
-### Constructors
-
-- [constructor](Logger.md#constructor)
-
-### Methods
-
-- [end](Logger.md#end)
-- [log](Logger.md#log)
+- [`ChainLogger`](ChainLogger.md)
+- [`ConsoleLogger`](ConsoleLogger.md)
 
 ## Constructors
 
-### constructor
+### new Logger()
 
-• **new Logger**(): [`Logger`](Logger.md)
+> **new Logger**(): [`Logger`](Logger.md)
 
 #### Returns
 
@@ -33,9 +23,9 @@
 
 ## Methods
 
-### end
+### end()
 
-▸ **end**(): `Promise`\<`void`\>
+> **end**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -43,19 +33,17 @@
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L12)
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L12)
 
-___
+***
 
-### log
+### log()
 
-▸ **log**(`entry`): `void`
+> `abstract` **log**(`entry`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `entry` | [`LogEntry`](../interfaces/LogEntry.md) |
+• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
@@ -63,4 +51,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L10)
+[src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L10)

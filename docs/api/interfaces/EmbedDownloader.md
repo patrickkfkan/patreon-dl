@@ -1,30 +1,27 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / EmbedDownloader
 
 # Interface: EmbedDownloader
-
-## Table of contents
-
-### Properties
-
-- [exec](EmbedDownloader.md#exec)
-- [provider](EmbedDownloader.md#provider)
 
 ## Properties
 
 ### exec
 
-• **exec**: `string`
+> **exec**: `string`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L20)
+[src/downloaders/DownloaderOptions.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L30)
 
-___
+***
 
 ### provider
 
-• **provider**: `string`
+> **provider**: `string`
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/DownloaderOptions.ts#L19)
+[src/downloaders/DownloaderOptions.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/DownloaderOptions.ts#L29)

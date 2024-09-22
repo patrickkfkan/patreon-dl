@@ -1,39 +1,28 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / ConsoleLogger
 
 # Class: ConsoleLogger
 
-## Hierarchy
+## Extends
 
 - [`Logger`](Logger.md)
 
-  ↳ **`ConsoleLogger`**
+## Extended by
 
-  ↳↳ [`FileLogger`](FileLogger.md)
-
-## Table of contents
-
-### Constructors
-
-- [constructor](ConsoleLogger.md#constructor)
-
-### Methods
-
-- [end](ConsoleLogger.md#end)
-- [getConfig](ConsoleLogger.md#getconfig)
-- [log](ConsoleLogger.md#log)
-- [setLevel](ConsoleLogger.md#setlevel)
+- [`FileLogger`](FileLogger.md)
 
 ## Constructors
 
-### constructor
+### new ConsoleLogger()
 
-• **new ConsoleLogger**(`options?`): [`ConsoleLogger`](ConsoleLogger.md)
+> **new ConsoleLogger**(`options`?): [`ConsoleLogger`](ConsoleLogger.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options?` | [`ConsoleLoggerOptions`](../interfaces/ConsoleLoggerOptions.md) |
+• **options?**: [`ConsoleLoggerOptions`](../interfaces/ConsoleLoggerOptions.md)
 
 #### Returns
 
@@ -41,17 +30,17 @@
 
 #### Overrides
 
-[Logger](Logger.md).[constructor](Logger.md#constructor)
+[`Logger`](Logger.md).[`constructor`](Logger.md#constructors)
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:54](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L54)
+[src/utils/logging/ConsoleLogger.ts:54](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L54)
 
 ## Methods
 
-### end
+### end()
 
-▸ **end**(): `Promise`\<`void`\>
+> **end**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -59,45 +48,71 @@
 
 #### Inherited from
 
-[Logger](Logger.md).[end](Logger.md#end)
+[`Logger`](Logger.md).[`end`](Logger.md#end)
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L12)
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L12)
 
-___
+***
 
-### getConfig
+### getConfig()
 
-▸ **getConfig**(): `Object`
+> **getConfig**(): `object`
 
 #### Returns
 
-`Object`
+`object`
 
-| Name | Type |
-| :------ | :------ |
-| `color` | `boolean` |
-| `dateTimeFormat` | `string` |
-| `enabled` | `boolean` |
-| `include` | \{ dateTime: boolean; level: boolean; originator: boolean; errorStack: boolean; } |
-| `logLevel` | [`LogLevel`](../README.md#loglevel) |
+##### color
+
+> **color**: `boolean`
+
+##### dateTimeFormat
+
+> **dateTimeFormat**: `string`
+
+##### enabled
+
+> **enabled**: `boolean`
+
+##### include
+
+> **include**: `object`
+
+##### include.dateTime
+
+> **dateTime**: `boolean`
+
+##### include.errorStack
+
+> **errorStack**: `boolean`
+
+##### include.level
+
+> **level**: `boolean`
+
+##### include.originator
+
+> **originator**: `boolean`
+
+##### logLevel
+
+> **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L83)
+[src/utils/logging/ConsoleLogger.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L83)
 
-___
+***
 
-### log
+### log()
 
-▸ **log**(`entry`): `void`
+> **log**(`entry`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `entry` | [`LogEntry`](../interfaces/LogEntry.md) |
+• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
@@ -105,23 +120,21 @@ ___
 
 #### Overrides
 
-[Logger](Logger.md).[log](Logger.md#log)
+[`Logger`](Logger.md).[`log`](Logger.md#log)
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L74)
+[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L74)
 
-___
+***
 
-### setLevel
+### setLevel()
 
-▸ **setLevel**(`value`): `void`
+> **setLevel**(`value`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | [`LogLevel`](../README.md#loglevel) |
+• **value**: [`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Returns
 
@@ -129,4 +142,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ConsoleLogger.ts#L87)
+[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L87)

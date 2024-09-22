@@ -1,48 +1,26 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / PostDownloader
 
 # Class: PostDownloader
 
-## Hierarchy
+## Extends
 
 - [`Downloader`](Downloader.md)\<[`Post`](../interfaces/Post.md)\>
 
-  ↳ **`PostDownloader`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](PostDownloader.md#constructor)
-
-### Properties
-
-- [name](PostDownloader.md#name)
-- [version](PostDownloader.md#version)
-
-### Methods
-
-- [\_\_getCampaign](PostDownloader.md#__getcampaign)
-- [emit](PostDownloader.md#emit)
-- [getConfig](PostDownloader.md#getconfig)
-- [off](PostDownloader.md#off)
-- [on](PostDownloader.md#on)
-- [once](PostDownloader.md#once)
-- [start](PostDownloader.md#start)
-- [getCampaign](PostDownloader.md#getcampaign)
-- [getInstance](PostDownloader.md#getinstance)
-
 ## Constructors
 
-### constructor
+### new PostDownloader()
 
-• **new PostDownloader**(`bootstrap`, `options?`): [`PostDownloader`](PostDownloader.md)
+> **new PostDownloader**(`bootstrap`, `options`?): [`PostDownloader`](PostDownloader.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `bootstrap` | [`PostDownloaderBootstrapData`](../interfaces/PostDownloaderBootstrapData.md) |
-| `options?` | [`DownloaderOptions`](../interfaces/DownloaderOptions.md) |
+• **bootstrap**: [`PostDownloaderBootstrapData`](../interfaces/PostDownloaderBootstrapData.md)
+
+• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
 
 #### Returns
 
@@ -50,225 +28,451 @@
 
 #### Inherited from
 
-[Downloader](Downloader.md).[constructor](Downloader.md#constructor)
+[`Downloader`](Downloader.md).[`constructor`](Downloader.md#constructors)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L52)
+[src/downloaders/Downloader.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L53)
 
 ## Properties
 
 ### name
 
-• **name**: `string` = `'PostDownloader'`
+> **name**: `string` = `'PostDownloader'`
 
 #### Overrides
 
-[Downloader](Downloader.md).[name](Downloader.md#name)
+[`Downloader`](Downloader.md).[`name`](Downloader.md#name)
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L19)
+[src/downloaders/PostDownloader.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/PostDownloader.ts#L18)
 
-___
+***
 
 ### version
 
-▪ `Static` **version**: `string` = `'1.1.1'`
+> `static` **version**: `string` = `'1.1.1'`
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L17)
+[src/downloaders/PostDownloader.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/PostDownloader.ts#L16)
 
 ## Methods
 
-### \_\_getCampaign
+### \_\_getCampaign()
 
-▸ **__getCampaign**(`signal?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+> **\_\_getCampaign**(`signal`?): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `signal?` | `AbortSignal` |
+• **signal?**: `AbortSignal`
 
 #### Returns
 
-`Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+`Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L428)
+[src/downloaders/PostDownloader.ts:492](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/PostDownloader.ts#L492)
 
-___
+***
 
-### emit
+### emit()
 
-▸ **emit**\<`T`\>(`event`, `args`): `boolean`
+> **emit**\<`T`\>(`event`, `args`): `boolean`
 
-#### Type parameters
+Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+to each.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+Returns `true` if the event had listeners, `false` otherwise.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// First listener
+myEmitter.on('event', function firstListener() {
+  console.log('Helloooo! first listener');
+});
+// Second listener
+myEmitter.on('event', function secondListener(arg1, arg2) {
+  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
+});
+// Third listener
+myEmitter.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`event with parameters ${parameters} in third listener`);
+});
+
+console.log(myEmitter.listeners('event'));
+
+myEmitter.emit('event', 1, 2, 3, 4, 5);
+
+// Prints:
+// [
+//   [Function: firstListener],
+//   [Function: secondListener],
+//   [Function: thirdListener]
+// ]
+// Helloooo! first listener
+// event with parameters 1, 2 in second listener
+// event with parameters 1, 2, 3, 4, 5 in third listener
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `args` | [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\> |
+• **event**: `T`
+
+• **args**: [`DownloaderEventPayloadOf`](../type-aliases/DownloaderEventPayloadOf.md)\<`T`\>
 
 #### Returns
 
 `boolean`
 
+#### Since
+
+v0.1.26
+
 #### Inherited from
 
-[Downloader](Downloader.md).[emit](Downloader.md#emit)
+[`Downloader`](Downloader.md).[`emit`](Downloader.md#emit)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:461](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L461)
+[src/downloaders/Downloader.ts:487](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L487)
 
-___
+***
 
-### getConfig
+### getConfig()
 
-▸ **getConfig**(): `Object`
+> **getConfig**(): `object`
 
 #### Returns
 
-`Object`
+`object`
 
-| Name | Type |
-| :------ | :------ |
-| `dirNameFormat` | \{ readonly campaign: string; readonly content: string; } |
-| `dryRun` | `boolean` |
-| `embedDownloaders` | readonly \{ readonly provider: string; readonly exec: string; }[] |
-| `fileExistsAction` | \{ readonly content: FileExistsAction; readonly info: FileExistsAction; readonly infoAPI: FileExistsAction; } |
-| `filenameFormat` | \{ readonly media: string; } |
-| `include` | \{ readonly lockedContent: boolean; readonly postsWithMediaType: "none" \| "any" \| readonly ("attachment" \| "audio" \| "video" \| "image")[]; readonly postsInTier: readonly string[] \| "any"; readonly campaignInfo: boolean; readonly contentInfo: boolean; readonly previewMedia: boolean \| readonly ("audio" \| ... 1 more ...... |
-| `outDir` | `string` |
-| `pathToFFmpeg` | ``null`` \| `string` |
-| `pathToYouTubeCredentials` | ``null`` \| `string` |
-| `postFetch` | \{ readonly type: "single"; readonly postId: string; } \| \{ readonly type: "byUser"; readonly vanity: string; readonly filters?: \{ readonly [x: string]: any; } \| undefined; } \| \{ readonly type: "byUserId"; readonly userId: string; readonly filters?: \{ readonly [x: string]: any; } \| undefined; } \| \{ readonly type: "byCollection"; readonly collectionId: string; readonly filters?: \{ readonly [x: string]: any; } \| undefined; } |
-| `request` | \{ readonly maxRetries: number; readonly maxConcurrent: number; readonly minTime: number; } |
-| `targetURL` | `string` |
-| `useStatusCache` | `boolean` |
+##### dirNameFormat
+
+> `readonly` **dirNameFormat**: `object`
+
+##### dirNameFormat.campaign
+
+> `readonly` **campaign**: `string`
+
+##### dirNameFormat.content
+
+> `readonly` **content**: `string`
+
+##### dryRun
+
+> `readonly` **dryRun**: `boolean`
+
+##### embedDownloaders
+
+> `readonly` **embedDownloaders**: readonly `object`[]
+
+##### fileExistsAction
+
+> `readonly` **fileExistsAction**: `object`
+
+##### fileExistsAction.content
+
+> `readonly` **content**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
+
+##### fileExistsAction.info
+
+> `readonly` **info**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
+
+##### fileExistsAction.infoAPI
+
+> `readonly` **infoAPI**: [`FileExistsAction`](../type-aliases/FileExistsAction.md)
+
+##### filenameFormat
+
+> `readonly` **filenameFormat**: `object`
+
+##### filenameFormat.media
+
+> `readonly` **media**: `string`
+
+##### include
+
+> `readonly` **include**: `object`
+
+##### include.allMediaVariants
+
+> `readonly` **allMediaVariants**: `boolean`
+
+##### include.campaignInfo
+
+> `readonly` **campaignInfo**: `boolean`
+
+##### include.contentInfo
+
+> `readonly` **contentInfo**: `boolean`
+
+##### include.contentMedia
+
+> `readonly` **contentMedia**: `boolean` \| readonly (`"attachment"` \| `"file"` \| `"audio"` \| `"video"` \| `"image"`)[]
+
+##### include.lockedContent
+
+> `readonly` **lockedContent**: `boolean`
+
+##### include.mediaByFilename
+
+> `readonly` **mediaByFilename**: `object`
+
+##### include.mediaByFilename.attachments
+
+> `readonly` **attachments**: `null` \| `string`
+
+##### include.mediaByFilename.audio
+
+> `readonly` **audio**: `null` \| `string`
+
+##### include.mediaByFilename.images
+
+> `readonly` **images**: `null` \| `string`
+
+##### include.postsInTier
+
+> `readonly` **postsInTier**: readonly `string`[] \| `"any"`
+
+##### include.postsPublished
+
+> `readonly` **postsPublished**: `object`
+
+##### include.postsPublished.after
+
+> `readonly` **after**: `null` \| `object`
+
+##### include.postsPublished.before
+
+> `readonly` **before**: `null` \| `object`
+
+##### include.postsWithMediaType
+
+> `readonly` **postsWithMediaType**: `"none"` \| `"any"` \| readonly (`"attachment"` \| `"audio"` \| `"video"` \| `"image"`)[]
+
+##### include.previewMedia
+
+> `readonly` **previewMedia**: `boolean` \| readonly (`"audio"` \| `"video"` \| `"image"`)[]
+
+##### outDir
+
+> `readonly` **outDir**: `string`
+
+##### pathToFFmpeg
+
+> `readonly` **pathToFFmpeg**: `null` \| `string`
+
+##### pathToYouTubeCredentials
+
+> `readonly` **pathToYouTubeCredentials**: `null` \| `string`
+
+##### postFetch
+
+> `readonly` **postFetch**: `object` \| `object` \| `object` \| `object`
+
+##### request
+
+> `readonly` **request**: `object`
+
+##### request.maxConcurrent
+
+> `readonly` **maxConcurrent**: `number`
+
+##### request.maxRetries
+
+> `readonly` **maxRetries**: `number`
+
+##### request.minTime
+
+> `readonly` **minTime**: `number`
+
+##### targetURL
+
+> `readonly` **targetURL**: `string`
+
+##### useStatusCache
+
+> `readonly` **useStatusCache**: `boolean`
 
 #### Inherited from
 
-[Downloader](Downloader.md).[getConfig](Downloader.md#getconfig)
+[`Downloader`](Downloader.md).[`getConfig`](Downloader.md#getconfig)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:387](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L387)
+[src/downloaders/Downloader.ts:413](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L413)
 
-___
+***
 
-### off
+### off()
 
-▸ **off**\<`T`\>(`event`, `listener`): [`PostDownloader`](PostDownloader.md)
+> **off**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Alias for `emitter.removeListener()`.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
 
 #### Returns
 
-[`PostDownloader`](PostDownloader.md)
+`this`
+
+#### Since
+
+v10.0.0
 
 #### Inherited from
 
-[Downloader](Downloader.md).[off](Downloader.md#off)
+[`Downloader`](Downloader.md).[`off`](Downloader.md#off)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:456](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L456)
+[src/downloaders/Downloader.ts:482](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L482)
 
-___
+***
 
-### on
+### on()
 
-▸ **on**\<`T`\>(`event`, `listener`): [`PostDownloader`](PostDownloader.md)
+> **on**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Adds the `listener` function to the end of the listeners array for the
+event named `eventName`. No checks are made to see if the `listener` has
+already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
+times.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+```js
+server.on('connection', (stream) => {
+  console.log('someone connected!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.on('foo', () => console.log('a'));
+myEE.prependListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
+
+The callback function
 
 #### Returns
 
-[`PostDownloader`](PostDownloader.md)
+`this`
+
+#### Since
+
+v0.1.101
 
 #### Inherited from
 
-[Downloader](Downloader.md).[on](Downloader.md#on)
+[`Downloader`](Downloader.md).[`on`](Downloader.md#on)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:446](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L446)
+[src/downloaders/Downloader.ts:472](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L472)
 
-___
+***
 
-### once
+### once()
 
-▸ **once**\<`T`\>(`event`, `listener`): [`PostDownloader`](PostDownloader.md)
+> **once**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
+
+The callback function
 
 #### Returns
 
-[`PostDownloader`](PostDownloader.md)
+`this`
+
+#### Since
+
+v0.3.0
 
 #### Inherited from
 
-[Downloader](Downloader.md).[once](Downloader.md#once)
+[`Downloader`](Downloader.md).[`once`](Downloader.md#once)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:451](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L451)
+[src/downloaders/Downloader.ts:477](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L477)
 
-___
+***
 
-### start
+### start()
 
-▸ **start**(`params?`): `Promise`\<`void`\>
+> **start**(`params`?): `Promise`\<`void`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `params?` | [`DownloaderStartParams`](../interfaces/DownloaderStartParams.md) |
+• **params?**: [`DownloaderStartParams`](../interfaces/DownloaderStartParams.md)
 
 #### Returns
 
@@ -276,50 +480,49 @@ ___
 
 #### Overrides
 
-[Downloader](Downloader.md).[start](Downloader.md#start)
+[`Downloader`](Downloader.md).[`start`](Downloader.md#start)
 
 #### Defined in
 
-[src/downloaders/PostDownloader.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/PostDownloader.ts#L23)
+[src/downloaders/PostDownloader.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/PostDownloader.ts#L22)
 
-___
+***
 
-### getCampaign
+### getCampaign()
 
-▸ **getCampaign**(`creator`, `signal?`, `logger?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+> `static` **getCampaign**(`creator`, `signal`?, `logger`?): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `creator` | `string` \| [`UserIdOrVanityParam`](../README.md#useridorvanityparam) |
-| `signal?` | `AbortSignal` |
-| `logger?` | ``null`` \| [`Logger`](Logger.md) |
+• **creator**: `string` \| [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
+
+• **signal?**: `AbortSignal`
+
+• **logger?**: `null` \| [`Logger`](Logger.md)
 
 #### Returns
 
-`Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+`Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Inherited from
 
-[Downloader](Downloader.md).[getCampaign](Downloader.md#getcampaign)
+[`Downloader`](Downloader.md).[`getCampaign`](Downloader.md#getcampaign)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:205](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L205)
+[src/downloaders/Downloader.ts:227](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L227)
 
-___
+***
 
-### getInstance
+### getInstance()
 
-▸ **getInstance**(`url`, `options?`): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
+> `static` **getInstance**(`url`, `options`?): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `url` | `string` |
-| `options?` | [`DownloaderOptions`](../interfaces/DownloaderOptions.md) |
+• **url**: `string`
+
+• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
 
 #### Returns
 
@@ -327,8 +530,8 @@ ___
 
 #### Inherited from
 
-[Downloader](Downloader.md).[getInstance](Downloader.md#getinstance)
+[`Downloader`](Downloader.md).[`getInstance`](Downloader.md#getinstance)
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L190)
+[src/downloaders/Downloader.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L210)

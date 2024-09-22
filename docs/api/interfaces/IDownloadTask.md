@@ -1,93 +1,81 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / IDownloadTask
 
 # Interface: IDownloadTask
 
-## Table of contents
-
-### Properties
-
-- [getProgress](IDownloadTask.md#getprogress)
-- [id](IDownloadTask.md#id)
-- [resolvedDestFilename](IDownloadTask.md#resolveddestfilename)
-- [resolvedDestPath](IDownloadTask.md#resolveddestpath)
-- [retryCount](IDownloadTask.md#retrycount)
-- [src](IDownloadTask.md#src)
-- [srcEntity](IDownloadTask.md#srcentity)
-
 ## Properties
 
-### getProgress
+### getProgress()
 
-• **getProgress**: () => ``null`` \| [`DownloadProgress`](DownloadProgress.md)
+> **getProgress**: () => `null` \| [`DownloadProgress`](DownloadProgress.md)
 
-#### Type declaration
+#### Returns
 
-▸ (): ``null`` \| [`DownloadProgress`](DownloadProgress.md)
-
-##### Returns
-
-``null`` \| [`DownloadProgress`](DownloadProgress.md)
+`null` \| [`DownloadProgress`](DownloadProgress.md)
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L80)
+[src/downloaders/task/DownloadTask.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L87)
 
-___
+***
 
 ### id
 
-• **id**: `number`
+> **id**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L74)
+[src/downloaders/task/DownloadTask.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L81)
 
-___
+***
 
 ### resolvedDestFilename
 
-• **resolvedDestFilename**: ``null`` \| `string`
+> **resolvedDestFilename**: `null` \| `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:78](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L78)
+[src/downloaders/task/DownloadTask.ts:85](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L85)
 
-___
+***
 
 ### resolvedDestPath
 
-• **resolvedDestPath**: ``null`` \| `string`
+> **resolvedDestPath**: `null` \| `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:79](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L79)
+[src/downloaders/task/DownloadTask.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L86)
 
-___
+***
 
 ### retryCount
 
-• **retryCount**: `number`
+> **retryCount**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:77](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L77)
+[src/downloaders/task/DownloadTask.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L84)
 
-___
+***
 
 ### src
 
-• **src**: `string`
+> **src**: `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L75)
+[src/downloaders/task/DownloadTask.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L82)
 
-___
+***
 
 ### srcEntity
 
-• **srcEntity**: [`Downloadable`](../README.md#downloadable)
+> **srcEntity**: [`Downloadable`](../type-aliases/Downloadable.md)
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:76](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L76)
+[src/downloaders/task/DownloadTask.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L83)

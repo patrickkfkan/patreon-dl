@@ -1,38 +1,24 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / ChainLogger
 
 # Class: ChainLogger
 
-## Hierarchy
+## Extends
 
 - [`Logger`](Logger.md)
 
-  ↳ **`ChainLogger`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](ChainLogger.md#constructor)
-
-### Methods
-
-- [add](ChainLogger.md#add)
-- [clear](ChainLogger.md#clear)
-- [end](ChainLogger.md#end)
-- [log](ChainLogger.md#log)
-- [remove](ChainLogger.md#remove)
-
 ## Constructors
 
-### constructor
+### new ChainLogger()
 
-• **new ChainLogger**(`loggers?`): [`ChainLogger`](ChainLogger.md)
+> **new ChainLogger**(`loggers`?): [`ChainLogger`](ChainLogger.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `loggers?` | [`Logger`](Logger.md)[] |
+• **loggers?**: [`Logger`](Logger.md)[]
 
 #### Returns
 
@@ -40,23 +26,21 @@
 
 #### Overrides
 
-[Logger](Logger.md).[constructor](Logger.md#constructor)
+[`Logger`](Logger.md).[`constructor`](Logger.md#constructors)
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L7)
+[src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L7)
 
 ## Methods
 
-### add
+### add()
 
-▸ **add**(`logger`): `void`
+> **add**(`logger`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `logger` | [`Logger`](Logger.md) |
+• **logger**: [`Logger`](Logger.md)
 
 #### Returns
 
@@ -64,13 +48,13 @@
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L12)
+[src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L12)
 
-___
+***
 
-### clear
+### clear()
 
-▸ **clear**(): `void`
+> **clear**(): `void`
 
 #### Returns
 
@@ -78,13 +62,13 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L23)
+[src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L23)
 
-___
+***
 
-### end
+### end()
 
-▸ **end**(): `Promise`\<`void`\>
+> **end**(): `Promise`\<`void`\>
 
 #### Returns
 
@@ -92,23 +76,21 @@ ___
 
 #### Overrides
 
-[Logger](Logger.md).[end](Logger.md#end)
+[`Logger`](Logger.md).[`end`](Logger.md#end)
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L33)
+[src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L33)
 
-___
+***
 
-### log
+### log()
 
-▸ **log**(`entry`): `void`
+> **log**(`entry`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `entry` | [`LogEntry`](../interfaces/LogEntry.md) |
+• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
@@ -116,23 +98,21 @@ ___
 
 #### Overrides
 
-[Logger](Logger.md).[log](Logger.md#log)
+[`Logger`](Logger.md).[`log`](Logger.md#log)
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L27)
+[src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L27)
 
-___
+***
 
-### remove
+### remove()
 
-▸ **remove**(`logger`): `void`
+> **remove**(`logger`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `logger` | [`Logger`](Logger.md) |
+• **logger**: [`Logger`](Logger.md)
 
 #### Returns
 
@@ -140,4 +120,4 @@ ___
 
 #### Defined in
 
-[src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/ChainLogger.ts#L16)
+[src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ChainLogger.ts#L16)

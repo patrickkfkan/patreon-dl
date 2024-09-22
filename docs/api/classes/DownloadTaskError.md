@@ -1,37 +1,28 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / DownloadTaskError
 
 # Class: DownloadTaskError
 
-## Hierarchy
+## Extends
 
 - `Error`
 
-  ↳ **`DownloadTaskError`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](DownloadTaskError.md#constructor)
-
-### Properties
-
-- [cause](DownloadTaskError.md#cause)
-- [task](DownloadTaskError.md#task)
-
 ## Constructors
 
-### constructor
+### new DownloadTaskError()
 
-• **new DownloadTaskError**(`message`, `task`, `cause?`): [`DownloadTaskError`](DownloadTaskError.md)
+> **new DownloadTaskError**(`message`, `task`, `cause`?): [`DownloadTaskError`](DownloadTaskError.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `message` | `string` |
-| `task` | [`IDownloadTask`](../interfaces/IDownloadTask.md) |
-| `cause?` | `Error` |
+• **message**: `string`
+
+• **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
+
+• **cause?**: `Error`
 
 #### Returns
 
@@ -39,32 +30,32 @@
 
 #### Overrides
 
-Error.constructor
+`Error.constructor`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L11)
+[src/downloaders/task/DownloadTask.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L13)
 
 ## Properties
 
-### cause
+### cause?
 
-• `Optional` **cause**: `Error`
+> `optional` **cause**: `Error`
 
 #### Overrides
 
-Error.cause
+`Error.cause`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L9)
+[src/downloaders/task/DownloadTask.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L11)
 
-___
+***
 
 ### task
 
-• **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
+> **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L8)
+[src/downloaders/task/DownloadTask.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L10)

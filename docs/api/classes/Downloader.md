@@ -1,62 +1,35 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / Downloader
 
-# Class: Downloader\<T\>
+# Class: `abstract` Downloader\<T\>
 
-## Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderType`](../README.md#downloadertype) |
-
-## Hierarchy
+## Extends
 
 - `EventEmitter`
 
-  ↳ **`Downloader`**
+## Extended by
 
-  ↳↳ [`PostDownloader`](PostDownloader.md)
+- [`PostDownloader`](PostDownloader.md)
+- [`ProductDownloader`](ProductDownloader.md)
 
-  ↳↳ [`ProductDownloader`](ProductDownloader.md)
+## Type Parameters
 
-## Table of contents
-
-### Constructors
-
-- [constructor](Downloader.md#constructor)
-
-### Properties
-
-- [name](Downloader.md#name)
-
-### Methods
-
-- [emit](Downloader.md#emit)
-- [getConfig](Downloader.md#getconfig)
-- [off](Downloader.md#off)
-- [on](Downloader.md#on)
-- [once](Downloader.md#once)
-- [start](Downloader.md#start)
-- [getCampaign](Downloader.md#getcampaign)
-- [getInstance](Downloader.md#getinstance)
+• **T** *extends* [`DownloaderType`](../type-aliases/DownloaderType.md)
 
 ## Constructors
 
-### constructor
+### new Downloader()
 
-• **new Downloader**\<`T`\>(`bootstrap`, `options?`): [`Downloader`](Downloader.md)\<`T`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderType`](../README.md#downloadertype) |
+> **new Downloader**\<`T`\>(`bootstrap`, `options`?): [`Downloader`](Downloader.md)\<`T`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `bootstrap` | [`DownloaderBootstrapData`](../README.md#downloaderbootstrapdata)\<`T`\> |
-| `options?` | [`DownloaderOptions`](../interfaces/DownloaderOptions.md) |
+• **bootstrap**: [`DownloaderBootstrapData`](../type-aliases/DownloaderBootstrapData.md)\<`T`\>
+
+• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
 
 #### Returns
 
@@ -64,171 +37,267 @@
 
 #### Overrides
 
-EventEmitter.constructor
+`EventEmitter.constructor`
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L52)
+[src/downloaders/Downloader.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L53)
 
 ## Properties
 
 ### name
 
-• `Abstract` **name**: `string`
+> `abstract` **name**: `string`
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L43)
+[src/downloaders/Downloader.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L44)
 
 ## Methods
 
-### emit
+### emit()
 
-▸ **emit**\<`T`\>(`event`, `args`): `boolean`
+> **emit**\<`T`\>(`event`, `args`): `boolean`
 
-#### Type parameters
+Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+to each.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+Returns `true` if the event had listeners, `false` otherwise.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// First listener
+myEmitter.on('event', function firstListener() {
+  console.log('Helloooo! first listener');
+});
+// Second listener
+myEmitter.on('event', function secondListener(arg1, arg2) {
+  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
+});
+// Third listener
+myEmitter.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`event with parameters ${parameters} in third listener`);
+});
+
+console.log(myEmitter.listeners('event'));
+
+myEmitter.emit('event', 1, 2, 3, 4, 5);
+
+// Prints:
+// [
+//   [Function: firstListener],
+//   [Function: secondListener],
+//   [Function: thirdListener]
+// ]
+// Helloooo! first listener
+// event with parameters 1, 2 in second listener
+// event with parameters 1, 2, 3, 4, 5 in third listener
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `args` | [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\> |
+• **event**: `T`
+
+• **args**: [`DownloaderEventPayloadOf`](../type-aliases/DownloaderEventPayloadOf.md)\<`T`\>
 
 #### Returns
 
 `boolean`
 
-#### Overrides
+#### Since
 
-EventEmitter.emit
-
-#### Defined in
-
-[src/downloaders/Downloader.ts:461](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L461)
-
-___
-
-### getConfig
-
-▸ **getConfig**(): `DeepReadonly`\<[`DownloaderConfig`](../README.md#downloaderconfig)\<`T`\>\>
-
-#### Returns
-
-`DeepReadonly`\<[`DownloaderConfig`](../README.md#downloaderconfig)\<`T`\>\>
-
-#### Defined in
-
-[src/downloaders/Downloader.ts:387](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L387)
-
-___
-
-### off
-
-▸ **off**\<`T`\>(`event`, `listener`): [`Downloader`](Downloader.md)\<`T`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
-
-#### Returns
-
-[`Downloader`](Downloader.md)\<`T`\>
+v0.1.26
 
 #### Overrides
 
-EventEmitter.off
+`EventEmitter.emit`
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:456](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L456)
+[src/downloaders/Downloader.ts:487](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L487)
 
-___
+***
 
-### on
+### getConfig()
 
-▸ **on**\<`T`\>(`event`, `listener`): [`Downloader`](Downloader.md)\<`T`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
+> **getConfig**(): `DeepReadonly`\<[`DownloaderConfig`](../type-aliases/DownloaderConfig.md)\<`T`\>\>
 
 #### Returns
 
-[`Downloader`](Downloader.md)\<`T`\>
-
-#### Overrides
-
-EventEmitter.on
+`DeepReadonly`\<[`DownloaderConfig`](../type-aliases/DownloaderConfig.md)\<`T`\>\>
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:446](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L446)
+[src/downloaders/Downloader.ts:413](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L413)
 
-___
+***
 
-### once
+### off()
 
-▸ **once**\<`T`\>(`event`, `listener`): [`Downloader`](Downloader.md)\<`T`\>
+> **off**\<`T`\>(`event`, `listener`): `this`
 
-#### Type parameters
+Alias for `emitter.removeListener()`.
 
-| Name | Type |
-| :------ | :------ |
-| `T` | extends [`DownloaderEvent`](../README.md#downloaderevent) |
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `T` |
-| `listener` | (`args`: [`DownloaderEventPayloadOf`](../README.md#downloadereventpayloadof)\<`T`\>) => `void` |
+• **event**: `T`
+
+• **listener**
 
 #### Returns
 
-[`Downloader`](Downloader.md)\<`T`\>
+`this`
+
+#### Since
+
+v10.0.0
 
 #### Overrides
 
-EventEmitter.once
+`EventEmitter.off`
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:451](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L451)
+[src/downloaders/Downloader.ts:482](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L482)
 
-___
+***
 
-### start
+### on()
 
-▸ **start**(`params`): `Promise`\<`void`\>
+> **on**\<`T`\>(`event`, `listener`): `this`
+
+Adds the `listener` function to the end of the listeners array for the
+event named `eventName`. No checks are made to see if the `listener` has
+already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
+times.
+
+```js
+server.on('connection', (stream) => {
+  console.log('someone connected!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.on('foo', () => console.log('a'));
+myEE.prependListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `params` | [`DownloaderStartParams`](../interfaces/DownloaderStartParams.md) |
+• **event**: `T`
+
+• **listener**
+
+The callback function
+
+#### Returns
+
+`this`
+
+#### Since
+
+v0.1.101
+
+#### Overrides
+
+`EventEmitter.on`
+
+#### Defined in
+
+[src/downloaders/Downloader.ts:472](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L472)
+
+***
+
+### once()
+
+> **once**\<`T`\>(`event`, `listener`): `this`
+
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
+
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+#### Type Parameters
+
+• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
+
+#### Parameters
+
+• **event**: `T`
+
+• **listener**
+
+The callback function
+
+#### Returns
+
+`this`
+
+#### Since
+
+v0.3.0
+
+#### Overrides
+
+`EventEmitter.once`
+
+#### Defined in
+
+[src/downloaders/Downloader.ts:477](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L477)
+
+***
+
+### start()
+
+> `abstract` **start**(`params`): `Promise`\<`void`\>
+
+#### Parameters
+
+• **params**: [`DownloaderStartParams`](../interfaces/DownloaderStartParams.md)
 
 #### Returns
 
@@ -236,42 +305,41 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:188](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L188)
+[src/downloaders/Downloader.ts:208](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L208)
 
-___
+***
 
-### getCampaign
+### getCampaign()
 
-▸ **getCampaign**(`creator`, `signal?`, `logger?`): `Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+> `static` **getCampaign**(`creator`, `signal`?, `logger`?): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `creator` | `string` \| [`UserIdOrVanityParam`](../README.md#useridorvanityparam) |
-| `signal?` | `AbortSignal` |
-| `logger?` | ``null`` \| [`Logger`](Logger.md) |
+• **creator**: `string` \| [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
+
+• **signal?**: `AbortSignal`
+
+• **logger?**: `null` \| [`Logger`](Logger.md)
 
 #### Returns
 
-`Promise`\<``null`` \| [`Campaign`](../interfaces/Campaign.md)\>
+`Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:205](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L205)
+[src/downloaders/Downloader.ts:227](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L227)
 
-___
+***
 
-### getInstance
+### getInstance()
 
-▸ **getInstance**(`url`, `options?`): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
+> `static` **getInstance**(`url`, `options`?): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `url` | `string` |
-| `options?` | [`DownloaderOptions`](../interfaces/DownloaderOptions.md) |
+• **url**: `string`
+
+• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
 
 #### Returns
 
@@ -279,4 +347,4 @@ ___
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/Downloader.ts#L190)
+[src/downloaders/Downloader.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Downloader.ts#L210)

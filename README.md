@@ -164,11 +164,16 @@ include.posts.in.tier = 123456, 789100
 #
 # include.locked.content
 # include.posts.with.media.type
+# include.posts.published.after
+# include.posts.published.before
 # include.campaign.info
 # include.content.info
 # include.preview.media
 # include.content.media
 # include.all.media.variants
+# include.images.by.filename
+# include.audio.by.filename
+# include.attachments.by.filename
 
 # URL 2 
 https://www.patreon.com/janedoe/posts

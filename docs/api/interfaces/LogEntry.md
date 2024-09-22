@@ -1,41 +1,37 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / LogEntry
 
 # Interface: LogEntry
-
-## Table of contents
-
-### Properties
-
-- [level](LogEntry.md#level)
-- [message](LogEntry.md#message)
-- [originator](LogEntry.md#originator)
 
 ## Properties
 
 ### level
 
-• **level**: [`LogLevel`](../README.md#loglevel)
+> **level**: [`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L4)
+[src/utils/logging/Logger.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L4)
 
-___
+***
 
 ### message
 
-• **message**: `any`[]
+> **message**: `any`[]
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L6)
+[src/utils/logging/Logger.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L6)
 
-___
+***
 
-### originator
+### originator?
 
-• `Optional` **originator**: `string`
+> `optional` **originator**: `string`
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/utils/logging/Logger.ts#L5)
+[src/utils/logging/Logger.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/Logger.ts#L5)

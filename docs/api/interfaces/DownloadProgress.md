@@ -1,96 +1,87 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / DownloadProgress
 
 # Interface: DownloadProgress
 
-## Table of contents
-
-### Properties
-
-- [destFilePath](DownloadProgress.md#destfilepath)
-- [destFilename](DownloadProgress.md#destfilename)
-- [length](DownloadProgress.md#length)
-- [lengthDownloaded](DownloadProgress.md#lengthdownloaded)
-- [lengthUnit](DownloadProgress.md#lengthunit)
-- [percent](DownloadProgress.md#percent)
-- [sizeDownloaded](DownloadProgress.md#sizedownloaded)
-- [speed](DownloadProgress.md#speed)
-
 ## Properties
-
-### destFilePath
-
-• **destFilePath**: `string`
-
-#### Defined in
-
-[src/downloaders/task/DownloadTask.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L30)
-
-___
 
 ### destFilename
 
-• **destFilename**: `string`
+> **destFilename**: `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L29)
+[src/downloaders/task/DownloadTask.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L36)
 
-___
+***
 
-### length
+### destFilePath
 
-• **length**: `number`
+> **destFilePath**: `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L32)
+[src/downloaders/task/DownloadTask.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L37)
 
-___
+***
+
+### length?
+
+> `optional` **length**: `number`
+
+#### Defined in
+
+[src/downloaders/task/DownloadTask.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L39)
+
+***
 
 ### lengthDownloaded
 
-• **lengthDownloaded**: `number`
+> **lengthDownloaded**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L33)
+[src/downloaders/task/DownloadTask.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L40)
 
-___
+***
 
 ### lengthUnit
 
-• **lengthUnit**: `string`
+> **lengthUnit**: `string`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L31)
+[src/downloaders/task/DownloadTask.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L38)
 
-___
+***
 
-### percent
+### percent?
 
-• **percent**: `number`
+> `optional` **percent**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L34)
+[src/downloaders/task/DownloadTask.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L41)
 
-___
+***
 
 ### sizeDownloaded
 
-• **sizeDownloaded**: `number`
+> **sizeDownloaded**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L35)
+[src/downloaders/task/DownloadTask.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L42)
 
-___
+***
 
 ### speed
 
-• **speed**: `number`
+> **speed**: `number`
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/downloaders/task/DownloadTask.ts#L36)
+[src/downloaders/task/DownloadTask.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L43)

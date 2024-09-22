@@ -1,52 +1,47 @@
+[**patreon-dl**](../README.md) • **Docs**
+
+***
+
 [patreon-dl](../README.md) / Attachment
 
 # Interface: Attachment
-
-## Table of contents
-
-### Properties
-
-- [id](Attachment.md#id)
-- [name](Attachment.md#name)
-- [type](Attachment.md#type)
-- [url](Attachment.md#url)
 
 ## Properties
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
 #### Defined in
 
-[src/entities/Attachment.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Attachment.ts#L3)
+[src/entities/Attachment.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/Attachment.ts#L3)
 
-___
+***
 
 ### name
 
-• **name**: ``null`` \| `string`
+> **name**: `null` \| `string`
 
 #### Defined in
 
-[src/entities/Attachment.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Attachment.ts#L4)
+[src/entities/Attachment.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/Attachment.ts#L4)
 
-___
+***
 
 ### type
 
-• **type**: ``"attachment"``
+> **type**: `"attachment"`
 
 #### Defined in
 
-[src/entities/Attachment.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Attachment.ts#L2)
+[src/entities/Attachment.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/Attachment.ts#L2)
 
-___
+***
 
 ### url
 
-• **url**: ``null`` \| `string`
+> **url**: `null` \| `string`
 
 #### Defined in
 
-[src/entities/Attachment.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/47a7410/src/entities/Attachment.ts#L5)
+[src/entities/Attachment.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/entities/Attachment.ts#L5)
