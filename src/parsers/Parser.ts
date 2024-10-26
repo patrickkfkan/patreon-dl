@@ -7,10 +7,9 @@ import {type LogLevel} from '../utils/logging/Logger.js';
 import type Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
-import { type Attachment } from '../entities/Attachment.js';
 import { type Reward, type Tier } from '../entities/Reward.js';
 
-const DOWNLOADABLE_TYPES = [ 'media', 'attachment' ] as const;
+const DOWNLOADABLE_TYPES = [ 'media' ] as const;
 
 export default abstract class Parser {
 
@@ -98,9 +97,10 @@ export default abstract class Parser {
           if (type === 'media') {
             const unknownMediaTypeAs =
               target === 'audio' ? 'audio' :
-                target === 'audio_preview' ? 'audio' :
-                  target === 'images' ? 'image' :
-                    undefined;
+              target === 'audio_preview' ? 'audio' :
+              target === 'images' ? 'image' :
+              target === 'attachments_media' ? 'attachment' :
+              undefined;
             mi = this.findInAPIResponseIncludedArray(included, id, type, unknownMediaTypeAs);
           }
           else {
@@ -141,15 +141,16 @@ export default abstract class Parser {
    */
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: typeof DOWNLOADABLE_TYPES[number]): Downloadable | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'tier', campaign: Campaign): Tier | null;
-  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file'): MediaItem | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file' | 'attachment'): MediaItem | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'reward'): Reward | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'campaign'): Campaign | null;
-  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'attachment'): Attachment | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: string, ...args: any[]): any {
     this.log('debug', `Find ${matchType} item #${id} in API response`);
     for (const inc of included) {
-      const _matchType = matchType === 'tier' ? 'access-rule' : matchType;
+      const _matchType =
+        matchType === 'tier' ? 'access-rule' :
+        matchType;
       if (inc && typeof inc === 'object' && inc.id === id && inc.type === _matchType) {
         this.log('debug', 'Found - parse item data');
 
@@ -167,9 +168,6 @@ export default abstract class Parser {
         }
         else if (_matchType === 'reward') {
           return this.parseRewardAPIDataInIncludedArray(inc);
-        }
-        else if (_matchType === 'attachment') {
-          return this.parseAttachmentAPIDataInIncludedArray(inc);
         }
       }
     }
@@ -305,6 +303,15 @@ export default abstract class Parser {
         createdAt,
         mimeType,
         downloadURL: attributes.download_url || null // TODO: test this
+      };
+    }
+    else if (attributes.owner_relationship === 'attachment' || unknownMediaTypeAs === 'attachment') {
+      mi = {
+        type: 'attachment',
+        id,
+        filename: attributes.file_name || null,
+        downloadURL: attributes.download_url || null,
+        mimeType
       };
     }
     else {
@@ -510,26 +517,6 @@ export default abstract class Parser {
     };
     this.log('debug', `Done parsing reward #${id}`);
     return reward;
-  }
-
-  protected parseAttachmentAPIDataInIncludedArray(data: any) {
-    const { id, attributes } = data;
-    if (!id) {
-      this.log('error', 'Parse error: \'id\' field missing in API data of attachment');
-      return null;
-    }
-    if (!attributes || typeof attributes !== 'object') {
-      this.log('error', `Parse error: 'attributes' field missing in API data of attachment #${id} or has incorrect type`);
-      return null;
-    }
-    const attachment: Attachment = {
-      type: 'attachment',
-      id,
-      name: attributes.name || null,
-      url: attributes.url || null
-    };
-    this.log('debug', `Done parsing attachment #${id}`);
-    return attachment;
   }
 
   protected log(level: LogLevel, ...msg: Array<any>) {

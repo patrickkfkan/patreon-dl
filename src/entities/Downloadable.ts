@@ -1,8 +1,7 @@
-import { type Attachment } from './Attachment.js';
 import { type MediaItem } from './MediaItem.js';
 import { type PostEmbed, type YouTubePostEmbed } from './Post.js';
 
-export type Downloadable = MediaItem | Attachment | PostEmbed;
+export type Downloadable = MediaItem | PostEmbed;
 
 export function isYouTubeEmbed(embed: PostEmbed): embed is YouTubePostEmbed {
   return embed.type === 'videoEmbed' && embed.provider === 'YouTube';

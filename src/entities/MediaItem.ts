@@ -103,6 +103,11 @@ export interface FileMediaItem extends MediaLike {
   downloadURL: string | null;
 }
 
+export interface AttachmentMediaItem extends MediaLike {
+  type: 'attachment';
+  downloadURL: string | null;
+}
+
 /**
  * Minimal `MediaItem` typically used to represent media-type properties of elements, such
  * as video thumbnails and campaign avatar / cover photos.
@@ -120,4 +125,5 @@ export type MediaItem =
   VideoMediaItem |
   AudioMediaItem |
   FileMediaItem |
+  AttachmentMediaItem |
   DummyMediaItem;

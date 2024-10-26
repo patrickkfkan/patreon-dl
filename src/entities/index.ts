@@ -1,4 +1,3 @@
-export * from './Attachment.js';
 export * from './Campaign.js';
 export { Downloadable } from './Downloadable.js';
 export * from './MediaItem.js';

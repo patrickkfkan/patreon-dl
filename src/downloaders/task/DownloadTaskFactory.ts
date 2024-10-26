@@ -6,7 +6,6 @@ import {type DownloadTaskCallbacks} from './DownloadTask.js';
 import type DownloadTask from './DownloadTask.js';
 import FetcherDownloadTask from './FetcherDownloadTask.js';
 import { type Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
-import AttachmentFilenameResolver from '../../utils/AttachmentFilenameResolver.js';
 import { type EmbedDownloader, type FileExistsAction } from '../DownloaderOptions.js';
 import type Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
@@ -138,7 +137,7 @@ export default class DownloadTaskFactory {
       }
       else if (item.type === 'attachment') {
         return {
-          [NULL_VARIANT]: item.url
+          [NULL_VARIANT]: item.downloadURL
         };
       }
       else if (item.type === 'videoEmbed') {
@@ -177,8 +176,7 @@ export default class DownloadTaskFactory {
         }
       }
       else {
-        const destFilenameResolver = item.type === 'attachment' ?
-          new AttachmentFilenameResolver(item, url, destFilenameFormat) :
+        const destFilenameResolver = 
           new MediaFilenameResolver(item, url, destFilenameFormat,
             variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
 

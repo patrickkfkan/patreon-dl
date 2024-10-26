@@ -43,7 +43,7 @@ const POSTS_API_URL_SEARCH_PARAMS = {
     'campaign',
     'access_rules',
     'access_rules.tier.null',
-    'attachments',
+    'attachments_media',
     'audio',
     'audio_preview.null',
     'images',

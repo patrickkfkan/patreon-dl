@@ -3,7 +3,6 @@ import { type MediaLike } from '../entities/MediaItem.js';
 import { type Product } from '../entities/Product.js';
 import Formatter, { type FormatFieldName, type FormatFieldRules, type FormatFieldValues } from './Formatter.js';
 import URLHelper from './URLHelper.js';
-import { type Attachment } from '../entities/Attachment.js';
 import { type Post } from '../entities/Post.js';
 import { toISODate } from './Misc.js';
 import FSHelper from './FSHelper.js';
@@ -97,17 +96,6 @@ export default class FilenameFormatHelper {
       'media.type': media.type,
       'media.filename': media.filename,
       'media.variant': media.variant
-    };
-
-    return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT, ext);
-  }
-
-  static getAttachmentFilename(att: Attachment, format: string, ext: string): string {
-    const dict: FormatFieldValues<MediaFilenameFormatFieldName> = {
-      'media.id': att.id,
-      'media.type': att.type,
-      'media.filename': att.name,
-      'media.variant': null
     };
 
     return this.#getFilename(format, dict, MEDIA_FILENAME_VALIDATION_SCHEMA, MEDIA_FILENAME_FALLBACK_FORMAT, ext);

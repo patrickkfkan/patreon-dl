@@ -112,7 +112,7 @@ export default class PostParser extends Parser {
             'audio': 'audio items',
             'audio_preview': 'audio preview items',
             'images': 'images',
-            'attachments': 'attachments'
+            'attachments_media': 'attachments'
           },
           includedJSON,
           `post #${id}`,
@@ -121,7 +121,7 @@ export default class PostParser extends Parser {
         audio = downloadables.audio?.[0] || null;
         audioPreview = downloadables.audio_preview?.[0] || null;
         images = downloadables.images || [];
-        attachments = downloadables.attachments || [];
+        attachments = downloadables.attachments_media || [];
       }
 
       const __getVideoMediaItemFromAttr = (attrJSON: any): VideoMediaItem => {
