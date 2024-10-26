@@ -95,6 +95,7 @@ https://www.patreon.com/<creator>/shop/<slug>-<product_id>
 
 // Download posts by creator
 https://www.patreon.com/<creator>/posts
+https://www.patreon.com/c/<creator>/posts
 https://www.patreon.com/user/posts?u=<user_id>
 
 // Dowload a single post

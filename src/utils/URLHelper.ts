@@ -11,6 +11,7 @@ const CAMPAIGN_API_URL = `${SITE_URL}/api/campaigns`;
 
 const PRODUCT_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop\/(([^/]+)-(\d+))$/;
 const POSTS_BY_USER_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/posts$/;
+const POSTS_BY_USER_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/c\/([^/]+?)\/posts$/;
 const COLLECTION_URL_REGEX = /https:\/\/www\.patreon\.com\/collection\/(\d+)$/;
 const POST_URL_REGEX = /https:\/\/www\.patreon\.com\/posts\/(([^/]+)-(\d+))$/;
 const POST_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/posts\/(\d+)$/; // No slug
@@ -196,9 +197,18 @@ export default class URLHelper {
       };
     }
 
-    const postsURLMatch = POSTS_BY_USER_URL_REGEX.exec(base);
-    if (postsURLMatch && postsURLMatch[1]) {
-      const vanity = postsURLMatch[1];
+    const __getPostsURLMatchVanity = (regex: RegExp) => {
+      const match = regex.exec(base);
+      if (match && match[1]) {
+        return match[1];
+      }
+      return null;
+    }
+    const postsURLMatchVanity =
+      __getPostsURLMatchVanity(POSTS_BY_USER_URL_REGEX) ||
+      __getPostsURLMatchVanity(POSTS_BY_USER_URL_REGEX_2);
+    if (postsURLMatchVanity) {
+      const vanity = postsURLMatchVanity;
       const filters = __getFiltersFromSearchParams(searchParams);
       let result: URLAnalysis & { type: 'postsByUser' | 'postsByUserId' };
       // Test if match https://www.patreon.com/user/posts?u={userId}
