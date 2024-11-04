@@ -58,6 +58,7 @@
     "bgutils-js": "^2.0.1",
     "bottleneck": "^2.19.5",
     "capitalize": "^2.0.4",
+    "cheerio": "^1.0.0",
     "cli-color": "^2.0.3",
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1",

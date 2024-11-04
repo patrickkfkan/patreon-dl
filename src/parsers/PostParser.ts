@@ -124,6 +124,12 @@ export default class PostParser extends Parser {
         attachments = downloadables.attachments_media || [];
       }
 
+      // Get inline media from content (currently only images supported)
+      if (hasIncludedJSON && attributes.content) {
+        const inlineMedia = this.parseInlineMedia(attributes.content, includedJSON);
+        images.push(...inlineMedia.images);
+      }
+
       const __getVideoMediaItemFromAttr = (attrJSON: any): VideoMediaItem => {
         let miFromIncluded: MediaItem | null = null;
         const _mediaId = attrJSON.media_id !== undefined ? attrJSON.media_id.toString() : null;

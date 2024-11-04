@@ -1,4 +1,5 @@
 import capitalize from 'capitalize';
+import { load as cheerioLoad } from 'cheerio';
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type CampaignCoverPhotoMediaItem, type DefaultImageMediaItem, type MediaItem, type SingleImageMediaItem } from '../entities/MediaItem.js';
@@ -517,6 +518,28 @@ export default abstract class Parser {
     };
     this.log('debug', `Done parsing reward #${id}`);
     return reward;
+  }
+
+  protected parseInlineMedia(content: string, included: Array<any>) {
+    const $ = cheerioLoad(content);
+
+    // Patreon images
+    // <img data-media-id="279317228" src="https://c10.patreonusercontent.com/4...">
+    const imgMediaIDs = $('img').toArray().reduce<string[]>((result, el) => {
+      const id = $(el).attr('data-media-id');
+      if (id) {
+        result.push(id);
+      }
+      return result;
+    }, []);
+    const images = imgMediaIDs
+      .map((id) => this.findInAPIResponseIncludedArray(included, id, 'media', 'image'))
+      .filter((item) => item !== null);
+    this.log('debug', `Parse inline media - got ${images.length} images`);
+
+    return {
+      images
+    };
   }
 
   protected log(level: LogLevel, ...msg: Array<any>) {
