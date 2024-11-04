@@ -3,7 +3,7 @@ import { type DummyMediaItem } from '../../entities/MediaItem.js';
 import type Fetcher from '../../utils/Fetcher.js';
 import MediaFilenameResolver from '../../utils/MediaFilenameResolver.js';
 import {type DownloadTaskCallbacks} from './DownloadTask.js';
-import type DownloadTask from './DownloadTask.js';
+import DownloadTask from './DownloadTask.js';
 import FetcherDownloadTask from './FetcherDownloadTask.js';
 import { type Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
 import { type EmbedDownloader, type FileExistsAction } from '../DownloaderOptions.js';
@@ -11,6 +11,7 @@ import type Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
 import ExternalDownloaderTask from './ExternalDownloaderTask.js';
 import { type DownloaderConfig } from '../Downloader.js';
+import type Bottleneck from 'bottleneck';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -49,13 +50,15 @@ const NULL_VARIANT = '/*NULL*/';
 
 export default class DownloadTaskFactory {
 
-  static createFromDownloadable(params: {
+  static async createFromDownloadable(params: {
     config: DownloaderConfig<any>,
     item: Downloadable,
     destDir: string,
     fetcher: Fetcher,
     fileExistsAction: FileExistsAction,
     callbacks?: DownloadTaskCallbacks | null,
+    limiter: Bottleneck,
+    signal?: AbortSignal,
     logger?: Logger | null;
   }) {
 
@@ -66,6 +69,8 @@ export default class DownloadTaskFactory {
       fetcher,
       fileExistsAction,
       callbacks,
+      limiter,
+      signal,
       logger
     } = params;
 
@@ -164,7 +169,7 @@ export default class DownloadTaskFactory {
         }
         // Use our own implementation if no external downloader configured for YT embeds
         else if (item.type === 'videoEmbed' && isYouTubeEmbed(item) && url) {
-          tasks.push(new YouTubeDownloadTask({
+          tasks.push(await DownloadTask.create(YouTubeDownloadTask, {
             config,
             src: url,
             destDir,
@@ -172,7 +177,9 @@ export default class DownloadTaskFactory {
             srcEntity: item,
             callbacks: callbacks || null,
             logger
-          }));
+          },
+          limiter,
+          signal));
         }
       }
       else {
@@ -181,7 +188,7 @@ export default class DownloadTaskFactory {
             variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
 
         if (url) {
-          tasks.push(new FetcherDownloadTask<Downloadable>({
+          tasks.push(await DownloadTask.create(FetcherDownloadTask, {
             config,
             fetcher,
             src: url,
@@ -191,7 +198,9 @@ export default class DownloadTaskFactory {
             srcEntity: item,
             callbacks: callbacks || null,
             logger
-          }));
+          },
+          limiter,
+          signal));
         }
       }
     }
@@ -220,13 +229,15 @@ export default class DownloadTaskFactory {
         }
       };
       tasks.push(
-        ...this.createFromDownloadable({
+        ...await this.createFromDownloadable({
           config: __config,
           item: videoThumbnailMediaItem,
           destDir,
           fetcher,
           fileExistsAction,
           callbacks,
+          limiter,
+          signal,
           logger
         })
       );

@@ -41,13 +41,13 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
     this.#abortingCallback = null;
   }
 
-  #checkAndSpawnFFmpegDownloadTask(
+  async #checkAndSpawnFFmpegDownloadTask(
     currentDestFilePath: string,
     preferredOutputFilePath: string) {
 
     if (this.srcEntity.type === 'video' && this.#isM3U8FilePath(currentDestFilePath) && this.callbacks) {
       // Spawn FFmpeg task to download actual stream
-      const spawn = new M3U8DownloadTask({
+      const spawn = await DownloadTask.create(M3U8DownloadTask, {
         config: this.config,
         src: currentDestFilePath,
         srcEntity: this.srcEntity,
@@ -64,11 +64,26 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
     return path.extname(filePath) === '.m3u8';
   }
 
+  protected async resolveDestPath(signal?: AbortSignal) {
+    return await this.#fetcher.resolveDestFilePath({
+      url: this.src,
+      destDir: this.#destDir,
+      destFilenameResolver: this.#destFilenameResolver,
+      signal
+    });
+  }
+
   protected doStart() {
     return new Promise<void>((resolve) => {
       void (async () => {
+        if (!this.resolvedDestPath) {
+          this.notifyError(Error('Destination file path not resolved'));
+          resolve();
+          return;
+        }
         if (this.status === 'aborted') {
           resolve();
+          return;
         }
   
         this.#abortController = new AbortController();
@@ -81,15 +96,13 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         let skipped = false;
         const fileExistsAction = this.#fileExistsAction;
         try {
-          const { destFilePath, monitor, start, abort } = await this.#fetcher.prepareDownload({
+          const destFilePath = this.resolvedDestPath;
+          const { monitor, start, abort } = await this.#fetcher.prepareDownload({
             url: this.src,
-            destDir: this.#destDir,
             srcEntity: this.srcEntity,
-            destFilenameResolver: this.#destFilenameResolver,
+            destFilePath,
             signal: this.#abortController.signal
           });
-  
-          this.resolvedDestPath = destFilePath;
   
           // Skip download?
           let skipDownload: { skip: false; } | { skip: true; reason: DownloadTaskSkipReason } = { skip: false };
@@ -178,7 +191,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
             commit();
           }
   
-          this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
+          await this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
   
           if (proceedWithCommit) {
             this.notifyComplete();

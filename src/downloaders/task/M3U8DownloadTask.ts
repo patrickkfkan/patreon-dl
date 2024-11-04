@@ -16,6 +16,10 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
     this.#destFilePath = params.destFilePath;
   }
 
+  protected resolveDestPath() {
+    return Promise.resolve(this.#destFilePath);
+  }
+
   protected async getFFmpegCommandParams(): Promise<FFmpegCommandParams> {
     return Promise.resolve({
       inputs: [

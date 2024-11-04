@@ -4,6 +4,11 @@ import type DownloadTask from './DownloadTask.js';
 import type Fetcher from '../../utils/Fetcher.js';
 import EventEmitter from 'events';
 import { type DownloadTaskBatchEvent, type DownloadTaskBatchEventPayloadOf } from './DownloadTaskBatchEvent.js';
+import path from 'path';
+import FSHelper from '../../utils/FSHelper.js';
+import {type LogLevel} from '../../utils/logging/Logger.js';
+import type Logger from '../../utils/logging/Logger.js';
+import { commonLog } from '../../utils/logging/Logger.js';
 
 export interface DownloadTaskBatchParams {
   name: string;
@@ -11,7 +16,8 @@ export interface DownloadTaskBatchParams {
   limiter: {
     maxConcurrent: number;
     minTime: number;
-  }
+  };
+  logger?: Logger | null;
 }
 
 export interface IDownloadTaskBatch extends EventEmitter {
@@ -36,6 +42,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
   #name: string;
   #tasks: DownloadTask[];
   #limiter: Bottleneck;
+  #logger?: Logger | null;
   #startPromise: Promise<void> | null;
   #startingCallback?: (() => void) | null;
   #abortPromise: Promise<void> | null;
@@ -53,6 +60,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
     this.#taskIdCounter = 0;
     this.#name = params.name;
     this.#tasks = [];
+    this.#logger = params.logger;
     this.#startPromise = null;
     this.#startingCallback = null;
     this.#abortPromise = null;
@@ -129,6 +137,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
         resolve();
       };
       if (this.#tasks.length > 0) {
+        this.#resolveConflictingDestPaths();
         for (const task of this.#tasks) {
           void this.#limiter.schedule(() => task.start());
         }
@@ -140,6 +149,21 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
     });
 
     return this.#startPromise;
+  }
+
+  #resolveConflictingDestPaths() {
+    const tasks = this.#tasks.filter((task) => !task.doa && task.resolvedDestPath);
+    this.log('debug', `Resolve conflicting dest paths (${tasks.length} tasks)`);
+    for (const t of tasks) {
+      const dup = tasks.filter((task) => task.resolvedDestPath === t.resolvedDestPath);
+      if (dup.length > 1) {
+        this.log('debug', `${dup.length} tasks have same dest path "${t.resolvedDestPath}"`);
+        dup.forEach((task) => {
+          task.addSuffixToDestPath(` - ${task.srcEntity.id}`);
+          this.log('debug', `(#${this.id}.${task.id}): Override dest path -> "${task.resolvedDestPath}"`);
+        });
+      }
+    }
   }
 
   #checkAndCallbackBatchComplete() {
@@ -221,6 +245,14 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
 
   get name() {
     return this.#name;
+  }
+
+  get limiter() {
+    return this.#limiter;
+  }
+
+  protected log(level: LogLevel, ...msg: any[]) {
+    commonLog(this.#logger, level, this.name, ...msg);
   }
 
   on<T extends DownloadTaskBatchEvent>(event: T, listener: (args: DownloadTaskBatchEventPayloadOf<T>) => void): this;

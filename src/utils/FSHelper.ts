@@ -219,9 +219,9 @@ export default class FSHelper {
     return [ useName, sanitizedSuffix, sanitizedExt ].join('');
   }
 
-  static createTmpFilePath(filePath: string) {
+  static createTmpFilePath(filePath: string, prefix = '') {
     const { dir, base } = path.parse(filePath);
-    const tmpFilename = this.createFilename({ name: base, ext: '.part' });
+    const tmpFilename = this.createFilename({ name: `${prefix ? `${prefix}-` : ''}${base}`, ext: '.part' });
     return path.resolve(dir, tmpFilename);
   }
 

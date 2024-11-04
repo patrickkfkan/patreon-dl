@@ -3,6 +3,7 @@ import clc from 'cli-color';
 import dateFormat from 'dateformat';
 import Logger, { type LogEntry, type LogLevel } from '../../utils/logging/Logger.js';
 import { type DeepRequired, pickDefined } from '../../utils/Misc.js';
+import { FetcherError } from '../Fetcher.js';
 
 const LOG_LEVEL_ORDER = [
   'error',
@@ -106,6 +107,9 @@ export default class ConsoleLogger extends Logger {
     }
     else if (m.cause) {
       result.push(m.cause as string);
+    }
+    if (m instanceof FetcherError) {
+      result.push(`(${m.method}: ${m.url})`);
     }
     if (m.stack && this.config.include.errorStack && !forceNoStack) {
       result.push(m.stack);

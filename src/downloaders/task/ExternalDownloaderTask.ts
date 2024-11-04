@@ -36,6 +36,10 @@ export default class ExternalDownloaderTask extends DownloadTask {
     this.name = params.name;
   }
 
+  protected resolveDestPath() {
+    return Promise.resolve('(not applicable)');
+  }  
+
   protected doStart() {
     return new Promise<void>((resolve) => {
 

@@ -151,8 +151,9 @@ export default class ProductDownloader extends Downloader<Product> {
   
         if (this.config.include.previewMedia || this.config.include.contentMedia) {
           this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
-          batch = this.createDownloadTaskBatch(
+          batch = await this.createDownloadTaskBatch(
             `Product #${product.id} (${product.name})`,
+            signal,
   
             previewMedia.length > 0 ? {
               target: previewMedia,
@@ -168,6 +169,10 @@ export default class ProductDownloader extends Downloader<Product> {
               fileExistsAction: this.config.fileExistsAction.content
             } : null
           );
+
+          if (this.checkAbortSignal(signal, resolve)) {
+            return;
+          }
   
           this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
           this.emit('phaseBegin', { target: product, phase: 'batchDownload', batch });

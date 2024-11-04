@@ -36,6 +36,11 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     this.#ffmpegCommandParams = null;
   }
 
+  protected async resolveDestPath() {
+    const params = await this.getFFmpegCommandParams();
+    return params.output;
+  }
+
   getInnertube() {
     return InnertubeLoader.getInstance();
   }

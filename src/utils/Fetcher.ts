@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import { pipeline } from 'stream/promises';
-import { URL } from 'url';
 import path from 'path';
 import FetcherProgressMonitor from './FetcherProgressMonitor.js';
 import { type Downloadable } from '../entities/Downloadable.js';
@@ -15,9 +14,8 @@ import Progress from './Progress.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
-  destDir: string;
   srcEntity: T;
-  destFilenameResolver: FilenameResolver<T>;
+  destFilePath: string;
   signal: AbortSignal;
 }
 
@@ -29,11 +27,13 @@ export interface StartDownloadOverrides {
 export class FetcherError extends Error {
 
   url: string;
+  method: string;
 
-  constructor(message: string, url: string) {
+  constructor(message: string, url: string, method: string) {
     super(message);
     this.name = 'FetcherError';
     this.url = url;
+    this.method = method;
   }
 }
 
@@ -92,30 +92,38 @@ export default class Fetcher {
       }
       const errMsg = error instanceof Error ? error.message : error;
       const retriedMsg = rt > 0 ? ` (retried ${rt} times)` : '';
-      throw new FetcherError(`${errMsg}${retriedMsg}`, urlObj.toString());
+      throw new FetcherError(`${errMsg}${retriedMsg}`, urlObj.toString(), request.method);
     }
   }
 
-  async prepareDownload<T extends Downloadable>(params: PrepareDownloadParams<T>) {
-    const { url, destFilenameResolver, destDir, signal } = params;
-    const request = new Request(url, { method: 'GET' });
-    // Note: do not set cookie and host in headers except for attachments, otherwise you'll get 404 Not Found.
-    if (params.srcEntity.type === 'attachment') {
-      /**
-       * Special handling for attachments.
-       * 1. Send request with cookie. Server will redirect response to actual download URL.
-       *    However, in the request to redirect URL, the cookie and host set in headers will
-       *    cause server to return 404 - Not Found.
-       * 2. So we need to make another request to the redirect URL, this time without
-       *    setting cookie and host in headers. Server should return response 200, allowing us to stream
-       *    the response body to file.
-       */
-      this.#setHeaders(request, 'html');
-    }
-    else {
-      this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
+  async resolveDestFilePath<T extends Downloadable>(params: {
+    url: string;
+    destDir: string;
+    destFilenameResolver: FilenameResolver<T>;
+    signal?: AbortSignal;
+  }) {
+    const { url, destDir, destFilenameResolver, signal } = params;
+    const request = new Request(url, { method: 'HEAD' });
+    const internalAbortController = new AbortController();
+    if (signal) {
+      signal.addEventListener('abort', () => internalAbortController.abort(), {once: true});
     }
 
+    const res = await fetch(request, { signal: internalAbortController.signal });
+
+    if (this.#assertResponseOK(res, url, request.method, false)) {
+      const destFilename = destFilenameResolver.resolve(res);
+      const destFilePath = path.resolve(destDir, destFilename);
+      return destFilePath;
+    }
+
+    return undefined as never;
+  }
+
+  async prepareDownload<T extends Downloadable>(params: PrepareDownloadParams<T>) {
+    const { url, srcEntity, destFilePath, signal } = params;
+    const request = new Request(url, { method: 'GET' });
+    this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
     const internalAbortController = new AbortController();
     if (signal) {
       signal.addEventListener('abort', () => internalAbortController.abort(), {once: true});
@@ -130,10 +138,8 @@ export default class Fetcher {
       res = await fetch(redirectReq, { signal: internalAbortController.signal });
     }
 
-    if (this.#assertResponseOK(res, url)) {
-      const destFilename = destFilenameResolver.resolve(res);
-      const destFilePath = path.resolve(destDir, destFilename);
-
+    if (this.#assertResponseOK(res, url, request.method)) {
+      const destFilename = path.parse(destFilePath).base;
       const progress = new Progress(res, {
         reportInterval: 300
       });
@@ -142,7 +148,7 @@ export default class Fetcher {
       const _res = res;
       const start = (overrides?: StartDownloadOverrides) => {
         const _destFilePath = overrides?.destFilePath || destFilePath;
-        const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath);
+        const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath, srcEntity.id);
         return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress);
       };
       const abort = () => {
@@ -150,7 +156,6 @@ export default class Fetcher {
       };
 
       return {
-        destFilePath,
         monitor,
         start,
         abort
@@ -248,17 +253,17 @@ export default class Fetcher {
     }
   }
 
-  #assertResponseOK(response: Response | null, originURL: string, requireBody: false): response is Response;
-  #assertResponseOK(response: Response | null, originURL: string, requireBody?: true): response is Response & { body: NodeJS.ReadableStream };
-  #assertResponseOK(response: Response | null, originURL: string, requireBody = true) {
+  #assertResponseOK(response: Response | null, originURL: string, method: string, requireBody: false): response is Response;
+  #assertResponseOK(response: Response | null, originURL: string, method: string, requireBody?: true): response is Response & { body: NodeJS.ReadableStream };
+  #assertResponseOK(response: Response | null, originURL: string, method: string, requireBody = true) {
     if (!response) {
-      throw new FetcherError('No response', originURL);
+      throw new FetcherError('No response', originURL, method);
     }
     if (!response.ok) {
-      throw new FetcherError(`${response.status} - ${response.statusText}`, originURL);
+      throw new FetcherError(`${response.status} - ${response.statusText}`, originURL, method);
     }
     if (requireBody && !response.body) {
-      throw new FetcherError('Empty response body', originURL);
+      throw new FetcherError('Empty response body', originURL, method);
     }
     return true;
   }

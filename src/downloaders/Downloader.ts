@@ -11,7 +11,7 @@ import { commonLog } from '../utils/logging/Logger.js';
 import { type Campaign } from '../entities/Campaign.js';
 import FSHelper, { type WriteTextFileResult } from '../utils/FSHelper.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
-import { type IDownloadTask } from './task/DownloadTask.js';
+import DownloadTask, { type IDownloadTask } from './task/DownloadTask.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import FilenameFormatHelper from '../utils/FilenameFormatHelper.js';
 import { type Downloadable } from '../entities/Downloadable.js';
@@ -23,6 +23,7 @@ import InnertubeLoader from '../utils/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
+import Bottleneck from 'bottleneck';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -75,7 +76,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     this.#hasEmittedEndEventOnAbort = false;
   }
 
-  protected createDownloadTaskBatch(name: string, ...createTasks: Array<CreateDownloadTaskParams | null>): DownloadTaskBatch {
+  protected createDownloadTaskBatch(name: string, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>): Promise<DownloadTaskBatch> {
 
     const __getDownloadIdString = (task: IDownloadTask, batch: DownloadTaskBatch) => {
       let result = `#${batch.id}.${task.id}`;
@@ -88,7 +89,8 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     const batch = new DownloadTaskBatch({
       name,
       fetcher: this.fetcher,
-      limiter: this.config.request
+      limiter: this.config.request,
+      logger: this.logger
     });
 
     batch.on('taskStart', ({task}) => {
@@ -161,10 +163,10 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       this.log('info', `Download batch complete (#${batch.id}): ${counts}`);
     });
 
-    return this.addToDownloadTaskBatch(batch, ...createTasks);
+    return this.addToDownloadTaskBatch(batch, signal, ...createTasks);
   }
 
-  protected addToDownloadTaskBatch(batch: DownloadTaskBatch, ...createTasks: Array<CreateDownloadTaskParams | null>) {
+  protected async addToDownloadTaskBatch(batch: DownloadTaskBatch, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>) {
     let failedCreateTaskCount = 0;
     for (const task of createTasks) {
       if (!task) {
@@ -179,19 +181,32 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       let createdCount = 0;
       for (const tt of target) {
         try {
-          const tasks = DownloadTaskFactory.createFromDownloadable({
+          const tasks = await DownloadTaskFactory.createFromDownloadable({
             config: this.config,
             item: tt,
             destDir,
             fetcher: this.fetcher,
             fileExistsAction: task.fileExistsAction,
+            limiter: batch.limiter,
+            signal,
             logger: this.logger
           });
-          batch.addTasks(tasks);
+          // Filter out tasks that are DOA (errors that occurred in DownloadTask.create())
+          for (const task of tasks) {
+            if (task.doa) {
+              this.log('error', `Failed to create download task for item #${tt.id} in ${targetName}:`, task.doa.msg, task.doa.cause);
+              failedCreateTaskCount++;
+            }
+          }
+          batch.addTasks(tasks.filter((task) => !task.doa));
           createdCount += tasks.length;
         }
         catch (error) {
-          this.log('error', `Failed to create download task for item #${tt.id} in ${targetName}:`, error);
+          if (signal?.aborted) {
+            this.log('warn', 'Operation aborted');
+            return batch;
+          }
+          this.log('error', `Failed to create download task(s) for item #${tt.id} in ${targetName}:`, error);
           failedCreateTaskCount++;
         }
       }
@@ -374,8 +389,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             campaignMedia.push(reward.image);
           }
         }
-        batch = this.createDownloadTaskBatch(
+        batch = await this.createDownloadTaskBatch(
           `Campaign #${campaign.id} (${campaign.name})`,
+          signal,
           {
             target: campaignMedia,
             targetName: `campaign #${campaign.id} -> images`,
@@ -383,6 +399,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             fileExistsAction: this.config.fileExistsAction.info
           }
         );
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
         this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
         await batch.start();
         await batch.destroy();

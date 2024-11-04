@@ -378,7 +378,11 @@ export default class PostDownloader extends Downloader<Post> {
               this.config.include.contentMedia ||
               this.config.include.contentInfo) {
   
-              batch = this.#createDownloadTaskBatchForPost(post, postDirs);
+              batch = await this.#createDownloadTaskBatchForPost(post, postDirs, signal);
+
+              if (this.checkAbortSignal(signal, resolve)) {
+                return;
+              }
   
               if (this.config.include.contentInfo) {
                 const infoElements: Downloadable[] = [];
@@ -389,7 +393,8 @@ export default class PostDownloader extends Downloader<Post> {
                   infoElements.push(post.thumbnail);
                 }
                 if (infoElements.length > 0) {
-                  this.addToDownloadTaskBatch(batch,
+                  await this.addToDownloadTaskBatch(batch,
+                    signal,
                     {
                       target: infoElements,
                       targetName: `post #${post.id} -> info elements`,
@@ -523,7 +528,7 @@ export default class PostDownloader extends Downloader<Post> {
     return postsParser.parseCampaignAPIResponse(res.json);
   }
 
-  #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof this.fsHelper['getPostDirs']>) {
+  #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof this.fsHelper['getPostDirs']>, signal?: AbortSignal) {
 
     const incPreview = this.config.include.previewMedia;
     const incContent = this.config.include.contentMedia;
@@ -544,6 +549,7 @@ export default class PostDownloader extends Downloader<Post> {
 
     const batch = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
+      signal,
 
       __incPreview('audio') && post.audioPreview ? {
         target: [ post.audioPreview ],

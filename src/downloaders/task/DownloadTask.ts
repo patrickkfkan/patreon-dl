@@ -5,6 +5,7 @@ import type Logger from '../../utils/logging/Logger.js';
 import { commonLog } from '../../utils/logging/Logger.js';
 import FSHelper from '../../utils/FSHelper.js';
 import { type DownloaderConfig } from '../Downloader.js';
+import type Bottleneck from 'bottleneck';
 
 export class DownloadTaskError extends Error {
   task: IDownloadTask;
@@ -104,6 +105,10 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
   #lastProgress: DownloadProgress | null;
   #status: DownloadTaskStatus;
   #fsHelper: FSHelper;
+  #doa: {
+    msg: string;
+    cause: unknown;
+  } | null;
 
   #startPromise: Promise<void> | null;
   #startingCallback: (() => void) | null;
@@ -120,6 +125,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     this.#logger = params.logger;
     this.#lastProgress = null;
     this.#status = 'pending';
+    this.#doa = null;
     this.#startPromise = null;
     this.#startingCallback = null;
     this.#abortPromise = null;
@@ -129,10 +135,72 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     DownloadTask.#idCounter++;
   }
 
+  protected abstract resolveDestPath(signal?: AbortSignal): Promise<string>;
   protected abstract doStart(): Promise<void>;
   protected abstract doAbort(): Promise<void>;
   protected abstract doDestroy(): Promise<void>;
   protected abstract doGetProgress(): DownloadProgress | null | undefined;
+
+  static async create<A extends DownloadTask<B>, B extends Downloadable, C extends DownloadTaskParams<B>>(
+    classname: new (p: C) => A,
+    params: C,
+    limiter?: Bottleneck,
+    signal?: AbortSignal
+  ): Promise<A> {
+    const task = new classname(params);
+    const maxRetries = params.config.request.maxRetries;
+    const __doResolveDestPath = async () => {
+      let t = 0;
+      let err: unknown;
+      while (t < maxRetries + 1) {
+        try {
+          const p = await task.resolveDestPath(signal);
+          task.resolvedDestPath = p;
+          task.log('debug', `(Task create #${task.srcEntity.id}) Resolved dest path: "${p}"`);
+          return {
+            hasError: false,
+            destPath: p
+          };
+        }
+        catch (error: unknown) {
+          if (signal?.aborted) {
+            throw error;
+          }
+          const willRetry = t < maxRetries ? 'will retry' : 'max reached';
+          const retryStr = t > 0 ? `retried ${t} times - ${willRetry}`: willRetry;
+          task.log('error', `(Task create #${task.srcEntity.id}) Error resolving dest path (${retryStr}):`, error);
+          err = error;
+          t++;
+        }
+      }
+      return {
+        hasError: true,
+        msg: 'Could not resolve destination path',
+        error: err
+      };
+    };
+    const result = limiter ? await limiter.schedule(() => __doResolveDestPath()) : await __doResolveDestPath();
+    if (result.hasError) {
+      task.#doa = {
+        msg: result.msg as string,
+        cause: result.error
+      };
+    }
+    return task;
+  }
+
+  addSuffixToDestPath(suffix: string) {
+    if (!this.resolvedDestPath) {
+      throw Error('Destination file path not resolved');
+    }
+    const parts = path.parse(this.resolvedDestPath);
+    const newFilename = FSHelper.createFilename({
+      name: parts.name,
+      suffix,
+      ext: parts.ext
+    });
+    this.resolvedDestPath = path.resolve(parts.dir, newFilename);
+  }
 
   start() {
     if (this.#startPromise) {
@@ -141,6 +209,11 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
 
     if (this.hasEnded()) {
       // Cannot start an ended task
+      return Promise.resolve();
+    }
+
+    if (this.#doa) {
+      this.notifyError(Error(this.#doa.msg, { cause: this.#doa.cause }), false);
       return Promise.resolve();
     }
 
@@ -224,13 +297,13 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     this.#notifyEnd('skipped', reason);
   }
 
-  protected notifyError(error: any) {
+  protected notifyError(error: any, allowRetry = true) {
     const msg = error instanceof Error ? error.message : error;
     const err = new DownloadTaskError(msg, this);
     if (error instanceof Error) {
       err.cause = error;
     }
-    const willRetry = this.#retryCount < this.maxRetries;
+    const willRetry = allowRetry && this.#retryCount < this.maxRetries;
     this.#notifyEnd('error', err, willRetry);
   }
 
@@ -311,6 +384,10 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
 
   get resolvedDestPath() {
     return this.#resolvedDestPath;
+  }
+
+  get doa() {
+    return this.#doa;
   }
 
   protected set resolvedDestPath(value: string | null) {
