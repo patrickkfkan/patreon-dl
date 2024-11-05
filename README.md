@@ -650,6 +650,12 @@ Each event emitted by a download task batch has a payload, which is an object wi
 
 ## Changelog
 
+v2.1.0
+- Fix attachment downloads following API changes ([#40](https://github.com/patrickkfkan/patreon-dl/issues/40))
+- Add support for URL format: `https://www.patreon.com/c/<creator>/posts`
+- Check and resolve conflicting destination paths ([#38](https://github.com/patrickkfkan/patreon-dl/issues/38))
+- Parse inline content media ([#40](https://github.com/patrickkfkan/patreon-dl/issues/40))
+
 v2.0.0
 - Replace [node-fetch](https://github.com/node-fetch/node-fetch) with Fetch API; required Node.js version bumped to v18 or higher.
 - Update dependencies and libraries
