@@ -118,6 +118,10 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
     this.#tasks.push(...tasks);
   }
 
+  prestart() {
+    this.#resolveConflictingDestPaths();
+  }
+
   start() {
     if (this.isAborted()) {
       throw Error('Cannot start aborted task batch');
@@ -137,7 +141,6 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
         resolve();
       };
       if (this.#tasks.length > 0) {
-        this.#resolveConflictingDestPaths();
         for (const task of this.#tasks) {
           void this.#limiter.schedule(() => task.start());
         }
@@ -153,6 +156,9 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
 
   #resolveConflictingDestPaths() {
     const tasks = this.#tasks.filter((task) => !task.doa && task.resolvedDestPath);
+    if (tasks.length === 0) {
+      return;
+    }
     this.log('debug', `Resolve conflicting dest paths (${tasks.length} tasks)`);
     for (const t of tasks) {
       const dup = tasks.filter((task) => task.resolvedDestPath === t.resolvedDestPath);

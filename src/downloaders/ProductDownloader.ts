@@ -174,6 +174,7 @@ export default class ProductDownloader extends Downloader<Product> {
             return;
           }
   
+          batch.prestart();
           this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
           this.emit('phaseBegin', { target: product, phase: 'batchDownload', batch });
   

@@ -402,6 +402,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
+        batch.prestart();
         this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
         await batch.start();
         await batch.destroy();

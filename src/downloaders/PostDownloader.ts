@@ -405,6 +405,7 @@ export default class PostDownloader extends Downloader<Post> {
                 }
               }
   
+              batch.prestart();
               this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
               this.emit('phaseBegin', { target: post, phase: 'batchDownload', batch });
   
