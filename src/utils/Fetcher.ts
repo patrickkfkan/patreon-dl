@@ -79,8 +79,15 @@ export default class Fetcher {
     }
     const request = new Request(urlObj, { method: 'GET' });
     this.#setHeaders(request, type);
+    const internalAbortController = new AbortController();
+    let removeAbortHandler: undefined | (() => void) = undefined;
+    if (signal) {
+      const abortHandler = () => internalAbortController.abort();
+      signal.addEventListener('abort', abortHandler, {once: true});
+      removeAbortHandler = () => signal.removeEventListener('abort', abortHandler);
+    }
     try {
-      const res = await fetch(request, { signal });
+      const res = await fetch(request, { signal: internalAbortController.signal });
       return await (type === 'html' ? res.text() : res.json()) as FetcherGetResultOf<T>;
     }
     catch (error: any) {
@@ -88,11 +95,15 @@ export default class Fetcher {
         throw error;
       }
       if (rt < maxRetries) {
-        return this.get({ url, type, payload, maxRetries }, rt + 1);
+        if (removeAbortHandler) removeAbortHandler();
+        return await this.get({ url, type, payload, maxRetries, signal }, rt + 1);
       }
       const errMsg = error instanceof Error ? error.message : error;
       const retriedMsg = rt > 0 ? ` (retried ${rt} times)` : '';
       throw new FetcherError(`${errMsg}${retriedMsg}`, urlObj.toString(), request.method);
+    }
+    finally {
+      if (removeAbortHandler) removeAbortHandler();
     }
   }
 
