@@ -9,6 +9,8 @@ import type Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import { type Reward, type Tier } from '../entities/Reward.js';
+import URLHelper from '../utils/URLHelper.js';
+import FSHelper from '../utils/FSHelper.js';
 
 const DOWNLOADABLE_TYPES = [ 'media' ] as const;
 
@@ -142,6 +144,7 @@ export default abstract class Parser {
    */
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: typeof DOWNLOADABLE_TYPES[number]): Downloadable | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'tier', campaign: Campaign): Tier | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs: 'image', fallbackData?: Record<string, any>): MediaItem | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file' | 'attachment'): MediaItem | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'reward'): Reward | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
@@ -171,6 +174,10 @@ export default abstract class Parser {
           return this.parseRewardAPIDataInIncludedArray(inc);
         }
       }
+    }
+
+    if (matchType === 'media' && args[0] === 'image' && args[1]) {
+      return this.parseMediaItemAPIDataInIncludedArray(args[1], args[0]);
     }
 
     this.log('warn', `Item #${id} not found in API response or has invalid data`);
@@ -520,20 +527,30 @@ export default abstract class Parser {
     return reward;
   }
 
-  protected parseInlineMedia(content: string, included: Array<any>) {
+  protected parseInlineMedia(postId: string, content: string, included: Array<any>) {
     const $ = cheerioLoad(content);
 
     // Patreon images
     // <img data-media-id="279317228" src="https://c10.patreonusercontent.com/4...">
-    const imgMediaIDs = $('img').toArray().reduce<string[]>((result, el) => {
+    const imgMediaIDs = $('img').toArray().reduce<Array<{ id: string, src?: string }>>((result, el) => {
       const id = $(el).attr('data-media-id');
+      const src = $(el).attr('src');
       if (id) {
-        result.push(id);
+        result.push({id, src});
       }
       return result;
     }, []);
     const images = imgMediaIDs
-      .map((id) => this.findInAPIResponseIncludedArray(included, id, 'media', 'image'))
+      .map(({id, src}) => this.findInAPIResponseIncludedArray(included, id, 'media', 'image', src ? {
+        id,
+        attributes: {
+          file_name: FSHelper.sanitizeFilename(`${postId}_${id}${URLHelper.getExtensionFromURL(src)}`),
+          media_type: 'image',
+          image_urls: {
+            original: src
+          }
+        }
+      } : undefined))
       .filter((item) => item !== null);
     this.log('debug', `Parse inline media - got ${images.length} images`);
 

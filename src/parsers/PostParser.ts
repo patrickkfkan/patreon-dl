@@ -126,7 +126,7 @@ export default class PostParser extends Parser {
 
       // Get inline media from content (currently only images supported)
       if (hasIncludedJSON && attributes.content) {
-        const inlineMedia = this.parseInlineMedia(attributes.content, includedJSON);
+        const inlineMedia = this.parseInlineMedia(id, attributes.content, includedJSON);
         images.push(...inlineMedia.images);
       }
 
