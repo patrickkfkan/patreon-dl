@@ -105,16 +105,24 @@ export default class Fetcher {
     const { url, destDir, destFilenameResolver, signal } = params;
     const request = new Request(url, { method: 'HEAD' });
     const internalAbortController = new AbortController();
+    const abortHandler = () => internalAbortController.abort();
     if (signal) {
-      signal.addEventListener('abort', () => internalAbortController.abort(), {once: true});
+      signal.addEventListener('abort', abortHandler, {once: true});
     }
 
-    const res = await fetch(request, { signal: internalAbortController.signal });
+    try {
+      const res = await fetch(request, { signal: internalAbortController.signal });
 
-    if (this.#assertResponseOK(res, url, request.method, false)) {
-      const destFilename = destFilenameResolver.resolve(res);
-      const destFilePath = path.resolve(destDir, destFilename);
-      return destFilePath;
+      if (this.#assertResponseOK(res, url, request.method, false)) {
+        const destFilename = destFilenameResolver.resolve(res);
+        const destFilePath = path.resolve(destDir, destFilename);
+        return destFilePath;
+      }
+    }
+    finally {
+      if (signal) {
+        signal.removeEventListener('abort', abortHandler);
+      }
     }
 
     return undefined as never;
@@ -125,41 +133,51 @@ export default class Fetcher {
     const request = new Request(url, { method: 'GET' });
     this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
     const internalAbortController = new AbortController();
+    let removeAbortHandler: undefined | (() => void) = undefined;
     if (signal) {
-      signal.addEventListener('abort', () => internalAbortController.abort(), {once: true});
+      const abortHandler = () => internalAbortController.abort();
+      signal.addEventListener('abort', abortHandler, {once: true});
+      removeAbortHandler = () => signal.removeEventListener('abort', abortHandler);
     }
 
-    let res = await fetch(request, { signal: internalAbortController.signal });
+    try {
+      let res = await fetch(request, { signal: internalAbortController.signal });
 
-    // Special handling for attachment
-    if (params.srcEntity.type === 'attachment' && !res.ok && res.redirected && res.url) {
-      const redirectReq = new Request(res.url, { method: 'GET' });
-      this.#setHeaders(redirectReq, 'html', { setCookie: false, setHost: false });
-      res = await fetch(redirectReq, { signal: internalAbortController.signal });
+      // Special handling for attachment
+      if (params.srcEntity.type === 'attachment' && !res.ok && res.redirected && res.url) {
+        const redirectReq = new Request(res.url, { method: 'GET' });
+        this.#setHeaders(redirectReq, 'html', { setCookie: false, setHost: false });
+        res = await fetch(redirectReq, { signal: internalAbortController.signal });
+      }
+
+      if (this.#assertResponseOK(res, url, request.method)) {
+        const destFilename = path.parse(destFilePath).base;
+        const progress = new Progress(res, {
+          reportInterval: 300
+        });
+        const monitor = new FetcherProgressMonitor(progress, destFilename, destFilePath);
+
+        const _res = res;
+        const start = (overrides?: StartDownloadOverrides) => {
+          const _destFilePath = overrides?.destFilePath || destFilePath;
+          const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath, srcEntity.id);
+          return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress, removeAbortHandler)
+        };
+        const abort = () => {
+          if (removeAbortHandler) removeAbortHandler();
+          internalAbortController.abort();
+        };
+
+        return {
+          monitor,
+          start,
+          abort
+        };
+      }
     }
-
-    if (this.#assertResponseOK(res, url, request.method)) {
-      const destFilename = path.parse(destFilePath).base;
-      const progress = new Progress(res, {
-        reportInterval: 300
-      });
-      const monitor = new FetcherProgressMonitor(progress, destFilename, destFilePath);
-
-      const _res = res;
-      const start = (overrides?: StartDownloadOverrides) => {
-        const _destFilePath = overrides?.destFilePath || destFilePath;
-        const _tmpFilePath = overrides?.tmpFilePath || FSHelper.createTmpFilePath(_destFilePath, srcEntity.id);
-        return this.#startDownload(_res, _tmpFilePath, _destFilePath, progress);
-      };
-      const abort = () => {
-        internalAbortController.abort();
-      };
-
-      return {
-        monitor,
-        start,
-        abort
-      };
+    catch (error: unknown) {
+      if (removeAbortHandler) removeAbortHandler();
+      throw error;
     }
 
     return undefined as never;
@@ -169,7 +187,8 @@ export default class Fetcher {
     response: Response & { body: NodeJS.ReadableStream },
     tmpFilePath: string,
     destFilePath: string,
-    progress: Progress) {
+    progress: Progress,
+    cleanup?: () => void) {
 
     try {
       let size = 0;
@@ -194,11 +213,11 @@ export default class Fetcher {
       }
 
       const commit = () => {
-        this.#commitDownload(tmpFilePath, destFilePath, size);
+        this.#commitDownload(tmpFilePath, destFilePath, size, cleanup);
       };
 
       const discard = () => {
-        this.#cleanupDownload(tmpFilePath);
+        this.#cleanupDownload(tmpFilePath, cleanup);
       };
 
       return {
@@ -208,22 +227,22 @@ export default class Fetcher {
       };
     }
     catch (error) {
-      this.#cleanupDownload(tmpFilePath);
+      this.#cleanupDownload(tmpFilePath, cleanup);
       throw error;
     }
   }
 
-  #commitDownload(tmpFilePath: string, destFilePath: string, size: number) {
+  #commitDownload(tmpFilePath: string, destFilePath: string, size: number, cleanup?: () => void) {
     try {
       this.log('debug', `Commit "${tmpFilePath}" to "${destFilePath}; filesize: ${size} bytes`);
       this.#fsHelper.rename(tmpFilePath, destFilePath);
     }
     finally {
-      this.#cleanupDownload(tmpFilePath);
+      this.#cleanupDownload(tmpFilePath, cleanup);
     }
   }
 
-  #cleanupDownload(tmpFilePath: string) {
+  #cleanupDownload(tmpFilePath: string, extra?: () => void) {
     try {
       if (this.#dryRun || fs.existsSync(tmpFilePath)) {
         this.log('debug', `Clean up "${tmpFilePath}"`);
@@ -232,6 +251,9 @@ export default class Fetcher {
     }
     catch (error) {
       this.log('error', `Error cleaning up "${tmpFilePath}:`, error);
+    }
+    finally {
+      if (extra) extra();
     }
   }
 
