@@ -404,6 +404,10 @@ export default class PostDownloader extends Downloader<Post> {
                   );
                 }
               }
+
+              if (this.checkAbortSignal(signal, resolve)) {
+                return;
+              }
   
               batch.prestart();
               this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
