@@ -76,7 +76,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     this.#hasEmittedEndEventOnAbort = false;
   }
 
-  protected createDownloadTaskBatch(name: string, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>): Promise<DownloadTaskBatch> {
+  protected createDownloadTaskBatch(name: string, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>): Promise<{ batch: DownloadTaskBatch; errorCount: number; }> {
 
     const __getDownloadIdString = (task: IDownloadTask, batch: DownloadTaskBatch) => {
       let result = `#${batch.id}.${task.id}`;
@@ -204,7 +204,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         catch (error) {
           if (signal?.aborted) {
             this.log('warn', 'Operation aborted');
-            return batch;
+            return { batch, errorCount: failedCreateTaskCount };
           }
           this.log('error', `Failed to create download task(s) for item #${tt.id} in ${targetName}:`, error);
           failedCreateTaskCount++;
@@ -217,7 +217,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     if (failedCreateTaskCount > 0) {
       this.log('warn', `${failedCreateTaskCount} items could not be processed for downloading`);
     }
-    return batch;
+    return { batch, errorCount: failedCreateTaskCount };
   }
 
   abstract start(params: DownloaderStartParams): Promise<void>;
@@ -389,7 +389,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             campaignMedia.push(reward.image);
           }
         }
-        batch = await this.createDownloadTaskBatch(
+        batch = (await this.createDownloadTaskBatch(
           `Campaign #${campaign.id} (${campaign.name})`,
           signal,
           {
@@ -398,7 +398,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             destDir: campaignDirs.info,
             fileExistsAction: this.config.fileExistsAction.info
           }
-        );
+        )).batch;
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }

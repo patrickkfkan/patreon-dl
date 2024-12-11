@@ -374,11 +374,14 @@ export default class PostDownloader extends Downloader<Post> {
             }
   
             // Step 4.6: create download tasks
+            let createTaskErrorCount = 0;
             if (this.config.include.previewMedia ||
               this.config.include.contentMedia ||
               this.config.include.contentInfo) {
   
-              batch = await this.#createDownloadTaskBatchForPost(post, postDirs, signal);
+              const batchResult = await this.#createDownloadTaskBatchForPost(post, postDirs, signal);
+              batch = batchResult.batch;
+              createTaskErrorCount += batchResult.errorCount;
 
               if (this.checkAbortSignal(signal, resolve)) {
                 return;
@@ -393,7 +396,7 @@ export default class PostDownloader extends Downloader<Post> {
                   infoElements.push(post.thumbnail);
                 }
                 if (infoElements.length > 0) {
-                  await this.addToDownloadTaskBatch(batch,
+                  const { errorCount } = await this.addToDownloadTaskBatch(batch,
                     signal,
                     {
                       target: infoElements,
@@ -402,6 +405,7 @@ export default class PostDownloader extends Downloader<Post> {
                       fileExistsAction: this.config.fileExistsAction.info
                     }
                   );
+                  createTaskErrorCount += errorCount;
                 }
               }
 
@@ -416,7 +420,7 @@ export default class PostDownloader extends Downloader<Post> {
               await batch.start();
   
               // Step 4.7: Update status cache
-              statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0, this.config);
+              statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0 || createTaskErrorCount > 0, this.config);
   
               await batch.destroy();
               batch = null;
@@ -552,7 +556,7 @@ export default class PostDownloader extends Downloader<Post> {
       return incContent.includes(mediaType);
     };
 
-    const batch = this.createDownloadTaskBatch(
+    const batchResult = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
       signal,
 
@@ -619,6 +623,6 @@ export default class PostDownloader extends Downloader<Post> {
         } : null
     );
 
-    return batch;
+    return batchResult;
   }
 }

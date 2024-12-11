@@ -151,7 +151,7 @@ export default class ProductDownloader extends Downloader<Product> {
   
         if (this.config.include.previewMedia || this.config.include.contentMedia) {
           this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
-          batch = await this.createDownloadTaskBatch(
+          const batchResult = await this.createDownloadTaskBatch(
             `Product #${product.id} (${product.name})`,
             signal,
   
@@ -169,11 +169,12 @@ export default class ProductDownloader extends Downloader<Product> {
               fileExistsAction: this.config.fileExistsAction.content
             } : null
           );
-
+          
           if (this.checkAbortSignal(signal, resolve)) {
             return;
           }
-  
+          
+          batch = batchResult.batch;
           batch.prestart();
           this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
           this.emit('phaseBegin', { target: product, phase: 'batchDownload', batch });
@@ -181,7 +182,7 @@ export default class ProductDownloader extends Downloader<Product> {
           await batch.start();
   
           // Step 9: Update status cache
-          statusCache.updateOnDownload(product, productDirs.root, batch.getTasks('error').length > 0, this.config);
+          statusCache.updateOnDownload(product, productDirs.root, batch.getTasks('error').length > 0 || batchResult.errorCount > 0, this.config);
   
           await batch.destroy();
           batch = null;
