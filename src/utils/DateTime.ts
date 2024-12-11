@@ -60,7 +60,7 @@ export default class DateTime {
         dateTimeStr
       };
     }
-    catch (error: any) {
+    catch (_error: unknown) {
       return {
         ok: false,
         message: `failed to parse date from ${dateTimeStr}`

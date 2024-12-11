@@ -292,7 +292,7 @@ export default class URLHelper {
     try {
       urlObj = new URL(url);
     }
-    catch (error) {
+    catch (_error: unknown) {
       return false;
     }
     return !!urlObj;

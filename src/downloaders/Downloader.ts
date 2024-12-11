@@ -11,7 +11,7 @@ import { commonLog } from '../utils/logging/Logger.js';
 import { type Campaign } from '../entities/Campaign.js';
 import FSHelper, { type WriteTextFileResult } from '../utils/FSHelper.js';
 import DownloadTaskBatch from './task/DownloadTaskBatch.js';
-import DownloadTask, { type IDownloadTask } from './task/DownloadTask.js';
+import { type IDownloadTask } from './task/DownloadTask.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import FilenameFormatHelper from '../utils/FilenameFormatHelper.js';
 import { type Downloadable } from '../entities/Downloadable.js';
@@ -23,7 +23,6 @@ import InnertubeLoader from '../utils/yt/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
-import Bottleneck from 'bottleneck';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &

@@ -212,7 +212,7 @@ export default class CommandLineParser {
     try {
       opts = this.#parseArgs();
     }
-    catch (error) {
+    catch (_error: unknown) {
       return false;
     }
     if (opts.help) {
@@ -253,7 +253,7 @@ export default class CommandLineParser {
     try {
       opts = this.#parseArgs();
     }
-    catch (error) {
+    catch (_error: unknown) {
       return false;
     }
     return opts['configure-youtube'];
@@ -264,7 +264,7 @@ export default class CommandLineParser {
     try {
       opts = this.#parseArgs();
     }
-    catch (error) {
+    catch (_error: unknown) {
       return null;
     }
 

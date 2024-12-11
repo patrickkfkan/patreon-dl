@@ -1,6 +1,6 @@
 import path from 'path';
 import * as InnertubeLib from 'youtubei.js';
-import { type YT, type Misc, type YTNodes } from 'youtubei.js';
+import { type YT, type Misc } from 'youtubei.js';
 import { type YouTubePostEmbed } from '../../entities/Post.js';
 import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
 import InnertubeLoader from '../../utils/yt/InnertubeLoader.js';
@@ -157,21 +157,21 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     try {
       bestVideoWithAudio = video.chooseFormat({ quality: 'best', type: 'video+audio', format: 'any' });
     }
-    catch (error) {
+    catch (_error: unknown) {
       bestVideoWithAudio = null;
     }
     try {
       // `bestVideo` may also contain audio
       bestVideo = video.chooseFormat({ quality: 'best', type: 'video', format: 'any' });
     }
-    catch (error) {
+    catch (_error: unknown) {
       bestVideo = null;
     }
     try {
       // `bestAudio` is audio only
       bestAudio = video.chooseFormat({ quality: 'best', type: 'audio', format: 'any' });
     }
-    catch (error) {
+    catch (_error: unknown) {
       bestAudio = null;
     }
 

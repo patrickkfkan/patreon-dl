@@ -4,8 +4,6 @@ import type DownloadTask from './DownloadTask.js';
 import type Fetcher from '../../utils/Fetcher.js';
 import EventEmitter from 'events';
 import { type DownloadTaskBatchEvent, type DownloadTaskBatchEventPayloadOf } from './DownloadTaskBatchEvent.js';
-import path from 'path';
-import FSHelper from '../../utils/FSHelper.js';
 import {type LogLevel} from '../../utils/logging/Logger.js';
 import type Logger from '../../utils/logging/Logger.js';
 import { commonLog } from '../../utils/logging/Logger.js';

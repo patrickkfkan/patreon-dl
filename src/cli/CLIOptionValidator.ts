@@ -137,7 +137,7 @@ export default class CLIOptionValidator {
     try {
       return this.validateString(entry, 'any', 'none');
     }
-    catch (error) {
+    catch (_error: unknown) {
       return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment' ] as const);
     }
   }
@@ -146,7 +146,7 @@ export default class CLIOptionValidator {
     try {
       return this.validateString(entry, 'any');
     }
-    catch (error) {
+    catch (_error: unknown) {
       return this.validateStringArray<string>(entry);
     }
   }
@@ -155,7 +155,7 @@ export default class CLIOptionValidator {
     try {
       return this.validateBoolean(entry);
     }
-    catch (error) {
+    catch (_error: unknown) {
       return this.validateStringArray(entry, [ 'image', 'video', 'audio' ] as const);
     }
   }
@@ -164,7 +164,7 @@ export default class CLIOptionValidator {
     try {
       return this.validateBoolean(entry);
     }
-    catch (error) {
+    catch (_error: unknown) {
       return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment', 'file' ] as const);
     }
   }
@@ -177,7 +177,7 @@ export default class CLIOptionValidator {
     try {
       return DateTime.from(v);
     }
-    catch (error) {
+    catch (_error: unknown) {
       throw Error(`${this.#logEntryKey(entry)} has invalid datetime string "${v}"; must be in this format: ${DateTime.FORMAT}`);
     }
   }

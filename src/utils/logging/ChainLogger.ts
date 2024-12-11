@@ -35,7 +35,7 @@ export default class ChainLogger extends Logger {
       try {
         await logger.end();
       }
-      catch (error) {
+      catch (_error: unknown) {
         // Do nothing
       }
     });

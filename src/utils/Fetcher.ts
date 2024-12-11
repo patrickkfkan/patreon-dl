@@ -209,7 +209,7 @@ export default class Fetcher {
             size += chunk.length;
           }
         }
-        catch (error) {
+        catch (_error: unknown) {
           // Do nothing
         }
       }

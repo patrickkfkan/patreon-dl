@@ -101,7 +101,7 @@ export default class PatreonDownloaderCLI {
               throw Error();
             }
           }
-          catch (error) {
+          catch (_error: unknown) {
             console.error(`${EOL}Error fetching tier data for "${target}"${EOL}${EOL}`);
             hasError = true;
           }

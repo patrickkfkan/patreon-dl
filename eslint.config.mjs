@@ -1,6 +1,7 @@
 // @ts-check
 import eslint from "@eslint/js";
 import tslint from "typescript-eslint";
+import unusedImports from "eslint-plugin-unused-imports";
 
 /** @type {import("typescript-eslint").ConfigWithExtends} */
 const config = {
@@ -9,6 +10,9 @@ const config = {
             project: true,
             tsconfigRootDir: import.meta.dirname,
         },
+    },
+    plugins: {
+        "unused-imports": unusedImports,
     },
     rules: {
         "@typescript-eslint/no-floating-promises": "error",
@@ -69,9 +73,6 @@ const config = {
         // Declaration merging with a namespace is a necessary tool when working with enums.
         "@typescript-eslint/no-namespace": "off",
 
-        // Reported by TypeScript
-        "@typescript-eslint/no-unused-vars": "off",
-
         "no-console": "off",
 
         "@typescript-eslint/no-confusing-void-expression": "off",
@@ -106,6 +107,19 @@ const config = {
                     "Use type.getSymbol() instead, Type.symbol is not properly typed.",
             },
         ],
+
+        "@typescript-eslint/no-unused-vars": "off",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": [
+            "warn",
+            {
+                "vars": "all",
+                "varsIgnorePattern": "^_",
+                "args": "after-used",
+                "argsIgnorePattern": "^_",
+                "caughtErrorsIgnorePattern": "^_"
+            },
+        ]
     },
 };
 
