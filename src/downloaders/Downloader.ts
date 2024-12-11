@@ -19,7 +19,7 @@ import { generateCampaignSummary } from './templates/CampaignInfo.js';
 import path from 'path';
 import URLHelper from '../utils/URLHelper.js';
 import ffmpeg from 'fluent-ffmpeg';
-import InnertubeLoader from '../utils/InnertubeLoader.js';
+import InnertubeLoader from '../utils/yt/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
@@ -70,7 +70,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
     InnertubeLoader.setLogger(this.logger);
     if (this.config.pathToYouTubeCredentials) {
-      InnertubeLoader.loadCredentials(this.config.pathToYouTubeCredentials);
+      InnertubeLoader.setCredentialsFile(this.config.pathToYouTubeCredentials);
     }
 
     this.#hasEmittedEndEventOnAbort = false;

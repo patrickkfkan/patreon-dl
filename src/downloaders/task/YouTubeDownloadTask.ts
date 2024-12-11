@@ -1,8 +1,9 @@
 import path from 'path';
+import * as InnertubeLib from 'youtubei.js';
 import { type YT, type Misc, type YTNodes } from 'youtubei.js';
 import { type YouTubePostEmbed } from '../../entities/Post.js';
 import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
-import InnertubeLoader from '../../utils/InnertubeLoader.js';
+import InnertubeLoader from '../../utils/yt/InnertubeLoader.js';
 import FSHelper from '../../utils/FSHelper.js';
 
 export interface YouTubeDownloadTaskParams extends FFmpegDownloadTaskBaseParams<YouTubePostEmbed> {
@@ -45,17 +46,36 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     return InnertubeLoader.getInstance();
   }
 
+  async #getInfo(videoId: string) {
+    const innertube = await this.getInnertube();
+    // Prepare request payload
+    const payload = {
+      videoId,
+      enableMdxAutoplay: true,
+      isMdxPlayback: true,
+      playbackContext: {
+        contentPlaybackContext: {
+          signatureTimestamp: innertube.session.player?.sts || 0
+        }
+      },
+      client: 'TV'
+    } as any;
+    const cpn = InnertubeLib.Utils.generateRandomString(16);
+    const playerResponse = await innertube.actions.execute('/player', payload) as any;
+    // Wrap response in innertube VideoInfo.
+    return new InnertubeLib.YT.VideoInfo([ playerResponse ], innertube.actions, cpn);
+  }
+
   protected async getFFmpegCommandParams(): Promise<FFmpegCommandParams> {
     if (this.#ffmpegCommandParams) {
       return this.#ffmpegCommandParams;
     }
 
-    const innertube = await this.getInnertube();
     const videoURL = this.src;
 
     this.log('debug', `Fetch video info from "${videoURL}"`);
-    const endpoint = await this.#resolveURL(videoURL);
-    const video = await innertube.getInfo(endpoint);
+    const videoId = await this.#resolveURL(videoURL);
+    const video = await this.#getInfo(videoId);
     
     this.log('debug', `Choose best-quality stream for YouTube video #${video.basic_info.id}`);
     const stream = await this.#pickStream(video);
@@ -110,7 +130,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     return this.#video?.basic_info.duration || null;
   }
 
-  async #resolveURL(url: string): Promise<YTNodes.NavigationEndpoint> {
+  async #resolveURL(url: string): Promise<string> {
     const innertube = await this.getInnertube();
     const endpoint = await innertube.resolveURL(url);
     /**
@@ -121,7 +141,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
      */
     const payload = endpoint.payload && typeof endpoint.payload === 'object' ? endpoint.payload : null;
     if (payload && Reflect.has(payload, 'videoId')) {
-      return endpoint;
+      return payload.videoId;
     }
     if (payload && Reflect.has(payload, 'url')) {
       return this.#resolveURL(payload.url);

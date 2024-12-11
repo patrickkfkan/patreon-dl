@@ -55,7 +55,7 @@
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
     "@types/jsdom": "^21.1.7",
-    "bgutils-js": "^2.0.1",
+    "bgutils-js": "^3.1.0",
     "bottleneck": "^2.19.5",
     "capitalize": "^2.0.4",
     "cheerio": "^1.0.0",
@@ -83,7 +83,7 @@
     "speedometer": "^1.1.0",
     "string-argv": "^0.3.2",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^10.4.0"
+    "youtubei.js": "^12.1.0"
   },
   "keywords": [
     "patreon",
