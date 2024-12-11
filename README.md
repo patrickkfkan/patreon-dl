@@ -219,6 +219,12 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.1.1
+- Fix multiple abort signal listeners triggering warning ([#48](https://github.com/patrickkfkan/patreon-dl/issues/48))
+- Fix YouTube embeds failing to download due to YT changes ([#50](https://github.com/patrickkfkan/patreon-dl/issues/50))
+- Fix inline images of posts sometimes missing from downloads
+- Fix status cache: target marked as downloaded without errors despite having errors at task creation stage
+
 v2.1.0
 - Fix attachment downloads following API changes ([#40](https://github.com/patrickkfkan/patreon-dl/issues/40))
 - Add support for URL format: `https://www.patreon.com/c/<creator>/posts`
