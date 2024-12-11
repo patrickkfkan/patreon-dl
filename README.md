@@ -5,7 +5,7 @@
 A Patreon downloader written in [Node.js](https://nodejs.org).
 
 ### Features
-- Access to patron-only content through cookie
+- Access to patron-only content through cookie. This refers to content you have access to under your account. It does not include locked content that you don't have a subscription for.
 - Download posts by user, in a collection or single post
 - Download products (aka shop purchases)
 - Items included in downloads:

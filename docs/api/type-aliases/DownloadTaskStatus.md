@@ -10,4 +10,4 @@
 
 ## Defined in
 
-[src/downloaders/task/DownloadTask.ts:64](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/task/DownloadTask.ts#L64)
+[src/downloaders/task/DownloadTask.ts:65](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/task/DownloadTask.ts#L65)

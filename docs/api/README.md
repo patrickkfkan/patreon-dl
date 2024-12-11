@@ -23,7 +23,7 @@
 
 ## Interfaces
 
-- [Attachment](interfaces/Attachment.md)
+- [AttachmentMediaItem](interfaces/AttachmentMediaItem.md)
 - [AudioMediaItem](interfaces/AudioMediaItem.md)
 - [BootstrapData](interfaces/BootstrapData.md)
 - [Campaign](interfaces/Campaign.md)

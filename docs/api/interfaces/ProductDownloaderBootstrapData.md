@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Bootstrap.ts#L14)
+[src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/Bootstrap.ts#L14)
 
 ***
 
@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Bootstrap.ts#L9)
+[src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/Bootstrap.ts#L9)
 
 ***
 
@@ -46,4 +46,4 @@
 
 #### Defined in
 
-[src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/downloaders/Bootstrap.ts#L13)
+[src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/Bootstrap.ts#L13)

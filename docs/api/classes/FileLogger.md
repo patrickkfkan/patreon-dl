@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L53)
+[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/FileLogger.ts#L53)
 
 ## Methods
 
@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L172)
+[src/utils/logging/FileLogger.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/FileLogger.ts#L172)
 
 ***
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L162)
+[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/FileLogger.ts#L162)
 
 ***
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L74)
+[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/ConsoleLogger.ts#L75)
 
 ***
 
@@ -112,7 +112,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/ConsoleLogger.ts#L87)
+[src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/ConsoleLogger.ts#L88)
 
 ***
 
@@ -146,4 +146,4 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/3799c917b21e82ba47bd4fda974130f074846e4a/src/utils/logging/FileLogger.ts#L71)
+[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/logging/FileLogger.ts#L71)

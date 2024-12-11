@@ -2,9 +2,9 @@
 
 ***
 
-[patreon-dl](../README.md) / AudioMediaItem
+[patreon-dl](../README.md) / AttachmentMediaItem
 
-# Interface: AudioMediaItem
+# Interface: AttachmentMediaItem
 
 ## Extends
 
@@ -12,13 +12,13 @@
 
 ## Properties
 
-### createdAt
+### downloadURL
 
-> **createdAt**: `null` \| `string`
+> **downloadURL**: `null` \| `string`
 
 #### Defined in
 
-[src/entities/MediaItem.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L96)
+[src/entities/MediaItem.ts:108](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L108)
 
 ***
 
@@ -66,7 +66,7 @@
 
 ### type
 
-> **type**: `"audio"`
+> **type**: `"attachment"`
 
 #### Overrides
 
@@ -74,14 +74,4 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L95)
-
-***
-
-### url
-
-> **url**: `null` \| `string`
-
-#### Defined in
-
-[src/entities/MediaItem.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L97)
+[src/entities/MediaItem.ts:107](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L107)
