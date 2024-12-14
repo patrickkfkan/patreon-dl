@@ -50,6 +50,77 @@ const NULL_VARIANT = '/*NULL*/';
 
 export default class DownloadTaskFactory {
 
+  static #getSrcURLs(item: Downloadable, allVariants: boolean) {
+    if (item.type === 'image') {
+      let urls: Record<string, string | null> = {};
+      let priority: string[] = [];
+      switch (item.imageType) {
+        case 'single':
+          return {
+            [NULL_VARIANT]: item.imageURL
+          };
+        case 'default':
+          urls = {
+            ...item.imageURLs,
+            download: item.downloadURL
+          };
+          priority = DEFAULT_IMAGE_URL_PRIORITY;
+          break;
+        case 'campaignCoverPhoto':
+          urls = item.imageURLs;
+          priority = CAMPAIGN_COVER_PHOTO_URL_PRIORITY;
+          break;
+        case 'postCoverImage':
+          urls = item.imageURLs;
+          priority = POST_COVER_IMAGE_URL_PRIORITY;
+          break;
+        case 'postThumbnail':
+          urls = item.imageURLs;
+          priority = POST_THUMBNAIL_URL_PRIORITY;
+          break;
+      }
+      if (allVariants) {
+        return urls;
+      }
+      return this.#pickVariant(urls, priority);
+    }
+    else if (item.type === 'video') {
+      let videoVariantName = 'display';
+      if (item.size.width && item.size.height) {
+        videoVariantName = `${item.size.width}x${item.size.height}`;
+      }
+      const urls = {
+        download: item.downloadURL,
+        [videoVariantName]: item.displayURLs.video
+      };
+      if (allVariants) {
+        return urls;
+      }
+      const priority = [ 'download', videoVariantName ];
+      return this.#pickVariant(urls, priority);
+    }
+    else if (item.type === 'audio') {
+      return {
+        [NULL_VARIANT]: item.url
+      };
+    }
+    else if (item.type === 'file') {
+      return {
+        [NULL_VARIANT]: item.downloadURL
+      };
+    }
+    else if (item.type === 'dummy') {
+      return item.srcURLs;
+    }
+    else if (item.type === 'attachment') {
+      return {
+        [NULL_VARIANT]: item.downloadURL
+      };
+    }
+
+    return {};
+  }
+
   static async createFromDownloadable(params: {
     config: DownloaderConfig<any>,
     item: Downloadable,
@@ -77,112 +148,35 @@ export default class DownloadTaskFactory {
     const embedDownloaders = config.embedDownloaders;
     const destFilenameFormat = config.filenameFormat.media;
     const downloadAllVariants = config.include.allMediaVariants;
-
-    const __getSrcURLs = () => {
-      if (item.type === 'image') {
-        let urls: Record<string, string | null> = {};
-        let priority: string[] = [];
-        switch (item.imageType) {
-          case 'single':
-            return {
-              [NULL_VARIANT]: item.imageURL
-            };
-          case 'default':
-            urls = {
-              ...item.imageURLs,
-              download: item.downloadURL
-            };
-            priority = DEFAULT_IMAGE_URL_PRIORITY;
-            break;
-          case 'campaignCoverPhoto':
-            urls = item.imageURLs;
-            priority = CAMPAIGN_COVER_PHOTO_URL_PRIORITY;
-            break;
-          case 'postCoverImage':
-            urls = item.imageURLs;
-            priority = POST_COVER_IMAGE_URL_PRIORITY;
-            break;
-          case 'postThumbnail':
-            urls = item.imageURLs;
-            priority = POST_THUMBNAIL_URL_PRIORITY;
-            break;
-        }
-        if (downloadAllVariants) {
-          return urls;
-        }
-        return this.#pickVariant(urls, priority);
-      }
-      else if (item.type === 'video') {
-        let videoVariantName = 'display';
-        if (item.size.width && item.size.height) {
-          videoVariantName = `${item.size.width}x${item.size.height}`;
-        }
-        const urls = {
-          download: item.downloadURL,
-          [videoVariantName]: item.displayURLs.video
-        };
-        if (downloadAllVariants) {
-          return urls;
-        }
-        const priority = [ 'download', videoVariantName ];
-        return this.#pickVariant(urls, priority);
-      }
-      else if (item.type === 'audio') {
-        return {
-          [NULL_VARIANT]: item.url
-        };
-      }
-      else if (item.type === 'file') {
-        return {
-          [NULL_VARIANT]: item.downloadURL
-        };
-      }
-      else if (item.type === 'dummy') {
-        return item.srcURLs;
-      }
-      else if (item.type === 'attachment') {
-        return {
-          [NULL_VARIANT]: item.downloadURL
-        };
-      }
-      else if (item.type === 'videoEmbed') {
-        return {
-          [NULL_VARIANT]: item.url
-        };
-      }
-      return {};
-    };
-
-
-    const srcURLs = __getSrcURLs();
-
     const tasks: DownloadTask[] = [];
-    for (const [ variant, url ] of Object.entries(srcURLs)) {
-      if (isEmbed(item)) {
-        // Check if external downloader configured for embed item
-        const embedDownloader = this.findEmbedDownloader(embedDownloaders, item.provider);
-        if (embedDownloader) {
-          const task = ExternalDownloaderTask.fromEmbedDownloader(config, embedDownloader, item, destDir, callbacks || null, logger);
-          if (task) {
-            tasks.push(task);
-          }
-        }
-        // Use our own implementation if no external downloader configured for YT embeds
-        else if (item.type === 'videoEmbed' && isYouTubeEmbed(item) && url) {
-          tasks.push(await DownloadTask.create(YouTubeDownloadTask, {
-            config,
-            src: url,
-            destDir,
-            fileExistsAction,
-            srcEntity: item,
-            callbacks: callbacks || null,
-            logger
-          },
-          limiter,
-          signal));
+
+    if (isEmbed(item)) {
+      // Check if external downloader configured for embed item
+      const embedDownloader = this.findEmbedDownloader(embedDownloaders, item.provider);
+      if (embedDownloader) {
+        const task = ExternalDownloaderTask.fromEmbedDownloader(config, embedDownloader, item, destDir, callbacks || null, logger);
+        if (task) {
+          tasks.push(task);
         }
       }
-      else {
+      // Use our own implementation if no external downloader configured for YT embeds
+      else if (isYouTubeEmbed(item) && item.url) {
+        tasks.push(await DownloadTask.create(YouTubeDownloadTask, {
+          config,
+          src: item.url,
+          destDir,
+          fileExistsAction,
+          srcEntity: item,
+          callbacks: callbacks || null,
+          logger
+        },
+        limiter,
+        signal));
+      }
+    }
+    else {
+      const srcURLs = this.#getSrcURLs(item, downloadAllVariants);
+      for (const [ variant, url ] of Object.entries(srcURLs)) {
         const destFilenameResolver = 
           new MediaFilenameResolver(item, url, destFilenameFormat,
             variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
@@ -203,8 +197,8 @@ export default class DownloadTaskFactory {
           signal));
         }
       }
-    }
-
+    }    
+    
     // Create a DownloadTask backed by a DummyMediaItem for video thumbnail
     if (item.type === 'video' && item.displayURLs.thumbnail) {
       let filename: string | null = null;

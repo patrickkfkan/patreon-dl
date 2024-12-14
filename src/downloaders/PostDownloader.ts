@@ -186,7 +186,7 @@ export default class PostDownloader extends Downloader<Post> {
               const hasAttachments = post.attachments.length > 0;
               const hasAudio = !!post.audio || !!post.audioPreview;
               const hasImages = post.images.length > 0;
-              const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && post.embed.type === 'videoEmbed');
+              const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && (post.embed.type === 'videoEmbed' || isYouTubeEmbed(post.embed)));
   
               let skip = false;
               if (postsWithMediaType === 'none') {
@@ -556,6 +556,28 @@ export default class PostDownloader extends Downloader<Post> {
       return incContent.includes(mediaType);
     };
 
+    const __getEmbedTask = () => {
+      if (!post.embed) {
+        return null;
+      }
+
+      const hasEmbedDownloader = DownloadTaskFactory.findEmbedDownloader(this.config.embedDownloaders, post.embed.provider);
+      const isDownloadableVideo = isYouTubeEmbed(post.embed) || (post.embed.type === 'videoEmbed' && hasEmbedDownloader);
+      const isDownloadableOther = !isYouTubeEmbed(post.embed) && post.embed.type !== 'videoEmbed' && hasEmbedDownloader;
+      
+      if ((isDownloadableVideo && __incContent('video')) || isDownloadableOther) {
+        const embedType = post.embed.type === 'videoEmbed' ? ' video' : post.embed.type === 'linkEmbed' ? ' link' : '';
+        return {
+          target: [ post.embed ],
+          targetName: `post #${post.id} -> embedded ${post.embed.provider}${embedType}`,
+          destDir: postDirs.embed,
+          fileExistsAction: this.config.fileExistsAction.content
+        };
+      }
+      
+      return null;
+    }
+
     const batchResult = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
       signal,
@@ -613,14 +635,7 @@ export default class PostDownloader extends Downloader<Post> {
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      __incContent('video') && post.embed &&
-        (isYouTubeEmbed(post.embed) || DownloadTaskFactory.findEmbedDownloader(this.config.embedDownloaders, post.embed.provider)) ?
-        {
-          target: [ post.embed ],
-          targetName: `post #${post.id} -> embedded ${post.embed.provider} video`,
-          destDir: postDirs.embed,
-          fileExistsAction: this.config.fileExistsAction.content
-        } : null
+      __getEmbedTask()
     );
 
     return batchResult;

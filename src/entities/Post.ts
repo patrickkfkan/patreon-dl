@@ -101,4 +101,4 @@ export interface PostEmbed {
   url: string | null;
 }
 
-export type YouTubePostEmbed = PostEmbed & { type: 'videoEmbed'; provider: 'YouTube' }
+export type YouTubePostEmbed = PostEmbed & { provider: 'YouTube' }

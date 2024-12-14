@@ -4,7 +4,7 @@ import { type PostEmbed, type YouTubePostEmbed } from './Post.js';
 export type Downloadable = MediaItem | PostEmbed;
 
 export function isYouTubeEmbed(embed: PostEmbed): embed is YouTubePostEmbed {
-  return embed.type === 'videoEmbed' && embed.provider === 'YouTube';
+  return embed.provider === 'YouTube';
 }
 
 export function isEmbed(data: Downloadable): data is PostEmbed {
