@@ -22,7 +22,7 @@ export default class MediaFilenameResolver<T extends MediaLike> extends Filename
   resolve(response: Response) {
     const mi = this.target;
     const miFilenameParts = mi.filename ? path.parse(mi.filename) : null;
-    const resFilenameParts = this.getFilenamePartsFromResponse(response);
+    const resFilenameParts = this.getFilenamePartsFromResponse(response, mi.type !== 'attachment');
 
     const filenameParts = {
       name: '',
@@ -47,12 +47,15 @@ export default class MediaFilenameResolver<T extends MediaLike> extends Filename
 
     /**
      * Obtain `extension` from (in order of priority):
-     * 1. Response headers
+     * 1. Response headers (unless target is attachment, in which case (2) takes precedence)
      * 2. Media filename
      * 3. Media mimetype
      * 4. Src URL
      */
-    if (resFilenameParts.ext) {
+    if (mi.type === 'attachment' && miFilenameParts?.ext) {
+      filenameParts.ext = miFilenameParts.ext;
+    }
+    else if (resFilenameParts.ext) {
       // Use media item filename if the same (preserves case)
       if (miFilenameParts?.ext?.toLowerCase() === resFilenameParts.ext.toLowerCase() &&
         filenameParts.name === miFilenameParts.name && this.#format.includes('{media.filename}')) {

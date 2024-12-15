@@ -23,7 +23,7 @@ export default abstract class FilenameResolver<T> {
 
   abstract resolve(response: Response): string;
 
-  protected getFilenamePartsFromResponse(response: Response) {
+  protected getFilenamePartsFromResponse(response: Response, extByContentType = true) {
     const parts = {
       name: '',
       ext: ''
@@ -40,12 +40,14 @@ export default abstract class FilenameResolver<T> {
       }
     }
     // Filename obtained from content-disposition could have wrong extension.
-    // Always use extension derived from headers content-type if available.
-    const contentType = response.headers.get('content-type') || null;
-    if (contentType) {
-      const extByContentType = this.getExtensionByContentType(contentType);
-      if (extByContentType) {
-        parts.ext = extByContentType;
+    // The default behavior is to obtain extension from content-type header if available.
+    if (extByContentType) {
+      const contentType = response.headers.get('content-type') || null;
+      if (contentType) {
+        const _extByContentType = this.getExtensionByContentType(contentType);
+        if (_extByContentType) {
+          parts.ext = _extByContentType;
+        }
       }
     }
 
