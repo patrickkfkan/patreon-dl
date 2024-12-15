@@ -221,6 +221,11 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.2.0
+- Widen scope of external downloaders to any type of embed (previously only works for video embeds) ([#51](https://github.com/patrickkfkan/patreon-dl/issues/51))
+- YouTube downloading now covers embedded YT links
+- Fix attachment filenames sometimes have wrong extension
+
 v2.1.1
 - Fix multiple abort signal listeners triggering warning ([#48](https://github.com/patrickkfkan/patreon-dl/issues/48))
 - Fix YouTube embeds failing to download due to YT changes ([#50](https://github.com/patrickkfkan/patreon-dl/issues/50))
