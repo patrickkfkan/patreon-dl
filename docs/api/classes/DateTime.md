@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/DateTime.ts#L32)
+[src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/DateTime.ts#L32)
 
 ## Properties
 
@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/DateTime.ts#L19)
+[src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/DateTime.ts#L19)
 
 ## Methods
 
@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/DateTime.ts#L113)
+[src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/DateTime.ts#L113)
 
 ***
 
@@ -60,7 +60,7 @@
 
 #### Defined in
 
-[src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/DateTime.ts#L109)
+[src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/DateTime.ts#L109)
 
 ***
 
@@ -78,4 +78,4 @@
 
 #### Defined in
 
-[src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/DateTime.ts#L71)
+[src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/DateTime.ts#L71)

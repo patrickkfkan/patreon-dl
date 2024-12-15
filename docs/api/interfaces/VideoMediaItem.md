@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L81)
+[src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L81)
 
 ***
 
@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L88)
+[src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L88)
 
 ***
 
@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L87)
+[src/entities/MediaItem.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L87)
 
 ***
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L86)
+[src/entities/MediaItem.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L86)
 
 ***
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -98,7 +98,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -116,7 +116,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L82)
+[src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L82)
 
 ***
 
@@ -130,4 +130,4 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L80)
+[src/entities/MediaItem.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L80)

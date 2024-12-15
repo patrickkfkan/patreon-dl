@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L17)
+[src/entities/MediaItem.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L17)
 
 ***
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L18)
+[src/entities/MediaItem.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L18)
 
 ***
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -84,4 +84,4 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/MediaItem.ts#L16)
+[src/entities/MediaItem.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L16)

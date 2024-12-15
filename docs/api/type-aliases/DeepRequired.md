@@ -16,4 +16,4 @@
 
 ## Defined in
 
-[src/utils/Misc.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/utils/Misc.ts#L6)
+[src/utils/Misc.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/Misc.ts#L6)

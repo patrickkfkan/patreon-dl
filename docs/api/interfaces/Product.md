@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L15)
+[src/entities/Product.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L15)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L14)
+[src/entities/Product.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L14)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L9)
+[src/entities/Product.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L9)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L6)
+[src/entities/Product.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L6)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L7)
+[src/entities/Product.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L7)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L8)
+[src/entities/Product.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L8)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L13)
+[src/entities/Product.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L13)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L10)
+[src/entities/Product.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L10)
 
 ***
 
@@ -94,7 +94,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L11)
+[src/entities/Product.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L11)
 
 ***
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L16)
+[src/entities/Product.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L16)
 
 ***
 
@@ -114,7 +114,7 @@
 
 #### Defined in
 
-[src/entities/Product.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L5)
+[src/entities/Product.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L5)
 
 ***
 
@@ -124,4 +124,4 @@
 
 #### Defined in
 
-[src/entities/Product.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/entities/Product.ts#L12)
+[src/entities/Product.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/Product.ts#L12)

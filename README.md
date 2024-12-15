@@ -23,7 +23,9 @@ You can run `patreon-dl` from the command-line or [use it as a library](./docs/L
 
 ### Limitations
 
-- Embedded links are not followed; only info about the embed is saved.
+- Embedded links are not followed; only info about the embed is saved. Exception:
+  - YouTube video link - in which case the video is downloaded; or
+  - An external downloader is configured for the link provider.
 
 ### FFmpeg dependency
 
@@ -33,9 +35,9 @@ You can run `patreon-dl` from the command-line or [use it as a library](./docs/L
 
 Not all video downloads require FFmpeg, but you should have it installed on your system anyway.
 
-### Embedded YouTube videos - Premium access
+### Embedded YouTube videos / links - Premium access
 
-`patreon-dl` supports downloading embedded YouTube videos. In addition, if you have a YouTube Premium subscription, you can connect `patreon-dl` to your account and download videos at qualities available only to Premium accounts (e.g. '1080p Premium'). For CLI users, you would configure `patreon-dl` as follows:
+`patreon-dl` supports downloading embedded YouTube videos or from embedded YouTube video links. In addition, if you have a YouTube Premium subscription, you can connect `patreon-dl` to your account and download videos at qualities available only to Premium accounts (e.g. '1080p Premium'). For CLI users, you would configure `patreon-dl` as follows:
 
 ```
 $ patreon-dl --configure-youtube
@@ -43,9 +45,9 @@ $ patreon-dl --configure-youtube
 
 > ...or you may just refer to the next section on how to download enhanecd-quality videos without a Premium account.
 
-### Embedded videos - external downloader
+### Embedded videos / links - external downloader
 
-You can specify external programs to download embedded videos. For YouTube videos, this will replace the built-in downloader. See the [example config](./example-embed.conf) on how to do this.
+You can specify external programs to download embedded videos or from embedded links. For YouTube videos, this will replace the built-in downloader. See the [example config](./example-embed.conf) on how to do this.
 
 > The example config utilizes [yt-dlp](https://github.com/yt-dlp/yt-dlp), a popular program capable of downloading YouTube and Vimeo content. As of current release, `yt-dlp` is also able to download Premium-quality YouTube videos without a Premium account.
 

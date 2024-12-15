@@ -131,7 +131,7 @@ See [Campaign](./api/interfaces/Campaign.md), [Reward](./api/interfaces/Reward.m
 
 #### External downloaders
 
-You can specify external downloaders for embedded videos. Each entry in the `embedDownloaders` option is an object with the following properties:
+You can specify external downloaders for embedded videos / links. Each entry in the `embedDownloaders` option is an object with the following properties:
 
 | Proprety | Description |
 |----------|-------------|

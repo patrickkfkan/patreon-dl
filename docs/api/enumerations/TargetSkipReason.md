@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/DownloaderEvent.ts#L17)
+[src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderEvent.ts#L17)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/DownloaderEvent.ts#L16)
+[src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderEvent.ts#L16)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/DownloaderEvent.ts#L19)
+[src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderEvent.ts#L19)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/DownloaderEvent.ts#L20)
+[src/downloaders/DownloaderEvent.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderEvent.ts#L20)
 
 ***
 
@@ -54,4 +54,4 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/9af63ff8fb311b0c258b1f0abf6afcc007d73ad0/src/downloaders/DownloaderEvent.ts#L18)
+[src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderEvent.ts#L18)
