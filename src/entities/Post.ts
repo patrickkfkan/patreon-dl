@@ -26,6 +26,7 @@ export interface Post {
    * - poll
    * - link: only embedded link info is saved. Link is not followed / downloaded.
    * - video_embed - only embedded video info is saved. Video itself is not downloaded.
+   * - podcast
    */
   postType: string;
   isViewable: boolean;

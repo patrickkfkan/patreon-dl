@@ -138,7 +138,7 @@ export default class CLIOptionValidator {
       return this.validateString(entry, 'any', 'none');
     }
     catch (_error: unknown) {
-      return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment' ] as const);
+      return this.validateStringArray(entry, [ 'image', 'video', 'audio', 'attachment', 'podcast' ] as const);
     }
   }
 

@@ -187,6 +187,7 @@ export default class PostDownloader extends Downloader<Post> {
               const hasAudio = !!post.audio || !!post.audioPreview;
               const hasImages = post.images.length > 0;
               const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && (post.embed.type === 'videoEmbed' || isYouTubeEmbed(post.embed)));
+              const isPodcast = post.postType === 'podcast'
   
               let skip = false;
               if (postsWithMediaType === 'none') {
@@ -197,7 +198,8 @@ export default class PostDownloader extends Downloader<Post> {
                   (postsWithMediaType.includes('attachment') && hasAttachments) ||
                   (postsWithMediaType.includes('audio') && hasAudio) ||
                   (postsWithMediaType.includes('image') && hasImages) ||
-                  (postsWithMediaType.includes('video') && hasVideo));
+                  (postsWithMediaType.includes('video') && hasVideo) ||
+                  (postsWithMediaType.includes('podcast') && isPodcast && (hasAudio || hasVideo)));
               }
   
               if (skip) {

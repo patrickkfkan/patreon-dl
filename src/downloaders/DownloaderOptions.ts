@@ -7,7 +7,7 @@ export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopy
 
 export interface DownloaderIncludeOptions {
   lockedContent?: boolean;
-  postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment'> | 'any' | 'none';
+  postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment' | 'podcast'> | 'any' | 'none';
   postsInTier?: Array<string> | 'any';
   postsPublished?: {
     after?: DateTime | null;
