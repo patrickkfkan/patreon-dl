@@ -52,7 +52,7 @@ export default class ObjectHelper {
         }
       }
     }
-    return result;
+    return Array.isArray(obj) ? Object.values(result) : result;
   }
 }
 
