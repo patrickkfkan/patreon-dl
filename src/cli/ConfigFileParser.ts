@@ -35,7 +35,8 @@ const CONFIG_FILE_PROPS = {
     allMediaVariants: 'include:all.media.variants',
     imagesByFilename: 'include:images.by.filename',
     audioByFilename: 'include.audio.by.filename',
-    attachmentsByFilename: 'include:attachments.by.filename'
+    attachmentsByFilename: 'include:attachments.by.filename',
+    comments: 'include:comments'
   },
   request: {
     maxRetries: 'request:max.retries',
@@ -119,7 +120,8 @@ export default class ConfigFileParser {
           images: __getValue(CONFIG_FILE_PROPS.include.imagesByFilename),
           audio: __getValue(CONFIG_FILE_PROPS.include.audioByFilename),
           attachments: __getValue(CONFIG_FILE_PROPS.include.attachmentsByFilename)
-        }
+        },
+        comments: __getValue(CONFIG_FILE_PROPS.include.comments)
       },
       request: {
         maxRetries: __getValue(CONFIG_FILE_PROPS.request.maxRetries),

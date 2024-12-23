@@ -36,6 +36,7 @@ export interface Post {
   teaserText: string | null;
   publishedAt: string | null;
   editedAt: string | null;
+  commentCount: number;
   coverImage: PostCoverImageMediaItem | null;
   thumbnail: PostThumbnailMediaItem | null;
   tiers: Tier[];

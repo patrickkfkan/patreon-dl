@@ -279,6 +279,7 @@ export default class PostParser extends Parser {
         teaserText: attributes.teaser_text || null,
         publishedAt: attributes.published_at || null,
         editedAt: attributes.edited_at || null,
+        commentCount: attributes.comment_count || 0,
         coverImage,
         thumbnail,
         tiers,

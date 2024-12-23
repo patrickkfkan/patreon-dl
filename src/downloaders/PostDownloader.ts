@@ -10,6 +10,9 @@ import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import PostsFetcher from './PostsFetcher.js';
+import CommentParser from '../parsers/CommentParser.js';
+import { Comment, CommentCollection, CommentReply, CommentReplyCollection } from '../entities/Comment.js';
+import { generatePostCommentsSummary } from './templates/CommentInfo.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -374,8 +377,25 @@ export default class PostDownloader extends Downloader<Post> {
               const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
               this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
             }
+
+            // Step 4.6: Fetch and save comments
+            if (this.config.include.comments && post.commentCount > 0) {
+              const comments = await this.#fetchComments(post, resolve, signal);
+              if (this.checkAbortSignal(signal, resolve)) {
+                return;
+              }
+              if (comments.length > 0) {
+                const commentsFile = path.resolve(postDirs.info, 'comments.txt');
+                const commentsSummary = generatePostCommentsSummary(comments);
+                const saveCommentsResult = await this.fsHelper.writeTextFile(commentsFile, commentsSummary, this.config.fileExistsAction.info);
+                this.logWriteTextFileResult(saveCommentsResult, post, `${comments.length} comments`);
+              }
+              else {
+                this.log('info', `No comments fetched for post #${post.id}`)
+              }
+            }
   
-            // Step 4.6: create download tasks
+            // Step 4.7: create download tasks
             let createTaskErrorCount = 0;
             if (this.config.include.previewMedia ||
               this.config.include.contentMedia ||
@@ -421,7 +441,7 @@ export default class PostDownloader extends Downloader<Post> {
   
               await batch.start();
   
-              // Step 4.7: Update status cache
+              // Step 4.8: Update status cache
               statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0 || createTaskErrorCount > 0, this.config);
   
               await batch.destroy();
@@ -641,5 +661,114 @@ export default class PostDownloader extends Downloader<Post> {
     );
 
     return batchResult;
+  }
+
+  async #fetchComments(post: Post, resolve: () => void, signal?: AbortSignal, accumulated?: CommentCollection & { nextURL: string; }): Promise<Comment[]> {
+    if (!post.commentCount) {
+      this.log('debug', `Comment count is zero for post #${post.id}`);
+      return [];
+    }
+    let commentsURL;
+    if (!accumulated) {
+      this.log('info', `Fetch comments for post #${post.id}`);
+      commentsURL = URLHelper.constructPostCommentsAPIURL({ postId: post.id });
+    }
+    else {
+      this.log('debug', `Fetch next batch of comments for post #${post.id}`);
+      commentsURL = accumulated.nextURL;
+    }
+    const { json } = await this.commonFetchAPI(commentsURL, signal);
+    const parser = new CommentParser(this.logger);
+    if (json) {
+      const comments = parser.parseCommentsAPIResponse(json, commentsURL);
+      this.log('debug', `Fetched ${comments.items.length} comments for post #${post.id}`);
+      if (comments.items.length > 0 && comments.nextURL) {
+        let _acc;
+        if (!accumulated) {
+          _acc = {
+            url: comments.url,
+            items: comments.items,
+            nextURL: comments.nextURL,
+            total: comments.total
+          };
+        }
+        else {
+          _acc = accumulated;
+          _acc.url = comments.url;
+          _acc.items.push(...comments.items);
+          _acc.nextURL = comments.nextURL;
+        }
+        return this.#fetchComments(post, resolve, signal, _acc);
+      }
+      else {
+        const result = accumulated ? [ ...accumulated.items, ...comments.items ] : comments.items;
+        this.log('debug', `Total ${result.length} comments fetched for post #${post.id}`);
+        for (const comment of result) {
+          if (comment.replyCount > 0) {
+            comment.replies = await this.#fetchCommentReplies(comment, resolve, signal);
+          }
+        }
+        return result;
+      }
+    }
+    else if (this.checkAbortSignal(signal, resolve)) {
+      return [];
+    }
+    else {
+      this.log('warn', `Failed to fetch comments for post #${post.id}`);
+      return [];
+    }
+  }
+
+  async #fetchCommentReplies(comment: Comment, resolve: () => void, signal?: AbortSignal, accumulated?: CommentReplyCollection & { nextURL: string; }): Promise<CommentReply[]> {
+    if (!comment.replyCount) {
+      this.log('debug', `Reply count is zero for comment #${comment.id}`);
+      return [];
+    }
+    let repliesURL;
+    if (!accumulated) {
+      this.log('debug', `Fetch replies to comment #${comment.id}`);
+      repliesURL = URLHelper.constructPostCommentsAPIURL({ commentId: comment.id, replies: true });
+    }
+    else {
+      this.log('debug', `Fetch next batch of replies to comment #${comment.id}`);
+      repliesURL = accumulated.nextURL;
+    }
+    const { json } = await this.commonFetchAPI(repliesURL, signal);
+    const parser = new CommentParser(this.logger);
+    if (json) {
+      const replies = parser.parseCommentsAPIResponse(json, repliesURL, true);
+      this.log('debug', `Fetched ${replies.items.length} replies to comment #${comment.id}`);
+      if (replies.items.length > 0 && replies.nextURL) {
+        let _acc;
+        if (!accumulated) {
+          _acc = {
+            url: replies.url,
+            items: replies.items,
+            nextURL: replies.nextURL,
+            total: replies.total
+          };
+        }
+        else {
+          _acc = accumulated;
+          _acc.url = replies.url;
+          _acc.items.push(...replies.items);
+          _acc.nextURL = replies.nextURL;
+        }
+        return this.#fetchCommentReplies(comment, resolve, signal, _acc);
+      }
+      else {
+        const result = accumulated ? [ ...accumulated.items, ...replies.items ] : replies.items;
+        this.log('debug', `Total ${result.length} replies fetched for comment #${comment.id}`);
+        return result;
+      }
+    }
+    else if (this.checkAbortSignal(signal, resolve)) {
+      return [];
+    }
+    else {
+      this.log('warn', `Failed to fetch replies to comment #${comment.id}`);
+      return [];
+    }
   }
 }

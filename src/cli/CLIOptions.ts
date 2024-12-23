@@ -149,7 +149,8 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
       images: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.images, configFileOptions?.include?.mediaByFilename?.images)) || null,
       audio: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.audio, configFileOptions?.include?.mediaByFilename?.audio)) || null,
       attachments: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.attachments, configFileOptions?.include?.mediaByFilename?.attachments)) || null
-    }
+    },
+    comments: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.comments, configFileOptions?.include?.comments))
   };
 }
 
@@ -177,7 +178,8 @@ function readTargetsFile(file: string) {
     allMediaVariants: 'include.all.media.variants',
     imagesByFilename: 'include.images.by.filename',
     audioByFilename: 'include.audio.by.filename',
-    attachmentsByFilename: 'include.attachments.by.filename'
+    attachmentsByFilename: 'include.attachments.by.filename',
+    comments: 'include.comments'
   };
 
   const lines = fs.readFileSync(file)

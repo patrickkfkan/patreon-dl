@@ -8,6 +8,8 @@ const PRODUCT_API_URL = `${SITE_URL}/api/product`;
 const POSTS_API_URL = `${SITE_URL}/api/posts`;
 const USER_API_URL = `${SITE_URL}/api/user`;
 const CAMPAIGN_API_URL = `${SITE_URL}/api/campaigns`;
+const POST_COMMENTS_API_URL = `${SITE_URL}/api/posts/{POST_ID}/comments2`
+const POST_COMMENT_REPLIES_API_URL = `${SITE_URL}/api/comments/{COMMENT_ID}/replies2`
 
 const PRODUCT_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop\/(([^/]+)-(\d+))$/;
 const POSTS_BY_USER_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/posts$/;
@@ -59,6 +61,83 @@ const POSTS_API_URL_SEARCH_PARAMS = {
     'ti_checks'
   ]
 };
+
+const POST_COMMENTS_API_URL_SEARCH_PARAMS = {
+  INCLUDE: [
+    'parent',
+    'post',
+    'on_behalf_of_campaign.null',
+    'commenter.campaign.null',
+    'first_reply.commenter.campaign.null',
+    'first_reply.parent',
+    'first_reply.post',
+    'first_reply.on_behalf_of_campaign.null'
+  ],
+  FIELDS: {
+    COMMENT: [
+      'body',
+      'created',
+      'deleted_at',
+      'is_by_patron',
+      'is_by_creator',
+      'is_liked_by_creator',
+      'vote_sum',
+      'current_user_vote',
+      'reply_count',
+      'visibility_state'
+    ],
+    CAMPAIGN: [],
+    POST: [
+      'comment_count',
+      'current_user_can_comment',
+      'url'
+    ],
+    POST_TAG: [
+      'tag_type',
+      'value'
+    ],
+    USER: [
+      'image_url',
+      'full_name',
+      'url'
+    ]
+  },
+  COUNT: 50,
+  SORT: '-created'
+};
+
+const POST_COMMENT_REPLIES_API_URL_SEARCH_PARAMS = {
+  INCLUDE: [
+    'commenter.campaign',
+    'parent',
+    'post',
+    'on_behalf_of_campaign'
+  ],
+  FIELDS: {
+    CAMPAIGN: [],
+    COMMENT: [
+      'body',
+      'created',
+      'deleted_at',
+      'is_by_patron',
+      'is_by_creator',
+      'is_liked_by_creator',
+      'vote_sum',
+      'current_user_vote',
+      'visibility_state'
+    ],
+    POST: [
+      'comment_count'
+    ],
+    USER: [
+      'image_url',
+      'full_name',
+      'url'
+    ]
+  },
+  COUNT: 50,
+  SORT: 'created'
+}
 
 export enum PostSortOrder {
   PublisedAtDesc = '-published_at',
@@ -161,6 +240,42 @@ export default class URLHelper {
     for (const [ key, value ] of Object.entries(allFilters)) {
       searchParams[`filter[${key}]`] = value;
     }
+    for (const [ key, value ] of Object.entries(searchParams)) {
+      urlObj.searchParams.set(key, value);
+    }
+
+    return urlObj.toString();
+  }
+
+  static constructPostCommentsAPIURL(params: {
+    postId: string,
+    replies?: false
+    count?: number;
+  } | {
+    commentId: string,
+    replies: true,
+    count?: number
+  }) {
+    let urlObj: URL;
+    if (params.replies) {
+      urlObj = new URL(POST_COMMENT_REPLIES_API_URL.replace('{COMMENT_ID}', params.commentId));
+    }
+    else {
+      urlObj = new URL(POST_COMMENTS_API_URL.replace('{POST_ID}', params.postId));
+    }
+    const fields: Record<string, string> = {};
+    const bundle = params.replies ? POST_COMMENT_REPLIES_API_URL_SEARCH_PARAMS : POST_COMMENTS_API_URL_SEARCH_PARAMS;
+    for (const [k, v] of Object.entries(bundle.FIELDS)) {
+      fields[`fields[${k.toLowerCase()}]`] = v.join(',') || '[]'
+    }
+    const searchParams: Record<string, any> = {
+      'include': bundle.INCLUDE.join(','),
+      ...fields,
+      'page[count]': params.count || bundle.COUNT,
+      'sort': bundle.SORT,
+      'json-api-version': '1.0',
+      'json-api-use-default-includes': false
+    };
     for (const [ key, value ] of Object.entries(searchParams)) {
       urlObj.searchParams.set(key, value);
     }

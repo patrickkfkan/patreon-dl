@@ -22,7 +22,8 @@ export interface DownloaderIncludeOptions {
     images?: string | null;
     audio?: string | null;
     attachments?: string | null;
-  }
+  };
+  comments?: boolean;
 }
 
 export interface EmbedDownloader {
@@ -101,7 +102,8 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
       images: null,
       audio: null,
       attachments: null
-    }
+    },
+    comments: false
   },
   request: {
     maxRetries: 3,
@@ -148,7 +150,8 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
         images: pickDefined(options?.include?.mediaByFilename?.images, defaults.include.mediaByFilename.images),
         audio: pickDefined(options?.include?.mediaByFilename?.audio, defaults.include.mediaByFilename.audio),
         attachments: pickDefined(options?.include?.mediaByFilename?.attachments, defaults.include.mediaByFilename.attachments)
-      }
+      },
+      comments: pickDefined(options?.include?.comments, defaults.include.comments)
     },
     request: {
       maxRetries: pickDefined(options?.request?.maxRetries, defaults.request.maxRetries),
