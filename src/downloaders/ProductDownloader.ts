@@ -80,7 +80,9 @@ export default class ProductDownloader extends Downloader<Product> {
   
         // Step 5: Check with status cache
         const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
-        if (statusCache.validate(product, productDirs.root, this.config)) {
+        const statusCacheValidation = statusCache.validate(product, productDirs.root, this.config);
+        this.log('debug', 'Status cache validation result:', statusCacheValidation);
+        if (!statusCacheValidation.invalidated) {
           this.log('info', `Skipped downloading product #${product.id}: already downloaded and nothing has changed since last download`);
           this.emit('targetEnd', {
             target: product,

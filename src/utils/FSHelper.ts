@@ -38,6 +38,20 @@ const POST_FIXED_DIR_NAMES = {
   EMBED: 'embed'
 };
 
+export interface PostDirectories {
+  root: string;
+  info: string;
+  audio: string;
+  video: string;
+  images: string;
+  audioPreview: string;
+  videoPreview: string;
+  imagePreviews: string;
+  attachments: string;
+  embed: string;
+  statusCache: string;
+}
+
 const INTERNAL_DATA_DIR_NAME = '.patreon-dl';
 
 export type WriteTextFileResult = {
@@ -73,7 +87,7 @@ export default class FSHelper {
     };
   }
 
-  getPostDirs(post: Post) {
+  getPostDirs(post: Post): PostDirectories {
     const dirName = FilenameFormatHelper.getContentDirName(post, this.config.dirNameFormat.content);
     let postRootPath: string;
     let statusCachePath: string;

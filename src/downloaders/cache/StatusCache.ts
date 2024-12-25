@@ -20,23 +20,42 @@ export interface StatusCacheData {
 
 export type StatusCacheTarget = Product | Post;
 
-export interface StatusCacheEntry<T extends StatusCacheTarget = StatusCacheTarget> {
+export type StatusCacheConfigIncludes<T extends StatusCacheTarget> = {
+  lockedContent: boolean;
+  contentInfo: boolean;
+  previewMedia: DownloaderConfig<T>['include']['previewMedia'];
+  contentMedia: DownloaderConfig<T>['include']['contentMedia'];
+  allMediaVariants: boolean;
+} & (
+  T extends Post ? {
+    comments: boolean;
+  } : {}
+);
+
+export interface StatusCacheEntry<T extends StatusCacheTarget> {
   type: T['type'];
   downloaderVersion: string;
   lastDownloaded: string;
   lastDownloadHasErrors: boolean;
   lastDownloadConfig: {
-    include: {
-      lockedContent: boolean;
-      contentInfo: boolean;
-      previewMedia: DownloaderConfig<T>['include']['previewMedia'];
-      contentMedia: DownloaderConfig<T>['include']['contentMedia'];
-      allMediaVariants: boolean;
-    };
+    include: StatusCacheConfigIncludes<T>
   };
   lastDestDir: string;
   lastTargetInfo: StatusCacheTargetInfo<T>;
 }
+
+export type StatusCacheValidationResult<T extends StatusCacheTarget> = {
+  invalidated: false;
+  scope?: undefined;
+} | {
+  invalidated: true;
+  scope: StatusCacheValidationScope<T>;
+};
+
+export type StatusCacheValidationScope<T extends StatusCacheTarget> =
+  T extends Post ? ('post' | 'comments')[] :
+  T extends Product ? ('product')[] :
+  never;
 
 const STATUS_CACHE_FILENAME = 'status-cache.json';
 const INSTANCE_CACHE_SIZE = 5;
@@ -48,6 +67,7 @@ export type StatusCacheTargetInfo<T extends Product | Post> =
     T extends Post ? {
       isViewable: T['isViewable'];
       editedAt: T['editedAt'];
+      commentCount: T['commentCount'];
     } :
     T extends Product ? {
       isAccessible: T['isAccessible'];
@@ -113,58 +133,81 @@ export default class StatusCache {
     return instance;
   }
 
-  validate(target: Product | Post, destDir: string, config: DownloaderConfig<any>) {
-    if (!this.#enabled) {
-      return false;
+  #validationResult<T extends StatusCacheTarget> (target: T, invalidated: boolean, scope?: StatusCacheValidationScope<T>): StatusCacheValidationResult<T> {
+    if (!invalidated) {
+      return {
+        invalidated: false
+      };
+    }
+    if (this.#isTargetType(target, 'post')) {
+      const result: StatusCacheValidationResult<Post> = {
+        invalidated: true,
+        scope: scope ? scope as StatusCacheValidationScope<Post> : ['post', 'comments']
+      };
+      return result as StatusCacheValidationResult<T>;
+    }
+    if (this.#isTargetType(target, 'product')) {
+      const result: StatusCacheValidationResult<Product> = {
+        invalidated: true,
+        scope: scope ? scope as StatusCacheValidationScope<Product> : ['product']
+      };
+      return result as StatusCacheValidationResult<T>;
+    }
+    throw Error('Unknown target');
+  }
+
+  validate(target: Post, destDir: string, config: DownloaderConfig<any>): StatusCacheValidationResult<Post>;
+  validate(target: Product, destDir: string, config: DownloaderConfig<any>): StatusCacheValidationResult<Product>;
+  validate<T extends StatusCacheTarget>(target: T, destDir: string, config: DownloaderConfig<any>) {
+    
+    if (!this.#enabled) {     
+      return this.#validationResult(target, true);
     }
 
-    const entry =
-      target.type === 'product' ? this.#getCacheEntry(target.id, 'product') :
-        target.type === 'post' ? this.#getCacheEntry(target.id, 'post') :
-          null;
+    const entry = this.#getCacheEntry(target);
 
     if (!entry) {
       this.log('debug', `Status cache entry does not exist for ${target.type} #${target.id}`);
-      return false;
+      return this.#validationResult(target, true);
     }
 
     this.log('debug', `Validate status cache entry for ${target.type} #${target.id}; last downloaded: ${entry.lastDownloaded}; dest dir: "${entry.lastDestDir}"`);
 
     if (!entry.lastDestDir) {
       this.log('debug', '-> Invalidated: \'lastDestDir\' missing in status cache entry');
-      return false;
+      return this.#validationResult(target, true);
     }
     // `entry.lastDestDir` is relative to the dir of status cache. Resolve to absolute.
     const lastDestDir = path.resolve(this.#dir, entry.lastDestDir);
     if (lastDestDir !== destDir) {
       this.log('debug', `-> Invalidated: destination directory has changed from "${lastDestDir}" to "${destDir}"`);
-      return false;
+      return this.#validationResult(target, true);
     }
     if (!fse.existsSync(lastDestDir)) {
       this.log('debug', `-> Invalidated: destination directory "${lastDestDir}" does not exist`);
-      return false;
+      return this.#validationResult(target, true);
     }
 
     const downloaderVer =
-      target.type === 'product' ? ProductDownloader.version :
-        target.type === 'post' ? PostDownloader.version :
+      this.#isTargetType(target, 'product') ? ProductDownloader.version :
+        this.#isTargetType(target, 'post') ? PostDownloader.version :
           null;
     if (downloaderVer && !this.#validateByDownloaderVer(entry.downloaderVersion, downloaderVer)) {
       this.log('debug', '-> Invalidated: downloader version has changed (major / minor)');
-      return false;
+      return this.#validationResult(target, true);
     }
 
     if (entry.lastDownloadHasErrors) {
       this.log('debug', '-> Invalidated: last download has errors');
-      return false;
+      return this.#validationResult(target, true);
     }
 
     if (!entry.lastDownloadConfig?.include) {
       this.log('debug', '-> Invalidated: \'lastDownloadConfig.include\' missing in status cache entry');
-      return false;
+      return this.#validationResult(target, true);
     }
 
-    const __compareConfigInclude = (prop: keyof StatusCacheEntry['lastDownloadConfig']['include'] & keyof DownloaderConfig<StatusCacheTarget>['include']) => {
+    const __compareConfigInclude = <K extends StatusCacheTarget>(prop: keyof StatusCacheConfigIncludes<T & K> & keyof DownloaderConfig<any>['include']) => {
       const last = entry.lastDownloadConfig.include[prop];
       const now = config.include[prop];
 
@@ -199,53 +242,86 @@ export default class StatusCache {
       return !invalidated;
     };
 
-    const includeProps: Array<keyof StatusCacheEntry['lastDownloadConfig']['include']> =
-      [ 'lockedContent', 'contentInfo', 'previewMedia', 'contentMedia', 'allMediaVariants' ];
-    for (const prop of includeProps) {
-      if (!__compareConfigInclude(prop)) {
-        return false;
+    const __compareConfigIncludes = <K extends StatusCacheTarget>(props: (keyof StatusCacheConfigIncludes<T & K> & keyof DownloaderConfig<any>['include'])[]) => {
+      for (const prop of props) {
+        if (!__compareConfigInclude(prop)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const baseIncludes = [ 'lockedContent', 'contentInfo', 'previewMedia', 'contentMedia', 'allMediaVariants' ] as const;
+    const scope: StatusCacheValidationScope<any> = [];
+    if (!__compareConfigIncludes([...baseIncludes])) {
+      return this.#validationResult(target, true);
+    }
+    else if (this.#isTargetType(target, 'post') && !__compareConfigInclude<Post>('comments')) {
+      return this.#validationResult<Post>(target, true, ['comments']);
+    }
+    if (!entry.lastTargetInfo) {
+      this.log('debug', '-> Invalidated: \'lastTargetInfo\' missing in status cache entry');
+      return this.#validationResult(target, true);
+    }
+
+    if (this.#isTargetType(target, 'post') && this.#isEntryType(entry, 'post')) {
+      const invalidated =  this.#validatePostCacheEntry(entry, target);
+      if (invalidated.length > 0) {
+        return this.#validationResult<Post>(target, true, [...invalidated]);
+      }
+    }
+    if (this.#isTargetType(target, 'product') && this.#isEntryType(entry, 'product')) {
+      const invalidated = this.#validateProductCacheEntry(entry, target);
+      if (invalidated.length > 0){
+        return this.#validationResult<Product>(target, true, invalidated);
       }
     }
 
-    if (!entry.lastTargetInfo) {
-      this.log('debug', '-> Invalidated: \'lastTargetInfo\' missing in status cache entry');
-      return false;
-    }
-
-    if (target.type === 'post' && entry.type === 'post' && !this.#validatePostCacheEntry(entry, target)) {
-      return false;
-    }
-    if (target.type === 'product' && entry.type === 'product' && !this.#validateProductCacheEntry(entry, target)) {
-      return false;
-    }
-
     this.log('debug', '-> Validated');
-    return true;
+    return this.#validationResult(target, false);
+  }
+
+  #isTargetType(target: StatusCacheTarget, type: 'post'): target is Post;
+  #isTargetType(target: StatusCacheTarget, type: 'product'): target is Product;
+  #isTargetType<T extends StatusCacheTarget>(target: StatusCacheTarget, type: T['type']): target is T {
+    return target.type === type;
+  }
+
+  #isEntryType(entry: StatusCacheEntry<any>, type: 'post'): entry is StatusCacheEntry<Post>;
+  #isEntryType(entry: StatusCacheEntry<any>, type: 'product'): entry is StatusCacheEntry<Product>;
+  #isEntryType<T extends StatusCacheTarget>(entry: StatusCacheEntry<any>, type: T['type']): entry is StatusCacheEntry<T> {
+    return entry.type === type;
   }
 
   #validatePostCacheEntry(entry: StatusCacheEntry<Post>, post: Post) {
+    const invalidated: Partial<Record<StatusCacheValidationScope<Post>[number], any>> = {};
     if (entry.lastTargetInfo.isViewable !== post.isViewable) {
       this.log('debug', `-> Invalidated: viewability has changed (before: ${entry.lastTargetInfo.isViewable}; now: ${post.isViewable})`);
-      return false;
+      invalidated['post'] = 1;
     }
     if (entry.lastTargetInfo.editedAt !== post.editedAt) {
       this.log('debug', `-> Invalidated: post has been edited (before: ${entry.lastTargetInfo.editedAt}; now: ${post.editedAt})`);
-      return false;
+      invalidated['post'] = 1;
     }
-    return true;
+    if (entry.lastTargetInfo.commentCount !== post.commentCount) {
+      this.log('debug', `-> Invalidated: comment cout of post has changed (before: ${entry.lastTargetInfo.commentCount}; now: ${post.commentCount})`);
+      invalidated['comments'] = 1;
+    }
+    return Object.keys(invalidated) as StatusCacheValidationScope<Post>;
   }
 
   #validateProductCacheEntry(entry: StatusCacheEntry<Product>, product: Product) {
+    const invalidated: Partial<Record<StatusCacheValidationScope<Product>[number], any>> = {};
     if (entry.lastTargetInfo.isAccessible !== product.isAccessible) {
       this.log('debug', `-> Invalidated: product accessibility has changed (before: ${entry.lastTargetInfo.isAccessible}; now: ${product.isAccessible})`);
-      return false;
+      invalidated['product'] = 1;
     }
-    return true;
+    return Object.keys(invalidated) as StatusCacheValidationScope<Product>;
   }
 
-  #getCacheEntry(targetId: string, targetType: 'post'): StatusCacheEntry<Post> | null;
-  #getCacheEntry(targetId: string, targetType: 'product'): StatusCacheEntry<Product> | null;
-  #getCacheEntry(targetId: string, targetType: 'product' | 'post') {
+  #getCacheEntry<T extends StatusCacheTarget>(target: T): StatusCacheEntry<T> | null {
+    const targetType = target['type'];
+    const targetId = target['id'];
     const key = targetType === 'product' ? `products.${targetId}` : `posts.${targetId}`;
     return ObjectHelper.getProperty(this.#data, key) || null;
   }
@@ -274,7 +350,7 @@ export default class StatusCache {
         }
       }
     };
-    if (target.type === 'product') {
+    if (this.#isTargetType(target, 'product')) {
       this.#data.products[target.id] = {
         type: 'product',
         downloaderVersion: ProductDownloader.version,
@@ -285,15 +361,22 @@ export default class StatusCache {
         }
       };
     }
-    else if (target.type === 'post') {
+    else if (this.#isTargetType(target, 'post')) {
       this.#data.posts[target.id] = {
         type: 'post',
         downloaderVersion: PostDownloader.version,
         ...commonData,
+        lastDownloadConfig: {
+          include: {
+            ...commonData.lastDownloadConfig.include,
+            comments: config.include.comments
+          }
+        },
         lastTargetInfo: {
           id: target.id,
           isViewable: target.isViewable,
-          editedAt: target.editedAt
+          editedAt: target.editedAt,
+          commentCount: target.commentCount
         }
       };
     }

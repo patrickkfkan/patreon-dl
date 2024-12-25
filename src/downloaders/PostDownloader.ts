@@ -4,7 +4,7 @@ import type DownloadTaskBatch from './task/DownloadTaskBatch.js';
 import PostParser from '../parsers/PostParser.js';
 import { type Post } from '../entities/Post.js';
 import { type Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
-import StatusCache from './cache/StatusCache.js';
+import StatusCache, { StatusCacheValidationScope } from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
@@ -13,6 +13,7 @@ import PostsFetcher from './PostsFetcher.js';
 import CommentParser from '../parsers/CommentParser.js';
 import { Comment, CommentCollection, CommentReply, CommentReplyCollection } from '../entities/Comment.js';
 import { generatePostCommentsSummary } from './templates/CommentInfo.js';
+import { PostDirectories } from '../utils/FSHelper.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -36,18 +37,6 @@ export default class PostDownloader extends Downloader<Post> {
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
-        }
-  
-        const abortHandler = () => {
-          void (async () => {
-            this.log('info', 'Abort signal received');
-            if (batch) {
-              await batch.abort();
-            }
-          })();
-        };
-        if (signal) {
-          signal.addEventListener('abort', abortHandler, { once: true });
         }
   
         if (postFetch.type === 'byUser') {
@@ -150,7 +139,8 @@ export default class PostDownloader extends Downloader<Post> {
   
             // Step 4.2: Check with status cache
             const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
-            if (statusCache.validate(post, postDirs.root, this.config)) {
+            const statusCacheValidation = statusCache.validate(post, postDirs.root, this.config)
+            if (!statusCacheValidation.invalidated) {
               this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
               this.emit('targetEnd', {
                 target: post,
@@ -161,301 +151,27 @@ export default class PostDownloader extends Downloader<Post> {
               skippedRedundant++;
               continue;
             }
-  
-            this.log('info', `Download post #${post.id} (${post.title})`);
-  
-            // Step 4.3: Check whether we should download post
-            // -- 4.3.1: Viewability
-            if (!post.isViewable) {
-              if (this.config.include.lockedContent) {
-                this.log('warn', `Post #${post.id} is not viewable by current user`);
-              }
-              else {
-                this.log('warn', `Skipped downloading post #${post.id}: not viewable by current user`);
-                this.emit('targetEnd', {
-                  target: post,
-                  isSkipped: true,
-                  skipReason: TargetSkipReason.Inaccessible,
-                  skipMessage: 'Target is not viewable by current user'
-                });
-                skippedUnviewable++;
-                continue;
-              }
-            }
-  
-            // -- 4.3.2: Config option 'include.postsWithMediaType'
-            const postsWithMediaType = this.config.include.postsWithMediaType;
-            if (postsWithMediaType !== 'any') {
-              const hasAttachments = post.attachments.length > 0;
-              const hasAudio = !!post.audio || !!post.audioPreview;
-              const hasImages = post.images.length > 0;
-              const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && (post.embed.type === 'videoEmbed' || isYouTubeEmbed(post.embed)));
-              const isPodcast = post.postType === 'podcast'
-  
-              let skip = false;
-              if (postsWithMediaType === 'none') {
-                skip = hasAttachments || hasAudio || hasImages || hasVideo;
-              }
-              else if (Array.isArray(postsWithMediaType)) {
-                skip = !(
-                  (postsWithMediaType.includes('attachment') && hasAttachments) ||
-                  (postsWithMediaType.includes('audio') && hasAudio) ||
-                  (postsWithMediaType.includes('image') && hasImages) ||
-                  (postsWithMediaType.includes('video') && hasVideo) ||
-                  (postsWithMediaType.includes('podcast') && isPodcast && (hasAudio || hasVideo)));
-              }
-  
-              if (skip) {
-                this.log('warn', `Skipped downloading post #${post.id}: unmet media type criteria`);
-                this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
-                  hasAttachments,
-                  hasAudio,
-                  hasImages,
-                  hasVideo
-                });
-                this.emit('targetEnd', {
-                  target: post,
-                  isSkipped: true,
-                  skipReason: TargetSkipReason.UnmetMediaTypeCriteria,
-                  skipMessage: 'Target does not meet media type criteria'
-                });
-                skippedUnmetMediaTypeCriteria++;
-                continue;
-              }
-            }
-  
-            // -- 4.3.3: Config option 'include.postsInTier'
-            const postsInTier = this.config.include.postsInTier;
-            const isAnyTier = postsInTier === 'any' || postsInTier.includes('any');
-            if (!isAnyTier) {
-              const applicableTierIds = postsInTier.filter((id) => post.campaign?.rewards.find((r) => r.id === id));
-              if (!post.campaign) {
-                this.log('warn', 'config.include.postsInTier: ignored - post missing campaign info');
-              }
-              else {
-                this.log('debug', 'config.include.postsInTier: applicable tier IDs:', applicableTierIds);
-              }
-              let skip = false;
-              if (!post.campaign) {
-                skip = false;
-              }
-              else if (applicableTierIds.length === 0) {
-                skip = true;
-              }
-              else if (!post.tiers.find((tier) => tier.id === 'patrons')) {
-                skip = applicableTierIds.every((id) => !post.tiers.find((tier) => tier.id === id));
-              }
-              if (skip) {
-                this.log('warn', `Skipped downloading post #${post.id}: not in tier`);
-                this.log('debug', 'Match criteria failed:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
-                this.emit('targetEnd', {
-                  target: post,
-                  isSkipped: true,
-                  skipReason: TargetSkipReason.NotInTier,
-                  skipMessage: 'Target not in tier'
-                });
+            
+            switch ((await this.#doDownload(post, postDirs, statusCacheValidation.scope, statusCache, resolve, signal)).status) {
+              case 'aborted':
+                return;
+              case 'downloaded':
+                downloaded++;
+                break;
+              case 'skippedNotInTier':
                 skippedNotInTier++;
-                continue;
-              }
-              if (post.campaign) {
-                this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
-              }
+                break;
+              case 'skippedPublishDateOutOfRange':
+                skippedPublishDateOutOfRange++;
+                break;
+              case 'skippedUnmetMediaTypeCriteria':
+                skippedUnmetMediaTypeCriteria++;
+                break;
+              case 'skippedUnviewable':
+                skippedUnviewable++;
+                break;
             }
 
-            // -- 4.3.4: Config option 'include.postsPublished'
-            const postsPublishedAfter = this.config.include.postsPublished.after;
-            const postsPublishedBefore = this.config.include.postsPublished.before;
-            if (postsPublishedAfter || postsPublishedBefore) {
-              const targetPublishedAt = post.publishedAt;
-              let parsedPublishedAt: Date | null = null;
-              if (!targetPublishedAt) {
-                this.log('warn', `config.include.postsPublished: ignored - post #${post.id} missing publish date`);
-              }
-              else {
-                try {
-                  parsedPublishedAt = new Date(targetPublishedAt);
-                }
-                catch (error: any) {
-                  this.log('error', `Failed to parse publish date of post #${post.id} ("${targetPublishedAt}"): `, error);
-                  this.log('warn', `config.include.postsPublished: ignored - publish date of post #${post.id} could not be parsed`);
-                }
-              }
-              let skip = false;
-              if (parsedPublishedAt) {
-                const isAfter = postsPublishedAfter ? parsedPublishedAt.getTime() >= postsPublishedAfter.valueOf().getTime() : true;
-                const isBefore = postsPublishedBefore ? parsedPublishedAt.getTime() < postsPublishedBefore.valueOf().getTime() : true;
-                skip = !isAfter || !isBefore;
-                let eq: string | null = null;
-                if (postsPublishedAfter && postsPublishedBefore) {
-                  eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
-                }
-                else if (postsPublishedAfter) {
-                  eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}*`;
-                }
-                else if (postsPublishedBefore) {
-                  eq = `*${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
-                }
-                if (eq) {
-                  if (skip) {
-                    this.log('warn', `Skipped downloading post #${post.id}: publish date out of range`);
-                    this.log('debug', `Publish date test failed for post #${post.id}: ${eq}`);
-                  }
-                  else {
-                    this.log('debug', `Publish date test OK for post #${post.id}: ${eq}`);
-                  }
-                }
-                if (skip) {
-                  this.emit('targetEnd', {
-                    target: post,
-                    isSkipped: true,
-                    skipReason: TargetSkipReason.PublishDateOutOfRange,
-                    skipMessage: 'Publish date out of range'
-                  });
-                  skippedPublishDateOutOfRange++;
-                  continue;
-                }
-              }
-            }
-
-  
-            // Step 4.4: Save post info
-            if (this.config.include.contentInfo) {
-              this.log('info', `Save post info #${post.id}`);
-              this.emit('phaseBegin', { target: post, phase: 'saveInfo' });
-              this.fsHelper.createDir(postDirs.info);
-              // Post raw data might not be complete or consistent with other posts in the collection.
-              // Fetch directly from API.
-              // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
-              const { json: fetchedPostAPIData } = await this.commonFetchAPI(
-                URLHelper.constructPostsAPIURL({
-                  postId: post.id,
-                  campaignId: post.campaign?.id
-                }),
-                signal
-              );
-  
-              if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-  
-              // Save summary and raw json
-              const summary = generatePostSummary(post);
-              const summaryFile = path.resolve(postDirs.info, 'info.txt');
-              const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-              this.logWriteTextFileResult(saveSummaryResult, post, 'post summary');
-  
-              const postRawFile = path.resolve(postDirs.info, 'post-api.json');
-              const savePostRawResult = await this.fsHelper.writeTextFile(
-                postRawFile, fetchedPostAPIData || post.raw, this.config.fileExistsAction.infoAPI);
-              this.logWriteTextFileResult(savePostRawResult, post, 'post API data');
-              this.emit('phaseEnd', { target: post, phase: 'saveInfo' });
-  
-              // (Downloading of info media items deferred to the next step)
-            }
-  
-            if (this.config.include.previewMedia || this.config.include.contentMedia) {
-              this.emit('phaseBegin', { target: post, phase: 'saveMedia' });
-            }
-  
-            // Step 4.5: save embed info
-            if (post.embed && this.config.include.contentMedia) {
-              this.log('info', `Save embed info of post #${post.id}`);
-              this.fsHelper.createDir(postDirs.embed);
-              const embedSummary = generatePostEmbedSummary(post.embed);
-              let embedFilename;
-              switch (post.embed.type) {
-                case 'videoEmbed':
-                  embedFilename = 'embedded-video.txt';
-                  break;
-                case 'linkEmbed':
-                  embedFilename = 'embedded-link.txt';
-                  break;
-                default:
-                  embedFilename = 'embedded-unknown.txt';
-              }
-              const embedFile = path.resolve(postDirs.embed, embedFilename);
-              const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
-              this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
-            }
-
-            // Step 4.6: Fetch and save comments
-            if (this.config.include.comments && post.commentCount > 0) {
-              const comments = await this.#fetchComments(post, resolve, signal);
-              if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-              if (comments.length > 0) {
-                const commentsFile = path.resolve(postDirs.info, 'comments.txt');
-                const commentsSummary = generatePostCommentsSummary(comments);
-                const saveCommentsResult = await this.fsHelper.writeTextFile(commentsFile, commentsSummary, this.config.fileExistsAction.info);
-                this.logWriteTextFileResult(saveCommentsResult, post, `${comments.length} comments`);
-              }
-              else {
-                this.log('info', `No comments fetched for post #${post.id}`)
-              }
-            }
-  
-            // Step 4.7: create download tasks
-            let createTaskErrorCount = 0;
-            if (this.config.include.previewMedia ||
-              this.config.include.contentMedia ||
-              this.config.include.contentInfo) {
-  
-              const batchResult = await this.#createDownloadTaskBatchForPost(post, postDirs, signal);
-              batch = batchResult.batch;
-              createTaskErrorCount += batchResult.errorCount;
-
-              if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-  
-              if (this.config.include.contentInfo) {
-                const infoElements: Downloadable[] = [];
-                if (post.coverImage) {
-                  infoElements.push(post.coverImage);
-                }
-                if (post.thumbnail) {
-                  infoElements.push(post.thumbnail);
-                }
-                if (infoElements.length > 0) {
-                  const { errorCount } = await this.addToDownloadTaskBatch(batch,
-                    signal,
-                    {
-                      target: infoElements,
-                      targetName: `post #${post.id} -> info elements`,
-                      destDir: postDirs.info,
-                      fileExistsAction: this.config.fileExistsAction.info
-                    }
-                  );
-                  createTaskErrorCount += errorCount;
-                }
-              }
-
-              if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-  
-              batch.prestart();
-              this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
-              this.emit('phaseBegin', { target: post, phase: 'batchDownload', batch });
-  
-              await batch.start();
-  
-              // Step 4.8: Update status cache
-              statusCache.updateOnDownload(post, postDirs.root, batch.getTasks('error').length > 0 || createTaskErrorCount > 0, this.config);
-  
-              await batch.destroy();
-              batch = null;
-              this.emit('phaseEnd', { target: post, phase: 'batchDownload'});
-            }
-  
-            if (this.config.include.previewMedia || this.config.include.contentMedia) {
-              this.emit('phaseEnd', { target: post, phase: 'saveMedia' });
-            }
-  
-            downloaded++;
-            this.emit('targetEnd', { target: post, isSkipped: false });
-  
             if (this.checkAbortSignal(signal, resolve)) {
               return;
             }
@@ -467,9 +183,6 @@ export default class PostDownloader extends Downloader<Post> {
         }
   
         // Done
-        if (signal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
         if (postFetch.type === 'byUser') {
           this.log('info', `Done downloading posts by '${postFetch.vanity}'`);
         }
@@ -519,6 +232,352 @@ export default class PostDownloader extends Downloader<Post> {
     });
 
     return this.#startPromise;
+  }
+
+  async #doDownload(post: Post, postDirs: PostDirectories, scope: StatusCacheValidationScope<Post>, statusCache: StatusCache, resolve: () => void, signal?: AbortSignal): Promise<{status: 'skippedUnviewable' | 'skippedUnmetMediaTypeCriteria' | 'skippedNotInTier' | 'skippedPublishDateOutOfRange' | 'aborted' | 'downloaded' }> {
+    this.log('info', `Download post #${post.id} (${post.title})`);
+
+    const downloadPost = scope.includes('post');
+    const downloadComments = scope.includes('comments');
+      
+    // Step 1: Check whether we should download post
+    // -- 1.1 Viewability
+    if (!post.isViewable) {
+      if (this.config.include.lockedContent) {
+        this.log('warn', `Post #${post.id} is not viewable by current user`);
+      }
+      else {
+        this.log('warn', `Skipped downloading post #${post.id}: not viewable by current user`);
+        this.emit('targetEnd', {
+          target: post,
+          isSkipped: true,
+          skipReason: TargetSkipReason.Inaccessible,
+          skipMessage: 'Target is not viewable by current user'
+        });
+        return {
+          status: 'skippedUnviewable'
+        };
+      }
+    }
+
+    // -- 1.2 Config option 'include.postsWithMediaType'
+    const postsWithMediaType = this.config.include.postsWithMediaType;
+    if (postsWithMediaType !== 'any') {
+      const hasAttachments = post.attachments.length > 0;
+      const hasAudio = !!post.audio || !!post.audioPreview;
+      const hasImages = post.images.length > 0;
+      const hasVideo = !!post.video || !!post.videoPreview || !!(post.embed && (post.embed.type === 'videoEmbed' || isYouTubeEmbed(post.embed)));
+      const isPodcast = post.postType === 'podcast'
+
+      let skip = false;
+      if (postsWithMediaType === 'none') {
+        skip = hasAttachments || hasAudio || hasImages || hasVideo;
+      }
+      else if (Array.isArray(postsWithMediaType)) {
+        skip = !(
+          (postsWithMediaType.includes('attachment') && hasAttachments) ||
+          (postsWithMediaType.includes('audio') && hasAudio) ||
+          (postsWithMediaType.includes('image') && hasImages) ||
+          (postsWithMediaType.includes('video') && hasVideo) ||
+          (postsWithMediaType.includes('podcast') && isPodcast && (hasAudio || hasVideo)));
+      }
+
+      if (skip) {
+        this.log('warn', `Skipped downloading post #${post.id}: unmet media type criteria`);
+        this.log('debug', 'Match criteria failed:', `config.include.postsWithMediaType: ${JSON.stringify(postsWithMediaType)} <-> post #${post.id}:`, {
+          hasAttachments,
+          hasAudio,
+          hasImages,
+          hasVideo
+        });
+        this.emit('targetEnd', {
+          target: post,
+          isSkipped: true,
+          skipReason: TargetSkipReason.UnmetMediaTypeCriteria,
+          skipMessage: 'Target does not meet media type criteria'
+        });
+        return {
+          status: 'skippedUnmetMediaTypeCriteria'
+        };
+      }
+    }
+
+    // -- 1.3 Config option 'include.postsInTier'
+    const postsInTier = this.config.include.postsInTier;
+    const isAnyTier = postsInTier === 'any' || postsInTier.includes('any');
+    if (!isAnyTier) {
+      const applicableTierIds = postsInTier.filter((id) => post.campaign?.rewards.find((r) => r.id === id));
+      if (!post.campaign) {
+        this.log('warn', 'config.include.postsInTier: ignored - post missing campaign info');
+      }
+      else {
+        this.log('debug', 'config.include.postsInTier: applicable tier IDs:', applicableTierIds);
+      }
+      let skip = false;
+      if (!post.campaign) {
+        skip = false;
+      }
+      else if (applicableTierIds.length === 0) {
+        skip = true;
+      }
+      else if (!post.tiers.find((tier) => tier.id === 'patrons')) {
+        skip = applicableTierIds.every((id) => !post.tiers.find((tier) => tier.id === id));
+      }
+      if (skip) {
+        this.log('warn', `Skipped downloading post #${post.id}: not in tier`);
+        this.log('debug', 'Match criteria failed:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
+        this.emit('targetEnd', {
+          target: post,
+          isSkipped: true,
+          skipReason: TargetSkipReason.NotInTier,
+          skipMessage: 'Target not in tier'
+        });
+        return {
+          status: 'skippedNotInTier'
+        };
+      }
+      if (post.campaign) {
+        this.log('debug', 'Match criteria OK:', `config.include.postsInTier: ${JSON.stringify(applicableTierIds)} <-> post #${post.id}:`, post.tiers);
+      }
+    }
+
+    // -- 1.4 Config option 'include.postsPublished'
+    const postsPublishedAfter = this.config.include.postsPublished.after;
+    const postsPublishedBefore = this.config.include.postsPublished.before;
+    if (postsPublishedAfter || postsPublishedBefore) {
+      const targetPublishedAt = post.publishedAt;
+      let parsedPublishedAt: Date | null = null;
+      if (!targetPublishedAt) {
+        this.log('warn', `config.include.postsPublished: ignored - post #${post.id} missing publish date`);
+      }
+      else {
+        try {
+          parsedPublishedAt = new Date(targetPublishedAt);
+        }
+        catch (error: any) {
+          this.log('error', `Failed to parse publish date of post #${post.id} ("${targetPublishedAt}"): `, error);
+          this.log('warn', `config.include.postsPublished: ignored - publish date of post #${post.id} could not be parsed`);
+        }
+      }
+      let skip = false;
+      if (parsedPublishedAt) {
+        const isAfter = postsPublishedAfter ? parsedPublishedAt.getTime() >= postsPublishedAfter.valueOf().getTime() : true;
+        const isBefore = postsPublishedBefore ? parsedPublishedAt.getTime() < postsPublishedBefore.valueOf().getTime() : true;
+        skip = !isAfter || !isBefore;
+        let eq: string | null = null;
+        if (postsPublishedAfter && postsPublishedBefore) {
+          eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
+        }
+        else if (postsPublishedAfter) {
+          eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}*`;
+        }
+        else if (postsPublishedBefore) {
+          eq = `*${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
+        }
+        if (eq) {
+          if (skip) {
+            this.log('warn', `Skipped downloading post #${post.id}: publish date out of range`);
+            this.log('debug', `Publish date test failed for post #${post.id}: ${eq}`);
+          }
+          else {
+            this.log('debug', `Publish date test OK for post #${post.id}: ${eq}`);
+          }
+        }
+        if (skip) {
+          this.emit('targetEnd', {
+            target: post,
+            isSkipped: true,
+            skipReason: TargetSkipReason.PublishDateOutOfRange,
+            skipMessage: 'Publish date out of range'
+          });
+          return {
+            status: 'skippedPublishDateOutOfRange'
+          }
+        }
+      }
+    }
+
+    if (!downloadPost && downloadComments) {
+      this.log('info', `Previously downloaded post #${post.id} - refresh comments only`);
+    }
+
+    let hasDownloadPostError = false;
+    if (downloadPost) {
+      // Step 2: Save post info
+      if (this.config.include.contentInfo) {
+        this.log('info', `Save post info #${post.id}`);
+        this.emit('phaseBegin', { target: post, phase: 'saveInfo' });
+        this.fsHelper.createDir(postDirs.info);
+        // Post raw data might not be complete or consistent with other posts in the collection.
+        // Fetch directly from API.
+        // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
+        const { json: fetchedPostAPIData } = await this.commonFetchAPI(
+          URLHelper.constructPostsAPIURL({
+            postId: post.id,
+            campaignId: post.campaign?.id
+          }),
+          signal
+        );
+
+        if (this.checkAbortSignal(signal, resolve)) {
+          return {
+            status: 'aborted'
+          };
+        }
+
+        // Step 3. Save summary and raw json
+        const summary = generatePostSummary(post);
+        const summaryFile = path.resolve(postDirs.info, 'info.txt');
+        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+        this.logWriteTextFileResult(saveSummaryResult, post, 'post summary');
+
+        const postRawFile = path.resolve(postDirs.info, 'post-api.json');
+        const savePostRawResult = await this.fsHelper.writeTextFile(
+          postRawFile, fetchedPostAPIData || post.raw, this.config.fileExistsAction.infoAPI);
+        this.logWriteTextFileResult(savePostRawResult, post, 'post API data');
+        this.emit('phaseEnd', { target: post, phase: 'saveInfo' });
+
+        // (Downloading of info media items deferred to the next step)
+      }
+
+      if (this.config.include.previewMedia || this.config.include.contentMedia) {
+        this.emit('phaseBegin', { target: post, phase: 'saveMedia' });
+      }
+
+      // Step 4: save embed info
+      if (post.embed && this.config.include.contentMedia) {
+        this.log('info', `Save embed info of post #${post.id}`);
+        this.fsHelper.createDir(postDirs.embed);
+        const embedSummary = generatePostEmbedSummary(post.embed);
+        let embedFilename;
+        switch (post.embed.type) {
+          case 'videoEmbed':
+            embedFilename = 'embedded-video.txt';
+            break;
+          case 'linkEmbed':
+            embedFilename = 'embedded-link.txt';
+            break;
+          default:
+            embedFilename = 'embedded-unknown.txt';
+        }
+        const embedFile = path.resolve(postDirs.embed, embedFilename);
+        const saveSummaryResult = await this.fsHelper.writeTextFile(embedFile, embedSummary, this.config.fileExistsAction.content);
+        this.logWriteTextFileResult(saveSummaryResult, post, 'embed info');
+      }
+
+      // Step 5: create download tasks
+      let createTaskErrorCount = 0;
+      if (this.config.include.previewMedia ||
+        this.config.include.contentMedia ||
+        this.config.include.contentInfo) {
+
+        const batchResult = await this.#createDownloadTaskBatchForPost(post, postDirs, signal);
+        const { batch } = batchResult;    
+        createTaskErrorCount += batchResult.errorCount;
+
+        const abortHandler = () => {
+          void (async () => {
+            this.log('info', 'Abort signal received');
+            if (batch) {
+              await batch.abort();
+            }
+          })();
+        };
+        if (signal) {
+          signal.addEventListener('abort', abortHandler, { once: true });
+        }
+
+        try {
+          if (this.checkAbortSignal(signal, resolve)) {
+            return {
+              status: 'aborted'
+            };
+          }
+    
+          if (this.config.include.contentInfo) {
+            const infoElements: Downloadable[] = [];
+            if (post.coverImage) {
+              infoElements.push(post.coverImage);
+            }
+            if (post.thumbnail) {
+              infoElements.push(post.thumbnail);
+            }
+            if (infoElements.length > 0) {
+              const { errorCount } = await this.addToDownloadTaskBatch(batch,
+                signal,
+                {
+                  target: infoElements,
+                  targetName: `post #${post.id} -> info elements`,
+                  destDir: postDirs.info,
+                  fileExistsAction: this.config.fileExistsAction.info
+                }
+              );
+              createTaskErrorCount += errorCount;
+            }
+          }
+    
+          if (this.checkAbortSignal(signal, resolve)) {
+            return {
+              status: 'aborted'
+            };
+          }
+    
+          batch.prestart();
+          this.log('info', `Download batch created (#${batch.id}): ${batch.getTasks('pending').length} downloads pending`);
+          this.emit('phaseBegin', { target: post, phase: 'batchDownload', batch });
+    
+          await batch.start();
+
+          hasDownloadPostError = batch.getTasks('error').length > 0 || createTaskErrorCount > 0;
+
+          await batch.destroy();
+        }
+        finally {
+          if (signal) {
+            signal.removeEventListener('abort', abortHandler);
+          }
+        }
+
+        this.emit('phaseEnd', { target: post, phase: 'batchDownload'});
+      }
+
+      if (this.config.include.previewMedia || this.config.include.contentMedia) {
+        this.emit('phaseEnd', { target: post, phase: 'saveMedia' });
+      }
+    }
+
+    // Step 6: Fetch and save comments
+    if (downloadComments && this.config.include.comments) {
+      if (post.commentCount > 0) {
+        const comments = await this.#fetchComments(post, resolve, signal);
+        if (this.checkAbortSignal(signal, resolve)) {
+          return {
+            status: 'aborted'
+          };
+        }
+        if (comments.length > 0) {
+          const commentsFile = path.resolve(postDirs.info, 'comments.txt');
+          const commentsSummary = generatePostCommentsSummary(comments);
+          const saveCommentsResult = await this.fsHelper.writeTextFile(commentsFile, commentsSummary, this.config.fileExistsAction.info);
+          this.logWriteTextFileResult(saveCommentsResult, post, `${comments.length} comments`);
+        }
+        else {
+          this.log('warn', `Expecting ${post.commentCount} comments for post #${post.id} but got none`);
+        }
+      }
+      else {
+        this.log('info', `No comments available for post #${post.id}`)
+      }
+    }
+
+    // Step 7: Update status cache
+    statusCache.updateOnDownload(post, postDirs.root, hasDownloadPostError, this.config);
+
+    this.emit('targetEnd', { target: post, isSkipped: false });
+
+    return {
+      status: 'downloaded'
+    };
   }
 
   #isFetchingMultiplePosts(postFetch: DownloaderConfig<Post>['postFetch']): postFetch is DownloaderConfig<Post>['postFetch'] & { type: 'byUser' | 'byUserId' | 'byCollection' } {
