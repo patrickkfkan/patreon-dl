@@ -91,15 +91,15 @@ export default class PostDownloader extends Downloader<Post> {
             resolve();
             return;
           }
-          if (!campaignSaved && collection.posts[0]?.campaign) {
-            await this.saveCampaignInfo(collection.posts[0].campaign, signal);
+          if (!campaignSaved && collection.items[0]?.campaign) {
+            await this.saveCampaignInfo(collection.items[0].campaign, signal);
             campaignSaved = true;
             if (this.checkAbortSignal(signal, resolve)) {
               return;
             }
           }
   
-          for (const _post of collection.posts) {
+          for (const _post of collection.items) {
   
             let post = _post;
   
@@ -110,7 +110,7 @@ export default class PostDownloader extends Downloader<Post> {
               const { json } = await this.commonFetchAPI(postURL, signal);
               let refreshed: Post | null = null;
               if (json) {
-                refreshed = postsParser.parsePostsAPIResponse(json, postURL).posts[0] || null;
+                refreshed = postsParser.parsePostsAPIResponse(json, postURL).items[0] || null;
                 if (!refreshed) {
                   this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
                 }

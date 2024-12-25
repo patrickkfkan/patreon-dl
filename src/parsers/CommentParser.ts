@@ -33,7 +33,7 @@ export default class CommentParser extends Parser {
       url: _url,
       items: [],
       total: ObjectHelper.getProperty(json, 'meta.pagination.total') || null,
-      nextURL: this.parseNextURL(json, _url)
+      nextURL: this.parseCollectionNextURL(json, _url)
     };
 
     let hasIncludedJSON = true;
@@ -104,20 +104,5 @@ export default class CommentParser extends Parser {
     this.log('debug', 'Done parsing comments');
 
     return collection;
-  }
-
-  parseNextURL(json: any, _url: string) {
-    const nextURL = ObjectHelper.getProperty(json, 'links.next') || null;
-    const nextPageCursor = ObjectHelper.getProperty(json, 'meta.pagination.cursors.next');
-    let realNextURL = null;
-    if (nextURL && nextPageCursor) {
-      const urlObj = new URL(nextURL);
-      urlObj.searchParams.set('page[cursor]', nextPageCursor);
-      realNextURL = urlObj.toString();
-    }
-    if (nextURL && !nextPageCursor) {
-      this.log('warn', `Anomaly in API response of "${_url}: (pagination) next page cursor expected but missing`);
-    }
-    return realNextURL;
   }
 }

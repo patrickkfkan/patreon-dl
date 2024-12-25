@@ -156,7 +156,7 @@ export default class PostsFetcher extends EventEmitter {
 
     const total = this.#total = this.#fetched[0].total;
     if (this.#isFetchingMultiplePosts(postFetch)) {
-      let totalFetched = this.#fetched[0].posts.length;
+      let totalFetched = this.#fetched[0].items.length;
       this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
       let nextURL = this.#fetched[0].nextURL;
       while (nextURL) {
@@ -188,7 +188,7 @@ export default class PostsFetcher extends EventEmitter {
         else {
           const collection = postsParser.parsePostsAPIResponse(json, nextURL);
           this.#fetched.push(collection);
-          const fetched = collection.posts.length;
+          const fetched = collection.items.length;
           totalFetched += fetched;
           this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
           nextURL = collection.nextURL;

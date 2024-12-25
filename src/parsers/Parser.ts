@@ -559,6 +559,21 @@ export default abstract class Parser {
     };
   }
 
+  protected parseCollectionNextURL(json: any, _url: string) {
+    const nextURL = ObjectHelper.getProperty(json, 'links.next') || null;
+    const nextPageCursor = ObjectHelper.getProperty(json, 'meta.pagination.cursors.next');
+    let realNextURL = null;
+    if (nextURL && nextPageCursor) {
+      const urlObj = new URL(nextURL);
+      urlObj.searchParams.set('page[cursor]', nextPageCursor);
+      realNextURL = urlObj.toString();
+    }
+    if (nextURL && !nextPageCursor) {
+      this.log('warn', `Anomaly in API response of "${_url}: (pagination) next page cursor expected but missing`);
+    }
+    return realNextURL;
+  }
+
   protected log(level: LogLevel, ...msg: Array<any>) {
     commonLog(this.#logger, level, this.name, ...msg);
   }
