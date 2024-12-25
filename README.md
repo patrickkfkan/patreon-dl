@@ -175,6 +175,7 @@ include.posts.in.tier = 123456, 789100
 # include.images.by.filename
 # include.audio.by.filename
 # include.attachments.by.filename
+# include.comments
 
 # URL 2 
 https://www.patreon.com/janedoe/posts
