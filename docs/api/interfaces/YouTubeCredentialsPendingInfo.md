@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/YouTubeCredentialsCapturer.ts#L6)
+[src/utils/YouTubeCredentialsCapturer.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/YouTubeCredentialsCapturer.ts#L6)
 
 ***
 
@@ -24,4 +24,4 @@
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/utils/YouTubeCredentialsCapturer.ts#L5)
+[src/utils/YouTubeCredentialsCapturer.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/YouTubeCredentialsCapturer.ts#L5)

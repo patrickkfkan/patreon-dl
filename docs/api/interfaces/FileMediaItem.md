@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L102)
+[src/entities/MediaItem.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L102)
 
 ***
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:103](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L103)
+[src/entities/MediaItem.ts:103](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L103)
 
 ***
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -84,4 +84,4 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/entities/MediaItem.ts#L101)
+[src/entities/MediaItem.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/MediaItem.ts#L101)

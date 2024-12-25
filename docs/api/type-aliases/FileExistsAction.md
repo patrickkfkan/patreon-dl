@@ -10,4 +10,4 @@
 
 ## Defined in
 
-[src/downloaders/DownloaderOptions.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/29c94231b23a7a4c79dabb0a793bbd02deb02932/src/downloaders/DownloaderOptions.ts#L6)
+[src/downloaders/DownloaderOptions.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/DownloaderOptions.ts#L6)
