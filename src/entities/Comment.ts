@@ -1,5 +1,5 @@
-import { Collection } from "./Collection.js";
-import { User } from "./User.js";
+import { type Collection } from "./Collection.js";
+import { type User } from "./User.js";
 
 export type CommentCollection = Collection<Comment>;
 export type CommentReplyCollection = Collection<CommentReply>;

@@ -1,5 +1,5 @@
 import { type Campaign } from './Campaign.js';
-import { Collection } from './Collection.js';
+import { type Collection } from './Collection.js';
 import { type Downloadable } from './Downloadable.js';
 import { type PostCoverImageMediaItem, type PostThumbnailMediaItem } from './MediaItem.js';
 import { type Tier } from './Reward.js';

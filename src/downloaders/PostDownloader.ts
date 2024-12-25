@@ -1,19 +1,18 @@
 import URLHelper from '../utils/URLHelper.js';
 import Downloader, { type DownloaderConfig, type DownloaderStartParams } from './Downloader.js';
-import type DownloadTaskBatch from './task/DownloadTaskBatch.js';
 import PostParser from '../parsers/PostParser.js';
 import { type Post } from '../entities/Post.js';
 import { type Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
-import StatusCache, { StatusCacheValidationScope } from './cache/StatusCache.js';
+import StatusCache, { type StatusCacheValidationScope } from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
 import path from 'path';
 import { TargetSkipReason } from './DownloaderEvent.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import PostsFetcher from './PostsFetcher.js';
 import CommentParser from '../parsers/CommentParser.js';
-import { Comment, CommentCollection, CommentReply, CommentReplyCollection } from '../entities/Comment.js';
+import { type Comment, type CommentCollection, type CommentReply, type CommentReplyCollection } from '../entities/Comment.js';
 import { generatePostCommentsSummary } from './templates/CommentInfo.js';
-import { PostDirectories } from '../utils/FSHelper.js';
+import { type PostDirectories } from '../utils/FSHelper.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -33,7 +32,6 @@ export default class PostDownloader extends Downloader<Post> {
       void (async () => {
         const { signal } = params || {};
         const postFetch = this.config.postFetch;
-        let batch: DownloadTaskBatch | null = null;
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;

@@ -1,5 +1,5 @@
 import { EOL } from 'os';
-import { Comment, CommentReply } from '../../entities/Comment.js';
+import { type Comment, type CommentReply } from '../../entities/Comment.js';
 
 const POST_COMMENT_TEMPLATE =
   `

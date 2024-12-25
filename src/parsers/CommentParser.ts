@@ -1,7 +1,7 @@
-import { CommentReplyCollection, type CommentCollection } from '../entities/Comment.js';
+import { type CommentReplyCollection, type CommentCollection } from '../entities/Comment.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
-import { User } from '../entities/User.js';
+import { type User } from '../entities/User.js';
 
 export default class CommentParser extends Parser {
 
@@ -74,7 +74,7 @@ export default class CommentParser extends Parser {
       }
 
       let commenter: User | null = null;
-      if (relationships.commenter?.data?.id && includedJSON) {
+      if (relationships.commenter?.data?.id && hasIncludedJSON) {
         commenter = this.findInAPIResponseIncludedArray(includedJSON, relationships.commenter.data.id, 'user')
       }
 

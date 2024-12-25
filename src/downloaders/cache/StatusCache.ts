@@ -252,7 +252,6 @@ export default class StatusCache {
     }
 
     const baseIncludes = [ 'lockedContent', 'contentInfo', 'previewMedia', 'contentMedia', 'allMediaVariants' ] as const;
-    const scope: StatusCacheValidationScope<any> = [];
     if (!__compareConfigIncludes([...baseIncludes])) {
       return this.#validationResult(target, true);
     }
