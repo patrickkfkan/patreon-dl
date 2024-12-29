@@ -544,8 +544,8 @@ export default class PostDownloader extends Downloader<Post> {
       }
     }
 
-    // Step 6: Fetch and save comments
-    if (downloadComments && this.config.include.comments) {
+    // Step 6: Fetch and save comments (only available if post is viewable)
+    if (downloadComments && this.config.include.comments && post.isViewable) {
       if (post.commentCount > 0) {
         const comments = await this.#fetchComments(post, resolve, signal);
         if (this.checkAbortSignal(signal, resolve)) {
@@ -686,7 +686,11 @@ export default class PostDownloader extends Downloader<Post> {
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      __incContent('audio') && post.audio ? {
+      /**
+       * If post is not viewable, audio data should have no URL, so check and
+       * skip if this is the case.
+       */
+      __incContent('audio') && post.audio && (post.isViewable || (post.audio.type === 'audio' && post.audio.url)) ? {
         target: [ post.audio ],
         targetName: `post #${post.id} -> audio`,
         destDir: postDirs.audio,
