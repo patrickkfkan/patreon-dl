@@ -130,43 +130,11 @@ export default class PostParser extends Parser {
         images.push(...inlineMedia.images);
       }
 
-      const __getVideoMediaItemFromAttr = (attrJSON: any): VideoMediaItem => {
-        let miFromIncluded: MediaItem | null = null;
-        const _mediaId = attrJSON.media_id !== undefined ? attrJSON.media_id.toString() : null;
-        if (_mediaId && hasIncludedJSON) {
-          // Fetch item from 'included' array, matching `media_id`
-          miFromIncluded = this.findInAPIResponseIncludedArray(includedJSON, _mediaId, 'media', 'video');
-        }
-        const vidInc = miFromIncluded && miFromIncluded.type === 'video' ? miFromIncluded : null;
-        const mediaId = _mediaId || id; // Fallback to post ID
-
-        const { download_url: downloadURL = null, url: displayURL = null } = attrJSON;
-
-        // Convert `attrJSON` to Downloadable (VideoMediaItem)
-        return {
-          type: 'video',
-          id: mediaId,
-          filename: vidInc?.filename || null,
-          mimeType: vidInc?.mimeType || null,
-          createdAt: vidInc?.createdAt || null,
-          size: {
-            width: attrJSON.width || vidInc?.size.width,
-            height: attrJSON.height || vidInc?.size.height
-          },
-          duration: attrJSON.duration || vidInc?.duration,
-          downloadURL: downloadURL || vidInc?.downloadURL,
-          displayURLs: {
-            thumbnail: vidInc?.displayURLs.thumbnail || null,
-            video: displayURL || vidInc?.downloadURL
-          }
-        };
-      };
-
       // Video preview
       let videoPreview: Downloadable | null = null;
       const vidPreviewJSON = attributes.video_preview;
       if (vidPreviewJSON && typeof vidPreviewJSON === 'object') {
-        videoPreview = __getVideoMediaItemFromAttr(vidPreviewJSON);
+        videoPreview = this.#getVideoMediaItemFromAttr(vidPreviewJSON, includedJSON, id);
         if (!videoPreview.downloadURL && !videoPreview.displayURLs.video) {
           this.log('warn', `Video preview for post #${id} is missing URLs`);
         }
@@ -177,10 +145,20 @@ export default class PostParser extends Parser {
       const postFileJSON = attributes.post_file;
       const hasPostFile = postFileJSON && typeof postFileJSON === 'object';
       if (attributes.post_type === 'video_external_file' && hasPostFile) {
-        video = __getVideoMediaItemFromAttr(postFileJSON);
+        video = this.#getVideoMediaItemFromAttr(postFileJSON, includedJSON, id);
         if (!video.downloadURL && !video.displayURLs.video) {
           this.log('warn', `Video for post #${id} is missing URLs`);
         }
+      }
+      // Repeat for 'podcast' type - but note that `postFile` here can be audio or video.
+      // We are only interested in video. For audio, info should have already been obtained
+      // through relationships above.
+      if (attributes.post_type === 'podcast' && hasPostFile) {
+        video = this.#getVideoMediaItemFromAttr(postFileJSON, includedJSON, id, true);
+      }
+
+      if (attributes.post_type === 'podcast' && isViewable && !video && !audio) {
+        this.log('warn', `Post #${id} is podcast type and is viewable, but no video or audio was found`);
       }
 
       // Cover image
@@ -313,4 +291,42 @@ export default class PostParser extends Parser {
 
     return collection;
   }
+
+  #getVideoMediaItemFromAttr(attrJSON: any, includedJSON: any, postId: string, strict: true): VideoMediaItem | null;
+  #getVideoMediaItemFromAttr(attrJSON: any, includedJSON: any, postId: string, strict?: false): VideoMediaItem;
+  #getVideoMediaItemFromAttr(attrJSON: any, includedJSON: any, postId: string, strict = false) {
+    let miFromIncluded: MediaItem | null = null;
+    const _mediaId = attrJSON.media_id !== undefined ? attrJSON.media_id.toString() : null;
+    const hasIncludedJSON = includedJSON && Array.isArray(includedJSON)
+    if (_mediaId && hasIncludedJSON) {
+      // Fetch item from 'included' array, matching `media_id`
+      miFromIncluded = this.findInAPIResponseIncludedArray(includedJSON, _mediaId, 'media', 'video');
+    }
+    const vidInc = miFromIncluded && miFromIncluded.type === 'video' ? miFromIncluded : null;
+    if (strict && !miFromIncluded) {
+      return null;
+    }
+    const mediaId = _mediaId || postId; // Fallback to post ID
+
+    const { download_url: downloadURL = null, url: displayURL = null } = attrJSON;
+
+    // Convert `attrJSON` to Downloadable (VideoMediaItem)
+    return {
+      type: 'video',
+      id: mediaId,
+      filename: vidInc?.filename || null,
+      mimeType: vidInc?.mimeType || null,
+      createdAt: vidInc?.createdAt || null,
+      size: {
+        width: attrJSON.width || vidInc?.size.width,
+        height: attrJSON.height || vidInc?.size.height
+      },
+      duration: attrJSON.duration || vidInc?.duration,
+      downloadURL: downloadURL || vidInc?.downloadURL,
+      displayURLs: {
+        thumbnail: vidInc?.displayURLs.thumbnail || null,
+        video: displayURL || vidInc?.downloadURL
+      }
+    };
+  };
 }

@@ -78,7 +78,7 @@ export interface Post {
    * @privateRemarks
    * Not included in `data.relationships`
    * Converted from `data.attributes.post_file` with
-   * `data.attributes.post_type` matching 'video_external_file'
+   * `data.attributes.post_type` matching 'video_external_file' / 'podcast'
    */
   video: Downloadable | null;
 
