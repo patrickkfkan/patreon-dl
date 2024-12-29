@@ -222,6 +222,11 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.3.0
+- Add `podcast` type to `include.postsWithMediaType` option
+- Add `include.comments` option
+- Fix videos not downloaded in podcast-type posts ([#56](https://github.com/patrickkfkan/patreon-dl/issues/56))
+
 v2.2.0
 - Widen scope of external downloaders to any type of embed (previously only works for video embeds) ([#51](https://github.com/patrickkfkan/patreon-dl/issues/51))
 - YouTube downloading now covers embedded YT links
