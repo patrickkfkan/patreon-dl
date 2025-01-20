@@ -75,7 +75,7 @@ $ patreon-dl [OPTION]... URL
 |-----------|-------|-------------|
 | `--help`  | `-h`  | Display usage guide |
 | <code><nobr>--config-file &lt;path&gt;</nobr></code> | `-C` | Load [configuration file](#configuration-file) at `<path>` for setting full options |
-| `--cookie <string>` | `-c` | Cookie for accessing patron-only content; [how to obtain cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
+| `--cookie <string>` | `-c` | Cookie for accessing patron-only content; [how to obtain cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). Enclose within double quotation marks e.g. "Cookie: patreon_device_id:..."|
 | `--ffmpeg <path>` | `-f` | Path to FFmpeg executable |
 | `--out-dir <path>` |`-o` | Directory to save content |
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
