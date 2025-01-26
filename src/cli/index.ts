@@ -232,10 +232,11 @@ export default class PatreonDownloaderCLI {
           console.log('Console logging disabled', EOL);
         }
 
-        if (fileLoggers.length > 0) {
+        const enabledFileLoggers = fileLoggers.filter((logger) => logger.getConfig().enabled);
+        if (enabledFileLoggers.length > 0) {
           console.log('Log files');
           console.log('---------');
-          for (const fl of fileLoggers) {
+          for (const fl of enabledFileLoggers) {
             const flConf = fl.getConfig();
             console.log(`- ${flConf.logLevel}: ${flConf.logFilePath}`);
           }
