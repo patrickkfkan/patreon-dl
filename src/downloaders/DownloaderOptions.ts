@@ -171,3 +171,11 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
 export function getDefaultDownloaderOutDir() {
   return DEFAULT_DOWNLOADER_INIT.outDir;
 }
+
+export function getDefaultDownloaderOptions(): DeepRequired<DownloaderOptions> {
+  return {
+    ...getDownloaderInit(),
+    cookie: '',
+    logger: null
+  };
+}
