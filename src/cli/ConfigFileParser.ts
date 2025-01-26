@@ -213,10 +213,13 @@ export default class ConfigFileParser {
       if (result.find((dl) => dl.provider?.value === provider)) {
         throw Error(`Duplicate config file section 'embed.downloader.${provider}`);
       }
-      result.push({
-        provider: { src: 'cfg', section: `embed.downloader.${provider}`, key: 'provider', value: provider },
-        exec: __getValue(section, CONFIG_FILE_PROPS.embedDownloader.exec)
-      });
+      const exec = __getValue(section, CONFIG_FILE_PROPS.embedDownloader.exec);
+      if (exec) {
+        result.push({
+          provider: { src: 'cfg', section: `embed.downloader.${provider}`, key: 'provider', value: provider },
+          exec
+        });
+      }
       return result;
     }, []);
 
