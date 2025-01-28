@@ -85,6 +85,10 @@ export default class ConsoleLogger extends Logger {
     return this.config;
   }
 
+  static getDefaultConfig() {
+    return DEFAULT_LOGGER_CONFIG;
+  }
+
   setLevel(value: LogLevel): void {
     this.config.logLevel = value;
   }

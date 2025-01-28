@@ -163,6 +163,10 @@ export default class FileLogger extends ConsoleLogger {
     return this.config;
   }
 
+  static getDefaultConfig() {
+    return DEFAULT_LOGGER_CONFIG;
+  }
+
   protected toOutput(_level: LogLevel, msg: string[]) {
     const stream = this.#getStream();
     stream.write(msg.join(' '));
