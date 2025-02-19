@@ -13,7 +13,7 @@ const POST_COMMENT_REPLIES_API_URL = `${SITE_URL}/api/comments/{COMMENT_ID}/repl
 
 const PRODUCT_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop\/(([^/]+)-(\d+))$/;
 const POSTS_BY_USER_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/posts$/;
-const POSTS_BY_USER_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/c\/([^/]+?)\/posts$/;
+const POSTS_BY_USER_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/(?:c|cw)\/([^/]+?)\/posts$/;
 const COLLECTION_URL_REGEX = /https:\/\/www\.patreon\.com\/collection\/(\d+)$/;
 const POST_URL_REGEX = /https:\/\/www\.patreon\.com\/posts\/(([^/]+)-(\d+))$/;
 const POST_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/posts\/(\d+)$/; // No slug
