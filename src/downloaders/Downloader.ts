@@ -190,6 +190,11 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             signal,
             logger: this.logger
           });
+
+          if (signal?.aborted) {
+            return { batch, errorCount: failedCreateTaskCount };
+          }
+
           // Filter out tasks that are DOA (errors that occurred in DownloadTask.create())
           for (const task of tasks) {
             if (task.doa) {

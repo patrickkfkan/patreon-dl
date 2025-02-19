@@ -172,10 +172,10 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
 
   #checkAndCallbackBatchComplete() {
     if (this.allTasksEnded()) {
+      this.emit('complete', {});
       if (this.#startingCallback) {
         this.#startingCallback();
       }
-      this.emit('complete', {});
     }
   }
 

@@ -181,6 +181,10 @@ export default class DownloadTaskFactory {
           new MediaFilenameResolver(item, url, destFilenameFormat,
             variant !== NULL_VARIANT ? variant : null, downloadAllVariants);
 
+        if (signal?.aborted) {
+          return tasks;
+        }
+
         if (url) {
           tasks.push(await DownloadTask.create(FetcherDownloadTask, {
             config,
