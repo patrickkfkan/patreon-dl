@@ -54,8 +54,6 @@ async function download(url, o, videoPassword, ytdlpPath) {
     return await new Promise((resolve, reject) => {
       let settled = false;
       const args = [
-        '-f',
-        'bv*+ba[acodec^=mp4a]',
         '-o',
         o
       ];
