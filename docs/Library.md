@@ -26,6 +26,7 @@ An object with the following properties (all *optional*):
 |-----------------|-------------------------------------------------------------|
 | `cookie`          | Cookie to include in requests; required for accessing patron-only content. See [How to obtain Cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
 | `useStatusCache`  | Whether to use status cache to quickly determine whether a target that had been downloaded before has changed since the last download. Default: `true` |
+| `stopOn`      | Sets the condition to stop the downloader when downloading posts. Values can be: <ul><li>`never`: do not stop; run till the end.</li><li>`postPreviouslyDownloaded`: stop on encountering a post that was previously downloaded. Requires enabling `useStatusCache`.</li><li>`postPublishDateOutOfRange`: stop on encountering a post published outside the date range set by `include.postsPublished`.</li></ul> Default: `never`|
 | `pathToFFmpeg`    | Path to `ffmpeg` executable. If not specified, `ffmpeg` will be called directly when needed, so make sure it is in the PATH. |
 | `pathToYouTubeCredentials` | Path to file storing YouTube credentials for connecting to a YouTube account when downloading embedded YouTube videos. Its purpose is to allow YouTube Premium accounts to download videos at higher than normal qualities. For more information, see [Configuring YouTube connection](#configuring-youtube-connection).
 | `outDir`          | Path to directory where content is saved. Default: current working directory |

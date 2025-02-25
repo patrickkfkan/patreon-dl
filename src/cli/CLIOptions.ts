@@ -58,6 +58,7 @@ export function getCLIOptions(): CLIOptions {
     targetURLs,
     cookie: CLIOptionValidator.validateString(pickDefined(commandLineOptions.cookie, configFileOptions?.cookie)),
     useStatusCache: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.useStatusCache, configFileOptions?.useStatusCache)),
+    stopOn: CLIOptionValidator.validateString(pickDefined(commandLineOptions.stopOn, configFileOptions?.stopOn), 'never', 'postPreviouslyDownloaded', 'postPublishDateOutOfRange'),
     pathToFFmpeg: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToFFmpeg, configFileOptions?.pathToFFmpeg)),
     outDir: CLIOptionValidator.validateString(pickDefined(commandLineOptions.outDir, configFileOptions?.outDir)),
     dirNameFormat: {

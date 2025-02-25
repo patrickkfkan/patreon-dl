@@ -6,6 +6,7 @@ const CONFIG_FILE_PROPS = {
   targetURL: 'downloader:target.url',
   cookie: 'downloader:cookie',
   useStatusCache: 'downloader:use.status.cache',
+  stopOn: 'downloader:stop.on',
   noPrompt: 'downloader:no.prompt',
   pathToFFmpeg: 'downloader:path.to.ffmpeg',
   dryRun: 'downloader:dry.run',
@@ -94,6 +95,7 @@ export default class ConfigFileParser {
       targetURLs: __getValue(CONFIG_FILE_PROPS.targetURL),
       cookie: __getValue(CONFIG_FILE_PROPS.cookie),
       useStatusCache: __getValue(CONFIG_FILE_PROPS.useStatusCache),
+      stopOn: __getValue(CONFIG_FILE_PROPS.stopOn),
       pathToFFmpeg: __getValue(CONFIG_FILE_PROPS.pathToFFmpeg),
       outDir: __getValue(CONFIG_FILE_PROPS.outDir),
       dirNameFormat: {

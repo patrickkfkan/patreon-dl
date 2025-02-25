@@ -78,6 +78,7 @@ export default class PostDownloader extends Downloader<Post> {
         let skippedNotInTier = 0;
         let skippedPublishDateOutOfRange = 0;
         let campaignSaved = false;
+        let stopConditionMet = false;
         const postsParser = new PostParser(this.logger);
         while (postsFetcher.hasNext()) {
           const { collection, aborted, error } = await postsFetcher.next();
@@ -99,6 +100,10 @@ export default class PostDownloader extends Downloader<Post> {
   
           for (const _post of collection.items) {
   
+            if (stopConditionMet) {
+              break;
+            }
+
             let post = _post;
   
             if (this.#isFetchingMultiplePosts(postFetch)) {
@@ -147,6 +152,9 @@ export default class PostDownloader extends Downloader<Post> {
                 skipMessage: 'Target already downloaded and nothing has changed since last download'
               });
               skippedRedundant++;
+              if (this.config.stopOn === 'postPreviouslyDownloaded') {
+                stopConditionMet = true;
+              }
               continue;
             }
             
@@ -161,6 +169,9 @@ export default class PostDownloader extends Downloader<Post> {
                 break;
               case 'skippedPublishDateOutOfRange':
                 skippedPublishDateOutOfRange++;
+                if (this.config.stopOn === 'postPublishDateOutOfRange') {
+                  stopConditionMet = true;
+                }
                 break;
               case 'skippedUnmetMediaTypeCriteria':
                 skippedUnmetMediaTypeCriteria++;
@@ -174,10 +185,18 @@ export default class PostDownloader extends Downloader<Post> {
               return;
             }
           }
+
+          if (stopConditionMet) {
+            break;
+          }
         }
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
+        }
+
+        if (stopConditionMet && this.#isFetchingMultiplePosts(postFetch)) {
+          this.log('info', `Stop downloader: stop condition "${this.config.stopOn}" met`)
         }
   
         // Done

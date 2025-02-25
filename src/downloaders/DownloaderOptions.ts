@@ -4,6 +4,7 @@ import { type DeepRequired, pickDefined } from '../utils/Misc.js';
 import type DateTime from '../utils/DateTime.js';
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
+export type StopOnCondition = 'never' | 'postPreviouslyDownloaded' | 'postPublishDateOutOfRange';
 
 export interface DownloaderIncludeOptions {
   lockedContent?: boolean;
@@ -34,6 +35,7 @@ export interface EmbedDownloader {
 export interface DownloaderOptions {
   cookie?: string;
   useStatusCache?: boolean;
+  stopOn?: StopOnCondition;
   pathToFFmpeg?: string | null;
   pathToYouTubeCredentials?: string | null;
   outDir?: string;
@@ -63,6 +65,7 @@ export interface DownloaderOptions {
 export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'outDir' |
   'useStatusCache' |
+  'stopOn' |
   'pathToFFmpeg' |
   'pathToYouTubeCredentials' |
   'dirNameFormat' |
@@ -76,6 +79,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
 const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   outDir: process.cwd(),
   useStatusCache: true,
+  stopOn: 'never',
   pathToFFmpeg: null,
   pathToYouTubeCredentials: null,
   dirNameFormat: {
@@ -124,6 +128,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
   return {
     outDir: options?.outDir ? path.resolve(options.outDir) : defaults.outDir,
     useStatusCache: pickDefined(options?.useStatusCache, defaults.useStatusCache),
+    stopOn: pickDefined(options?.stopOn, defaults.stopOn),
     pathToFFmpeg: pickDefined(options?.pathToFFmpeg, defaults.pathToFFmpeg),
     pathToYouTubeCredentials: pickDefined(options?.pathToYouTubeCredentials, defaults.pathToYouTubeCredentials),
     dirNameFormat: {
