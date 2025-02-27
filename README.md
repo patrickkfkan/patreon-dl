@@ -19,7 +19,7 @@ A Patreon downloader written in [Node.js](https://nodejs.org).
 - Save campaign and content info 
 - Extensively configurable
 
-You can run `patreon-dl` from the command-line or [use it as a library](./docs/Library.md) for your project. Node.js v18 or higher required.
+You can run `patreon-dl` from the command-line or [use it as a library](./docs/Library.md) for your project. Node.js v20 or higher required.
 
 ### Limitations
 
