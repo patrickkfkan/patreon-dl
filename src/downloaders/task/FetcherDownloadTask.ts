@@ -9,6 +9,7 @@ import DownloadTask, { type DownloadTaskParams, type DownloadProgress, type Down
 import M3U8DownloadTask from './M3U8DownloadTask.js';
 import { type Downloadable } from '../../entities/Downloadable.js';
 import { type FileExistsAction } from '../DownloaderOptions.js';
+import { createProxyAgent } from '../../utils/Proxy.js';
 
 export interface FetcherDownloadTaskParams<T extends Downloadable> extends DownloadTaskParams {
   fetcher: Fetcher;
@@ -47,9 +48,12 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
 
     if (this.srcEntity.type === 'video' && this.#isM3U8FilePath(currentDestFilePath) && this.callbacks) {
       // Spawn FFmpeg task to download actual stream
+      const { protocol: proxyProtocol } = createProxyAgent(this.config) || {};
       const spawn = await DownloadTask.create(M3U8DownloadTask, {
         config: this.config,
-        src: currentDestFilePath,
+        // MUST pass original m3u8 URL if HTTP proxy is to be used, otherwise FFmpeg will complain
+        // about http_proxy option not available (due to input being a file).
+        src: proxyProtocol === 'http' ? this.src : currentDestFilePath,
         srcEntity: this.srcEntity,
         callbacks: this.callbacks,
         logger: this.logger,
