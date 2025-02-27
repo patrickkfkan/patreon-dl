@@ -1,9 +1,12 @@
-import Innertube, { YTNodes } from 'youtubei.js';
+import Innertube, { Platform, YTNodes } from 'youtubei.js';
 import BG, { type BgConfig } from 'bgutils-js';
 import fse from 'fs-extra';
 import { JSDOM } from 'jsdom';
+import { type Dispatcher } from 'undici';
 import type Logger from '../logging/Logger.js';
 import { commonLog, type LogLevel } from '../logging/Logger.js';
+import { type DownloaderConfig } from '../../downloaders/Downloader.js';
+import { createProxyAgent } from '../Proxy.js';
 
 enum Stage {
   Init = '1 - Init',
@@ -33,12 +36,13 @@ export default class InnertubeLoader {
   static #poTokenRefreshTimer: NodeJS.Timeout | null = null;
   static #logger?: Logger | null;
   static #credentialsFile: string | null = null;
+  static #proxy: Dispatcher | undefined = undefined;
 
   static setLogger(logger?: Logger | null) {
     this.#logger = logger;
   }
 
-  static async getInstance() {
+  static async getInstance(options: DownloaderConfig<any>) {
     if (this.#innertube) {
       return this.#innertube;
     }
@@ -48,6 +52,18 @@ export default class InnertubeLoader {
     }
 
     this.log('info', 'Initialize YouTube downloader (this could take some time)')
+
+    if (!this.#proxy) {
+      const { agent, protocol } = createProxyAgent(options) || {};
+      if (agent && protocol) {
+        if (protocol === 'http') {
+          this.#proxy = agent;
+        }
+        else {
+          this.log('warn', `${protocol.toUpperCase()} proxy ignored - YouTube downloader uses FFmpeg which only supports HTTP proxy`);
+        }
+      }
+    }
 
     this.#pendingPromise = this.#beginInitStage();
 
@@ -134,7 +150,8 @@ export default class InnertubeLoader {
     this.log('debug', `Create Innertube instance${poToken?.value ? ' with po_token' : ''}...`);
     const innertube = await Innertube.create({
       visitor_data: poToken?.params.visitorData,
-      po_token: poToken?.value
+      po_token: poToken?.value,
+      fetch: (input, init) => Platform.shim.fetch(input, { ...init, dispatcher: this.#proxy } as any)
     });
     const credentials = this.#loadCredentials();
     if (credentials) {
@@ -237,7 +254,7 @@ export default class InnertubeLoader {
   static async #generatePoToken(identifier: string) {
     const requestKey = 'O43z0dpjhgX20SCx4KAo';
     const bgConfig: BgConfig = {
-      fetch: (url, options) => fetch(url, options),
+      fetch: (url, options) => fetch(url, {...options, dispatcher: this.#proxy} as any),
       globalObj: globalThis,
       identifier,
       requestKey

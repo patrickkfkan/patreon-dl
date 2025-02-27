@@ -4,6 +4,7 @@ import DownloadTask, { type DownloadProgress, type DownloadTaskParams } from './
 import { type FileExistsAction } from './../DownloaderOptions.js';
 import { type Downloadable } from '../../entities/Downloadable.js';
 import FSHelper from '../../utils/FSHelper.js';
+import { createProxyAgent } from '../../utils/Proxy.js';
 
 export interface FFmpegDownloadTaskBaseParams<T extends Downloadable> extends DownloadTaskParams<T> {
   fileExistsAction: FileExistsAction;
@@ -194,13 +195,38 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
       throw Error('Unable to create FFmpeg command: no input specified');
     }
 
-    const command = ffmpeg(inputs[0].input);
+    const command = ffmpeg();
+
+    let proxyURL = '';
+    const proxyAgentInfo = createProxyAgent(this.config);
+    if (proxyAgentInfo) {
+      // FFmpeg only supports HTTP proxy
+      if (proxyAgentInfo.protocol === 'http') {
+        proxyURL = proxyAgentInfo.proxyURL;
+      }
+      else {
+        this.log('warn', `${proxyAgentInfo.protocol.toUpperCase()} proxy ignored - FFmpeg supports HTTP proxy only`)
+      }
+    }
+
+    command.input(inputs[0].input);
     inputs.forEach(({input, options}, index) => {
       if (index > 0) {
         command.input(input);
       }
-      if (options) {
-        options.forEach((opt) => command.inputOption(opt));
+      const _options = options ? [...options] : [];
+      if (proxyURL) {
+        const protocolWhitelistOptIndex = _options.findIndex((opt) => opt.startsWith('-protocol_whitelist'));
+        if (protocolWhitelistOptIndex >= 0 && !_options[protocolWhitelistOptIndex].split(',').includes('httpproxy')) {
+          _options[protocolWhitelistOptIndex] += ',httpproxy';
+        }
+        else {
+          _options.push('-protocol_whitelist http,https,tcp,tls,httpproxy');
+        }
+        _options.push('-http_proxy', proxyURL);
+      }
+      if (_options.length > 0) {
+        _options.forEach((opt) => command.inputOption(opt));
       }
     });
 

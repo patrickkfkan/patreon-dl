@@ -53,6 +53,7 @@ export function getCLIOptions(): CLIOptions {
   }
 
   const { consoleLogger, fileLoggers } = getCLILoggerOptions(commandLineOptions, configFileOptions);
+  const proxy = getProxyOptions(configFileOptions);
 
   const options: CLIOptions = {
     targetURLs,
@@ -72,7 +73,8 @@ export function getCLIOptions(): CLIOptions {
     request: {
       maxRetries: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.maxRetries, configFileOptions?.request?.maxRetries)),
       maxConcurrent: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.maxConcurrent, configFileOptions?.request?.maxConcurrent)),
-      minTime: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.minTime, configFileOptions?.request?.minTime))
+      minTime: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions?.request?.minTime, configFileOptions?.request?.minTime)),
+      proxy
     },
     fileExistsAction: {
       content: CLIOptionValidator.validateString(pickDefined(commandLineOptions.fileExistsAction?.content, configFileOptions?.fileExistsAction?.content), 'overwrite', 'skip', 'saveAsCopy', 'saveAsCopyIfNewer'),
@@ -163,6 +165,16 @@ function getEmbedDownloaderOptions(configFileOptions?: ConfigFileParseResult | n
     }));
   }
   return undefined;
+}
+
+function getProxyOptions(configFileOptions?: ConfigFileParseResult | null) {
+  if (configFileOptions?.request?.proxy && configFileOptions.request.proxy.url?.value?.trim()) {
+    return {
+      url: CLIOptionValidator.validateProxyURL(configFileOptions.request.proxy.url),
+      rejectUnauthorizedTLS: CLIOptionValidator.validateBoolean(configFileOptions.request.proxy.rejectUnauthorizedTLS)
+    };
+  }
+  return null;
 }
 
 function readTargetsFile(file: string) {

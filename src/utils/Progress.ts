@@ -1,3 +1,4 @@
+import { type Response } from 'undici';
 import EventEmitter from 'events';
 import { Transform, type TransformCallback } from 'stream';
 import speedometer from 'speedometer';

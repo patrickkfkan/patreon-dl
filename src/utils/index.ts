@@ -6,3 +6,4 @@ export * from './YouTubeCredentialsCapturer.js';
 export { default as URLHelper } from './URLHelper.js';
 export * from './URLHelper.js';
 export { FetcherError } from './Fetcher.js';
+export { createProxyAgent } from './Proxy.js';

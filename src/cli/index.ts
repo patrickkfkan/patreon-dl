@@ -18,6 +18,7 @@ import ObjectHelper from '../utils/ObjectHelper.js';
 import copy from 'fast-copy';
 import type deepFreeze from 'deep-freeze';
 import { type DeepPartial } from '../utils/Misc.js';
+import { createProxyAgent } from '../utils/Proxy.js';
 
 const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
@@ -225,6 +226,16 @@ export default class PatreonDownloaderCLI {
       commonLog(logger, 'info', null, `*** BEGIN target URL: ${targetURL} ***`, EOL);
     };
 
+    const __checkProxy = () => {
+      const proxyAgentInfo = createProxyAgent(options);
+      if (proxyAgentInfo) {
+        if (proxyAgentInfo.protocol !== 'http') {
+          commonLog(logger, 'warn', null,
+            `${proxyAgentInfo.protocol.toUpperCase()} proxy option found. However, FFmpeg which is required for downloading videos in streaming format only supports HTTP proxy. For such downloads, the specified proxy option will be ignored.`, EOL);
+        }
+      }
+    }
+
     if (!options.noPrompt) {
 
       const __printLoggerConfigs = () => {
@@ -245,7 +256,7 @@ export default class PatreonDownloaderCLI {
       };
 
       const __printDownloaderCreated = () => {
-        commonLog(logger, 'info', `Created ${downloaderName} instance with config: `, this.#getDisplayConfig(downloader.getConfig()), EOL);
+        commonLog(logger, 'info', null, `Created ${downloaderName} instance with config: `, this.#getDisplayConfig(downloader.getConfig()), EOL);
       };
 
       let promptConfirm = true;
@@ -254,6 +265,7 @@ export default class PatreonDownloaderCLI {
       if (targetURLs.length === 1) {
         __printLoggerConfigs();
         __printDownloaderCreated();
+        __checkProxy();
       }
       else if (index === 0) {
         postConfirm = () => {
@@ -292,6 +304,7 @@ export default class PatreonDownloaderCLI {
         if (targetURLs.find((target) => target.include)) {
           console.log('Target-specific settings may override common settings', EOL);
         }
+        __checkProxy();
       }
       else {
         __logBegin();
@@ -310,6 +323,9 @@ export default class PatreonDownloaderCLI {
     else {
       __logBegin();
       commonLog(logger, 'debug', null, `Created ${downloaderName} instance with config: `, downloader.getConfig());
+      if (index === 0) {
+        __checkProxy();
+      }
     }
 
     let hasDownloaderError = false;

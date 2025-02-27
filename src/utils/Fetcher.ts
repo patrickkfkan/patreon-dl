@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import { pipeline } from 'stream/promises';
+import { fetch, Request, type Response } from 'undici';
 import path from 'path';
+import { type Dispatcher } from 'undici';
 import FetcherProgressMonitor from './FetcherProgressMonitor.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import type FilenameResolver from './FllenameResolver.js';
@@ -11,6 +13,7 @@ import { commonLog } from './logging/Logger.js';
 import FSHelper from './FSHelper.js';
 import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import Progress from './Progress.js';
+import { createProxyAgent } from './Proxy.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
@@ -53,12 +56,14 @@ export default class Fetcher {
   #logger?: Logger | null;
   #dryRun: boolean;
   #fsHelper: FSHelper;
+  #proxyAgent?: Dispatcher;
 
   constructor(config: DownloaderConfig<any>, cookie?: string, logger?: Logger | null) {
     this.#cookie = cookie;
     this.#logger = logger;
     this.#dryRun = config.dryRun;
     this.#fsHelper = new FSHelper(config, logger);
+    this.#proxyAgent = createProxyAgent(config)?.agent || undefined;
   }
 
   async get<T extends FetcherGetType>(args: {
@@ -87,7 +92,7 @@ export default class Fetcher {
       removeAbortHandler = () => signal.removeEventListener('abort', abortHandler);
     }
     try {
-      const res = await fetch(request, { signal: internalAbortController.signal });
+      const res = await fetch(request, { signal: internalAbortController.signal, dispatcher: this.#proxyAgent });
       return await (type === 'html' ? res.text() : res.json()) as FetcherGetResultOf<T>;
     }
     catch (error: any) {
@@ -98,7 +103,19 @@ export default class Fetcher {
         if (removeAbortHandler) removeAbortHandler();
         return await this.get({ url, type, payload, maxRetries, signal }, rt + 1);
       }
-      const errMsg = error instanceof Error ? error.message : error;
+      let errMsg;
+      if (error instanceof Error) {
+        const errMsgParts = [error.message];
+        let _err = error.cause;
+        while (_err) {
+          errMsgParts.push(_err instanceof Error ? _err.message : JSON.stringify(_err));
+          _err = _err instanceof Error ? _err.cause : null;
+        }
+        errMsg = errMsgParts.join(': ');
+      }
+      else {
+        errMsg = String(error);
+      }
       const retriedMsg = rt > 0 ? ` (retried ${rt} times)` : '';
       throw new FetcherError(`${errMsg}${retriedMsg}`, urlObj.toString(), request.method);
     }
@@ -115,6 +132,7 @@ export default class Fetcher {
   }) {
     const { url, destDir, destFilenameResolver, signal } = params;
     const request = new Request(url, { method: 'HEAD' });
+    this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
     const internalAbortController = new AbortController();
     const abortHandler = () => internalAbortController.abort();
     if (signal) {
@@ -122,7 +140,7 @@ export default class Fetcher {
     }
 
     try {
-      const res = await fetch(request, { signal: internalAbortController.signal });
+      const res = await fetch(request, { signal: internalAbortController.signal, dispatcher: this.#proxyAgent });
 
       if (this.#assertResponseOK(res, url, request.method, false)) {
         const destFilename = destFilenameResolver.resolve(res);
@@ -152,13 +170,13 @@ export default class Fetcher {
     }
 
     try {
-      let res = await fetch(request, { signal: internalAbortController.signal });
+      let res = await fetch(request, { signal: internalAbortController.signal, dispatcher: this.#proxyAgent });
 
       // Special handling for attachment
       if (params.srcEntity.type === 'attachment' && !res.ok && res.redirected && res.url) {
         const redirectReq = new Request(res.url, { method: 'GET' });
         this.#setHeaders(redirectReq, 'html', { setCookie: false, setHost: false });
-        res = await fetch(redirectReq, { signal: internalAbortController.signal });
+        res = await fetch(redirectReq, { signal: internalAbortController.signal, dispatcher: this.#proxyAgent });
       }
 
       if (this.#assertResponseOK(res, url, request.method)) {

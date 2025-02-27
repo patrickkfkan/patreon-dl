@@ -43,7 +43,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
   }
 
   getInnertube() {
-    return InnertubeLoader.getInstance();
+    return InnertubeLoader.getInstance(this.config);
   }
 
   async #getInfo(videoId: string) {

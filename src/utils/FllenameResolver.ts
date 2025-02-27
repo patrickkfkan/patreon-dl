@@ -1,3 +1,4 @@
+import { type Response } from 'undici';
 import contentDisposition from 'content-disposition';
 import mimeTypes from 'mime-types';
 import path from 'path';

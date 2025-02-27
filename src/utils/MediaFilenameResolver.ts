@@ -1,3 +1,4 @@
+import { type Response } from 'undici';
 import path from 'path';
 import { type MediaLike } from '../entities/MediaItem.js';
 import FilenameResolver from './FllenameResolver.js';

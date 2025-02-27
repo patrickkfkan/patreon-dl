@@ -27,6 +27,11 @@ export interface DownloaderIncludeOptions {
   comments?: boolean;
 }
 
+export interface ProxyOptions {
+  url: string;
+  rejectUnauthorizedTLS?: boolean;
+}
+
 export interface EmbedDownloader {
   provider: string;
   exec: string;
@@ -51,6 +56,7 @@ export interface DownloaderOptions {
     maxRetries?: number;
     maxConcurrent?: number;
     minTime?: number;
+    proxy?: ProxyOptions | null;
   };
   fileExistsAction?: {
     content?: FileExistsAction;
@@ -112,7 +118,11 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
   request: {
     maxRetries: 3,
     maxConcurrent: 10,
-    minTime: 333
+    minTime: 333,
+    proxy: {
+      url: '',
+      rejectUnauthorizedTLS: true
+    },
   },
   fileExistsAction: {
     content: 'skip',
@@ -125,6 +135,18 @@ const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
 
 export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
   const defaults = DEFAULT_DOWNLOADER_INIT;
+
+  let proxy: DownloaderInit['request']['proxy'] = null;
+  if (options?.request?.proxy && defaults.request.proxy) {
+    proxy = {
+      url: options.request.proxy.url,
+      rejectUnauthorizedTLS: pickDefined(options.request.proxy.rejectUnauthorizedTLS, defaults.request.proxy.rejectUnauthorizedTLS)
+    };
+  }
+  if (!proxy?.url) {
+    proxy = null;
+  }
+
   return {
     outDir: options?.outDir ? path.resolve(options.outDir) : defaults.outDir,
     useStatusCache: pickDefined(options?.useStatusCache, defaults.useStatusCache),
@@ -161,7 +183,8 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     request: {
       maxRetries: pickDefined(options?.request?.maxRetries, defaults.request.maxRetries),
       maxConcurrent: pickDefined(options?.request?.maxConcurrent, defaults.request.maxConcurrent),
-      minTime: pickDefined(options?.request?.minTime, defaults.request.minTime)
+      minTime: pickDefined(options?.request?.minTime, defaults.request.minTime),
+      proxy
     },
     fileExistsAction: {
       content: options?.fileExistsAction?.content || defaults.fileExistsAction.content,

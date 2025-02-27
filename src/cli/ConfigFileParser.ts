@@ -42,7 +42,11 @@ const CONFIG_FILE_PROPS = {
   request: {
     maxRetries: 'request:max.retries',
     maxConcurrent: 'request:max.concurrent',
-    minTime: 'request:min.time'
+    minTime: 'request:min.time',
+    proxy: {
+      url: 'request:proxy.url',
+      rejectUnauthorizedTLS: 'request:proxy.reject.unauthorized.tls'
+    }
   },
   consoleLogger: {
     enabled: 'logger.console:enabled',
@@ -128,7 +132,11 @@ export default class ConfigFileParser {
       request: {
         maxRetries: __getValue(CONFIG_FILE_PROPS.request.maxRetries),
         maxConcurrent: __getValue(CONFIG_FILE_PROPS.request.maxConcurrent),
-        minTime: __getValue(CONFIG_FILE_PROPS.request.minTime)
+        minTime: __getValue(CONFIG_FILE_PROPS.request.minTime),
+        proxy: {
+          url: __getValue(CONFIG_FILE_PROPS.request.proxy.url),
+          rejectUnauthorizedTLS: __getValue(CONFIG_FILE_PROPS.request.proxy.rejectUnauthorizedTLS),
+        }
       },
       fileExistsAction: {
         content: __getValue(CONFIG_FILE_PROPS.fileExistsAction.content),
