@@ -223,6 +223,18 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.4.0
+- Support additional URL format: `https://www.patreon.com/cw/<creator>/posts`
+- Add `stopOn` option ([#63](https://github.com/patrickkfkan/patreon-dl/issues/63))
+- Add `proxy` option ([#62](https://github.com/patrickkfkan/patreon-dl/issues/62))
+- Fix Vimeo download script
+- Fix YouTube embeds failing to download due to YT changes
+- API changes (non-breaking):
+  - Expose `URLHelper`, `FetcherError`
+  - Add `getDefaultDownloaderOptions()`
+  - `ConsoleLogger` / `FileLogger`: add `getDefaultConfig()`
+- Required Node version bumped to v20.18.1 or higher
+
 v2.3.0
 - Add `podcast` type to `include.postsWithMediaType` option
 - Add `include.comments` option
