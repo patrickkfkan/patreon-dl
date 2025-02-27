@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTask.ts#L14)
+[src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L14)
 
 ## Properties
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTask.ts#L12)
+[src/downloaders/task/DownloadTask.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L12)
 
 ***
 
@@ -58,4 +58,4 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTask.ts#L11)
+[src/downloaders/task/DownloadTask.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L11)

@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L53)
+[src/downloaders/Downloader.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L53)
 
 ## Properties
 
@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/ProductDownloader.ts#L16)
+[src/downloaders/ProductDownloader.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/ProductDownloader.ts#L16)
 
 ***
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/ProductDownloader.ts#L14)
+[src/downloaders/ProductDownloader.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/ProductDownloader.ts#L14)
 
 ## Methods
 
@@ -64,13 +64,13 @@
 
 > **emit**\<`T`\>(`event`, `args`): `boolean`
 
-Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+Synchronously calls each of the listeners registered for the event named `eventName`, in the order they were registered, passing the supplied arguments
 to each.
 
 Returns `true` if the event had listeners, `false` otherwise.
 
 ```js
-const EventEmitter = require('events');
+import { EventEmitter } from 'node:events';
 const myEmitter = new EventEmitter();
 
 // First listener
@@ -126,7 +126,7 @@ v0.1.26
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:506](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L506)
+[src/downloaders/Downloader.ts:511](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L511)
 
 ***
 
@@ -282,6 +282,14 @@ v0.1.26
 
 > `readonly` **minTime**: `number`
 
+##### request.proxy
+
+> `readonly` **proxy**: `null` \| `object`
+
+##### stopOn
+
+> `readonly` **stopOn**: [`StopOnCondition`](../type-aliases/StopOnCondition.md)
+
 ##### targetURL
 
 > `readonly` **targetURL**: `string`
@@ -296,7 +304,7 @@ v0.1.26
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:432](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L432)
+[src/downloaders/Downloader.ts:437](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L437)
 
 ***
 
@@ -330,7 +338,7 @@ v10.0.0
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:501](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L501)
+[src/downloaders/Downloader.ts:506](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L506)
 
 ***
 
@@ -338,10 +346,10 @@ v10.0.0
 
 > **on**\<`T`\>(`event`, `listener`): `this`
 
-Adds the `listener` function to the end of the listeners array for the
-event named `eventName`. No checks are made to see if the `listener` has
-already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
-times.
+Adds the `listener` function to the end of the listeners array for the event
+named `eventName`. No checks are made to see if the `listener` has already
+been added. Multiple calls passing the same combination of `eventName` and
+`listener` will result in the `listener` being added, and called, multiple times.
 
 ```js
 server.on('connection', (stream) => {
@@ -351,10 +359,11 @@ server.on('connection', (stream) => {
 
 Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+By default, event listeners are invoked in the order they are added. The `emitter.prependListener()` method can be used as an alternative to add the
 event listener to the beginning of the listeners array.
 
 ```js
+import { EventEmitter } from 'node:events';
 const myEE = new EventEmitter();
 myEE.on('foo', () => console.log('a'));
 myEE.prependListener('foo', () => console.log('b'));
@@ -390,7 +399,7 @@ v0.1.101
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:491](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L491)
+[src/downloaders/Downloader.ts:496](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L496)
 
 ***
 
@@ -398,7 +407,7 @@ v0.1.101
 
 > **once**\<`T`\>(`event`, `listener`): `this`
 
-Adds a **one-time**`listener` function for the event named `eventName`. The
+Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
 
 ```js
@@ -409,10 +418,11 @@ server.once('connection', (stream) => {
 
 Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+By default, event listeners are invoked in the order they are added. The `emitter.prependOnceListener()` method can be used as an alternative to add the
 event listener to the beginning of the listeners array.
 
 ```js
+import { EventEmitter } from 'node:events';
 const myEE = new EventEmitter();
 myEE.once('foo', () => console.log('a'));
 myEE.prependOnceListener('foo', () => console.log('b'));
@@ -448,7 +458,7 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:496](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L496)
+[src/downloaders/Downloader.ts:501](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L501)
 
 ***
 
@@ -470,7 +480,7 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/ProductDownloader.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/ProductDownloader.ts#L20)
+[src/downloaders/ProductDownloader.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/ProductDownloader.ts#L20)
 
 ***
 
@@ -496,7 +506,7 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:241](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L241)
+[src/downloaders/Downloader.ts:246](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L246)
 
 ***
 
@@ -520,4 +530,4 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/Downloader.ts:224](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/Downloader.ts#L224)
+[src/downloaders/Downloader.ts:229](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/Downloader.ts#L229)

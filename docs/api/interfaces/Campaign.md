@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L11)
+[src/entities/Campaign.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L11)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L12)
+[src/entities/Campaign.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L12)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L9)
+[src/entities/Campaign.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L9)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L17)
+[src/entities/Campaign.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L17)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L15)
+[src/entities/Campaign.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L15)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L7)
+[src/entities/Campaign.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L7)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L8)
+[src/entities/Campaign.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L8)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L10)
+[src/entities/Campaign.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L10)
 
 ***
 
@@ -94,7 +94,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L18)
+[src/entities/Campaign.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L18)
 
 ***
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L16)
+[src/entities/Campaign.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L16)
 
 ***
 
@@ -114,7 +114,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L13)
+[src/entities/Campaign.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L13)
 
 ***
 
@@ -124,7 +124,7 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L6)
+[src/entities/Campaign.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L6)
 
 ***
 
@@ -134,4 +134,4 @@
 
 #### Defined in
 
-[src/entities/Campaign.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Campaign.ts#L14)
+[src/entities/Campaign.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Campaign.ts#L14)

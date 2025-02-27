@@ -6,6 +6,7 @@
 
 ## Enumerations
 
+- [PostSortOrder](enumerations/PostSortOrder.md)
 - [TargetSkipReason](enumerations/TargetSkipReason.md)
 
 ## Classes
@@ -15,10 +16,12 @@
 - [DateTime](classes/DateTime.md)
 - [Downloader](classes/Downloader.md)
 - [DownloadTaskError](classes/DownloadTaskError.md)
+- [FetcherError](classes/FetcherError.md)
 - [FileLogger](classes/FileLogger.md)
 - [Logger](classes/Logger.md)
 - [PostDownloader](classes/PostDownloader.md)
 - [ProductDownloader](classes/ProductDownloader.md)
+- [URLHelper](classes/URLHelper.md)
 - [YouTubeCredentialsCapturer](classes/YouTubeCredentialsCapturer.md)
 
 ## Interfaces
@@ -53,6 +56,8 @@
 - [PostThumbnailMediaItem](interfaces/PostThumbnailMediaItem.md)
 - [Product](interfaces/Product.md)
 - [ProductDownloaderBootstrapData](interfaces/ProductDownloaderBootstrapData.md)
+- [ProxyAgentInfo](interfaces/ProxyAgentInfo.md)
+- [ProxyOptions](interfaces/ProxyOptions.md)
 - [Reward](interfaces/Reward.md)
 - [SingleImageMediaItem](interfaces/SingleImageMediaItem.md)
 - [User](interfaces/User.md)
@@ -80,6 +85,13 @@
 - [LogLevel](type-aliases/LogLevel.md)
 - [MediaItem](type-aliases/MediaItem.md)
 - [NoDeepTypes](type-aliases/NoDeepTypes.md)
+- [StopOnCondition](type-aliases/StopOnCondition.md)
 - [Tier](type-aliases/Tier.md)
+- [URLAnalysis](type-aliases/URLAnalysis.md)
 - [UserIdOrVanityParam](type-aliases/UserIdOrVanityParam.md)
 - [YouTubePostEmbed](type-aliases/YouTubePostEmbed.md)
+
+## Functions
+
+- [createProxyAgent](functions/createProxyAgent.md)
+- [getDefaultDownloaderOptions](functions/getDefaultDownloaderOptions.md)

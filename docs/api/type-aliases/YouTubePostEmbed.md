@@ -16,4 +16,4 @@
 
 ## Defined in
 
-[src/entities/Post.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L102)
+[src/entities/Post.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L102)

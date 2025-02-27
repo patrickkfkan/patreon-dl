@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L24)
+[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L24)
 
 ***
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L28)
+[src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L28)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L25)
+[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L25)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L22)
+[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L22)
 
 ***
 
@@ -78,7 +78,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L27)
+[src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L27)
 
 ***
 
@@ -92,7 +92,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L26)
+[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L26)
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L23)
+[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L23)
 
 ## Methods
 
@@ -136,7 +136,7 @@ v10.0.0
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L31)
+[src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L31)
 
 ***
 
@@ -144,10 +144,10 @@ v10.0.0
 
 > **on**\<`T`\>(`event`, `listener`): `this`
 
-Adds the `listener` function to the end of the listeners array for the
-event named `eventName`. No checks are made to see if the `listener` has
-already been added. Multiple calls passing the same combination of `eventName` and `listener` will result in the `listener` being added, and called, multiple
-times.
+Adds the `listener` function to the end of the listeners array for the event
+named `eventName`. No checks are made to see if the `listener` has already
+been added. Multiple calls passing the same combination of `eventName` and
+`listener` will result in the `listener` being added, and called, multiple times.
 
 ```js
 server.on('connection', (stream) => {
@@ -157,10 +157,11 @@ server.on('connection', (stream) => {
 
 Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
+By default, event listeners are invoked in the order they are added. The `emitter.prependListener()` method can be used as an alternative to add the
 event listener to the beginning of the listeners array.
 
 ```js
+import { EventEmitter } from 'node:events';
 const myEE = new EventEmitter();
 myEE.on('foo', () => console.log('a'));
 myEE.prependListener('foo', () => console.log('b'));
@@ -196,7 +197,7 @@ v0.1.101
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L29)
+[src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L29)
 
 ***
 
@@ -204,7 +205,7 @@ v0.1.101
 
 > **once**\<`T`\>(`event`, `listener`): `this`
 
-Adds a **one-time**`listener` function for the event named `eventName`. The
+Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
 
 ```js
@@ -215,10 +216,11 @@ server.once('connection', (stream) => {
 
 Returns a reference to the `EventEmitter`, so that calls can be chained.
 
-By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+By default, event listeners are invoked in the order they are added. The `emitter.prependOnceListener()` method can be used as an alternative to add the
 event listener to the beginning of the listeners array.
 
 ```js
+import { EventEmitter } from 'node:events';
 const myEE = new EventEmitter();
 myEE.once('foo', () => console.log('a'));
 myEE.prependOnceListener('foo', () => console.log('b'));
@@ -254,4 +256,4 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/downloaders/task/DownloadTaskBatch.ts#L30)
+[src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTaskBatch.ts#L30)

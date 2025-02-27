@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/logging/ConsoleLogger.ts#L55)
+[src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L55)
 
 ## Methods
 
@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/logging/Logger.ts#L12)
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/Logger.ts#L12)
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/logging/ConsoleLogger.ts#L84)
+[src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L84)
 
 ***
 
@@ -124,7 +124,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/logging/ConsoleLogger.ts#L75)
+[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L75)
 
 ***
 
@@ -142,4 +142,54 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/utils/logging/ConsoleLogger.ts#L88)
+[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L92)
+
+***
+
+### getDefaultConfig()
+
+> `static` **getDefaultConfig**(): `object`
+
+#### Returns
+
+`object`
+
+##### color
+
+> **color**: `boolean`
+
+##### dateTimeFormat
+
+> **dateTimeFormat**: `string`
+
+##### enabled
+
+> **enabled**: `boolean`
+
+##### include
+
+> **include**: `object`
+
+##### include.dateTime
+
+> **dateTime**: `boolean`
+
+##### include.errorStack
+
+> **errorStack**: `boolean`
+
+##### include.level
+
+> **level**: `boolean`
+
+##### include.originator
+
+> **originator**: `boolean`
+
+##### logLevel
+
+> **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
+
+#### Defined in
+
+[src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L88)

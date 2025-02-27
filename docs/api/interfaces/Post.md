@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L50)
+[src/entities/Post.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L50)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L56)
+[src/entities/Post.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L56)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L62)
+[src/entities/Post.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L62)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:85](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L85)
+[src/entities/Post.ts:85](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L85)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L35)
+[src/entities/Post.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L35)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L31)
+[src/entities/Post.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L31)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L36)
+[src/entities/Post.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L36)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L34)
+[src/entities/Post.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L34)
 
 ***
 
@@ -94,7 +94,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L44)
+[src/entities/Post.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L44)
 
 ***
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L11)
+[src/entities/Post.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L11)
 
 ***
 
@@ -114,7 +114,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L68)
+[src/entities/Post.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L68)
 
 ***
 
@@ -124,7 +124,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L28)
+[src/entities/Post.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L28)
 
 ***
 
@@ -134,7 +134,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L27)
+[src/entities/Post.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L27)
 
 ***
 
@@ -144,7 +144,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L33)
+[src/entities/Post.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L33)
 
 ***
 
@@ -154,7 +154,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L87)
+[src/entities/Post.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L87)
 
 ***
 
@@ -164,7 +164,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L32)
+[src/entities/Post.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L32)
 
 ***
 
@@ -174,7 +174,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L37)
+[src/entities/Post.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L37)
 
 ***
 
@@ -184,7 +184,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L38)
+[src/entities/Post.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L38)
 
 ***
 
@@ -194,7 +194,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L30)
+[src/entities/Post.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L30)
 
 ***
 
@@ -204,7 +204,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L10)
+[src/entities/Post.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L10)
 
 ***
 
@@ -214,7 +214,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L29)
+[src/entities/Post.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L29)
 
 ***
 
@@ -224,7 +224,7 @@
 
 #### Defined in
 
-[src/entities/Post.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L83)
+[src/entities/Post.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L83)
 
 ***
 
@@ -234,4 +234,4 @@
 
 #### Defined in
 
-[src/entities/Post.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/794996b6269a4df0afea77da4d86f16365f2adf5/src/entities/Post.ts#L75)
+[src/entities/Post.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Post.ts#L75)
