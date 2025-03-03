@@ -167,7 +167,25 @@ export default class ExternalDownloaderTask extends DownloadTask {
   }
 
   #getCommandString() {
-    const quotedArgs = this.#exec.args.map((arg) => arg.includes(' ') ? `"${arg}"` : arg);
+    const quotedArgs = this.#exec.args.map((arg) => {
+      const _arg = arg.trim();
+      if (_arg.startsWith('"') && _arg.endsWith('"')) {
+        return _arg;
+      }
+      if (_arg.includes('=') && _arg.startsWith('-')) {
+        const equalPosition = _arg.indexOf('=');
+        const argKey = _arg.substring(0, equalPosition);
+        let argValue = _arg.substring(equalPosition);
+        if (argValue.includes(' ')) {
+          argValue = `"${argValue}"`;
+        }
+        return `${argKey}=${argValue}`;
+      }
+      if (_arg.includes(' ')) {
+        return `"${_arg}"`;
+      }
+      return _arg;
+    });
     return [
       this.#exec.command,
       ...quotedArgs
