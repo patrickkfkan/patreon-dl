@@ -216,6 +216,7 @@ export default class PostParser extends Parser {
         embed = {
           id: `${id}-embed`,
           postId: id,
+          postURL: attributes.url || null,
           type: embedType,
           description: embedJSON.descripton || null,
           html: embedJSON.html || null,

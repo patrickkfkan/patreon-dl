@@ -90,6 +90,7 @@ export interface Post {
 export interface PostEmbed {
   id: `${string}-embed`;
   postId: string;
+  postURL: string | null;
   type: 'videoEmbed' | 'linkEmbed' | 'unknownEmbed';
   description: string | null;
   html: string | null;

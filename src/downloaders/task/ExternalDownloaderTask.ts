@@ -199,11 +199,13 @@ export default class ExternalDownloaderTask extends DownloadTask {
     }
     const dict = {
       'post.id': embed.postId,
+      'post.url': embed.postURL,
       'embed.provider': embed.provider,
       'embed.provider.url': embed.providerURL,
       'embed.url': embed.url,
       'embed.subject': embed.subject,
       'embed.html': embed.html,
+      'cookie': config.cookie || '',
       'dest.dir': destDir
     };
 
@@ -216,7 +218,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       const interpolated = Formatter.format(arg, dict).result.trim();
-      if (!interpolated) {
+      if (!interpolated && arg !== '{cookie}') {
         __log('warn', `Could not create task: got empty string for command arg '${arg}'`);
         return null;
       }
