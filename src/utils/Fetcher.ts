@@ -58,8 +58,8 @@ export default class Fetcher {
   #fsHelper: FSHelper;
   #proxyAgent?: Dispatcher;
 
-  constructor(config: DownloaderConfig<any>, cookie?: string, logger?: Logger | null) {
-    this.#cookie = cookie;
+  constructor(config: DownloaderConfig<any>, logger?: Logger | null) {
+    this.#cookie = config.cookie;
     this.#logger = logger;
     this.#dryRun = config.dryRun;
     this.#fsHelper = new FSHelper(config, logger);

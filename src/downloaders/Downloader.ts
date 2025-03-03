@@ -59,7 +59,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       ...getDownloaderInit(options)
     };
 
-    this.fetcher = new Fetcher(this.config, options?.cookie, options?.logger);
+    this.fetcher = new Fetcher(this.config, options?.logger);
     this.fsHelper = new FSHelper(this.config, this.logger);
     this.logger = options?.logger;
 

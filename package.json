@@ -61,6 +61,7 @@
     "capitalize": "^2.0.4",
     "cheerio": "^1.0.0",
     "cli-color": "^2.0.3",
+    "cli-truncate": "^4.0.0",
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1",
     "configparser": "^0.3.10",

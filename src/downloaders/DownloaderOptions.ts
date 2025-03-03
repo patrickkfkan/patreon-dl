@@ -80,9 +80,11 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'request' |
   'fileExistsAction' |
   'embedDownloaders' |
-  'dryRun'>>;
+  'dryRun'>> & {
+    cookie?: string;
+  };
 
-const DEFAULT_DOWNLOADER_INIT: DeepRequired<DownloaderInit> = {
+const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
   outDir: process.cwd(),
   useStatusCache: true,
   stopOn: 'never',
@@ -148,6 +150,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
   }
 
   return {
+    cookie: options?.cookie,
     outDir: options?.outDir ? path.resolve(options.outDir) : defaults.outDir,
     useStatusCache: pickDefined(options?.useStatusCache, defaults.useStatusCache),
     stopOn: pickDefined(options?.stopOn, defaults.stopOn),
