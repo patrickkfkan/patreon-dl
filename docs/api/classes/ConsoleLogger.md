@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L55)
+[src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L55)
 
 ## Methods
 
@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/Logger.ts#L12)
+[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/Logger.ts#L12)
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L84)
+[src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L84)
 
 ***
 
@@ -124,7 +124,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L75)
+[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L75)
 
 ***
 
@@ -142,7 +142,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L92)
+[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L92)
 
 ***
 
@@ -192,4 +192,4 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/ConsoleLogger.ts#L88)
+[src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L88)

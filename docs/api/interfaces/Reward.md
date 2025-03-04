@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L8)
+[src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L8)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L9)
+[src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L9)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L7)
+[src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L7)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L11)
+[src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L11)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L5)
+[src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L5)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L12)
+[src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L12)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L10)
+[src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L10)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L6)
+[src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L6)
 
 ***
 
@@ -94,7 +94,7 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L4)
+[src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L4)
 
 ***
 
@@ -104,4 +104,4 @@
 
 #### Defined in
 
-[src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/Reward.ts#L13)
+[src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/Reward.ts#L13)

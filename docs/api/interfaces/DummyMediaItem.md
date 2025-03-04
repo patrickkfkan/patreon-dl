@@ -27,7 +27,7 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -41,7 +41,7 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -55,7 +55,7 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -65,7 +65,7 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:120](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/MediaItem.ts#L120)
+[src/entities/MediaItem.ts:120](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L120)
 
 ***
 
@@ -79,4 +79,4 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 #### Defined in
 
-[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/entities/MediaItem.ts#L118)
+[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L118)

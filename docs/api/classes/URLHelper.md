@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:286](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L286)
+[src/utils/URLHelper.ts:286](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L286)
 
 ***
 
@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L206)
+[src/utils/URLHelper.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L206)
 
 ***
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L182)
+[src/utils/URLHelper.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L182)
 
 ***
 
@@ -86,7 +86,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:198](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L198)
+[src/utils/URLHelper.ts:198](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L198)
 
 ***
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:250](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L250)
+[src/utils/URLHelper.ts:250](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L250)
 
 ***
 
@@ -132,7 +132,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L210)
+[src/utils/URLHelper.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L210)
 
 ***
 
@@ -150,7 +150,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L172)
+[src/utils/URLHelper.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L172)
 
 ***
 
@@ -168,7 +168,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:202](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L202)
+[src/utils/URLHelper.ts:202](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L202)
 
 ***
 
@@ -186,7 +186,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L190)
+[src/utils/URLHelper.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L190)
 
 ***
 
@@ -204,7 +204,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:400](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L400)
+[src/utils/URLHelper.ts:400](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L400)
 
 ***
 
@@ -222,7 +222,7 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:391](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L391)
+[src/utils/URLHelper.ts:391](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L391)
 
 ***
 
@@ -240,4 +240,4 @@
 
 #### Defined in
 
-[src/utils/URLHelper.ts:405](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/URLHelper.ts#L405)
+[src/utils/URLHelper.ts:405](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/URLHelper.ts#L405)

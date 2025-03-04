@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/FileLogger.ts#L43)
+[src/utils/logging/FileLogger.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L43)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/FileLogger.ts#L42)
+[src/utils/logging/FileLogger.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L42)
 
 ***
 
@@ -34,4 +34,4 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/utils/logging/FileLogger.ts#L41)
+[src/utils/logging/FileLogger.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L41)

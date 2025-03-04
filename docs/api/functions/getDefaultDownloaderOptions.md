@@ -14,4 +14,4 @@
 
 ## Defined in
 
-[src/downloaders/DownloaderOptions.ts:203](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/DownloaderOptions.ts#L203)
+[src/downloaders/DownloaderOptions.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L206)

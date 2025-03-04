@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L37)
+[src/downloaders/task/DownloadTask.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L37)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L38)
+[src/downloaders/task/DownloadTask.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L38)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L40)
+[src/downloaders/task/DownloadTask.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L40)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L41)
+[src/downloaders/task/DownloadTask.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L41)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L39)
+[src/downloaders/task/DownloadTask.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L39)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L42)
+[src/downloaders/task/DownloadTask.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L42)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L43)
+[src/downloaders/task/DownloadTask.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L43)
 
 ***
 
@@ -84,4 +84,4 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTask.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/7c1cd2021db5cdb3733758940f1bc6aab660b08d/src/downloaders/task/DownloadTask.ts#L44)
+[src/downloaders/task/DownloadTask.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTask.ts#L44)
