@@ -16,7 +16,9 @@
  * --yt-dlp "</path/to/yt-dlp>": if yt-dlp is not in the PATH
  * 
  * Upon encountering a post with embedded Vimeo content, 'patreon-dl' will call this script. The following then happens:
- * - This script obtains the video URL from 'embed.html' or 'embed.url'.
+ * - This script obtains the video URL from 'embed.html' or 'embed.url'. The former is always preferable since it is what's actually
+ *   played within the Patreon post, and furthermore 'embed.url' sometimes returns "Page not found"
+ *   (see issue: https://github.com/patrickkfkan/patreon-dl/issues/65).
  * - The URL is passed to yt-dlp.
  * - yt-dlp downloads the video from URL and saves it to 'dest.dir'. The filename is determined by the specified
  *   format '%(title)s.%(ext)s' (see: https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#output-template).
@@ -31,11 +33,42 @@ function tryGetPlayerURL(html) {
   if (!html) {
     return null;
   }
+
   const regex = /https:\/\/player\.vimeo\.com\/video\/\d+/g;
   const match = regex.exec(html);
   if (match && match[0]) {
+    console.log('Found Vimeo player URL from embed HTML:', match[0]);
     return match[0];
   }
+
+  const regex2 = /src="(\/\/cdn.embedly.com\/widgets.+?)"/g;
+  const match2 = regex2.exec(html);
+  if (match2 && match2[1]) {
+    const embedlyURL = match2[1];
+    console.log('Found Embedly URL from embed HTML:', embedlyURL);
+    let embedlySrc;
+    try {
+      const urlObj = new URL(`https:${embedlyURL}`);
+      embedlySrc = urlObj.searchParams.get('src');
+    }
+    catch (error) {
+      console.error('Error parsing Embedly URL:', error);
+    }
+    try {
+      const embedlySrcObj = new URL(embedlySrc);
+      if (embedlySrcObj.hostname === 'player.vimeo.com') {
+        console.log(`Got Vimeo player URL from Embedly src: ${embedlySrc}`);
+      }
+      else {
+        console.warn(`Embedly src "${embedlySrc}" does not correspond to Vimeo player URL`);
+      }
+      return embedlySrc;
+    }
+    catch (error) {
+      console.error(`Error parsing Embedly src "${embedlySrc}":`, error);
+    }
+  }
+
   return null;
 }
 
@@ -54,8 +87,8 @@ async function download(url, o, videoPassword, ytdlpPath) {
     return await new Promise((resolve, reject) => {
       let settled = false;
       const args = [
-        '-o',
-        o
+        '-o', o,
+        '--referer', 'https://patreon.com/'
       ];
       const printArgs = [...args];
       if (videoPassword) {
