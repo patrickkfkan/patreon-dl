@@ -4,6 +4,8 @@
 
 A Patreon downloader written in [Node.js](https://nodejs.org).
 
+This repo contains the `patreon-dl` library and its command-line tool. For GUI application, check out [patreon-dl-gui](https://github.com/patrickkfkan/patreon-dl-gui).
+
 ### Features
 - Access to patron-only content through cookie. This refers to content you have access to under your account. It does not include locked content that you don't have a subscription for.
 - Download posts by user, in a collection or single post
