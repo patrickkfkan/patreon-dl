@@ -164,7 +164,11 @@ export default class FileLogger extends ConsoleLogger {
   }
 
   static getDefaultConfig() {
-    return DEFAULT_LOGGER_CONFIG;
+    const config = {
+      ...DEFAULT_LOGGER_CONFIG
+    };
+    config.logDir = config.logDir.replaceAll('/', path.sep);
+    return config;
   }
 
   protected toOutput(_level: LogLevel, msg: string[]) {
