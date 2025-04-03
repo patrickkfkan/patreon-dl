@@ -87,7 +87,7 @@
     "string-argv": "^0.3.2",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^13.1.0"
+    "youtubei.js": "^13.3.0"
   },
   "keywords": [
     "patreon",
