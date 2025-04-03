@@ -30,6 +30,8 @@ export type DownloadTaskSkipReason = {
   pattern: string;
   destFilename: string;
 } | {
+  name: 'dependentTaskNotCompleted'
+} | {
   name: 'other';
 })
 

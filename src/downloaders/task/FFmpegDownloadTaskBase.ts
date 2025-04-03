@@ -17,6 +17,7 @@ export interface FFmpegCommandParams {
   }[];
   output: string;
   outputOptions?: string[];
+  noProxy?: boolean;
 }
 
 // https://github.com/fluent-ffmpeg/node-fluent-ffmpeg
@@ -189,7 +190,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
       return options.some((s) => s.trim().startsWith(`${key} `));
     };
 
-    const { inputs, outputOptions } = params;
+    const { inputs, outputOptions, noProxy = false } = params;
 
     if (inputs.length === 0) {
       throw Error('Unable to create FFmpeg command: no input specified');
@@ -198,7 +199,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
     const command = ffmpeg();
 
     let proxyURL = '';
-    const proxyAgentInfo = createProxyAgent(this.config);
+    const proxyAgentInfo = !noProxy ? createProxyAgent(this.config) : null;
     if (proxyAgentInfo) {
       // FFmpeg only supports HTTP proxy
       if (proxyAgentInfo.protocol === 'http') {

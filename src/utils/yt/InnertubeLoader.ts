@@ -1,4 +1,5 @@
 import Innertube, { Platform, YTNodes } from 'youtubei.js';
+import * as InnertubeLib from 'youtubei.js';
 import BG, { type BgConfig } from 'bgutils-js';
 import fse from 'fs-extra';
 import { JSDOM } from 'jsdom';
@@ -27,12 +28,17 @@ interface POToken {
   refreshThreshold?: number;
 }
 
+export interface InnertubeLoaderGetInstanceResult {
+  innertube: Innertube;
+  getVideoInfo: (videoId: string) => Promise<InnertubeLib.YT.VideoInfo>
+};
+
 export default class InnertubeLoader {
 
   static #name = 'InnertubeLoader';
 
-  static #innertube: Innertube | null = null;
-  static #pendingPromise: Promise<Innertube> | null = null;
+  static #instanceResult: InnertubeLoaderGetInstanceResult | null = null;
+  static #pendingPromise: Promise<InnertubeLoaderGetInstanceResult> | null = null;
   static #poTokenRefreshTimer: NodeJS.Timeout | null = null;
   static #logger?: Logger | null;
   static #credentialsFile: string | null = null;
@@ -43,8 +49,8 @@ export default class InnertubeLoader {
   }
 
   static async getInstance(options: DownloaderConfig<any>) {
-    if (this.#innertube) {
-      return this.#innertube;
+    if (this.#instanceResult) {
+      return this.#instanceResult;
     }
 
     if (this.#pendingPromise) {
@@ -54,14 +60,9 @@ export default class InnertubeLoader {
     this.log('info', 'Initialize YouTube downloader (this could take some time)')
 
     if (!this.#proxy) {
-      const { agent, protocol } = createProxyAgent(options) || {};
-      if (agent && protocol) {
-        if (protocol === 'http') {
-          this.#proxy = agent;
-        }
-        else {
-          this.log('warn', `${protocol.toUpperCase()} proxy ignored - YouTube downloader uses FFmpeg which only supports HTTP proxy`);
-        }
+      const { agent } = createProxyAgent(options) || {};
+      if (agent) {
+        this.#proxy = agent;
       }
     }
 
@@ -71,7 +72,7 @@ export default class InnertubeLoader {
   }
 
   static #beginInitStage() {
-    return new Promise<Innertube>((resolve) => {
+    return new Promise<InnertubeLoaderGetInstanceResult>((resolve) => {
       this.#createInstance(Stage.Init, resolve)
         .catch((error: unknown) => {
           this.log('error', 'Error initializing YouTube downloader:', error);
@@ -79,7 +80,7 @@ export default class InnertubeLoader {
     });
   }
 
-  static async #beginPOStage(innertube: Innertube, resolve: (value: Innertube) => void, lastToken?: POToken) {
+  static async #beginPOStage(innertube: Innertube, resolve: (value: InnertubeLoaderGetInstanceResult) => void, lastToken?: POToken) {
     let identifier: POToken['params']['identifier'] | null = null;
     const visitorData = lastToken?.params.visitorData || innertube.session.context.client.visitorData;
     const lastIdentifier = lastToken?.params.identifier;
@@ -146,14 +147,15 @@ export default class InnertubeLoader {
     this.#resolveGetInstanceResult(innertube, resolve);
   }
 
-  static async #createInstance(stage: Stage, resolve: (value: Innertube) => void, poToken?: POToken) {
+  static async #createInstance(stage: Stage, resolve: (value: InnertubeLoaderGetInstanceResult) => void, poToken?: POToken) {
     this.log('debug', `Create Innertube instance${poToken?.value ? ' with po_token' : ''}...`);
+    const credentials = this.#loadCredentials();
     const innertube = await Innertube.create({
+      client_type: credentials ? InnertubeLib.ClientType.TV : InnertubeLib.ClientType.IOS,
       visitor_data: poToken?.params.visitorData,
       po_token: poToken?.value,
       fetch: (input, init) => Platform.shim.fetch(input, { ...init, dispatcher: this.#proxy } as any)
     });
-    const credentials = this.#loadCredentials();
     if (credentials) {
       const __updateCredentials = (data: any) => {
         if (this.#credentialsFile) {
@@ -203,7 +205,7 @@ export default class InnertubeLoader {
     if (this.#pendingPromise) {
       this.#pendingPromise = null;
     }
-    this.#innertube = null;
+    this.#instanceResult = null;
   }
 
   static #clearPOTokenRefreshTimer() {
@@ -213,9 +215,8 @@ export default class InnertubeLoader {
     }
   }
 
-  static #resolveGetInstanceResult(innertube: Innertube, resolve: (value: Innertube) => void, poToken?: POToken) {
+  static #resolveGetInstanceResult(innertube: Innertube, resolve: (value: InnertubeLoaderGetInstanceResult) => void, poToken?: POToken) {
     this.#pendingPromise = null;
-    this.#innertube = innertube;
     this.#clearPOTokenRefreshTimer();
     if (poToken) {
       const { ttl, refreshThreshold = 100 } = poToken;
@@ -225,14 +226,25 @@ export default class InnertubeLoader {
         this.#poTokenRefreshTimer = setTimeout(() => this.#refreshPOToken(poToken), timeout * 1000);
       }
     }
-    this.#setTVClientContext(innertube);
-    const signedIn = innertube.session.logged_in ? 'yes' : 'no';
-    this.log('info', `YouTube downloader initialized (signed-in: ${signedIn})`);
-    resolve(innertube);
+    const signedIn = innertube.session.logged_in;
+    let getVideoInfoFn: InnertubeLoaderGetInstanceResult['getVideoInfo'];
+    if (signedIn) {
+      this.#setTVClientContext(innertube);
+      getVideoInfoFn = (videoId) => this.#getVideoInfoAsTVClient(innertube, videoId);
+    }
+    else {
+      getVideoInfoFn = (videoId) => innertube.getBasicInfo(videoId, 'IOS');
+    }
+    this.#instanceResult = {
+      innertube,
+      getVideoInfo: getVideoInfoFn
+    };
+    this.log('info', `YouTube downloader initialized (signed-in: ${signedIn ? 'yes' : 'no'})`);
+    resolve(this.#instanceResult);
   }
 
   static #refreshPOToken(lastToken: POToken) {
-    const innertube = this.#innertube;
+    const innertube = this.#instanceResult?.innertube;
     if (!innertube) {
       return;
     }
@@ -316,6 +328,25 @@ export default class InnertubeLoader {
       clientVersion: '7.20230405.08.01',
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36; SMART-TV; Tizen 4.0,gzip(gfe)'
     };
+  }
+
+  static async #getVideoInfoAsTVClient(innertube: Innertube, videoId: string) {
+    // Prepare request payload
+    const payload = {
+      videoId,
+      enableMdxAutoplay: true,
+      isMdxPlayback: true,
+      playbackContext: {
+        contentPlaybackContext: {
+          signatureTimestamp: innertube.session.player?.sts || 0
+        }
+      },
+      client: 'TV'
+    } as any;
+    const cpn = InnertubeLib.Utils.generateRandomString(16);
+    const playerResponse = await innertube.actions.execute('/player', payload) as any;
+    // Wrap response in innertube VideoInfo.
+    return new InnertubeLib.YT.VideoInfo([ playerResponse ], innertube.actions, cpn);
   }
 
   protected static log(level: LogLevel, ...msg: any[]) {

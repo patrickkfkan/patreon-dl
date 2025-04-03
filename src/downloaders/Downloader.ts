@@ -99,7 +99,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       this.log('info', `Download ${retryOrBeginStr} (${__getDownloadIdString(task, batch)}): [type: ${task.srcEntity.type}; ID: #${task.srcEntity.id}]${destStr}`);
       if (task instanceof FFmpegDownloadTaskBase) {
         const retryOrBeginStr = task.retryCount > 0 ? 'Retry' : 'Begin';
-        this.log('info', `${retryOrBeginStr} downloading through FFmpeg (${__getDownloadIdString(task, batch)}): ${task.commandLine}`);
+        this.log('info', `${retryOrBeginStr} FFmpeg task (${__getDownloadIdString(task, batch)}): ${task.commandLine}`);
       }
     });
 
