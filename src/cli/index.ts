@@ -235,7 +235,7 @@ export default class PatreonDownloaderCLI {
       if (proxyAgentInfo) {
         if (proxyAgentInfo.protocol !== 'http') {
           commonLog(logger, 'warn', null,
-            `${proxyAgentInfo.protocol.toUpperCase()} proxy option found. However, FFmpeg which is required for downloading videos in streaming format only supports HTTP proxy. For such downloads, the specified proxy option will be ignored.`, EOL);
+            `${proxyAgentInfo.protocol.toUpperCase()} proxy specified in config. Note that some operations use FFmpeg to download video streams. Since FFmpeg only supports HTTP proxy, these operations will ignore the specified proxy options.`, EOL);
         }
       }
     }
