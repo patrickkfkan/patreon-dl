@@ -106,7 +106,7 @@ export default class DownloadTaskBatch extends EventEmitter implements IDownload
           if (!this.isAborted() && !this.isDestroyed()) {
             this.#reassignTaskId(spawn);
             this.#tasks.push(spawn);
-            void this.#limiter.schedule(() => spawn.start());
+            // void this.#limiter.schedule(() => spawn.start());
             this.emit('taskSpawn', { origin, spawn });
             void spawn.start();
           }
