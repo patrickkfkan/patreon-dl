@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L9)
+[src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L9)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L6)
+[src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L6)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L8)
+[src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L8)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L5)
+[src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L5)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L10)
+[src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L10)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L7)
+[src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L7)
 
 ***
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L14)
+[src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L14)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L11)
+[src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L11)
 
 ***
 
@@ -94,7 +94,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L4)
+[src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L4)
 
 ***
 
@@ -104,7 +104,7 @@
 
 #### Defined in
 
-[src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L12)
+[src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L12)
 
 ***
 
@@ -114,4 +114,4 @@
 
 #### Defined in
 
-[src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/User.ts#L13)
+[src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L13)

@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L24)
+[src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L24)
 
 ***
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L28)
+[src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L28)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L25)
+[src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L25)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L22)
+[src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L22)
 
 ***
 
@@ -78,7 +78,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L27)
+[src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L27)
 
 ***
 
@@ -92,7 +92,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L26)
+[src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L26)
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L23)
+[src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L23)
 
 ## Methods
 
@@ -136,7 +136,7 @@ v10.0.0
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L31)
+[src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L31)
 
 ***
 
@@ -197,7 +197,7 @@ v0.1.101
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L29)
+[src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L29)
 
 ***
 
@@ -256,4 +256,4 @@ v0.3.0
 
 #### Defined in
 
-[src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/task/DownloadTaskBatch.ts#L30)
+[src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatch.ts#L30)

@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L4)
+[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L3)
+[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L38)
+[src/entities/MediaItem.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L38)
 
 ***
 
@@ -76,7 +76,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L39)
+[src/entities/MediaItem.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L39)
 
 ***
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L5)
+[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -104,4 +104,4 @@
 
 #### Defined in
 
-[src/entities/MediaItem.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/entities/MediaItem.ts#L37)
+[src/entities/MediaItem.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L37)

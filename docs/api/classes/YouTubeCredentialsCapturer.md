@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L17)
+[src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L17)
 
 ## Methods
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L33)
+[src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L33)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L26)
+[src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L26)
 
 ***
 
@@ -122,7 +122,7 @@ v0.1.26
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L68)
+[src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L68)
 
 #### emit(eventName, credentials)
 
@@ -186,7 +186,7 @@ v0.1.26
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L69)
+[src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L69)
 
 ***
 
@@ -218,7 +218,7 @@ v10.0.0
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L62)
+[src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L62)
 
 #### off(eventName, listener)
 
@@ -246,7 +246,7 @@ v10.0.0
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L63)
+[src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L63)
 
 ***
 
@@ -307,7 +307,7 @@ v0.1.101
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L50)
+[src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L50)
 
 #### on(eventName, listener)
 
@@ -364,7 +364,7 @@ v0.1.101
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L51)
+[src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L51)
 
 ***
 
@@ -423,7 +423,7 @@ v0.3.0
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L56)
+[src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L56)
 
 #### once(eventName, listener)
 
@@ -478,4 +478,4 @@ v0.3.0
 
 ##### Defined in
 
-[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/YouTubeCredentialsCapturer.ts#L57)
+[src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/YouTubeCredentialsCapturer.ts#L57)

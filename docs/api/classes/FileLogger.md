@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L53)
+[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L53)
 
 ## Methods
 
@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:176](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L176)
+[src/utils/logging/FileLogger.ts:180](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L180)
 
 ***
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L162)
+[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L162)
 
 ***
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L75)
+[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L75)
 
 ***
 
@@ -112,17 +112,69 @@
 
 #### Defined in
 
-[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/ConsoleLogger.ts#L92)
+[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L92)
 
 ***
 
 ### getDefaultConfig()
 
-> `static` **getDefaultConfig**(): `Omit`\<[`FileLoggerConfig`](../interfaces/FileLoggerConfig.md), `"created"`\>
+> `static` **getDefaultConfig**(): `object`
 
 #### Returns
 
-`Omit`\<[`FileLoggerConfig`](../interfaces/FileLoggerConfig.md), `"created"`\>
+`object`
+
+##### color
+
+> **color**: `boolean`
+
+##### dateTimeFormat
+
+> **dateTimeFormat**: `string`
+
+##### enabled
+
+> **enabled**: `boolean`
+
+##### fileExistsAction
+
+> **fileExistsAction**: `"append"` \| `"overwrite"`
+
+##### include
+
+> **include**: `object`
+
+##### include.dateTime
+
+> **dateTime**: `boolean`
+
+##### include.errorStack
+
+> **errorStack**: `boolean`
+
+##### include.level
+
+> **level**: `boolean`
+
+##### include.originator
+
+> **originator**: `boolean`
+
+##### logDir
+
+> **logDir**: `string`
+
+##### logFilename
+
+> **logFilename**: `string`
+
+##### logFilePath
+
+> **logFilePath**: `string`
+
+##### logLevel
+
+> **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Overrides
 
@@ -130,7 +182,7 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:166](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L166)
+[src/utils/logging/FileLogger.ts:166](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L166)
 
 ***
 
@@ -164,4 +216,4 @@
 
 #### Defined in
 
-[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/utils/logging/FileLogger.ts#L71)
+[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L71)

@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L57)
+[src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L57)
 
 ***
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L25)
+[src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L25)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L43)
+[src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L43)
 
 ***
 
@@ -62,7 +62,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L52)
+[src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L52)
 
 ***
 
@@ -76,7 +76,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L29)
+[src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L29)
 
 ***
 
@@ -92,4 +92,4 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderEvent.ts#L33)
+[src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L33)

@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L21)
+[src/downloaders/DownloaderOptions.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L21)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L17)
+[src/downloaders/DownloaderOptions.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L17)
 
 ***
 
@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L27)
+[src/downloaders/DownloaderOptions.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L27)
 
 ***
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L18)
+[src/downloaders/DownloaderOptions.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L18)
 
 ***
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L20)
+[src/downloaders/DownloaderOptions.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L20)
 
 ***
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L10)
+[src/downloaders/DownloaderOptions.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L10)
 
 ***
 
@@ -86,7 +86,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L22)
+[src/downloaders/DownloaderOptions.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L22)
 
 ***
 
@@ -96,7 +96,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L12)
+[src/downloaders/DownloaderOptions.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L12)
 
 ***
 
@@ -114,7 +114,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L13)
+[src/downloaders/DownloaderOptions.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L13)
 
 ***
 
@@ -124,7 +124,7 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L11)
+[src/downloaders/DownloaderOptions.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L11)
 
 ***
 
@@ -134,4 +134,4 @@
 
 #### Defined in
 
-[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/7168e7165dfd3021aec234ee0e8458b1a8040c70/src/downloaders/DownloaderOptions.ts#L19)
+[src/downloaders/DownloaderOptions.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderOptions.ts#L19)
