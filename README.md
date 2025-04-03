@@ -225,6 +225,11 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.4.2
+- Fix YouTube embeds failing to download due to YT changes
+- Fix slow YouTube downloads ([#66](https://github.com/patrickkfkan/patreon-dl/issues/66))
+- Other minor fixes
+
 v2.4.1
 - Fix Vimeo download script obtaining and downloading from player URL in embed HTML ([#65](https://github.com/patrickkfkan/patreon-dl/issues/65))
 - Add `post-url` and `cookie` to available external downloader exec params
