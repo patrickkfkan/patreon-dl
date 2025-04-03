@@ -2,7 +2,7 @@ import * as InnertubeLib from 'youtubei.js';
 import { type YouTubePostEmbed } from '../../entities/Post.js';
 import { createWriteStream } from 'fs';
 import speedometer from 'speedometer';
-import DownloadTask, { DownloadProgress, DownloadTaskParams } from './DownloadTask.js';
+import DownloadTask, { type DownloadProgress, type DownloadTaskParams } from './DownloadTask.js';
 import deepEqual from 'deep-equal';
 
 export type YouTubeStreamType = 'video' | 'audio' | 'video+audio';
@@ -67,7 +67,7 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
   async start() {
     if (!this.#startPromise) {
       this.#startPromise = new Promise((resolve) => {
-        return (async () => {
+        void (async () => {
           await super.start();
           this.#callback();
           this.#startPromise = null;
@@ -199,7 +199,7 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
     let cancel: AbortController;
 
     return new ReadableStream<Uint8Array>({
-      start() {
+      start() { // Do nothing
       },
       pull: async (controller) => {
         if (must_end) {
@@ -211,44 +211,46 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
           must_end = true;
         }
 
-        return new Promise(async (resolve, reject) => {
-          try {
-            cancel = new AbortController();
-
-            const response = await actions.session.http.fetch_function(`${stream.url}&cpn=${stream.cpn}&range=${chunk_start}-${chunk_end || ''}`, {
-              method: 'GET',
-              headers: {
-                ...InnertubeLib.Constants.STREAM_HEADERS
-                // XXX: use YouTube's range parameter instead of a Range header.
-                // Range: `bytes=${chunk_start}-${chunk_end}`
-              },
-              signal: cancel.signal
-            });
-
-            // Throw if the response is not 2xx
-            if (!response.ok)
-              throw Error('Innertube error: The server responded with a non 2xx status code');
-
-            const body = response.body;
-
-            if (!body)
-              throw Error('Innertube error: Could not get ReadableStream from fetch Response.');
-
-            for await (const chunk of InnertubeLib.Utils.streamToIterable(body)) {
-              controller.enqueue(chunk);
+        return new Promise((resolve, reject) => {
+          void (async () => {
+            try {
+              cancel = new AbortController();
+  
+              const response = await actions.session.http.fetch_function(`${stream.url}&cpn=${stream.cpn}&range=${chunk_start}-${chunk_end || ''}`, {
+                method: 'GET',
+                headers: {
+                  ...InnertubeLib.Constants.STREAM_HEADERS
+                  // XXX: use YouTube's range parameter instead of a Range header.
+                  // Range: `bytes=${chunk_start}-${chunk_end}`
+                },
+                signal: cancel.signal
+              });
+  
+              // Throw if the response is not 2xx
+              if (!response.ok)
+                throw Error('Innertube error: The server responded with a non 2xx status code');
+  
+              const body = response.body;
+  
+              if (!body)
+                throw Error('Innertube error: Could not get ReadableStream from fetch Response.');
+  
+              for await (const chunk of InnertubeLib.Utils.streamToIterable(body)) {
+                controller.enqueue(chunk);
+              }
+  
+              chunk_start = chunk_end + 1;
+              chunk_end += chunk_size;
+  
+              resolve();
+  
+            } catch (e: any) {
+              reject(e as Error);
             }
-
-            chunk_start = chunk_end + 1;
-            chunk_end += chunk_size;
-
-            resolve();
-
-          } catch (e: any) {
-            reject(e);
-          }
+          })();
         });
       },
-      async cancel(reason) {
+      cancel(reason) {
         cancel.abort(reason);
       }
     }, {

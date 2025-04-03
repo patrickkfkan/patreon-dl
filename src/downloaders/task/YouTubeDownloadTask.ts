@@ -6,10 +6,9 @@ import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTa
 import InnertubeLoader from '../../utils/yt/InnertubeLoader.js';
 import FSHelper from '../../utils/FSHelper.js';
 import fs from 'fs';
-import speedometer from 'speedometer';
 import DownloadTask from './DownloadTask.js';
 import YouTubeStreamDownloadTask from './YouTubeStreamDownloadTask.js';
-import { FileExistsAction } from '../DownloaderOptions.js';
+import { type FileExistsAction } from '../DownloaderOptions.js';
 
 export interface YouTubeDownloadTaskParams extends FFmpegDownloadTaskBaseParams<YouTubePostEmbed> {
   destDir: string;
@@ -225,7 +224,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
 
     const streamDownloadsResult = await new Promise<'complete' | 'incomplete'>((resolve) => {
-      return (async () => {
+      void (async () => {
         const tasks = await Promise.all(ffmpegParams.inputs.map(({ input, stream }) =>
           DownloadTask.create(YouTubeStreamDownloadTask, {
             callbacks: this.callbacks,
