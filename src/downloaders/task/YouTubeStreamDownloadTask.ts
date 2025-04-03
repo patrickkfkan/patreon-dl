@@ -41,6 +41,8 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
   };
   #callback: YouTubeStreamDownloadTaskParams<T>['callback'];
   #startPromise: Promise<void> | null;
+  #abortController: AbortController | null;
+  #abortingCallback: (() => void) | null;
 
   constructor(params: YouTubeStreamDownloadTaskParams<T>) {
     super(params);
@@ -58,6 +60,8 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
     };
     this.#callback = params.callback;
     this.#startPromise = null;
+    this.#abortController = null;
+    this.#abortingCallback = null;
   }
 
   protected resolveDestPath() {
@@ -84,41 +88,62 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
     }
     this.notifyStart();
     this.#setProgressReportTimer();
+    this.#abortController = new AbortController();
     try {
       this.#downloadStream = await this.#createDownloadStream(this.#stream, this.#innertube.session.actions);
       this.log('debug', `Download YouTube stream "${this.#stream.url}" to "${this.#destFilePath}"`);
       const file = !this.config.dryRun ? createWriteStream(this.#destFilePath) : null;
       for await (const chunk of InnertubeLib.Utils.streamToIterable(this.#downloadStream)) {
+        if (this.#abortController.signal.aborted) {
+          throw Error('Aborted');
+        }
         if (file) {
           file.write(chunk);
         }
         this.#progress.transferred += chunk.byteLength;
         this.#progress.speed = this.#progress.speedometer(chunk.byteLength);
       }
+      this.log('debug', `Saved "${this.#destFilePath}"; filesize: ${this.#progress.transferred} bytes`);
+      this.#reportProgress();
+      this.notifyComplete();
     }
     catch (error: unknown) {
       this.#reportProgress();
-      this.notifyError(error);
-      return;
+      if (this.#abortController.signal.aborted && this.#abortingCallback) {
+        this.#abortingCallback();
+      }
+      else {
+        this.notifyError(error);
+      }
     }
-    this.log('debug', `Saved "${this.#destFilePath}"; filesize: ${this.#progress.transferred} bytes`);
-    this.#downloadStream = null;
-    this.#reportProgress();
-    this.notifyComplete();
   }
 
   protected async doAbort() {
-    if (!this.#downloadStream) {
-      return;
-    }
-    return this.#downloadStream.cancel();
+    return new Promise<void>((resolve) => {
+      if (this.#abortController) {
+        this.#abortingCallback = () => {
+          void (async () => {
+            this.#abortingCallback = null;
+            if (this.#downloadStream) {
+              await this.#downloadStream.cancel();
+            }
+            this.notifyAbort();
+            resolve();
+          })();
+        };
+        this.#abortController.abort();
+      }
+      else {
+        resolve();
+      }
+    });
   }
 
   protected async doDestroy() {
-    if (this.#downloadStream) {
-      await this.#downloadStream.cancel();
-      this.#downloadStream = null;
+    if (this.isRunning()) {
+      await this.doAbort();
     }
+    this.#downloadStream = null;
   }
 
   protected doGetProgress() {
