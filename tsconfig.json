@@ -12,5 +12,16 @@
     "inlineSources": true,
     "strict": true,
     "strictPropertyInitialization": false,
-  }
+    "typeRoots": [
+        "node_modules/@types",
+        "src/types"
+    ],
+    "paths": {
+      "argv-split": ["./src/types/argv-split"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "src/types/**"
+  ]
 }

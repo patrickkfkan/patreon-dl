@@ -7,7 +7,7 @@ import type Logger from '../../utils/logging/Logger.js';
 import { type EmbedDownloader } from '../DownloaderOptions.js';
 import DownloadTask, { type DownloadTaskCallbacks, type DownloadTaskParams } from './DownloadTask.js';
 import spawn from '@patrickkfkan/cross-spawn';
-import stringArgv from 'string-argv';
+import split from 'argv-split'; // Switched from 'string-argv' which does not split nested quotes properly
 import { type DownloaderConfig } from '../Downloader.js';
 
 export interface ExternalDownloaderTaskParams extends DownloadTaskParams {
@@ -227,7 +227,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
       'dest.dir': destDir
     };
 
-    const args = stringArgv(dl.exec);
+    const args = split(dl.exec);
     const cmd = args.shift();
     if (!cmd) {
       __log('warn', 'Could not create task: no command specified');
