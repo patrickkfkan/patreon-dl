@@ -16,12 +16,13 @@
  * --yt-dlp "</path/to/yt-dlp>": if yt-dlp is not in the PATH
  * 
  * Upon encountering a post with embedded Vimeo content, 'patreon-dl' will call this script. The following then happens:
- * - This script obtains the video URL from 'embed.html' or 'embed.url'. The former is always preferable since it is what's actually
- *   played within the Patreon post, and furthermore 'embed.url' sometimes returns "Page not found"
- *   (see issue: https://github.com/patrickkfkan/patreon-dl/issues/65).
+ * - This script obtains the video URL from 'embed.html' or 'embed.url'. The former ("player URL") is always preferable 
+ *   since it is what's actually played within the Patreon post, and furthermore 'embed.url' sometimes returns
+ *   "Page not found" (see issue: https://github.com/patrickkfkan/patreon-dl/issues/65).
  * - The URL is passed to yt-dlp.
  * - yt-dlp downloads the video from URL and saves it to 'dest.dir'. The filename is determined by the specified
  *   format '%(title)s.%(ext)s' (see: https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#output-template).
+ * - Fallback to embed URL if player URL fails to download.
  * 
  */
 
@@ -164,8 +165,17 @@ if (!url) {
   process.exit(1);
 }
 
+async function doDownload(_url) {
+  let code = await download(_url, o, videoPassword, ytdlpPath);
+  if (code !== 0 && _url !== embedURL && embedURL) {
+    console.log(`Download failed - retrying with embed URL "${embedURL}"`);
+    return await doDownload(embedURL);
+  }
+  return code;
+}
+
 console.log(`Going to download video from "${url}"`);
 
-download(url, o, videoPassword, ytdlpPath).then((code) => {
+doDownload(url).then((code) => {
   process.exit(code);
 });
