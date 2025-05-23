@@ -14,11 +14,13 @@ import FSHelper from './FSHelper.js';
 import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import Progress from './Progress.js';
 import { createProxyAgent } from './Proxy.js';
+import { SITE_URL } from './URLHelper.js';
 
 export interface PrepareDownloadParams<T extends Downloadable> {
   url: string;
   srcEntity: T;
   destFilePath: string;
+  setReferer?: boolean;
   signal: AbortSignal;
 }
 
@@ -128,11 +130,12 @@ export default class Fetcher {
     url: string;
     destDir: string;
     destFilenameResolver: FilenameResolver<T>;
+    setReferer?: boolean;
     signal?: AbortSignal;
   }) {
-    const { url, destDir, destFilenameResolver, signal } = params;
+    const { url, destDir, destFilenameResolver, setReferer = false, signal } = params;
     const request = new Request(url, { method: 'HEAD' });
-    this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
+    this.#setHeaders(request, 'html', { setCookie: false, setHost: false, setReferer });
     const internalAbortController = new AbortController();
     const abortHandler = () => internalAbortController.abort();
     if (signal) {
@@ -158,9 +161,9 @@ export default class Fetcher {
   }
 
   async prepareDownload<T extends Downloadable>(params: PrepareDownloadParams<T>) {
-    const { url, srcEntity, destFilePath, signal } = params;
+    const { url, srcEntity, destFilePath, setReferer = false, signal } = params;
     const request = new Request(url, { method: 'GET' });
-    this.#setHeaders(request, 'html', { setCookie: false, setHost: false });
+    this.#setHeaders(request, 'html', { setCookie: false, setHost: false, setReferer });
     const internalAbortController = new AbortController();
     let removeAbortHandler: undefined | (() => void) = undefined;
     if (signal) {
@@ -286,14 +289,18 @@ export default class Fetcher {
     }
   }
 
-  #setHeaders(request: Request, type: 'html' | 'json', opts?: { setCookie?: boolean; setHost?: boolean; }) {
+  #setHeaders(request: Request, type: 'html' | 'json', opts?: { setCookie?: boolean; setHost?: boolean; setReferer?: boolean; }) {
     const setCookie = pickDefined(opts?.setCookie, true);
     const setHost = pickDefined(opts?.setHost, true);
+    const setReferer = pickDefined(opts?.setReferer, false);
     if (this.#cookie && setCookie) {
       request.headers.set('Cookie', this.#cookie);
     }
     if (setHost) {
       request.headers.set('Host', 'www.patreon.com');
+    }
+    if (setReferer) {
+      request.headers.set('referer', SITE_URL);
     }
     request.headers.set('User-Agent', USER_AGENT);
     if (type === 'json') {

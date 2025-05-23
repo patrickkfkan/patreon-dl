@@ -2,7 +2,7 @@ import path from 'path';
 import { URL } from 'url';
 import { type UserIdOrVanityParam } from '../entities';
 
-const SITE_URL = 'https://www.patreon.com';
+export const SITE_URL = 'https://www.patreon.com';
 const COLLECTION_URL = `${SITE_URL}/collection`;
 const PRODUCT_API_URL = `${SITE_URL}/api/product`;
 const POSTS_API_URL = `${SITE_URL}/api/posts`;

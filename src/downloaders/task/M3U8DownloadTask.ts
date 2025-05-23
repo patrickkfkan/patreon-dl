@@ -1,4 +1,5 @@
 import { type VideoMediaItem } from '../../entities/MediaItem.js';
+import { SITE_URL } from '../../utils/URLHelper.js';
 import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
 
 export interface M3U8DownloadTaskParams extends FFmpegDownloadTaskBaseParams<VideoMediaItem> {
@@ -25,7 +26,12 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
       inputs: [
         {
           input: this.src,
-          options: [ '-protocol_whitelist file,http,https,tcp,tls' ]
+          options: [
+            '-protocol_whitelist',
+            'http,https,tcp,tls',
+            '-headers',
+            `Referer: ${SITE_URL}`
+          ]
         }
       ],
       output: this.#destFilePath

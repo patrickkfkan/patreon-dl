@@ -217,20 +217,20 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
       }
       const _options = options ? [...options] : [];
       if (proxyURL) {
-        const protocolWhitelistOptIndex = _options.findIndex((opt) => opt.startsWith('-protocol_whitelist'));
-        if (protocolWhitelistOptIndex >= 0) {
-          const whitelistEntries = _options[protocolWhitelistOptIndex].substring('-protocol_whitelist'.length).trim().split(',').map((entry) => entry.trim());
+        const whitelistIndex = _options.findIndex((opt) => opt.startsWith('-protocol_whitelist')) + 1;
+        if (whitelistIndex > 0 && _options[whitelistIndex]) {
+          const whitelistEntries = _options[whitelistIndex].trim().split(',').map((entry) => entry.trim());
           if (!whitelistEntries.includes('httpproxy')) {
-            _options[protocolWhitelistOptIndex] += ',httpproxy';
+            _options[whitelistIndex] += ',httpproxy';
           }
         }
         else {
-          _options.push('-protocol_whitelist http,https,tcp,tls,httpproxy');
+          _options.push('-protocol_whitelist', 'http,https,tcp,tls,httpproxy');
         }
         _options.push('-http_proxy', proxyURL);
       }
       if (_options.length > 0) {
-        _options.forEach((opt) => command.inputOption(opt));
+        command.inputOptions(..._options)
       }
     });
 
