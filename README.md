@@ -225,6 +225,11 @@ Note that you can override an option from a configuration file with one provided
 
 ## Changelog
 
+v2.4.3
+- Fix YouTube embeds failing to download due to YT changes
+- Add fallback download logic to Vimeo download script
+- Fix error when downloading video ([#75](https://github.com/patrickkfkan/patreon-dl/issues/75))
+
 v2.4.2
 - Fix YouTube embeds failing to download due to YT changes
 - Fix slow YouTube downloads ([#66](https://github.com/patrickkfkan/patreon-dl/issues/66))

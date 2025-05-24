@@ -1,6 +1,6 @@
 {
   "name": "patreon-dl",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Patreon Downloader",
   "type": "module",
   "exports": "./dist/index.js",
