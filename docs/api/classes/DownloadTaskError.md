@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,35 +6,41 @@
 
 # Class: DownloadTaskError
 
+Defined in: [src/downloaders/task/DownloadTask.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTask.ts#L13)
+
 ## Extends
 
 - `Error`
 
 ## Constructors
 
-### new DownloadTaskError()
+### Constructor
 
-> **new DownloadTaskError**(`message`, `task`, `cause`?): [`DownloadTaskError`](DownloadTaskError.md)
+> **new DownloadTaskError**(`message`, `task`, `cause?`): `DownloadTaskError`
+
+Defined in: [src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTask.ts#L17)
 
 #### Parameters
 
-• **message**: `string`
+##### message
 
-• **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
+`string`
 
-• **cause?**: `Error`
+##### task
+
+[`IDownloadTask`](../interfaces/IDownloadTask.md)
+
+##### cause?
+
+`Error`
 
 #### Returns
 
-[`DownloadTaskError`](DownloadTaskError.md)
+`DownloadTaskError`
 
 #### Overrides
 
 `Error.constructor`
-
-#### Defined in
-
-[src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTask.ts#L14)
 
 ## Properties
 
@@ -42,13 +48,11 @@
 
 > `optional` **cause**: `Error`
 
+Defined in: [src/downloaders/task/DownloadTask.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTask.ts#L15)
+
 #### Overrides
 
 `Error.cause`
-
-#### Defined in
-
-[src/downloaders/task/DownloadTask.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTask.ts#L12)
 
 ***
 
@@ -56,6 +60,4 @@
 
 > **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
 
-#### Defined in
-
-[src/downloaders/task/DownloadTask.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTask.ts#L11)
+Defined in: [src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTask.ts#L14)

@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,35 +6,41 @@
 
 # Class: FetcherError
 
+Defined in: [src/utils/Fetcher.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/Fetcher.ts#L32)
+
 ## Extends
 
 - `Error`
 
 ## Constructors
 
-### new FetcherError()
+### Constructor
 
-> **new FetcherError**(`message`, `url`, `method`): [`FetcherError`](FetcherError.md)
+> **new FetcherError**(`message`, `url`, `method`): `FetcherError`
+
+Defined in: [src/utils/Fetcher.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/Fetcher.ts#L37)
 
 #### Parameters
 
-• **message**: `string`
+##### message
 
-• **url**: `string`
+`string`
 
-• **method**: `string`
+##### url
+
+`string`
+
+##### method
+
+`string`
 
 #### Returns
 
-[`FetcherError`](FetcherError.md)
+`FetcherError`
 
 #### Overrides
 
 `Error.constructor`
-
-#### Defined in
-
-[src/utils/Fetcher.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/Fetcher.ts#L35)
 
 ## Properties
 
@@ -42,9 +48,7 @@
 
 > **method**: `string`
 
-#### Defined in
-
-[src/utils/Fetcher.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/Fetcher.ts#L33)
+Defined in: [src/utils/Fetcher.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/Fetcher.ts#L35)
 
 ***
 
@@ -52,6 +56,4 @@
 
 > **url**: `string`
 
-#### Defined in
-
-[src/utils/Fetcher.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/Fetcher.ts#L32)
+Defined in: [src/utils/Fetcher.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/Fetcher.ts#L34)

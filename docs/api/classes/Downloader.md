@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / Downloader
 
 # Class: `abstract` Downloader\<T\>
+
+Defined in: [src/downloaders/Downloader.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L47)
 
 ## Extends
 
@@ -17,31 +19,39 @@
 
 ## Type Parameters
 
-• **T** *extends* [`DownloaderType`](../type-aliases/DownloaderType.md)
+### T
+
+`T` *extends* [`DownloaderType`](../type-aliases/DownloaderType.md)
 
 ## Constructors
 
-### new Downloader()
+### Constructor
 
-> **new Downloader**\<`T`\>(`bootstrap`, `options`?): [`Downloader`](Downloader.md)\<`T`\>
+> **new Downloader**\<`T`\>(`config`, `db`, `logger?`): `Downloader`\<`T`\>
+
+Defined in: [src/downloaders/Downloader.ts:59](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L59)
 
 #### Parameters
 
-• **bootstrap**: [`DownloaderBootstrapData`](../type-aliases/DownloaderBootstrapData.md)\<`T`\>
+##### config
 
-• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
+[`DownloaderConfig`](../type-aliases/DownloaderConfig.md)\<`T`\>
+
+##### db
+
+`DBInstance`
+
+##### logger?
+
+`null` | [`Logger`](Logger.md)
 
 #### Returns
 
-[`Downloader`](Downloader.md)\<`T`\>
+`Downloader`\<`T`\>
 
 #### Overrides
 
 `EventEmitter.constructor`
-
-#### Defined in
-
-[src/downloaders/Downloader.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L53)
 
 ## Properties
 
@@ -49,15 +59,15 @@
 
 > `abstract` **name**: `string`
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L44)
+Defined in: [src/downloaders/Downloader.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L49)
 
 ## Methods
 
 ### emit()
 
 > **emit**\<`T`\>(`event`, `args`): `boolean`
+
+Defined in: [src/downloaders/Downloader.ts:548](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L548)
 
 Synchronously calls each of the listeners registered for the event named `eventName`, in the order they were registered, passing the supplied arguments
 to each.
@@ -99,13 +109,19 @@ myEmitter.emit('event', 1, 2, 3, 4, 5);
 
 #### Type Parameters
 
-• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
+##### T
+
+`T` *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-• **event**: `T`
+##### event
 
-• **args**: [`DownloaderEventPayloadOf`](../type-aliases/DownloaderEventPayloadOf.md)\<`T`\>
+`T`
+
+##### args
+
+[`DownloaderEventPayloadOf`](../type-aliases/DownloaderEventPayloadOf.md)\<`T`\>
 
 #### Returns
 
@@ -119,23 +135,17 @@ v0.1.26
 
 `EventEmitter.emit`
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:511](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L511)
-
 ***
 
 ### getConfig()
 
 > **getConfig**(): `DeepReadonly`\<[`DownloaderConfig`](../type-aliases/DownloaderConfig.md)\<`T`\>\>
 
+Defined in: [src/downloaders/Downloader.ts:474](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L474)
+
 #### Returns
 
 `DeepReadonly`\<[`DownloaderConfig`](../type-aliases/DownloaderConfig.md)\<`T`\>\>
-
-#### Defined in
-
-[src/downloaders/Downloader.ts:437](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L437)
 
 ***
 
@@ -143,17 +153,25 @@ v0.1.26
 
 > **off**\<`T`\>(`event`, `listener`): `this`
 
+Defined in: [src/downloaders/Downloader.ts:543](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L543)
+
 Alias for `emitter.removeListener()`.
 
 #### Type Parameters
 
-• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
+##### T
+
+`T` *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-• **event**: `T`
+##### event
 
-• **listener**
+`T`
+
+##### listener
+
+(`args`) => `void`
 
 #### Returns
 
@@ -167,15 +185,13 @@ v10.0.0
 
 `EventEmitter.off`
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:506](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L506)
-
 ***
 
 ### on()
 
 > **on**\<`T`\>(`event`, `listener`): `this`
+
+Defined in: [src/downloaders/Downloader.ts:533](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L533)
 
 Adds the `listener` function to the end of the listeners array for the event
 named `eventName`. No checks are made to see if the `listener` has already
@@ -206,13 +222,19 @@ myEE.emit('foo');
 
 #### Type Parameters
 
-• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
+##### T
+
+`T` *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-• **event**: `T`
+##### event
 
-• **listener**
+`T`
+
+##### listener
+
+(`args`) => `void`
 
 The callback function
 
@@ -228,15 +250,13 @@ v0.1.101
 
 `EventEmitter.on`
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:496](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L496)
-
 ***
 
 ### once()
 
 > **once**\<`T`\>(`event`, `listener`): `this`
+
+Defined in: [src/downloaders/Downloader.ts:538](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L538)
 
 Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
@@ -265,13 +285,19 @@ myEE.emit('foo');
 
 #### Type Parameters
 
-• **T** *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
+##### T
+
+`T` *extends* [`DownloaderEvent`](../type-aliases/DownloaderEvent.md)
 
 #### Parameters
 
-• **event**: `T`
+##### event
 
-• **listener**
+`T`
+
+##### listener
+
+(`args`) => `void`
 
 The callback function
 
@@ -287,66 +313,68 @@ v0.3.0
 
 `EventEmitter.once`
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:501](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L501)
-
 ***
 
 ### start()
 
 > `abstract` **start**(`params`): `Promise`\<`void`\>
 
+Defined in: [src/downloaders/Downloader.ts:244](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L244)
+
 #### Parameters
 
-• **params**: [`DownloaderStartParams`](../interfaces/DownloaderStartParams.md)
+##### params
+
+[`DownloaderStartParams`](../interfaces/DownloaderStartParams.md)
 
 #### Returns
 
 `Promise`\<`void`\>
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:227](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L227)
-
 ***
 
 ### getCampaign()
 
-> `static` **getCampaign**(`creator`, `signal`?, `logger`?): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
+> `static` **getCampaign**(`creator`, `signal?`, `logger?`): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
+
+Defined in: [src/downloaders/Downloader.ts:273](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L273)
 
 #### Parameters
 
-• **creator**: `string` \| [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
+##### creator
 
-• **signal?**: `AbortSignal`
+`string` | [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
 
-• **logger?**: `null` \| [`Logger`](Logger.md)
+##### signal?
+
+`AbortSignal`
+
+##### logger?
+
+`null` | [`Logger`](Logger.md)
 
 #### Returns
 
 `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
-#### Defined in
-
-[src/downloaders/Downloader.ts:246](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L246)
-
 ***
 
 ### getInstance()
 
-> `static` **getInstance**(`url`, `options`?): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
+> `static` **getInstance**(`url`, `options?`): `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
+
+Defined in: [src/downloaders/Downloader.ts:246](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/Downloader.ts#L246)
 
 #### Parameters
 
-• **url**: `string`
+##### url
 
-• **options?**: [`DownloaderOptions`](../interfaces/DownloaderOptions.md)
+`string`
+
+##### options?
+
+[`DownloaderOptions`](../interfaces/DownloaderOptions.md)
 
 #### Returns
 
 `Promise`\<[`PostDownloader`](PostDownloader.md) \| [`ProductDownloader`](ProductDownloader.md)\>
-
-#### Defined in
-
-[src/downloaders/Downloader.ts:229](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L229)

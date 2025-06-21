@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / AudioMediaItem
 
 # Interface: AudioMediaItem
+
+Defined in: [src/entities/MediaItem.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L94)
 
 ## Extends
 
@@ -16,9 +18,7 @@
 
 > **createdAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L96)
+Defined in: [src/entities/MediaItem.ts:96](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L96)
 
 ***
 
@@ -26,13 +26,11 @@
 
 > **filename**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L4)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`filename`](MediaLike.md#filename)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -40,13 +38,11 @@
 
 > **id**: `string`
 
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L3)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`id`](MediaLike.md#id)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -54,13 +50,19 @@
 
 > **mimeType**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L5)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`mimeType`](MediaLike.md#mimetype)
 
-#### Defined in
+***
 
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L5)
+### thumbnailURL
+
+> **thumbnailURL**: `null` \| `string`
+
+Defined in: [src/entities/MediaItem.ts:98](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L98)
 
 ***
 
@@ -68,13 +70,11 @@
 
 > **type**: `"audio"`
 
+Defined in: [src/entities/MediaItem.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L95)
+
 #### Overrides
 
 [`MediaLike`](MediaLike.md).[`type`](MediaLike.md#type)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:95](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L95)
 
 ***
 
@@ -82,6 +82,4 @@
 
 > **url**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L97)
+Defined in: [src/entities/MediaItem.ts:97](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L97)

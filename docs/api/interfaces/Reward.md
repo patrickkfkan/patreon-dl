@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,15 +6,15 @@
 
 # Interface: Reward
 
+Defined in: [src/entities/Reward.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L3)
+
 ## Properties
 
 ### amount
 
 > **amount**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L8)
+Defined in: [src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L8)
 
 ***
 
@@ -22,9 +22,7 @@
 
 > **createdAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L9)
+Defined in: [src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L9)
 
 ***
 
@@ -32,9 +30,7 @@
 
 > **description**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L7)
+Defined in: [src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L7)
 
 ***
 
@@ -42,9 +38,7 @@
 
 > **editedAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L11)
+Defined in: [src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L11)
 
 ***
 
@@ -52,9 +46,7 @@
 
 > **id**: `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L5)
+Defined in: [src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L5)
 
 ***
 
@@ -62,9 +54,7 @@
 
 > **image**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
 
-#### Defined in
-
-[src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L12)
+Defined in: [src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L12)
 
 ***
 
@@ -72,9 +62,7 @@
 
 > **publishedAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L10)
+Defined in: [src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L10)
 
 ***
 
@@ -82,9 +70,7 @@
 
 > **title**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L6)
+Defined in: [src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L6)
 
 ***
 
@@ -92,9 +78,7 @@
 
 > **type**: `"reward"`
 
-#### Defined in
-
-[src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L4)
+Defined in: [src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L4)
 
 ***
 
@@ -102,6 +86,4 @@
 
 > **url**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Reward.ts#L13)
+Defined in: [src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Reward.ts#L13)

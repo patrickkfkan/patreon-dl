@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,23 +6,25 @@
 
 # Class: DateTime
 
+Defined in: [src/utils/DateTime.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L17)
+
 ## Constructors
 
-### new DateTime()
+### Constructor
 
-> **new DateTime**(`args`): [`DateTime`](DateTime.md)
+> **new DateTime**(`args`): `DateTime`
+
+Defined in: [src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L32)
 
 #### Parameters
 
-• **args**: [`DateTimeConstructorArgs`](../type-aliases/DateTimeConstructorArgs.md)
+##### args
+
+[`DateTimeConstructorArgs`](../type-aliases/DateTimeConstructorArgs.md)
 
 #### Returns
 
-[`DateTime`](DateTime.md)
-
-#### Defined in
-
-[src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/DateTime.ts#L32)
+`DateTime`
 
 ## Properties
 
@@ -30,9 +32,7 @@
 
 > `static` **FORMAT**: `string` = `'yyyy-MM-dd [hh:mm[:ss] [GMT]]'`
 
-#### Defined in
-
-[src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/DateTime.ts#L19)
+Defined in: [src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L19)
 
 ## Methods
 
@@ -40,13 +40,11 @@
 
 > **toString**(): `string`
 
+Defined in: [src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L113)
+
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/DateTime.ts#L113)
 
 ***
 
@@ -54,28 +52,26 @@
 
 > **valueOf**(): `Date`
 
+Defined in: [src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L109)
+
 #### Returns
 
 `Date`
-
-#### Defined in
-
-[src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/DateTime.ts#L109)
 
 ***
 
 ### from()
 
-> `static` **from**(`value`): [`DateTime`](DateTime.md)
+> `static` **from**(`value`): `DateTime`
+
+Defined in: [src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/DateTime.ts#L71)
 
 #### Parameters
 
-• **value**: `string` \| `number`
+##### value
+
+`string` | `number`
 
 #### Returns
 
-[`DateTime`](DateTime.md)
-
-#### Defined in
-
-[src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/DateTime.ts#L71)
+`DateTime`

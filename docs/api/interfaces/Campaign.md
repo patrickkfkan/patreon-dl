@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,25 +6,23 @@
 
 # Interface: Campaign
 
+Defined in: [src/entities/Campaign.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L6)
+
 ## Properties
 
 ### avatarImage
 
-> **avatarImage**: [`Downloadable`](../type-aliases/Downloadable.md)
+> **avatarImage**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`DefaultImageMediaItem`](DefaultImageMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Campaign.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L11)
+Defined in: [src/entities/Campaign.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L12)
 
 ***
 
 ### coverPhoto
 
-> **coverPhoto**: [`Downloadable`](../type-aliases/Downloadable.md)
+> **coverPhoto**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`CampaignCoverPhotoMediaItem`](CampaignCoverPhotoMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Campaign.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L12)
+Defined in: [src/entities/Campaign.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L13)
 
 ***
 
@@ -32,9 +30,7 @@
 
 > **createdAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L9)
+Defined in: [src/entities/Campaign.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L10)
 
 ***
 
@@ -42,9 +38,7 @@
 
 > **creator**: `null` \| [`User`](User.md)
 
-#### Defined in
-
-[src/entities/Campaign.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L17)
+Defined in: [src/entities/Campaign.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L18)
 
 ***
 
@@ -52,9 +46,7 @@
 
 > **currency**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L15)
+Defined in: [src/entities/Campaign.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L16)
 
 ***
 
@@ -62,9 +54,7 @@
 
 > **id**: `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L7)
+Defined in: [src/entities/Campaign.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L8)
 
 ***
 
@@ -72,9 +62,7 @@
 
 > **name**: `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L8)
+Defined in: [src/entities/Campaign.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L9)
 
 ***
 
@@ -82,9 +70,7 @@
 
 > **publishedAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L10)
+Defined in: [src/entities/Campaign.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L11)
 
 ***
 
@@ -92,9 +78,7 @@
 
 > **raw**: `object`
 
-#### Defined in
-
-[src/entities/Campaign.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L18)
+Defined in: [src/entities/Campaign.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L19)
 
 ***
 
@@ -102,9 +86,7 @@
 
 > **rewards**: [`Reward`](Reward.md)[]
 
-#### Defined in
-
-[src/entities/Campaign.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L16)
+Defined in: [src/entities/Campaign.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L17)
 
 ***
 
@@ -112,9 +94,7 @@
 
 > **summary**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L13)
+Defined in: [src/entities/Campaign.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L14)
 
 ***
 
@@ -122,9 +102,7 @@
 
 > **type**: `"campaign"`
 
-#### Defined in
-
-[src/entities/Campaign.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L6)
+Defined in: [src/entities/Campaign.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L7)
 
 ***
 
@@ -132,6 +110,4 @@
 
 > **url**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Campaign.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Campaign.ts#L14)
+Defined in: [src/entities/Campaign.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Campaign.ts#L15)

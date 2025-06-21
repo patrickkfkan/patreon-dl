@@ -281,7 +281,7 @@ The `patreon-dl` library comes with the following `Logger` implementations that 
     ```
     import { FileLogger } from 'patreon-dl';
 
-    const myLogger = new FileLogger(init, [options]);
+    const myLogger = new FileLogger(options);
 
     const downloader = await PatreonDownloader.getInstance(url, {
         ...
@@ -289,18 +289,11 @@ The `patreon-dl` library comes with the following `Logger` implementations that 
     });
     ```
 
-    `init`: values that determine the name of the log file (object)
-    
-    | Property       | Description                                   |
-    |----------------|-----------------------------------------------|
-    | `targetURL`    | The url passed to `PatreonDownloader.getInstance()` |
-    | `outDir`       | Value of `outDir` specified in `PatreonDownloader.getInstance()` options, or `undefined` if none specified (in which case defaults to current working directory). |
-    | `date`         | <p>(*optional*) `Date` instance representing the creation date / time of the logger. Default: current date-time</p><p>You might want to provide this if you are creating multiple `FileLogger` instances and filenames are to be formatted with the date, otherwise the date-time part of the filenames might have different values.</p>|
-
     `options`: all `ConsoleLogger` options plus the following:
 
     | Option         | Description                                   |
     |----------------|-----------------------------------------------|
+    | `init`         | <p>Values that determine the name of the log file (object):</p><ul><li>`targetURL`: The url passed to `PatreonDownloader.getInstance()`</li><li>`outDir`: Value of `outDir` specified in `PatreonDownloader.getInstance()` options, or `undefined` if none specified (in which case defaults to current working directory).</li><li>`date`: (*optional*) `Date` instance representing the creation date / time of the logger. Default: current date-time.<p>You might want to provide this if you are creating multiple `FileLogger` instances and filenames are to be formatted with the date, otherwise the date-time part of the filenames might have different values.</p></li></ul> |
     | `logDir`       | <p>Path to directory of the log file.</p><p>The path can be a string pattern consisting of the following fields enclosed in curly braces:<ul><li>`out.dir`: value of `outDir` provided in `init` (or the default current working directory if none provided).</li><li>`target.url.path`: the pathname of `targetURL` provided in `init`, sanitized as necessary.</li><li>`datetime.<date-time format>`: the date-time of logger creation, as represented by `date` in `init` and formatted according to `<date-time format>` (using pattern rules defined by the [dateformat](https://github.com/felixge/node-dateformat) library).</li></ul></p> |
     | `logFilename`  | <p>Name of the log file.</p><p>The path can be a string pattern consisting of the following fields enclosed in curly braces:<ul><li>`target.url.path`: the pathname of `targetURL` provided in `init`, sanitized as necessary.</li><li>`datetime.<date-time format>`: the date-time of logger creation, as represented by `date` in `init` and formatted according to `<date-time format>` (using pattern rules defined by the [dateformat](https://github.com/felixge/node-dateformat) library).</li></ul></p><p>Default: '{datetime.yyyymmdd}-{log.level}.log'</p> |
     | `fileExistsAction` | <p>What to do if log file already exists? One of the following values: <ul><li>`append`: append logs to existing file</li><li>`overwrite`: overwrite the existing file</li></ul></p><p>Default: `append`</p> |
@@ -428,3 +421,43 @@ Each event emitted by a download task batch has a payload, which is an object wi
 | `taskSpawn`   | <p>Emitted when a download task is spawned from another task.</p><p>Payload properties:<ul><li>`origin`: the original download task</li><li>`spawn`: the spawned download task</li></ul></p> |
 | `complete` | <p>Emitted when the batch is complete and there are no more downloads pending.</p><p>Payload properties: *none*</p> |
 
+## Web server
+
+`patreon-dl` comes with a web server for serving downloaded content. You can utilize the web server as follows:
+
+```
+import { WebServer } from 'patreon-dl';
+
+const server = new WebServer(options);
+await server.start();
+
+console.log(`Web server listening on port: `, server.getConfig().port);
+
+...
+
+await server.stop();
+```
+
+`options` is an object with the following properties (all *optional*):
+
+| Option          | Description                                                 |
+|-----------------|-------------------------------------------------------------|
+| `dataDir`       | Path to directory containing downloaded content. This mirrors the `outDir` downloader option. Default: current working directory. |
+| `port`          | Port number to listen on. Default: `3000` or a random port number if `3000` is already in use.
+| `logger`        | See [Logger](#logger), but note that creation of `FileLogger` is different in the context of web server logging (see below). |
+
+#### Web server file logging
+
+To create a file logger for the web server:
+
+```
+const fileLogger = new FileLogger({
+  logFilePath: 'path/to/log/file',
+  fileExistsAction: 'append' // or 'overwrite'
+});
+
+const server = new WebServer({
+  ...
+  logger: fileLogger
+});
+```

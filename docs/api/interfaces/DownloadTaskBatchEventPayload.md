@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,15 +6,15 @@
 
 # Interface: DownloadTaskBatchEventPayload
 
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L13)
+
 ## Properties
 
 ### complete
 
 > **complete**: `object`
 
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L47)
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L47)
 
 ***
 
@@ -22,13 +22,11 @@
 
 > **taskAbort**: `object`
 
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L33)
+
 #### task
 
 > **task**: [`IDownloadTask`](IDownloadTask.md)
-
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L33)
 
 ***
 
@@ -36,19 +34,19 @@
 
 > **taskComplete**: `object`
 
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L24)
+
 #### task
 
 > **task**: [`IDownloadTask`](IDownloadTask.md)
-
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L24)
 
 ***
 
 ### taskError
 
 > **taskError**: `object`
+
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L28)
 
 #### error
 
@@ -58,15 +56,13 @@
 
 > **willRetry**: `boolean`
 
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L28)
-
 ***
 
 ### taskProgress
 
 > **taskProgress**: `object`
+
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L19)
 
 #### progress
 
@@ -76,15 +72,13 @@
 
 > **task**: [`IDownloadTask`](IDownloadTask.md)
 
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L19)
-
 ***
 
 ### taskSkip
 
 > **taskSkip**: `object`
+
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L37)
 
 #### reason
 
@@ -94,15 +88,13 @@
 
 > **task**: [`IDownloadTask`](IDownloadTask.md)
 
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L37)
-
 ***
 
 ### taskSpawn
 
 > **taskSpawn**: `object`
+
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L42)
 
 #### origin
 
@@ -112,20 +104,14 @@
 
 > **spawn**: [`IDownloadTask`](IDownloadTask.md)
 
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L42)
-
 ***
 
 ### taskStart
 
 > **taskStart**: `object`
 
+Defined in: [src/downloaders/task/DownloadTaskBatchEvent.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/task/DownloadTaskBatchEvent.ts#L15)
+
 #### task
 
 > **task**: [`IDownloadTask`](IDownloadTask.md)
-
-#### Defined in
-
-[src/downloaders/task/DownloadTaskBatchEvent.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTaskBatchEvent.ts#L15)

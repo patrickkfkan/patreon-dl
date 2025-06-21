@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # Type Alias: DownloaderEvent
 
-> **DownloaderEvent**: `"fetchBegin"` \| `"targetBegin"` \| `"targetEnd"` \| `"phaseBegin"` \| `"phaseEnd"` \| `"end"`
+> **DownloaderEvent** = `"fetchBegin"` \| `"targetBegin"` \| `"targetEnd"` \| `"phaseBegin"` \| `"phaseEnd"` \| `"end"`
 
-## Defined in
-
-[src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L6)
+Defined in: [src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L6)

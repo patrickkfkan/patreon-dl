@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,15 +6,15 @@
 
 # Interface: DownloaderEventPayload
 
+Defined in: [src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L23)
+
 ## Properties
 
 ### end
 
-> **end**: `object` \| `object`
+> **end**: \{ `aborted`: `true`; `error?`: `undefined`; `message`: `string`; \} \| \{ `aborted`: `false`; `error?`: `any`; `message`: `string`; \}
 
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L57)
+Defined in: [src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L57)
 
 ***
 
@@ -22,19 +22,19 @@
 
 > **fetchBegin**: `object`
 
+Defined in: [src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L25)
+
 #### targetType
 
 > **targetType**: `"product"` \| `"post"` \| `"posts"`
-
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L25)
 
 ***
 
 ### phaseBegin
 
-> **phaseBegin**: `object` & `object` \| `object`
+> **phaseBegin**: `object` & \{ `phase`: `"saveInfo"` \| `"saveMedia"`; \} \| \{ `batch`: [`IDownloadTaskBatch`](IDownloadTaskBatch.md); `phase`: `"batchDownload"`; \}
+
+Defined in: [src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L43)
 
 #### Type declaration
 
@@ -42,15 +42,13 @@
 
 > **target**: [`Campaign`](Campaign.md) \| [`Post`](Post.md) \| [`Product`](Product.md)
 
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L43)
-
 ***
 
 ### phaseEnd
 
 > **phaseEnd**: `object`
+
+Defined in: [src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L52)
 
 #### phase
 
@@ -60,36 +58,28 @@
 
 > **target**: [`Campaign`](Campaign.md) \| [`Post`](Post.md) \| [`Product`](Product.md)
 
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L52)
-
 ***
 
 ### targetBegin
 
 > **targetBegin**: `object`
 
+Defined in: [src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L29)
+
 #### target
 
 > **target**: [`Campaign`](Campaign.md) \| [`Post`](Post.md) \| [`Product`](Product.md)
-
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L29)
 
 ***
 
 ### targetEnd
 
-> **targetEnd**: `object` & `object` \| `object`
+> **targetEnd**: `object` & \{ `isSkipped`: `false`; \} \| \{ `isSkipped`: `true`; `skipMessage`: `string`; `skipReason`: [`TargetSkipReason`](../enumerations/TargetSkipReason.md); \}
+
+Defined in: [src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/downloaders/DownloaderEvent.ts#L33)
 
 #### Type declaration
 
 ##### target
 
 > **target**: [`Campaign`](Campaign.md) \| [`Post`](Post.md) \| [`Product`](Product.md)
-
-#### Defined in
-
-[src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/DownloaderEvent.ts#L33)

@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # Interface: ConsoleLoggerOptions
 
-## Extended by
-
-- [`FileLoggerOptions`](FileLoggerOptions.md)
+Defined in: [src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L15)
 
 ## Properties
 
@@ -16,9 +14,7 @@
 
 > `optional` **color**: `boolean`
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L25)
+Defined in: [src/utils/logging/ConsoleLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L25)
 
 ***
 
@@ -26,9 +22,7 @@
 
 > `optional` **dateTimeFormat**: `string`
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L24)
+Defined in: [src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L24)
 
 ***
 
@@ -36,15 +30,15 @@
 
 > `optional` **enabled**: `boolean`
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L16)
+Defined in: [src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L16)
 
 ***
 
 ### include?
 
 > `optional` **include**: `object`
+
+Defined in: [src/utils/logging/ConsoleLogger.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L18)
 
 #### dateTime?
 
@@ -62,16 +56,10 @@
 
 > `optional` **originator**: `boolean`
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L18)
-
 ***
 
 ### logLevel?
 
 > `optional` **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L17)
+Defined in: [src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/ConsoleLogger.ts#L17)

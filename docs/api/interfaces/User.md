@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,15 +6,15 @@
 
 # Interface: User
 
+Defined in: [src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L4)
+
 ## Properties
 
 ### createdAt
 
 > **createdAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L9)
+Defined in: [src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L10)
 
 ***
 
@@ -22,9 +22,7 @@
 
 > **firstName**: `string`
 
-#### Defined in
-
-[src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L6)
+Defined in: [src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L7)
 
 ***
 
@@ -32,9 +30,7 @@
 
 > **fullName**: `string`
 
-#### Defined in
-
-[src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L8)
+Defined in: [src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L9)
 
 ***
 
@@ -42,19 +38,15 @@
 
 > **id**: `string`
 
-#### Defined in
-
-[src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L5)
+Defined in: [src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L6)
 
 ***
 
 ### image
 
-> **image**: [`SingleImageMediaItem`](SingleImageMediaItem.md)
+> **image**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`SingleImageMediaItem`](SingleImageMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L10)
+Defined in: [src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L11)
 
 ***
 
@@ -62,9 +54,7 @@
 
 > **lastName**: `string`
 
-#### Defined in
-
-[src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L7)
+Defined in: [src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L8)
 
 ***
 
@@ -72,19 +62,15 @@
 
 > **raw**: `object`
 
-#### Defined in
-
-[src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L14)
+Defined in: [src/entities/User.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L15)
 
 ***
 
 ### thumbnail
 
-> **thumbnail**: [`SingleImageMediaItem`](SingleImageMediaItem.md)
+> **thumbnail**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`SingleImageMediaItem`](SingleImageMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L11)
+Defined in: [src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L12)
 
 ***
 
@@ -92,9 +78,7 @@
 
 > **type**: `"user"`
 
-#### Defined in
-
-[src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L4)
+Defined in: [src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L5)
 
 ***
 
@@ -102,9 +86,7 @@
 
 > **url**: `string`
 
-#### Defined in
-
-[src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L12)
+Defined in: [src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L13)
 
 ***
 
@@ -112,6 +94,4 @@
 
 > **vanity**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/User.ts#L13)
+Defined in: [src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/User.ts#L14)

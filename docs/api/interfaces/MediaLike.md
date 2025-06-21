@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / MediaLike
 
 # Interface: MediaLike
+
+Defined in: [src/entities/MediaItem.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L1)
 
 ## Extended by
 
@@ -25,9 +27,7 @@
 
 > **filename**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L4)
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -35,9 +35,7 @@
 
 > **id**: `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L3)
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -45,9 +43,7 @@
 
 > **mimeType**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L5)
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L5)
 
 ***
 
@@ -55,6 +51,4 @@
 
 > **type**: `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L2)
+Defined in: [src/entities/MediaItem.ts:2](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/MediaItem.ts#L2)
