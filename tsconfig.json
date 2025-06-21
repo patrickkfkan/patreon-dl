@@ -4,6 +4,7 @@
     "target": "es2021",
     "module": "ESNext",
     "outDir": "dist",
+    "declaration": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -21,6 +22,6 @@
   "exclude": [
     "node_modules",
     "src/types/**",
-    "src/web/**/*"
+    "src/browse/web/**/*"
   ]
 }

@@ -14,8 +14,8 @@ export class APIBase {
   name = 'API';
 
   protected static instance: APIInstance | null = null;
-  protected db: DBInstance;
-  protected logger?: Logger | null;
+  db: DBInstance;
+  logger?: Logger | null;
 
   constructor(db: DBInstance, logger?: Logger | null) {
     this.db = db;
@@ -29,7 +29,7 @@ export class APIBase {
     return this.instance;
   }
 
-  protected log(level: LogLevel, ...msg: any[]) {
+  log(level: LogLevel, ...msg: any[]) {
     const limiterStopOnError = msg.find(
       (m) => m instanceof Error && m.message === 'LimiterStopOnError'
     );

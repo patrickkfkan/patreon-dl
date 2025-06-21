@@ -18,33 +18,33 @@ type DatabaseAllFn = Database['all'];
 export class DBBase {
   name = 'DB';
 
-  private db: Database;
-  protected logger?: Logger | null;
+  db: Database;
+  logger?: Logger | null;
 
   constructor(db: Database, logger?: Logger | null) {
     this.db = db;
     this.logger = logger;
   }
 
-  protected exec(...args: Parameters<DatabaseExecFn>) {
+  exec(...args: Parameters<DatabaseExecFn>) {
     const [ sql ] = args;
     this.log('debug', '(db.exec):', sql);
     return this.db.exec(...args);
   }
 
-  protected run(...args: Parameters<DatabaseRunFn>) {
+  run(...args: Parameters<DatabaseRunFn>) {
     const [ sql, params ] = args;
     this.log('debug', '(db.run):', this.#interpolateSqlParams(sql, params));
     return this.db.run(...args);
   }
 
-  protected get<T = any>(...args: Parameters<DatabaseGetFn>) {
+  get<T = any>(...args: Parameters<DatabaseGetFn>) {
     const [ sql, params ] = args;
     this.log('debug', '(db.get):', this.#interpolateSqlParams(sql, params));
     return this.db.get<T>(...args);
   }
 
-  protected all<T = any[]>(...args: Parameters<DatabaseAllFn>) {
+  all<T = any[]>(...args: Parameters<DatabaseAllFn>) {
     const [ sql, params ] = args;
     this.log('debug', '(db.all):', this.#interpolateSqlParams(sql, params));
     return this.db.all<T>(...args);
@@ -63,7 +63,7 @@ export class DBBase {
     });
   }
 
-  protected log(level: LogLevel, ...msg: any[]) {
+  log(level: LogLevel, ...msg: any[]) {
     const limiterStopOnError = msg.find(
       (m) => m instanceof Error && m.message === 'LimiterStopOnError'
     );

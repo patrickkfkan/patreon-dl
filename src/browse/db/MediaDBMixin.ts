@@ -13,7 +13,7 @@ type DBMediaType = 'image' | 'video' | 'audio' | 'other';
 
 export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
   return class MediaDB extends Base {
-    protected async saveMedia(
+    async saveMedia(
       media: Downloadable
     ) {
       if (!media.downloaded || !media.downloaded.path) {
@@ -396,7 +396,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }));
     }
 
-    protected getMediaListSQL(params: {
+    getMediaListSQL(params: {
       select: string;
       join?: string;
       where?: string;
