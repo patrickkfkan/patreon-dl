@@ -1,0 +1,55 @@
+.lg-video-poster {
+  object-fit: contain;
+}
+
+.media-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--media-gallery-gap);
+
+  &__thumbnail-wrapper {
+    flex-grow: 1;
+    width: auto;
+    position: relative;
+    height: var(--media-gallery-row-height);
+    border: var(--media-gallery-thumbnail-border) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    overflow: hidden;
+    cursor: pointer;
+
+    &--video::before {
+      content: '\e1c4';
+      font-family: 'Material Icons Outlined';
+      font-size: 4em;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      transition: opacity 150ms ease-in-out;
+      opacity: 0.8;
+    }
+
+    &--video:hover::before {
+      opacity: 1;
+    }
+
+    &--empty {
+      width: var(--media-gallery-row-height);
+    }
+  }
+
+  &__thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__source-link {
+    color: inherit;
+
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+}

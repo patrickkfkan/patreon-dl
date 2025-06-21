@@ -6,6 +6,9 @@ import { commonLog } from '../../utils/logging/Logger.js';
 import FSHelper from '../../utils/FSHelper.js';
 import { type DownloaderConfig } from '../Downloader.js';
 import type Bottleneck from 'bottleneck';
+import {fileTypeFromFile} from 'file-type';
+import fs from 'fs/promises';
+import { imageSize } from 'image-size';
 
 export class DownloadTaskError extends Error {
   task: IDownloadTask;
@@ -50,6 +53,7 @@ export interface DownloadTaskParams<T extends Downloadable = Downloadable> {
   src: string;
   srcEntity: T,
   config: DownloaderConfig<any>;
+  downloadType: 'main' | 'thumbnail' | 'variant';
   callbacks: DownloadTaskCallbacks | null;
   logger?: Logger | null;
 }
@@ -102,6 +106,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
   #retryCount: number;
   #resolvedDestPath: string | null;
   #srcEntity: T;
+  #downloadType: 'main' | 'thumbnail' | 'variant';
   #callbacks: DownloadTaskCallbacks | null;
   #logger?: Logger | null;
   #lastProgress: DownloadProgress | null;
@@ -123,6 +128,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     this.#retryCount = 0;
     this.#resolvedDestPath = null;
     this.#srcEntity = params.srcEntity;
+    this.#downloadType = params.downloadType;
     this.#callbacks = params.callbacks;
     this.#logger = params.logger;
     this.#lastProgress = null;
@@ -368,6 +374,41 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
     return ENDED_STATUSES.includes(this.#status);
   }
 
+  async setDownloaded(filePath: string) {
+    if (!['main', 'thumbnail'].includes(this.downloadType)) {
+      return;
+    }
+    if (!this.#srcEntity.downloaded) {
+      this.#srcEntity.downloaded = {};
+    }
+    const rel =  path.relative(this.#config.outDir, filePath);
+    // Replace '\' with '/' - for cross-platform interoperability
+    const normalized = rel.replace(/\\/g, '/');
+    if (this.downloadType === 'main') {
+      this.#srcEntity.downloaded.mimeType = (await fileTypeFromFile(filePath))?.mime?.toLowerCase() || null;
+      this.#srcEntity.downloaded.path = normalized;
+    }
+    else if (this.downloadType === 'thumbnail') {
+      if (!this.#srcEntity.downloaded.thumbnail) {
+        this.#srcEntity.downloaded.thumbnail = {};
+      }
+      this.#srcEntity.downloaded.thumbnail.mimeType = (await fileTypeFromFile(filePath))?.mime.toLowerCase() || null;
+      this.#srcEntity.downloaded.thumbnail.path =  normalized;
+      let size;
+      try {
+        const buffer = await fs.readFile(filePath);
+        size = imageSize(buffer);
+      }
+      catch (_error) {
+        size = null;
+      }
+      if (size) {
+        this.#srcEntity.downloaded.thumbnail.width = size.width;
+        this.#srcEntity.downloaded.thumbnail.height = size.height;
+      }
+    }
+  }
+
   get id() {
     return this.#id;
   }
@@ -398,6 +439,14 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
 
   get srcEntity() {
     return this.#srcEntity;
+  }
+
+  get downloadType() {
+    return this.#downloadType;
+  }
+
+  set downloadType(value: 'main' | 'thumbnail' | 'variant') {
+    this.#downloadType = value;
   }
 
   protected get config() {

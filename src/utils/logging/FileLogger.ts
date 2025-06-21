@@ -9,18 +9,40 @@ import FSHelper from '../FSHelper.js';
 import { EOL } from 'os';
 import { getDefaultDownloaderOutDir } from '../../downloaders/DownloaderOptions.js';
 
-export interface FileLoggerOptions extends ConsoleLoggerOptions {
-  logDir?: string;
-  logFilename?: string;
-  fileExistsAction?: 'append' | 'overwrite';
-}
+export enum FileLoggerType {
+  Downloader = 'downloader',
+  Server = 'server'
+};
 
-export interface FileLoggerConfig extends DeepRequired<FileLoggerOptions> {
-  logFilePath: string;
-  created: Date;
-}
+export type FileLoggerOptions<T extends FileLoggerType> =
+  ConsoleLoggerOptions & 
+  ( T extends FileLoggerType.Downloader ? {
+      init: DownloaderFileLoggerInit;
+      logDir?: string;
+      logFilename?: string;
+      fileExistsAction?: 'append' | 'overwrite';
+    }
+    : T extends FileLoggerType.Server ? {
+      logFilePath: string;
+      fileExistsAction?: 'append' | 'overwrite';
+    }
+    : never
+  );
 
-const DEFAULT_LOGGER_CONFIG: Omit<FileLoggerConfig, 'created'> = {
+export type FileLoggerConfig<T extends FileLoggerType> =
+  DeepRequired<FileLoggerOptions<T>> & {
+    logDir: string;
+    logFilename: string;
+    logFilePath: string;
+    created: Date;
+  };
+
+export type FileLoggerGetPathInfoParams<T extends FileLoggerType> =
+  T extends FileLoggerType.Downloader ? Pick<FileLoggerOptions<T>, 'init' | 'logDir' | 'logFilename' | 'logLevel'>
+  : T extends FileLoggerType.Server ? Pick<FileLoggerOptions<T>, 'logFilePath'>
+  : never;
+
+const DEFAULT_DOWNLOADER_LOGGER_CONFIG: Omit<FileLoggerConfig<FileLoggerType.Downloader>, 'init' | 'created'> = {
   enabled: true,
   logDir: '{out.dir}/logs/{target.url.path}',
   logFilename: '{datetime.yyyymmdd}-{log.level}.log',
@@ -37,30 +59,35 @@ const DEFAULT_LOGGER_CONFIG: Omit<FileLoggerConfig, 'created'> = {
   color: false
 };
 
-export interface FileLoggerInit {
+const DEFAULT_SERVER_LOGGER_FILE_EXISTS_ACTION = 'append';
+
+export interface DownloaderFileLoggerInit {
   targetURL: string;
   outDir?: string;
   date?: Date;
 }
 
-export default class FileLogger extends ConsoleLogger {
+export default class FileLogger<T extends FileLoggerType = FileLoggerType.Downloader> extends ConsoleLogger {
 
-  protected config: FileLoggerConfig;
-  #fileExistsAction: FileLoggerConfig['fileExistsAction'];
+  protected config: FileLoggerConfig<T>;
+  #fileExistsAction: FileLoggerConfig<T>['fileExistsAction'];
   #stream: fs.WriteStream | null;
   #firstRun: boolean;
 
-  constructor(init: FileLoggerInit, options?: FileLoggerOptions) {
+  constructor(options: FileLoggerOptions<T>) {
     super(options);
-    this.#fileExistsAction = options?.fileExistsAction || DEFAULT_LOGGER_CONFIG.fileExistsAction;
+    
+    const defaultFileExistsAction = this.#isDownloaderOptions(options) ?
+      DEFAULT_DOWNLOADER_LOGGER_CONFIG.fileExistsAction
+      : DEFAULT_SERVER_LOGGER_FILE_EXISTS_ACTION;
+    this.#fileExistsAction = options?.fileExistsAction || defaultFileExistsAction;
     this.#stream = null;
     this.#firstRun = true;
-    this.config.color = pickDefined(options?.color, DEFAULT_LOGGER_CONFIG.color);
+    this.config.color = pickDefined(options?.color, DEFAULT_DOWNLOADER_LOGGER_CONFIG.color);
 
-    const pathInfo = FileLogger.getPathInfo({
-      ...init,
-      ...options
-    });
+    const pathInfo = this.#isDownloaderOptions(options) ?
+      FileLogger.#getPathInfoForDownloaderType(options)
+      : FileLogger.#getPathInfoForServerType(options);
 
     this.config.logDir = pathInfo.logDir;
     this.config.logFilename = pathInfo.filename;
@@ -68,15 +95,30 @@ export default class FileLogger extends ConsoleLogger {
     this.config.created = pathInfo.created;
   }
 
-  static getPathInfo(data: FileLoggerInit & Pick<FileLoggerOptions, 'logDir' | 'logFilename' | 'logLevel'>) {
-    const defaultLogDir = DEFAULT_LOGGER_CONFIG.logDir.replaceAll('/', path.sep);
+  static getPathInfo<T extends FileLoggerType>(
+    type: T,
+    params: FileLoggerGetPathInfoParams<T>
+  ) {
+    switch (type) {
+      case FileLoggerType.Downloader:
+        return this.#getPathInfoForDownloaderType(params as FileLoggerGetPathInfoParams<FileLoggerType.Downloader>);
+      case FileLoggerType.Server:
+        return this.#getPathInfoForServerType(params as FileLoggerGetPathInfoParams<FileLoggerType.Server>);
+    }
+    return undefined as never;
+  }
+
+  static #getPathInfoForDownloaderType(params: FileLoggerGetPathInfoParams<FileLoggerType.Downloader>) {
+    const defaultLogDir = DEFAULT_DOWNLOADER_LOGGER_CONFIG.logDir.replaceAll('/', path.sep);
     const {
       date = new Date(),
       outDir = getDefaultDownloaderOutDir(),
-      targetURL,
+      targetURL
+    } = params.init;
+    const {
       logDir: dirNameFormat = defaultLogDir,
-      logFilename: filenameFormat = DEFAULT_LOGGER_CONFIG.logFilename,
-      logLevel = DEFAULT_LOGGER_CONFIG.logLevel } = data;
+      logFilename: filenameFormat = DEFAULT_DOWNLOADER_LOGGER_CONFIG.logFilename,
+      logLevel = DEFAULT_DOWNLOADER_LOGGER_CONFIG.logLevel } = params;
 
     const __getDateTimeFieldValues = (format: string, addTo: Record<string, string>) => {
       const dateTimeRegex = /{(datetime\.(.+?))}/g;
@@ -122,7 +164,10 @@ export default class FileLogger extends ConsoleLogger {
       ...allDTValues
     };
 
-    const logDir = FSHelper.sanitizeFilePath(Formatter.format(dirNameFormat, logDirDict).result);
+    const logDir = path.resolve(
+      process.cwd(),
+      FSHelper.sanitizeFilePath(Formatter.format(dirNameFormat, logDirDict).result)
+    );
     const filename = FSHelper.sanitizeFilename(Formatter.format(filenameFormat, logFilenameDict).result);
     const filePath = path.resolve(logDir, filename);
     const created = date;
@@ -132,6 +177,20 @@ export default class FileLogger extends ConsoleLogger {
       filename,
       filePath,
       created
+    };
+  }
+
+  static #getPathInfoForServerType(params: FileLoggerGetPathInfoParams<FileLoggerType.Server>) {
+    const filePath = path.resolve(
+      process.cwd(),
+      FSHelper.sanitizeFilePath(params.logFilePath)
+    );
+    const { dir: logDir, base: filename } = path.parse(filePath);
+    return {
+      logDir,
+      filename,
+      filePath,
+      created: new Date()
     };
   }
 
@@ -159,13 +218,17 @@ export default class FileLogger extends ConsoleLogger {
     return this.#stream;
   }
 
+  #isDownloaderOptions(options: FileLoggerOptions<FileLoggerType>): options is FileLoggerOptions<FileLoggerType.Downloader> {
+    return Reflect.has(options, 'init');
+  }
+
   getConfig() {
     return this.config;
   }
 
   static getDefaultConfig() {
     const config = {
-      ...DEFAULT_LOGGER_CONFIG
+      ...DEFAULT_DOWNLOADER_LOGGER_CONFIG
     };
     config.logDir = config.logDir.replaceAll('/', path.sep);
     return config;

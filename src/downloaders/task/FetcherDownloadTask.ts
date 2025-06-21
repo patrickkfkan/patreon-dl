@@ -48,6 +48,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
     if (this.srcEntity.type === 'video' && this.#isM3U8FilePath(currentDestFilePath) && this.callbacks) {
       // Spawn FFmpeg task to download actual stream
       const spawn = await DownloadTask.create(M3U8DownloadTask, {
+        downloadType: 'main',
         config: this.config,
         src: this.src,
         srcEntity: this.srcEntity,
@@ -57,7 +58,9 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         fileExistsAction: this.#fileExistsAction
       });
       this.callbacks.onSpawn(this, spawn);
+      return true;
     }
+    return false;
   }
 
   #isM3U8FilePath(filePath: string) {
@@ -140,11 +143,14 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
             }
           }
   
-          const __handleSkip = (skipAction: () => void) => {
+          const __handleSkip = async (skipAction: () => void) => {
             if (skipDownload.skip) {
               skipped = true;
               skipAction();
               const reason = skipDownload.reason;
+              if (reason.name === 'destFileExists') {
+                await this.setDownloaded(reason.existingDestFilePath);
+              }
               this.notifySkip(reason);
               resolve();
               return true;
@@ -152,7 +158,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
             return false;
           };
   
-          if (__handleSkip(abort)) {
+          if (await __handleSkip(abort)) {
             return;
           }
   
@@ -182,7 +188,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
                 }
               };
               this.resolvedDestPath = lastDownloadedFilePath;
-              __handleSkip(discard);
+              await __handleSkip(discard);
             }
             else {
               this.log('debug', `${compareMsg}: Files do not match`);
@@ -193,8 +199,12 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
             commit();
           }
   
-          await this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
-  
+          const spawned = await this.#checkAndSpawnFFmpegDownloadTask(this.resolvedDestPath, destFilePath);
+          
+          if (!spawned) {
+            await this.setDownloaded(this.resolvedDestPath);
+          }
+
           if (proceedWithCommit) {
             this.notifyComplete();
             resolve();

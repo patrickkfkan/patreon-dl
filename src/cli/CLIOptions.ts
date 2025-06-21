@@ -2,7 +2,7 @@ import fs from 'fs';
 import { type DownloaderIncludeOptions, type DownloaderOptions } from '../downloaders/DownloaderOptions.js';
 import { type DeepPartial, type RecursivePropsTo, pickDefined } from '../utils/Misc.js';
 import { type ConsoleLoggerOptions } from '../utils/logging/ConsoleLogger.js';
-import { type FileLoggerOptions } from '../utils/logging/FileLogger.js';
+import { type FileLoggerType, type FileLoggerOptions } from '../utils/logging/FileLogger.js';
 import CLIOptionValidator from './CLIOptionValidator.js';
 import CommandLineParser, { type CommandLineParseResult } from './CommandLineParser.js';
 import ConfigFileParser, { type ConfigFileParseResult } from './ConfigFileParser.js';
@@ -19,7 +19,7 @@ export interface CLIOptions extends Omit<DownloaderOptions, 'logger'> {
   targetURLs: CLITargetURLEntry[];
   noPrompt: boolean;
   consoleLogger: ConsoleLoggerOptions;
-  fileLoggers?: FileLoggerOptions[];
+  fileLoggers?: Omit<FileLoggerOptions<FileLoggerType.Downloader>, 'init'>[];
 }
 
 export type CLIOptionParserEntry = ({
@@ -109,7 +109,7 @@ export function getCLILoggerOptions(commandLineOptions?: CommandLineParseResult,
   };
   let fileLoggers;
   if (configFileOptions?.fileLoggers) {
-    fileLoggers = configFileOptions.fileLoggers.map((logger): FileLoggerOptions => ({
+    fileLoggers = configFileOptions.fileLoggers.map((logger): Omit<FileLoggerOptions<FileLoggerType.Downloader>, 'init'> => ({
       enabled: CLIOptionValidator.validateBoolean(logger.enabled),
       logDir: CLIOptionValidator.validateString(logger.logDir),
       logFilename: CLIOptionValidator.validateString(logger.logFilename),

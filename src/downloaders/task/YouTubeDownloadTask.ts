@@ -209,6 +209,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
 
     const destFilePath = ffmpegParams.output;
     if (this.#fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
+      await this.setDownloaded(destFilePath);
       this.notifySkip({
         name: 'destFileExists',
         message: `Destination file exists (${destFilePath})`,
@@ -227,6 +228,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       void (async () => {
         const tasks = await Promise.all(ffmpegParams.inputs.map(({ input, stream }) =>
           DownloadTask.create(YouTubeStreamDownloadTask, {
+            downloadType: 'main',
             callbacks: this.callbacks,
             config: this.config,
             logger: this.logger,

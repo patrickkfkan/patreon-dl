@@ -1,0 +1,11 @@
+.light-gallery-item {
+  position: relative;
+
+  &__badge {
+    position: absolute;
+    font-size: 0.85em;
+    top: 1em;
+    left: 1em;
+    z-index: 1001;
+  }
+}

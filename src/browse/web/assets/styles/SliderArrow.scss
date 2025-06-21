@@ -1,0 +1,32 @@
+// react-slick's .slick-prev / .slick-next sets a bunch of conflicting styles.
+// Need to override them.
+
+.slider-arrow {
+  width: auto !important;
+  height: auto !important;
+  color: var(--bs-btn-color) !important;
+  background: var(--bs-btn-bg) !important;
+  font-size: inherit !important;
+
+  &__icon {
+    font-size: 2em;
+  }
+
+  &:hover {
+    color: var(--bs-btn-hover-color) !important;
+    background-color: var(--bs-btn-hover-bg) !important;
+  }
+
+  &.slick-prev::before,
+  &.slick-next::before {
+    content: none !important;
+  }
+
+  &--prev {
+    left: -2.5em;
+  }
+
+  &--next {
+    right: -2.5em;
+  }
+}

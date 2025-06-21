@@ -150,6 +150,7 @@ export default class ProductDownloader extends Downloader<Product> {
   
         const previewMedia = product.previewMedia.filter((tt) => __inc(incPreview, tt));
         const contentMedia = product.contentMedia.filter((tt) => __inc(incContent, tt));
+        const campaignDir = product.campaign ? this.fsHelper.getCampaignDirs(product.campaign).root : null;
   
         if (this.config.include.previewMedia || this.config.include.contentMedia) {
           this.emit('phaseBegin', { target: product, phase: 'saveMedia' });
@@ -160,14 +161,22 @@ export default class ProductDownloader extends Downloader<Product> {
             previewMedia.length > 0 ? {
               target: previewMedia,
               targetName: `product #${product.id} -> preview media`,
-              destDir: productDirs.previewMedia,
+              dirs: {
+                campaign: campaignDir,
+                main: productDirs.previewMedia,
+                thumbnails: productDirs.thumbnails
+              },
               fileExistsAction: this.config.fileExistsAction.content
             } : null,
   
             contentMedia.length > 0 ? {
               target: contentMedia,
               targetName: `product #${product.id} -> content media`,
-              destDir: productDirs.contentMedia,
+              dirs: {
+                campaign: campaignDir,
+                main: productDirs.contentMedia,
+                thumbnails: productDirs.thumbnails
+              },
               fileExistsAction: this.config.fileExistsAction.content
             } : null
           );
@@ -194,6 +203,20 @@ export default class ProductDownloader extends Downloader<Product> {
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
+        }
+
+        // Step 10: Save to DB
+        let skipDB = false;
+        if (!product.isAccessible) {
+          // Skip if existing db record (if any) refers to accessible product
+          const dbProduct = await this.db.getContent(product.id, 'product');
+          skipDB = dbProduct !== null && dbProduct.isAccessible;
+        }
+        if (!skipDB) {
+          await this.db.saveContent(product);
+        }
+        else {
+          this.log('info', `Skip overwrite existing accessible product #${product.id} in DB with current unviewable version`);
         }
   
         // Done

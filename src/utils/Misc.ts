@@ -24,6 +24,21 @@ export type RecursivePropsTo<T, U, E = NoDeepTypes> =
   T extends undefined | null ? never :
   U
 
+// https://www.totaltypescript.com/get-keys-of-an-object-where-values-are-of-a-given-type
+export type KeysOfValue<T, TCondition> = {
+  [K in keyof T]: T[K] extends TCondition
+    ? K
+    : never;
+}[keyof T];
+
+// https://stackoverflow.com/questions/69676439/create-constant-array-type-from-an-object-type/69676731#69676731
+export type UnionToTuple<U extends string, R extends unknown[] = []> =
+  {
+    [S in U]: Exclude<U, S> extends never ? [...R, S]
+    : UnionToTuple<Exclude<U, S>, [...R, S]>;
+  }[U] extends infer S extends unknown[] ?
+    S
+  : never;
 
 export function pickDefined<T>(value1: T | undefined, value2: T): T;
 export function pickDefined<T>(value1: T, value2: T | undefined): T;
@@ -35,4 +50,10 @@ export function pickDefined<T>(value1?: T, value2?: T) {
 
 export function toISODate(date: string): string {
   return new Date(date).toISOString().slice(0, 10);
+}
+
+export function getYearMonthString(date = new Date()) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Ensure two digits
+  return `${year}-${month}`;
 }

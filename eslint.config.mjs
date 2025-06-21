@@ -7,7 +7,7 @@ import unusedImports from "eslint-plugin-unused-imports";
 const config = {
     languageOptions: {
         parserOptions: {
-            project: true,
+            project: './tsconfig.eslint.json',
             tsconfigRootDir: import.meta.dirname,
         },
     },

@@ -1,0 +1,54 @@
+@use "./mixins";
+
+.sidebar {
+  width: 100%;
+  height: 100vh;
+  border-radius: 0;
+
+  &__header {
+    background: var(--bs-card-bg);
+  }
+
+  &__brand a {
+    color: inherit;
+  }
+
+  &__section-title {
+    color: var(--bs-body-color);
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    color: var(--bs-body-color);
+
+    &:hover {
+      color: var(--bs-link-hover-color);
+    }
+
+    transition: color 150ms;
+  }
+
+  &__link-icon {
+    width: 1.5em;
+    height: 1.5em;
+    object-fit: cover;
+
+    &--svg {
+      fill: var(--bs-body-color);
+    }
+  }
+
+  &__link-text {
+    @include mixins.line-clamp();
+
+    font-size: 0.9em;
+  }
+}

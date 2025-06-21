@@ -23,6 +23,8 @@ export default class CLIOptionValidator {
     throw Error('A required option missing');
   }
 
+  static validateString(entry?: CLIOptionParserEntry): string | undefined;
+  static validateString<T extends string[]>(entry?: CLIOptionParserEntry, ...match: T): T[number] | undefined;
   static validateString<T extends string[]>(entry?: CLIOptionParserEntry, ...match: T): T[number] | undefined {
     if (!entry) {
       return undefined;

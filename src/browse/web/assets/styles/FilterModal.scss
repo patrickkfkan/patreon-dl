@@ -1,0 +1,15 @@
+.filter-modal {
+  &__section {
+    transition: height 150ms ease, margin-bottom 150ms ease;
+
+    &--hidden {
+      overflow: hidden;
+      height: 0 !important;
+      margin-bottom: 0 !important;
+    }
+  }
+
+  &__section:not(:last-of-type) {
+    margin-bottom: 2rem;
+  }
+}

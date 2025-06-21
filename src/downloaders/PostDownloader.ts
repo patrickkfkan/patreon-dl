@@ -525,7 +525,11 @@ export default class PostDownloader extends Downloader<Post> {
                 {
                   target: infoElements,
                   targetName: `post #${post.id} -> info elements`,
-                  destDir: postDirs.info,
+                  dirs: {
+                    campaign: post.campaign ? this.fsHelper.getCampaignDirs(post.campaign).root : null,
+                    main: postDirs.info,
+                    thumbnails: postDirs.thumbnails
+                  },
                   fileExistsAction: this.config.fileExistsAction.info
                 }
               );
@@ -564,9 +568,10 @@ export default class PostDownloader extends Downloader<Post> {
     }
 
     // Step 6: Fetch and save comments (only available if post is viewable)
+    let comments: Comment[] | null = null;
     if (downloadComments && this.config.include.comments && post.isViewable) {
       if (post.commentCount > 0) {
-        const comments = await this.#fetchComments(post, resolve, signal);
+        comments = await this.#fetchComments(post, resolve, signal);
         if (this.checkAbortSignal(signal, resolve)) {
           return {
             status: 'aborted'
@@ -589,6 +594,23 @@ export default class PostDownloader extends Downloader<Post> {
 
     // Step 7: Update status cache
     statusCache.updateOnDownload(post, postDirs.root, hasDownloadPostError, this.config);
+
+    // Step 8: Save to DB
+    let skipDB = false;
+    if (!post.isViewable) {
+      // Skip if existing db record (if any) refers to viewable post
+      const dbPost = await this.db.getContent(post.id, 'post');
+      skipDB = dbPost !== null && dbPost.isViewable;
+    }
+    if (!skipDB) {
+      await this.db.saveContent(post);
+      if (comments) {
+        await this.db.savePostComments(post, comments);
+      }
+    }
+    else {
+      this.log('info', `Skip overwrite existing viewable post #${post.id} in DB with current unviewable version`);
+    }
 
     this.emit('targetEnd', { target: post, isSkipped: false });
 
@@ -668,13 +690,19 @@ export default class PostDownloader extends Downloader<Post> {
         return {
           target: [ post.embed ],
           targetName: `post #${post.id} -> embedded ${post.embed.provider}${embedType}`,
-          destDir: postDirs.embed,
+          dirs: {
+            campaign: post.campaign ? this.fsHelper.getCampaignDirs(post.campaign).root : null,
+            main: postDirs.embed,
+            thumbnails: postDirs.thumbnails
+          },
           fileExistsAction: this.config.fileExistsAction.content
         };
       }
       
       return null;
     }
+
+    const campaignDir = post.campaign ? this.fsHelper.getCampaignDirs(post.campaign).root : null;
 
     const batchResult = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
@@ -683,14 +711,22 @@ export default class PostDownloader extends Downloader<Post> {
       __incPreview('audio') && post.audioPreview ? {
         target: [ post.audioPreview ],
         targetName: `post #${post.id} -> audio preview`,
-        destDir: postDirs.audioPreview,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.audioPreview,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
       __incPreview('video') && post.videoPreview ? {
         target: [ post.videoPreview ],
         targetName: `post #${post.id} -> video preview`,
-        destDir: postDirs.videoPreview,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.videoPreview,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
@@ -701,7 +737,11 @@ export default class PostDownloader extends Downloader<Post> {
       __incPreview('image') && post.images.length > 0 && !post.isViewable ? {
         target: post.images,
         targetName: `post #${post.id} -> image previews`,
-        destDir: postDirs.imagePreviews,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.imagePreviews,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
@@ -712,28 +752,44 @@ export default class PostDownloader extends Downloader<Post> {
       __incContent('audio') && post.audio && (post.isViewable || (post.audio.type === 'audio' && post.audio.url)) ? {
         target: [ post.audio ],
         targetName: `post #${post.id} -> audio`,
-        destDir: postDirs.audio,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.audio,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
       __incContent('video') && post.video ? {
         target: [ post.video ],
         targetName: `post #${post.id} -> video`,
-        destDir: postDirs.video,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.video,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
       __incContent('image') && post.images.length > 0 && post.isViewable ? {
         target: post.images,
         targetName: `post #${post.id} -> images`,
-        destDir: postDirs.images,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.images,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
       __incContent('attachment') && post.attachments.length > 0 ? {
         target: post.attachments,
         targetName: `post #${post.id} -> attachments`,
-        destDir: postDirs.attachments,
+        dirs: {
+          campaign: campaignDir,
+          main: postDirs.attachments,
+          thumbnails: postDirs.thumbnails
+        },
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 

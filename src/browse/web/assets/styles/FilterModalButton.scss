@@ -1,0 +1,23 @@
+@use "./mixins";
+
+.filter-modal-button {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+
+  &--show::before {
+    content: "\e152"; // filter_list
+    font-family: "Material Icons";
+    font-size: 1.2em;
+    margin-right: 0.2em;
+  }
+  
+  &--clear {
+    &::before {
+      content: "\e5cd"; // close
+      font-family: "Material Icons";
+      font-size: 1.2em;
+      margin-right: 0.2em;
+    }
+  }
+}

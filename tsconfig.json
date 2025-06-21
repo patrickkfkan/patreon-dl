@@ -4,8 +4,6 @@
     "target": "es2021",
     "module": "ESNext",
     "outDir": "dist",
-    "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -13,8 +11,8 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "typeRoots": [
-        "node_modules/@types",
-        "src/types"
+      "node_modules/@types",
+      "src/types"
     ],
     "paths": {
       "argv-split": ["./src/types/argv-split"]
@@ -22,6 +20,7 @@
   },
   "exclude": [
     "node_modules",
-    "src/types/**"
+    "src/types/**",
+    "src/web/**/*"
   ]
 }

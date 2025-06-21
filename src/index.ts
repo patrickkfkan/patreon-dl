@@ -4,5 +4,7 @@ export * from './entities/index.js';
 export * from './utils/index.js';
 export * from './utils/logging/index.js';
 
+export * from './browse/server/WebServer.js';
+
 import { default as PatreonDownloader } from './downloaders/Downloader.js';
 export default PatreonDownloader;
