@@ -8,7 +8,7 @@
 
 > **YouTubePostEmbed** = [`PostEmbed`](../interfaces/PostEmbed.md) & `object`
 
-Defined in: [src/entities/Post.ts:119](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/entities/Post.ts#L119)
+Defined in: [src/entities/Post.ts:119](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L119)
 
 ## Type declaration
 

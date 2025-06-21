@@ -6,7 +6,7 @@
 
 # Class: `abstract` Logger
 
-Defined in: [src/utils/logging/Logger.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/Logger.ts#L9)
+Defined in: [src/utils/logging/Logger.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L9)
 
 ## Extended by
 
@@ -29,7 +29,7 @@ Defined in: [src/utils/logging/Logger.ts:9](https://github.com/patrickkfkan/patr
 
 > **end**(): `Promise`\<`void`\>
 
-Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/Logger.ts#L12)
+Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L12)
 
 #### Returns
 
@@ -41,7 +41,7 @@ Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/pat
 
 > `abstract` **log**(`entry`): `void`
 
-Defined in: [src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/21cb889ad3b60a77d2f4678e5262807670e6d9d0/src/utils/logging/Logger.ts#L10)
+Defined in: [src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L10)
 
 #### Parameters
 
