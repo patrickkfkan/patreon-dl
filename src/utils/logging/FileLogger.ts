@@ -16,18 +16,22 @@ export enum FileLoggerType {
 
 export type FileLoggerOptions<T extends FileLoggerType> =
   ConsoleLoggerOptions & 
-  ( T extends FileLoggerType.Downloader ? {
-      init: DownloaderFileLoggerInit;
-      logDir?: string;
-      logFilename?: string;
-      fileExistsAction?: 'append' | 'overwrite';
-    }
-    : T extends FileLoggerType.Server ? {
-      logFilePath: string;
-      fileExistsAction?: 'append' | 'overwrite';
-    }
+  ( T extends FileLoggerType.Downloader ? DownloaderFileLoggerOptions
+    : T extends FileLoggerType.Server ? ServerFileLoggerOptions
     : never
   );
+
+export interface DownloaderFileLoggerOptions {
+  init: DownloaderFileLoggerInit;
+  logDir?: string;
+  logFilename?: string;
+  fileExistsAction?: 'append' | 'overwrite';
+}
+
+export interface ServerFileLoggerOptions {
+  logFilePath: string;
+  fileExistsAction?: 'append' | 'overwrite';
+}
 
 export type FileLoggerConfig<T extends FileLoggerType> =
   DeepRequired<FileLoggerOptions<T>> & {

@@ -9,7 +9,6 @@ import { ContentDBMixin } from './ContentDBMixin.js';
 import { EnvDBMixin } from './EnvDBMixin.js';
 
 export type DBConstructor = new (...args: any[]) => DBBase;
-export type DBInstance = InstanceType<typeof DB>;
 
 type DatabaseExecFn = Database['exec'];
 type DatabaseRunFn = Database['run'];
@@ -19,21 +18,12 @@ type DatabaseAllFn = Database['all'];
 export class DBBase {
   name = 'DB';
 
-  protected static instance: DBInstance | null = null;
   private db: Database;
   protected logger?: Logger | null;
 
   constructor(db: Database, logger?: Logger | null) {
     this.db = db;
     this.logger = logger;
-  }
-
-  static async getInstance(file: string, dryRun = false, logger?: Logger | null) {
-    if (!this.instance) {
-      const db = await openDB(file, dryRun, logger);
-      this.instance = new DB(db, logger);
-    }
-    return this.instance;
   }
 
   protected exec(...args: Parameters<DatabaseExecFn>) {
@@ -84,6 +74,24 @@ export class DBBase {
   }
 }
 
-const DB = EnvDBMixin(ContentDBMixin(CampaignDBMixin(UserDBMixin(MediaDBMixin(DBBase)))));
+export class DBInstance extends EnvDBMixin(
+  ContentDBMixin(
+    CampaignDBMixin(
+      UserDBMixin(
+        MediaDBMixin(DBBase)
+      )
+    )
+  )
+) {}
 
-export default DB;
+export default class DB {
+  protected static instance: DBInstance | null = null;
+
+  static async getInstance(file: string, dryRun = false, logger?: Logger | null) {
+    if (!this.instance) {
+      const db = await openDB(file, dryRun, logger);
+      this.instance = new DBInstance(db, logger);
+    }
+    return this.instance;
+  }
+}
