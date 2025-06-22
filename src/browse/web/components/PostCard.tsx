@@ -8,7 +8,7 @@ import { Link, useLocation } from "react-router";
 import MediaImage from "./MediaImage";
 
 interface PostCardProps {
-  post: Post
+  post: Post;
   showCampaign?: boolean;
 }
 
@@ -26,8 +26,14 @@ function PostCard(props: PostCardProps) {
   else if (post.videoPreview) {
     mediaItems.push(post.videoPreview);
   }
-  else {
+  else if (post.images.length > 0) {
     mediaItems.push(...post.images);
+  }
+  else if (post.coverImage?.downloaded?.path) {
+    mediaItems.push(post.coverImage);
+  }
+  else if (post.thumbnail?.downloaded?.path) {
+    mediaItems.push(post.thumbnail);
   }
 
   const attachments = useMemo(() => {
