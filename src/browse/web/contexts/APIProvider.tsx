@@ -131,7 +131,7 @@ class API {
   }
 
   saveBrowseSettings(settings: BrowseSettings) {
-    return fetch("http://localhost:3000/api/settings/browse", {
+    return fetch("/api/settings/browse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(settings),
