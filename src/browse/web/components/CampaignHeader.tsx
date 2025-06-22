@@ -75,7 +75,7 @@ function CampaignHeader(props: CampaignHeaderProps) {
     return (
       <div className="mb-2">
         <MediaImage
-          className="campaign-header__avatar border rounded"
+          className="campaign-header__avatar rounded"
           mediaId={avatarMediaId}
         />
       </div>
