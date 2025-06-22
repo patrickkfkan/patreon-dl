@@ -427,7 +427,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
               content.content_type = 'post' AND 
               (
                 (content.content_subtype IN ('${PostType.Audio}', '${PostType.Podcast}', '${PostType.Link}') AND media_type = 'audio') OR 
-                (content.content_subtype IN ('${PostType.Video}', '${PostType.VideoEmbed}', '${PostType.Link}') AND media_type = 'video') OR 
+                (content.content_subtype IN ('${PostType.Video}', '${PostType.VideoEmbed}', '${PostType.Podcast}', '${PostType.Link}') AND media_type = 'video') OR 
                 (content.content_subtype NOT IN ('${PostType.Audio}', '${PostType.Podcast}', '${PostType.Video}', '${PostType.VideoEmbed}', '${PostType.Link}') AND media_type IN ('image', 'video', 'audio'))
               )
             )
