@@ -65,18 +65,35 @@ function AboutCampaign() {
         result.push(reward);
       }
       return result;
-    }, [])
+    }, []);
     if (filtered.length === 0) {
       return null;
     }
-    const cards = filtered.map((reward) => (
-      <div className="px-1">
-        <RewardCard reward={reward} />
-      </div>
-    ));
+
+    if (slidesToShow >= filtered.length) {
+      return (
+        <>
+          <h4 className="mb-3">Tiers</h4>
+          <Stack
+            direction="horizontal"
+            className="justify-content-center align-items-stretch mb-5"
+            gap={3}
+          >
+            {
+              filtered.map((reward) => (
+                <div style={{width: `${MIN_TIER_CARD_WIDTH}px`}}>
+                  <RewardCard reward={reward} />
+                </div>
+              ))
+            }
+          </Stack>
+        </>
+      )
+    }
+
     return (
       <>
-        <h4 className="px-1 mb-3">Tiers</h4>
+        <h4 className="mb-3">Tiers</h4>
         <Slider
           className="slider--h100 mb-5"
           dots
@@ -88,7 +105,13 @@ function AboutCampaign() {
           prevArrow={<SliderArrow type="prev" />}
           nextArrow={<SliderArrow type="next" />}
         >
-          {cards}
+          {
+            filtered.map((reward) => (
+              <div className="px-1">
+                <RewardCard reward={reward} />
+              </div>
+            ))
+          }
         </Slider>
       </>
     );
