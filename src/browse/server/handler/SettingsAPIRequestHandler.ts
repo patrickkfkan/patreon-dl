@@ -40,7 +40,8 @@ export default class SettingsAPIRequestHandler extends Basehandler {
       return false;
     }
     const hasValidThemeValue = Reflect.has(data, 'theme') && typeof data.theme === 'string';
-    const hasValidItemsPerPageValue = Reflect.has(data, 'itemsPerPage') && typeof data.itemsPerPage === 'number';
-    return hasValidThemeValue && hasValidItemsPerPageValue;
+    const hasValidListItemsPerPageValue = Reflect.has(data, 'listItemsPerPage') && typeof data.listItemsPerPage === 'number';
+    const hasValidGalleryItemsPerPageValue = Reflect.has(data, 'galleryItemsPerPage') && typeof data.galleryItemsPerPage === 'number';
+    return hasValidThemeValue && hasValidListItemsPerPageValue && hasValidGalleryItemsPerPageValue;
   }
 }
