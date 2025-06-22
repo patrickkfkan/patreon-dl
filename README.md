@@ -253,12 +253,12 @@ $ patreon-dl -o "C:\PatreonDownloads" <url>
 This will download content to `C:\PatreonDownloads`. To view the downloaded content, start `patreon-dl` server as follows:
 
 ```
-$ patreon-dl -i "C:\PatreonDownloads"
+$ patreon-dl-server -i "C:\PatreonDownloads"
 
-...info: Web server is running on http://localhost:3000
+...info: Web server is running on <URL>
 ```
 
-Note the URL shown in the output. Open this URL in a web browser to begin viewing the downloaded content. If you are on a different device on the same network, you can substitue `localhost` with the IP address of the computer running `patreon-dl-server`.
+Note the URL shown in the output. Open this URL in a web browser to begin viewing the downloaded content.
 
 > Keep in mind that the web server is in no way secure. It is meant for local browsing and should not be exposed to outside parties!
 

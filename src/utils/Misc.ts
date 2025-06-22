@@ -1,4 +1,5 @@
 import type DateTime from "./DateTime";
+import os from 'os';
 
 export type NoDeepTypes = DateTime;
 
@@ -56,4 +57,21 @@ export function getYearMonthString(date = new Date()) {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Ensure two digits
   return `${year}-${month}`;
+}
+
+export function getLocalIPAddress(): string {
+  const interfaces = os.networkInterfaces();
+
+  for (const name of Object.keys(interfaces)) {
+    const iface = interfaces[name];
+    if (!iface) continue;
+
+    for (const net of iface) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+
+  return '127.0.0.1';
 }

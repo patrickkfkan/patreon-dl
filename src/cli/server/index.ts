@@ -5,6 +5,7 @@ import ServerCommandLineParser from './ServerCommandLineParser.js';
 import { getServerCLIOptions, type ServerCLIOptions } from './ServerCLIOptions.js';
 import { WebServer } from '../../browse/server/WebServer.js';
 import { commonLog } from '../../utils/logging/Logger.js';
+import { getLocalIPAddress } from '../../utils/Misc.js';
 
 export default class ServerCLI {
 
@@ -83,11 +84,12 @@ export default class ServerCLI {
         })();
       });
       await server.start();
+      const ip = getLocalIPAddress();
       commonLog(
         logger,
         'info',
         null,
-        `Web server is running on http://localhost:${server.getConfig().port}`
+        `Web server is running on http://${ip}:${server.getConfig().port}`
       );
     } catch (error) {
       commonLog(logger, 'error', null, `Failed to start web server:`, error);
