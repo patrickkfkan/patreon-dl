@@ -264,6 +264,9 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.0.0
+- Add support for browsing downloaded content through integrated web server. Note: this feature will not work for downloads made with previous versions of `patreon-dl`.
+
 v2.4.3
 - Fix YouTube embeds failing to download due to YT changes
 - Add fallback download logic to Vimeo download script
@@ -382,3 +385,6 @@ v1.0.1
 
 v1.0.0
 - Initial release
+
+---
+This project is licensed under the MIT License and includes third-party software—see the [NOTICE](./NOTICE) file for attributions.
