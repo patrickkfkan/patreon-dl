@@ -1,0 +1,23 @@
+// Make react-slick slide elements the same height
+// https://github.com/akiran/react-slick/issues/1539
+.slider--h100 {
+  .slick-track {
+    display: flex !important;
+
+    .slick-slide {
+      height: auto;
+      display: flex !important;
+
+      > div {
+        display: flex;
+        width :100%;
+      }
+    }
+  }
+}
+
+.slider {
+  &__dots li button::before {
+    color: var(--bs-body-color) !important;
+  }
+}

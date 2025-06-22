@@ -227,7 +227,7 @@ export default class Fetcher {
       if (this.#dryRun) {
         try {
           for await (const chunk of response.body) {
-            size += chunk.length;
+            size += chunk.length as number;
           }
         }
         catch (_error: unknown) {

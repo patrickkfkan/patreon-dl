@@ -8,7 +8,7 @@ import { type CLIOptions, type CLITargetURLEntry, getCLILoggerOptions, getCLIOpt
 import CommandLineParser from './CommandLineParser.js';
 import type Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
-import FileLogger, { type FileLoggerInit } from '../utils/logging/FileLogger.js';
+import FileLogger, { FileLoggerType, type DownloaderFileLoggerInit } from '../utils/logging/FileLogger.js';
 import ChainLogger from '../utils/logging/ChainLogger.js';
 import { type PackageInfo, getPackageInfo } from '../utils/PackageInfo.js';
 import envPaths from 'env-paths';
@@ -20,6 +20,8 @@ import cliTruncate from 'cli-truncate';
 import type deepFreeze from 'deep-freeze';
 import { type DeepPartial } from '../utils/Misc.js';
 import { createProxyAgent } from '../utils/Proxy.js';
+import { type Product } from '../entities/Product.js';
+import { type Post } from '../entities/Post.js';
 
 const YT_CREDENTIALS_FILENAME = 'youtube-credentials.json';
 
@@ -281,7 +283,7 @@ export default class PatreonDownloaderCLI {
           ...options,
           pathToYouTubeCredentials: fs.existsSync(ytCredsPath) ? ytCredsPath : null
         });
-        const conf = {...displayConfSrc.getConfig()} as any;
+        const conf = {...displayConfSrc.getConfig()} as Partial<DownloaderConfig<Post>> & Partial<DownloaderConfig<Product>>;
         delete conf.targetURL;
         delete conf.type;
         delete conf.postFetch;
@@ -384,19 +386,20 @@ export default class PatreonDownloaderCLI {
 
   #createLoggers(targetURL: string, options: CLIOptions) {
     // Create file loggers
-    const fileLoggerInit: FileLoggerInit = {
+    const fileLoggerInit: DownloaderFileLoggerInit = {
       targetURL,
       outDir: options.outDir,
       date: new Date()
     };
     const fileLoggers = options.fileLoggers?.reduce<FileLogger[]>((result, fileLoggerOptions) => {
       try {
-        const { filePath } = FileLogger.getPathInfo({
-          ...fileLoggerInit,
+        const fullOptions = {
+          init: fileLoggerInit,
           ...fileLoggerOptions
-        });
+        };
+        const { filePath } = FileLogger.getPathInfo(FileLoggerType.Downloader, fullOptions);
         const existingFileLogger = this.#fileLoggers.find((logger) => logger.getConfig().logFilePath === filePath);
-        const fl = existingFileLogger || new FileLogger(fileLoggerInit, fileLoggerOptions);
+        const fl = existingFileLogger || new FileLogger(fullOptions);
         result.push(fl);
       }
       catch (error) {

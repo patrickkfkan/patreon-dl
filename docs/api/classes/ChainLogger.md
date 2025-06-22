@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,31 +6,33 @@
 
 # Class: ChainLogger
 
+Defined in: [src/utils/logging/ChainLogger.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L3)
+
 ## Extends
 
 - [`Logger`](Logger.md)
 
 ## Constructors
 
-### new ChainLogger()
+### Constructor
 
-> **new ChainLogger**(`loggers`?): [`ChainLogger`](ChainLogger.md)
+> **new ChainLogger**(`loggers?`): `ChainLogger`
+
+Defined in: [src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L7)
 
 #### Parameters
 
-• **loggers?**: [`Logger`](Logger.md)[]
+##### loggers?
+
+[`Logger`](Logger.md)[]
 
 #### Returns
 
-[`ChainLogger`](ChainLogger.md)
+`ChainLogger`
 
 #### Overrides
 
-[`Logger`](Logger.md).[`constructor`](Logger.md#constructors)
-
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L7)
+[`Logger`](Logger.md).[`constructor`](Logger.md#constructor)
 
 ## Methods
 
@@ -38,17 +40,17 @@
 
 > **add**(`logger`): `void`
 
+Defined in: [src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L12)
+
 #### Parameters
 
-• **logger**: [`Logger`](Logger.md)
+##### logger
+
+[`Logger`](Logger.md)
 
 #### Returns
 
 `void`
-
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L12)
 
 ***
 
@@ -56,19 +58,19 @@
 
 > **clear**(): `void`
 
+Defined in: [src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L23)
+
 #### Returns
 
 `void`
-
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L23)
 
 ***
 
 ### end()
 
 > **end**(): `Promise`\<`void`\>
+
+Defined in: [src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L33)
 
 #### Returns
 
@@ -78,19 +80,19 @@
 
 [`Logger`](Logger.md).[`end`](Logger.md#end)
 
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L33)
-
 ***
 
 ### log()
 
 > **log**(`entry`): `void`
 
+Defined in: [src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L27)
+
 #### Parameters
 
-• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
+##### entry
+
+[`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
@@ -100,24 +102,20 @@
 
 [`Logger`](Logger.md).[`log`](Logger.md#log)
 
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L27)
-
 ***
 
 ### remove()
 
 > **remove**(`logger`): `void`
 
+Defined in: [src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ChainLogger.ts#L16)
+
 #### Parameters
 
-• **logger**: [`Logger`](Logger.md)
+##### logger
+
+[`Logger`](Logger.md)
 
 #### Returns
 
 `void`
-
-#### Defined in
-
-[src/utils/logging/ChainLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ChainLogger.ts#L16)

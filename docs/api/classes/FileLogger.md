@@ -1,44 +1,52 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / FileLogger
 
-# Class: FileLogger
+# Class: FileLogger\<T\>
+
+Defined in: [src/utils/logging/FileLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L74)
 
 ## Extends
 
 - [`ConsoleLogger`](ConsoleLogger.md)
 
+## Type Parameters
+
+### T
+
+`T` *extends* [`FileLoggerType`](../enumerations/FileLoggerType.md) = [`Downloader`](../enumerations/FileLoggerType.md#downloader)
+
 ## Constructors
 
-### new FileLogger()
+### Constructor
 
-> **new FileLogger**(`init`, `options`?): [`FileLogger`](FileLogger.md)
+> **new FileLogger**\<`T`\>(`options`): `FileLogger`\<`T`\>
+
+Defined in: [src/utils/logging/FileLogger.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L81)
 
 #### Parameters
 
-• **init**: [`FileLoggerInit`](../interfaces/FileLoggerInit.md)
+##### options
 
-• **options?**: [`FileLoggerOptions`](../interfaces/FileLoggerOptions.md)
+[`FileLoggerOptions`](../type-aliases/FileLoggerOptions.md)\<`T`\>
 
 #### Returns
 
-[`FileLogger`](FileLogger.md)
+`FileLogger`\<`T`\>
 
 #### Overrides
 
-[`ConsoleLogger`](ConsoleLogger.md).[`constructor`](ConsoleLogger.md#constructors)
-
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L53)
+[`ConsoleLogger`](ConsoleLogger.md).[`constructor`](ConsoleLogger.md#constructor)
 
 ## Methods
 
 ### end()
 
 > **end**(): `Promise`\<`void`\>
+
+Defined in: [src/utils/logging/FileLogger.ts:247](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L247)
 
 #### Returns
 
@@ -48,27 +56,21 @@
 
 [`ConsoleLogger`](ConsoleLogger.md).[`end`](ConsoleLogger.md#end)
 
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:180](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L180)
-
 ***
 
 ### getConfig()
 
-> **getConfig**(): [`FileLoggerConfig`](../interfaces/FileLoggerConfig.md)
+> **getConfig**(): [`FileLoggerConfig`](../type-aliases/FileLoggerConfig.md)\<`T`\>
+
+Defined in: [src/utils/logging/FileLogger.ts:229](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L229)
 
 #### Returns
 
-[`FileLoggerConfig`](../interfaces/FileLoggerConfig.md)
+[`FileLoggerConfig`](../type-aliases/FileLoggerConfig.md)\<`T`\>
 
 #### Overrides
 
 [`ConsoleLogger`](ConsoleLogger.md).[`getConfig`](ConsoleLogger.md#getconfig)
-
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:162](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L162)
 
 ***
 
@@ -76,9 +78,13 @@
 
 > **log**(`entry`): `void`
 
+Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ConsoleLogger.ts#L75)
+
 #### Parameters
 
-• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
+##### entry
+
+[`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
@@ -88,19 +94,19 @@
 
 [`ConsoleLogger`](ConsoleLogger.md).[`log`](ConsoleLogger.md#log)
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L75)
-
 ***
 
 ### setLevel()
 
 > **setLevel**(`value`): `void`
 
+Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/ConsoleLogger.ts#L92)
+
 #### Parameters
 
-• **value**: [`LogLevel`](../type-aliases/LogLevel.md)
+##### value
+
+[`LogLevel`](../type-aliases/LogLevel.md)
 
 #### Returns
 
@@ -110,15 +116,13 @@
 
 [`ConsoleLogger`](ConsoleLogger.md).[`setLevel`](ConsoleLogger.md#setlevel)
 
-#### Defined in
-
-[src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/ConsoleLogger.ts#L92)
-
 ***
 
 ### getDefaultConfig()
 
 > `static` **getDefaultConfig**(): `object`
+
+Defined in: [src/utils/logging/FileLogger.ts:233](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L233)
 
 #### Returns
 
@@ -144,19 +148,19 @@
 
 > **include**: `object`
 
-##### include.dateTime
+###### include.dateTime
 
 > **dateTime**: `boolean`
 
-##### include.errorStack
+###### include.errorStack
 
 > **errorStack**: `boolean`
 
-##### include.level
+###### include.level
 
 > **level**: `boolean`
 
-##### include.originator
+###### include.originator
 
 > **originator**: `boolean`
 
@@ -180,19 +184,29 @@
 
 [`ConsoleLogger`](ConsoleLogger.md).[`getDefaultConfig`](ConsoleLogger.md#getdefaultconfig)
 
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:166](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L166)
-
 ***
 
 ### getPathInfo()
 
-> `static` **getPathInfo**(`data`): `object`
+> `static` **getPathInfo**\<`T`\>(`type`, `params`): `object`
+
+Defined in: [src/utils/logging/FileLogger.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/FileLogger.ts#L102)
+
+#### Type Parameters
+
+##### T
+
+`T` *extends* [`FileLoggerType`](../enumerations/FileLoggerType.md)
 
 #### Parameters
 
-• **data**: [`FileLoggerInit`](../interfaces/FileLoggerInit.md) & `Pick`\<[`FileLoggerOptions`](../interfaces/FileLoggerOptions.md), `"logLevel"` \| `"logDir"` \| `"logFilename"`\>
+##### type
+
+`T`
+
+##### params
+
+[`FileLoggerGetPathInfoParams`](../type-aliases/FileLoggerGetPathInfoParams.md)\<`T`\>
 
 #### Returns
 
@@ -213,7 +227,3 @@
 ##### logDir
 
 > **logDir**: `string`
-
-#### Defined in
-
-[src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/FileLogger.ts#L71)

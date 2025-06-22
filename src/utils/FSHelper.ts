@@ -22,7 +22,8 @@ const PRODUCT_FIXED_DIR_NAMES = {
   SHOP: 'shop',
   INFO: 'product_info',
   CONTENT_MEDIA: 'content_media',
-  PREVIEW_MEDIA: 'preview_media'
+  PREVIEW_MEDIA: 'preview_media',
+  THUMBNAILS: '.thumbnails'
 };
 
 const POST_FIXED_DIR_NAMES = {
@@ -35,7 +36,8 @@ const POST_FIXED_DIR_NAMES = {
   VIDEO_PREVIEW: 'video_preview',
   IMAGE_PREVIEWS: 'image_previews',
   ATTACHMENTS: 'attachments',
-  EMBED: 'embed'
+  EMBED: 'embed',
+  THUMBNAILS: '.thumbnails'
 };
 
 export interface PostDirectories {
@@ -49,10 +51,12 @@ export interface PostDirectories {
   imagePreviews: string;
   attachments: string;
   embed: string;
+  thumbnails: string;
   statusCache: string;
 }
 
 const INTERNAL_DATA_DIR_NAME = '.patreon-dl';
+const DB_FILENAME = 'db.sqlite';
 
 export type WriteTextFileResult = {
   status: 'completed';
@@ -76,6 +80,11 @@ export default class FSHelper {
   constructor(config: DownloaderConfig<any>, logger?: Logger | null) {
     this.config = config;
     this.logger = logger;
+  }
+
+  getDBFilePath() {
+    const dbDir = this.createDir(path.resolve(this.config.outDir, INTERNAL_DATA_DIR_NAME));
+    return path.resolve(dbDir, DB_FILENAME);
   }
 
   getCampaignDirs(campaign: Campaign) {
@@ -112,6 +121,7 @@ export default class FSHelper {
       imagePreviews: path.resolve(postRootPath, POST_FIXED_DIR_NAMES.IMAGE_PREVIEWS),
       attachments: path.resolve(postRootPath, POST_FIXED_DIR_NAMES.ATTACHMENTS),
       embed: path.resolve(postRootPath, POST_FIXED_DIR_NAMES.EMBED),
+      thumbnails: path.resolve(postRootPath, POST_FIXED_DIR_NAMES.THUMBNAILS),
       statusCache: statusCachePath
     };
   }
@@ -135,6 +145,7 @@ export default class FSHelper {
       info: path.resolve(productRootPath, PRODUCT_FIXED_DIR_NAMES.INFO),
       contentMedia: path.resolve(productRootPath, PRODUCT_FIXED_DIR_NAMES.CONTENT_MEDIA),
       previewMedia: path.resolve(productRootPath, PRODUCT_FIXED_DIR_NAMES.PREVIEW_MEDIA),
+      thumbnails: path.resolve(productRootPath, PRODUCT_FIXED_DIR_NAMES.THUMBNAILS),
       statusCache: statusCachePath
     };
   }

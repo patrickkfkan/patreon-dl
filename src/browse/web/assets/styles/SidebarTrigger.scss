@@ -1,0 +1,12 @@
+@use "./mixins";
+
+.sidebar-trigger {
+  text-decoration: none;
+  color: var(--bs-body-color);
+
+  &:hover {
+    color: var(--bs-link-hover-color)
+  }
+
+  transition: color 150ms;
+}

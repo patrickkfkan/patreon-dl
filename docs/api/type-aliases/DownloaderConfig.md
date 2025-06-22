@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,12 +6,12 @@
 
 # Type Alias: DownloaderConfig\<T\>
 
-> **DownloaderConfig**\<`T`\>: [`DownloaderInit`](DownloaderInit.md) & `Omit`\<[`DownloaderBootstrapData`](DownloaderBootstrapData.md)\<`T`\>, `"type"`\>
+> **DownloaderConfig**\<`T`\> = [`DownloaderInit`](DownloaderInit.md) & [`DownloaderBootstrapData`](DownloaderBootstrapData.md)\<`T`\>
+
+Defined in: [src/downloaders/Downloader.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/Downloader.ts#L28)
 
 ## Type Parameters
 
-• **T** *extends* [`DownloaderType`](DownloaderType.md)
+### T
 
-## Defined in
-
-[src/downloaders/Downloader.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/Downloader.ts#L27)
+`T` *extends* [`DownloaderType`](DownloaderType.md)

@@ -1,0 +1,26 @@
+.custom-scrollbars {
+  &__track-vertical {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: var(--bs-secondary);
+    opacity: 0.2;
+    border-radius: 3px;
+  }
+
+  &__track-horizontal {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bs-secondary);
+    opacity: 0.2;
+    border-radius: 3px;
+  }
+
+  &__thumb-vertical,
+  &__thumb-horizontal {
+    border-radius: 3px;
+    background: var(--bs-light);
+    opacity: 0.2;
+  }
+}

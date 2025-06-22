@@ -144,8 +144,8 @@ export default abstract class Parser {
    */
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: typeof DOWNLOADABLE_TYPES[number]): Downloadable | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'tier', campaign: Campaign): Tier | null;
-  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs: 'image', fallbackData?: Record<string, any>): MediaItem | null;
-  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file' | 'attachment'): MediaItem | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs: 'image', fallbackData?: Record<string, any>): Downloadable<MediaItem> | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'media', unknownMediaTypeAs?: 'image' | 'video' | 'audio' | 'file' | 'attachment'): Downloadable<MediaItem> | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'reward'): Reward | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'campaign'): Campaign | null;
@@ -256,10 +256,8 @@ export default abstract class Parser {
          */
         // DownloadURL: attributes.download_url || null,
         downloadURL: null,
-        displayURLs: {
-          thumbnail: ObjectHelper.getProperty(attributes, 'display.default_thumbnail.url') || null,
-          video: ObjectHelper.getProperty(attributes, 'display.url') || null
-        }
+        displayURL: ObjectHelper.getProperty(attributes, 'display.url') || null,
+        thumbnailURL: ObjectHelper.getProperty(attributes, 'display.default_thumbnail.url') || null
       };
     }
     else if (mimeType?.startsWith('image/') || mediaType === 'image' || unknownMediaTypeAs === 'image') {
@@ -278,7 +276,9 @@ export default abstract class Parser {
           thumbnail: ObjectHelper.getProperty(attributes, 'image_urls.thumbnail') || null,
           thumbnailLarge: ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_large') || null,
           thumbnailSmall: ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_small') || null
-        }
+        },
+        // Thumbnails are squared. Patreon uses default_large, so we use that as well.
+        thumbnailURL: ObjectHelper.getProperty(attributes, 'image_urls.default_large') || null
       };
     }
     else if (mimeType?.startsWith('audio/') || mediaType === 'audio' || unknownMediaTypeAs === 'audio') {
@@ -294,13 +294,14 @@ export default abstract class Parser {
          * a single URL.
          */
         url: ObjectHelper.getProperty(attributes, 'image_urls.original') ||
-                  ObjectHelper.getProperty(attributes, 'image_urls.default') ||
-                  attributes.download_url ||
-                  ObjectHelper.getProperty(attributes, 'image_urls.default_small') ||
-                  ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_large') ||
-                  ObjectHelper.getProperty(attributes, 'image_urls.thumbnail') ||
-                  ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_small') ||
-                  null
+          ObjectHelper.getProperty(attributes, 'image_urls.default') ||
+          attributes.download_url ||
+          ObjectHelper.getProperty(attributes, 'image_urls.default_small') ||
+          ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_large') ||
+          ObjectHelper.getProperty(attributes, 'image_urls.thumbnail') ||
+          ObjectHelper.getProperty(attributes, 'image_urls.thumbnail_small') ||
+          null,
+        thumbnailURL: null
       };
     }
     else if (mediaType === 'file' || unknownMediaTypeAs === 'file') {
@@ -391,9 +392,12 @@ export default abstract class Parser {
       this.log('debug', `Obtain creator info (user ID '${creatorId}')`);
       creator = this.findInAPIResponseIncludedArray(included, creatorId, 'user', true);
     }
-    const avatarImage: DefaultImageMediaItem = {
+    const thumbnail = ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail') || null;
+    const thumbnailLarge = ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail_large') || null;
+    const thumbnailSmall = ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail_small') || null;
+    const avatarImage: Downloadable<DefaultImageMediaItem> = {
       type: 'image',
-      id, // Use campaign ID
+      id: `campaign:${id}:avatar`,
       filename: 'avatar',
       createdAt: null,
       mimeType: null,
@@ -403,14 +407,15 @@ export default abstract class Parser {
         default: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.default') || null,
         defaultSmall: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.default_small') || null,
         original: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.original') || null,
-        thumbnail: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail') || null,
-        thumbnailLarge: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail_large') || null,
-        thumbnailSmall: ObjectHelper.getProperty(attributes, 'avatar_photo_image_urls.thumbnail_small') || null
-      }
+        thumbnail,
+        thumbnailLarge,
+        thumbnailSmall
+      },
+      thumbnailURL: thumbnailLarge || thumbnail || thumbnailSmall
     };
-    const coverPhoto: CampaignCoverPhotoMediaItem = {
+    const coverPhoto: Downloadable<CampaignCoverPhotoMediaItem> = {
       type: 'image',
-      id, // Use campaign ID
+      id: `campaign:${id}:cover`,
       filename: 'cover-photo',
       mimeType: null,
       imageType: 'campaignCoverPhoto',
@@ -454,19 +459,21 @@ export default abstract class Parser {
     }
     const image: SingleImageMediaItem = {
       type: 'image',
-      id,
+      id: `user:${id}:image`,
       filename: asCreator ? 'creator-image' : 'user-image',
       mimeType: null,
       imageType: 'single',
-      imageURL: attributes.image_url || null
+      imageURL: attributes.image_url || null,
+      thumbnailURL: attributes.thumb_url || null
     };
     const thumbnail: SingleImageMediaItem = {
       type: 'image',
-      id,
+      id: `user:${id}:thumbnail`,
       filename: asCreator ? 'creator-thumbnail' : 'user-thumbnail',
       mimeType: null,
       imageType: 'single',
-      imageURL: attributes.thumb_url || null
+      imageURL: attributes.thumb_url || null,
+      thumbnailURL: null
     };
     const user: User = {
       type: 'user',
@@ -505,11 +512,12 @@ export default abstract class Parser {
     const rewardFilenameSuffix = title ? ` (${title})` : `-${id}`;
     const image: SingleImageMediaItem | null = attributes.image_url ? {
       type: 'image',
-      id,
+      id: `reward:${id}:image`,
       filename: `reward${rewardFilenameSuffix}`,
       mimeType: null,
       imageType: 'single',
-      imageURL: attributes.image_url
+      imageURL: attributes.image_url,
+      thumbnailURL: null
     } : null;
     const reward: Reward = {
       type: 'reward',
@@ -551,7 +559,7 @@ export default abstract class Parser {
           }
         }
       } : undefined))
-      .filter((item) => item !== null);
+      .filter((item) => item !== null) as Downloadable<DefaultImageMediaItem>[];
     this.log('debug', `Parse inline media - got ${images.length} images`);
 
     return {

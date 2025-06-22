@@ -5,13 +5,14 @@ import MediaFilenameResolver from '../../utils/MediaFilenameResolver.js';
 import {type DownloadTaskCallbacks} from './DownloadTask.js';
 import DownloadTask from './DownloadTask.js';
 import FetcherDownloadTask from './FetcherDownloadTask.js';
-import { type Downloadable, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
+import { type Downloadable, isDownloadableWithThumbnail, isEmbed, isYouTubeEmbed } from '../../entities/Downloadable.js';
 import { type EmbedDownloader, type FileExistsAction } from '../DownloaderOptions.js';
 import type Logger from '../../utils/logging/Logger.js';
 import YouTubeDownloadTask from './YouTubeDownloadTask.js';
 import ExternalDownloaderTask from './ExternalDownloaderTask.js';
 import { type DownloaderConfig } from '../Downloader.js';
 import type Bottleneck from 'bottleneck';
+import ThumbnailFilenameResolver from '../../utils/ThmbnailFilenameResolver.js';
 
 const DEFAULT_IMAGE_URL_PRIORITY = [
   'original',
@@ -91,7 +92,7 @@ export default class DownloadTaskFactory {
       }
       const urls = {
         download: item.downloadURL,
-        [videoVariantName]: item.displayURLs.video
+        [videoVariantName]: item.displayURL
       };
       if (allVariants) {
         return urls;
@@ -123,8 +124,12 @@ export default class DownloadTaskFactory {
 
   static async createFromDownloadable(params: {
     config: DownloaderConfig<any>,
+    dirs: {
+      campaign: string | null;
+      main: string;
+      thumbnails: string | null;
+    },
     item: Downloadable,
-    destDir: string,
     fetcher: Fetcher,
     fileExistsAction: FileExistsAction,
     callbacks?: DownloadTaskCallbacks | null,
@@ -135,8 +140,8 @@ export default class DownloadTaskFactory {
 
     const {
       config,
+      dirs,
       item,
-      destDir,
       fetcher,
       fileExistsAction,
       callbacks,
@@ -144,7 +149,6 @@ export default class DownloadTaskFactory {
       signal,
       logger
     } = params;
-
     const embedDownloaders = config.embedDownloaders;
     const destFilenameFormat = config.filenameFormat.media;
     const downloadAllVariants = config.include.allMediaVariants;
@@ -154,7 +158,7 @@ export default class DownloadTaskFactory {
       // Check if external downloader configured for embed item
       const embedDownloader = this.findEmbedDownloader(embedDownloaders, item.provider);
       if (embedDownloader) {
-        const task = ExternalDownloaderTask.fromEmbedDownloader(config, embedDownloader, item, destDir, callbacks || null, logger);
+        const task = ExternalDownloaderTask.fromEmbedDownloader(config, embedDownloader, item, dirs.main, callbacks || null, logger);
         if (task) {
           tasks.push(task);
         }
@@ -162,9 +166,10 @@ export default class DownloadTaskFactory {
       // Use our own implementation if no external downloader configured for YT embeds
       else if (isYouTubeEmbed(item) && item.url) {
         tasks.push(await DownloadTask.create(YouTubeDownloadTask, {
+          downloadType: 'main',
           config,
           src: item.url,
-          destDir,
+          destDir: dirs.main,
           fileExistsAction,
           srcEntity: item,
           callbacks: callbacks || null,
@@ -176,6 +181,7 @@ export default class DownloadTaskFactory {
     }
     else {
       const srcURLs = this.#getSrcURLs(item, downloadAllVariants);
+      const urlToTasks: DownloadTask[] = [];
       for (const [ variant, url ] of Object.entries(srcURLs)) {
         const destFilenameResolver = 
           new MediaFilenameResolver(item, url, destFilenameFormat,
@@ -186,11 +192,12 @@ export default class DownloadTaskFactory {
         }
 
         if (url) {
-          tasks.push(await DownloadTask.create(FetcherDownloadTask, {
+          urlToTasks.push(await DownloadTask.create(FetcherDownloadTask, {
+            downloadType: 'variant',
             config,
             fetcher,
             src: url,
-            destDir,
+            destDir: dirs.main,
             destFilenameResolver,
             fileExistsAction,
             srcEntity: item,
@@ -201,10 +208,39 @@ export default class DownloadTaskFactory {
           signal));
         }
       }
-    }    
+      if (urlToTasks.length > 0) {
+        urlToTasks[0].downloadType = 'main';
+      }
+      tasks.push(...urlToTasks);
+    }
+
+    if (dirs.thumbnails && isDownloadableWithThumbnail(item)) {
+      const thumbnailURL = item.thumbnailURL;
+      // Thumbnails in `dirs.thumbnails` are for browse function, so
+      // no need to follow config's FileExistsAction.
+      const fse: FileExistsAction = 'overwrite';
+      // Same with FilenameResolver
+      const fnr = new ThumbnailFilenameResolver(item);
+      tasks.push(await DownloadTask.create(FetcherDownloadTask, {
+          downloadType: 'thumbnail',
+          config,
+          fetcher,
+          src: thumbnailURL,
+          destDir: dirs.thumbnails,
+          destFilenameResolver: fnr,
+          fileExistsAction: fse,
+          srcEntity: item,
+          callbacks: callbacks || null,
+          logger
+        },
+        limiter,
+        signal));
+    }
     
-    // Create a DownloadTask backed by a DummyMediaItem for video thumbnail
-    if (item.type === 'video' && item.displayURLs.thumbnail) {
+    // Create a DownloadTask backed by a DummyMediaItem for video thumbnail.
+    // Note this is saved in the same dir as the video itself, unlike thumbnails for browse function,
+    // so need to follow config's FileExistsAction and filename format.
+    if (item.type === 'video' && item.thumbnailURL) {
       let filename: string | null = null;
       if (item.filename) {
         // Video file extension not applicable to thumbnail, so strip it.
@@ -216,7 +252,7 @@ export default class DownloadTaskFactory {
         filename,
         mimeType: null,
         srcURLs: {
-          thumbnail: item.displayURLs.thumbnail
+          thumbnail: item.thumbnailURL
         }
       };
       const __config = {
@@ -229,8 +265,8 @@ export default class DownloadTaskFactory {
       tasks.push(
         ...await this.createFromDownloadable({
           config: __config,
+          dirs,
           item: videoThumbnailMediaItem,
-          destDir,
           fetcher,
           fileExistsAction,
           callbacks,

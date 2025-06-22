@@ -9,9 +9,13 @@ import DownloadTask, { type DownloadTaskCallbacks, type DownloadTaskParams } fro
 import spawn from '@patrickkfkan/cross-spawn';
 import split from 'argv-split'; // Switched from 'string-argv' which does not split nested quotes properly
 import { type DownloaderConfig } from '../Downloader.js';
+import fs from 'fs';
+import { fileTypeFromFile } from 'file-type';
+import path from 'path';
 
 export interface ExternalDownloaderTaskParams extends DownloadTaskParams {
   name: string;
+  destDir: string;
   exec: {
     command: string;
     args: string[];
@@ -22,6 +26,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
 
   protected name: string;
 
+  #destDir: string;
   #exec: ExternalDownloaderTaskParams['exec'];
   #proc: ChildProcess | null;
   #abortController: AbortController | null;
@@ -29,6 +34,7 @@ export default class ExternalDownloaderTask extends DownloadTask {
 
   constructor(params: ExternalDownloaderTaskParams) {
     super(params);
+    this.#destDir = params.destDir;
     this.#exec = params.exec;
     this.#abortController = null;
     this.#abortingCallback = null;
@@ -98,7 +104,11 @@ export default class ExternalDownloaderTask extends DownloadTask {
           const signalStr = signal !== null ? `; signal: ${signal}` : '';
           this.log('debug', `[pid: ${proc.pid}] Process exit (code: ${code}${signalStr})`);
           if (code === 0) {
-            this.notifyComplete();
+            void this.#findAndSetDownloaded().then(() => {
+              this.notifyComplete();
+              resolve();
+            });
+            return;
           }
           else {
             const e = lastErrMsg ? `. Last captured error message: ${lastErrMsg}` : '';
@@ -192,6 +202,42 @@ export default class ExternalDownloaderTask extends DownloadTask {
     ].join(' ');
   }
 
+  async #findAndSetDownloaded() {
+    if (!fs.existsSync(this.#destDir)) {
+      return null;
+    }
+    try {
+      this.log('debug', `Find video files in "${this.#destDir}"`);
+      const files = fs.readdirSync(this.#destDir)
+        .reduce<{ path: string; modified: number; }[]>((result, file) => {
+          const filePath = path.resolve(this.#destDir, file);
+          const stats = fs.statSync(filePath);
+          if (stats.isFile()) {
+            result.push({
+              path: filePath,
+              modified: stats.mtime.getTime()
+            });
+          }
+          return result;
+        }, [])
+        .sort((f1, f2) => f2.modified - f1.modified);
+      
+      for (const file of files) {
+        const filePath = file.path;
+        const fileType = await fileTypeFromFile(filePath);
+        if (fileType?.mime.startsWith('video/')) {
+          this.log('debug', `Found video file "${filePath}"`);
+          await this.setDownloaded(filePath);
+          return;
+        }
+      }
+      this.log('debug', `No video file found in "${this.#destDir}"`);
+    }
+    catch (error) {
+      this.log('warn', `Error finding files in "${this.#destDir}":`, error);
+    }
+  }
+
   static fromEmbedDownloader(
     config: DownloaderConfig<any>,
     dl: EmbedDownloader,
@@ -244,7 +290,9 @@ export default class ExternalDownloaderTask extends DownloadTask {
     }
 
     return new ExternalDownloaderTask({
+      downloadType: 'main',
       name: originator,
+      destDir,
       exec: {
         command: cmd,
         args

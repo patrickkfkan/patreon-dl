@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,14 +6,12 @@
 
 # Type Alias: YouTubePostEmbed
 
-> **YouTubePostEmbed**: [`PostEmbed`](../interfaces/PostEmbed.md) & `object`
+> **YouTubePostEmbed** = [`PostEmbed`](../interfaces/PostEmbed.md) & `object`
+
+Defined in: [src/entities/Post.ts:119](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L119)
 
 ## Type declaration
 
 ### provider
 
 > **provider**: `"YouTube"`
-
-## Defined in
-
-[src/entities/Post.ts:103](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L103)

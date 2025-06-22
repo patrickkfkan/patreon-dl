@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / Logger
 
 # Class: `abstract` Logger
+
+Defined in: [src/utils/logging/Logger.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L9)
 
 ## Extended by
 
@@ -13,13 +15,13 @@
 
 ## Constructors
 
-### new Logger()
+### Constructor
 
-> **new Logger**(): [`Logger`](Logger.md)
+> **new Logger**(): `Logger`
 
 #### Returns
 
-[`Logger`](Logger.md)
+`Logger`
 
 ## Methods
 
@@ -27,13 +29,11 @@
 
 > **end**(): `Promise`\<`void`\>
 
+Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L12)
+
 #### Returns
 
 `Promise`\<`void`\>
-
-#### Defined in
-
-[src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/Logger.ts#L12)
 
 ***
 
@@ -41,14 +41,14 @@
 
 > `abstract` **log**(`entry`): `void`
 
+Defined in: [src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/logging/Logger.ts#L10)
+
 #### Parameters
 
-• **entry**: [`LogEntry`](../interfaces/LogEntry.md)
+##### entry
+
+[`LogEntry`](../interfaces/LogEntry.md)
 
 #### Returns
 
 `void`
-
-#### Defined in
-
-[src/utils/logging/Logger.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/logging/Logger.ts#L10)

@@ -1,7 +1,7 @@
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
-import { type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
-import { type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
+import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
+import { PostType, type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
 import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
@@ -101,10 +101,10 @@ export default class PostParser extends Parser {
       }
 
       // Get downloadables from relationships
-      let audio: Downloadable | null = null;
-      let audioPreview: Downloadable | null = null;
-      let images: Downloadable[] = [];
-      let attachments: Downloadable[] = [];
+      let audio: Downloadable<AudioMediaItem> | null = null;
+      let audioPreview: Downloadable<AudioMediaItem> | null = null;
+      let images: Downloadable<DefaultImageMediaItem>[] = [];
+      let attachments: Downloadable<AttachmentMediaItem>[] = [];
       if (hasIncludedJSON) {
         const downloadables = this.fetchDownloadablesFromRelationships(
           relationships,
@@ -118,10 +118,10 @@ export default class PostParser extends Parser {
           `post #${id}`,
           false
         );
-        audio = downloadables.audio?.[0] || null;
-        audioPreview = downloadables.audio_preview?.[0] || null;
-        images = downloadables.images || [];
-        attachments = downloadables.attachments_media || [];
+        audio = downloadables.audio?.[0] as Downloadable<AudioMediaItem> || null;
+        audioPreview = downloadables.audio_preview?.[0] as Downloadable<AudioMediaItem> || null;
+        images = downloadables.images as Downloadable<DefaultImageMediaItem>[] || [];
+        attachments = downloadables.attachments_media as Downloadable<AttachmentMediaItem>[] || [];
       }
 
       // Get inline media from content (currently only images supported)
@@ -131,33 +131,33 @@ export default class PostParser extends Parser {
       }
 
       // Video preview
-      let videoPreview: Downloadable | null = null;
+      let videoPreview: Downloadable<VideoMediaItem> | null = null;
       const vidPreviewJSON = attributes.video_preview;
       if (vidPreviewJSON && typeof vidPreviewJSON === 'object') {
         videoPreview = this.#getVideoMediaItemFromAttr(vidPreviewJSON, includedJSON, id);
-        if (!videoPreview.downloadURL && !videoPreview.displayURLs.video) {
+        if (!videoPreview.downloadURL && !videoPreview.displayURL) {
           this.log('warn', `Video preview for post #${id} is missing URLs`);
         }
       }
 
       // Video - `postType` is 'video_external_file' and has `postFile`
-      let video: Downloadable | null = null;
+      let video: Downloadable<VideoMediaItem> | null = null;
       const postFileJSON = attributes.post_file;
       const hasPostFile = postFileJSON && typeof postFileJSON === 'object';
-      if (attributes.post_type === 'video_external_file' && hasPostFile) {
+      if (attributes.post_type === PostType.Video && hasPostFile) {
         video = this.#getVideoMediaItemFromAttr(postFileJSON, includedJSON, id);
-        if (!video.downloadURL && !video.displayURLs.video) {
+        if (!video.downloadURL && !video.displayURL) {
           this.log('warn', `Video for post #${id} is missing URLs`);
         }
       }
       // Repeat for 'podcast' type - but note that `postFile` here can be audio or video.
       // We are only interested in video. For audio, info should have already been obtained
       // through relationships above.
-      if (attributes.post_type === 'podcast' && hasPostFile) {
+      if (attributes.post_type === PostType.Podcast && hasPostFile) {
         video = this.#getVideoMediaItemFromAttr(postFileJSON, includedJSON, id, true);
       }
 
-      if (attributes.post_type === 'podcast' && isViewable && !video && !audio) {
+      if (attributes.post_type === PostType.Podcast && isViewable && !video && !audio) {
         this.log('warn', `Post #${id} is podcast type and is viewable, but no video or audio was found`);
       }
 
@@ -166,7 +166,7 @@ export default class PostParser extends Parser {
       if (attributes.image) {
         coverImage = {
           type: 'image',
-          id,
+          id: `post:${id}:cover`,
           filename: isViewable ? 'cover-image' : 'cover-image-preview',
           mimeType: null,
           imageType: 'postCoverImage',
@@ -185,7 +185,7 @@ export default class PostParser extends Parser {
       if (attributes.thumbnail) {
         thumbnail = {
           type: 'image',
-          id,
+          id: `post:${id}:thumbnail`,
           filename: isViewable ? 'thumbnail' : 'thumbnail-preview',
           mimeType: null,
           imageType: 'postThumbnail',
@@ -196,6 +196,18 @@ export default class PostParser extends Parser {
             default: ObjectHelper.getProperty(attributes, 'thumbnail.url') || null
           }
         };
+      }
+
+      // Audio items doesn't have thumbnail - use first image or thumbnail
+      if (audio) {
+        audio.thumbnailURL =
+          images[0]?.imageURLs.default ||
+          thumbnail?.imageURLs.default || null;
+      }
+      if (audioPreview) {
+        audioPreview.thumbnailURL =
+          images[0]?.imageURLs.default ||
+          thumbnail?.imageURLs.default || null;
       }
 
       // Embed
@@ -223,7 +235,8 @@ export default class PostParser extends Parser {
           provider: embedJSON.provider || null,
           providerURL: embedJSON.provider_url || null,
           subject: embedJSON.subject || null,
-          url: embedJSON.url || null
+          url: embedJSON.url || null,
+          thumbnailURL: ObjectHelper.getProperty(attributes, 'image.large_url') || null // Use cover image
         };
       }
 
@@ -324,10 +337,8 @@ export default class PostParser extends Parser {
       },
       duration: attrJSON.duration || vidInc?.duration,
       downloadURL: downloadURL || vidInc?.downloadURL,
-      displayURLs: {
-        thumbnail: vidInc?.displayURLs.thumbnail || null,
-        video: displayURL || vidInc?.downloadURL
-      }
+      displayURL: displayURL || vidInc?.downloadURL,
+      thumbnailURL: vidInc?.thumbnailURL || null
     };
   };
 }

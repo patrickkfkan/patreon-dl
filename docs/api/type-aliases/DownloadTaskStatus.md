@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # Type Alias: DownloadTaskStatus
 
-> **DownloadTaskStatus**: `"pending"` \| `"pending-retry"` \| `"downloading"` \| `"error"` \| `"completed"` \| `"aborted"` \| `"skipped"`
+> **DownloadTaskStatus** = `"pending"` \| `"pending-retry"` \| `"downloading"` \| `"error"` \| `"completed"` \| `"aborted"` \| `"skipped"`
 
-## Defined in
-
-[src/downloaders/task/DownloadTask.ts:67](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/downloaders/task/DownloadTask.ts#L67)
+Defined in: [src/downloaders/task/DownloadTask.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L71)

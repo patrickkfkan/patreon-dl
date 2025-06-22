@@ -223,7 +223,49 @@ Refer to the [example config](./example.conf) to see what options are offered. A
 
 Note that you can override an option from a configuration file with one provided at the command-line, provided of course that a command-line equivalent is available.
 
+## Browsing downloaded content
+
+`patreon-dl` comes with a web server that allows you to browse downloaded content. To start the web server:
+
+```
+$ patreon-dl-server [OPTION]
+```
+
+### OPTION
+
+| Option    | Alias | Description |
+|-----------|-------|-------------|
+| `--help`  | `-h`  | Display usage guide |
+| `--data-dir <dir>` |`-i` | Directory containing downloaded content. Default: current working directory |
+| `--port <number>` |`-p` | Web server port. Default: `3000`, or a random port if `3000` is already in use. |
+| `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. Default: `info` |
+| `--log-file <file>` | `-f` | Save logs to `<file>`. |
+
+
+### Example
+
+Say you downloaded something with `patreon-dl`:
+
+```
+$ patreon-dl -o "C:\PatreonDownloads" <url>
+```
+
+This will download content to `C:\PatreonDownloads`. To view the downloaded content, start `patreon-dl` server as follows:
+
+```
+$ patreon-dl-server -i "C:\PatreonDownloads"
+
+...info: Web server is running on <URL>
+```
+
+Note the URL shown in the output. Open this URL in a web browser to begin viewing the downloaded content.
+
+> Keep in mind that the web server is in no way secure. It is meant for local browsing and should not be exposed to outside parties!
+
 ## Changelog
+
+v3.0.0
+- Add support for browsing downloaded content through integrated web server. Note: this feature will not work for downloads made with previous versions of `patreon-dl`.
 
 v2.4.3
 - Fix YouTube embeds failing to download due to YT changes
@@ -343,3 +385,6 @@ v1.0.1
 
 v1.0.0
 - Initial release
+
+---
+This project is licensed under the MIT License and includes third-party software—see the [NOTICE](./NOTICE) file for attributions.

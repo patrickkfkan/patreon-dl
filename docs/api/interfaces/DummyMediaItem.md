@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / DummyMediaItem
 
 # Interface: DummyMediaItem
+
+Defined in: [src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L118)
 
 Minimal `MediaItem` typically used to represent media-type properties of elements, such
 as video thumbnails and campaign avatar / cover photos.
@@ -21,13 +23,11 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 > **filename**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L4)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`filename`](MediaLike.md#filename)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -35,13 +35,11 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 > **id**: `string`
 
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L3)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`id`](MediaLike.md#id)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -49,23 +47,19 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 > **mimeType**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L5)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`mimeType`](MediaLike.md#mimetype)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L5)
 
 ***
 
 ### srcURLs
 
-> **srcURLs**: `Record`\<`string`, `null` \| `string`\>
+> **srcURLs**: `Record`\<`string`, `string` \| `null`\>
 
-#### Defined in
-
-[src/entities/MediaItem.ts:120](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L120)
+Defined in: [src/entities/MediaItem.ts:121](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L121)
 
 ***
 
@@ -73,10 +67,8 @@ As a `MediaItem` type, and hence also a `Downloadable` type, it can be used to c
 
 > **type**: `"dummy"`
 
+Defined in: [src/entities/MediaItem.ts:119](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L119)
+
 #### Overrides
 
 [`MediaLike`](MediaLike.md).[`type`](MediaLike.md#type)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:118](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L118)

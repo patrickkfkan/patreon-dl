@@ -84,6 +84,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
             lastDownloadedFilePath = preceding;
           }
           else if (this.#fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
+            await this.setDownloaded(destFilePath);
             this.notifySkip({
               name: 'destFileExists',
               message: `Destination file exists (${destFilePath})`,
@@ -119,6 +120,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
                   proceedWithCommit = !(await this.fsHelper.compareFiles(_tmpFilePath, lastDownloadedFilePath));
                   if (!proceedWithCommit) {
                     this.log('debug', `${compareMsg}: Files match`);
+                    await this.setDownloaded(lastDownloadedFilePath);
                     this.notifySkip({
                       name: 'destFileExists',
                       message: `Destination file exists with same content (${lastDownloadedFilePath})`,
@@ -133,6 +135,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
                   const filesizeStr = !this.dryRun ? `; filesize: ${fs.lstatSync(_tmpFilePath).size} bytes` : '';
                   this.log('debug', `Commit "${_tmpFilePath}" to "${_destFilePath}${filesizeStr}`);
                   this.fsHelper.rename(_tmpFilePath, _destFilePath);
+                  await this.setDownloaded(_destFilePath);
                   this.notifyComplete();
                 }
                 __cleanup();

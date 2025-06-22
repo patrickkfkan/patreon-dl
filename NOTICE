@@ -1,0 +1,23 @@
+NOTICE
+
+This project includes the following third-party software:
+
+- LightGallery (https://www.lightgalleryjs.com/)
+  Copyright © 2016–2025
+  Licensed under the GNU General Public License v3.0 (GPLv3)
+  Developed by Srinivas Tamada and contributors.
+  Source: https://github.com/sachinchoolur/lightGallery
+
+- Bottleneck (https://github.com/SGrondin/bottleneck)
+  Licensed under the BSD 2-Clause License
+
+- Fast-Copy (https://github.com/planttheidea/fast-copy)
+  Licensed under the GNU General Public License v3.0 (GPLv3)
+
+- argv-split (https://github.com/75lb/argv-split)
+  Licensed under the GNU General Public License v2.0 (GPLv2)
+
+All other dependencies are used under permissive licenses such as MIT, Apache-2.0, or ISC, and do not require attribution beyond preservation of their license terms in `node_modules`.
+
+This project is open source and licensed under the MIT License.  
+In accordance with the terms of the above licenses, this NOTICE file provides attribution and license information for included third-party software.

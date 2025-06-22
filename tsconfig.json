@@ -3,18 +3,19 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "ESNext",
+    "jsx": "react-jsx",
     "outDir": "dist",
     "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,
     "strictPropertyInitialization": false,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "typeRoots": [
-        "node_modules/@types",
-        "src/types"
+      "node_modules/@types",
+      "src/types"
     ],
     "paths": {
       "argv-split": ["./src/types/argv-split"]
@@ -22,6 +23,7 @@
   },
   "exclude": [
     "node_modules",
-    "src/types/**"
+    "src/types/**",
+    "src/browse/web/**/*"
   ]
 }

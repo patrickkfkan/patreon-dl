@@ -1,10 +1,12 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
 [patreon-dl](../README.md) / VideoMediaItem
 
 # Interface: VideoMediaItem
+
+Defined in: [src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L81)
 
 ## Extends
 
@@ -16,27 +18,15 @@
 
 > **createdAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L81)
+Defined in: [src/entities/MediaItem.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L83)
 
 ***
 
-### displayURLs
+### displayURL
 
-> **displayURLs**: `object`
+> **displayURL**: `null` \| `string`
 
-#### thumbnail
-
-> **thumbnail**: `null` \| `string`
-
-#### video
-
-> **video**: `null` \| `string`
-
-#### Defined in
-
-[src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L88)
+Defined in: [src/entities/MediaItem.ts:90](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L90)
 
 ***
 
@@ -44,9 +34,7 @@
 
 > **downloadURL**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L87)
+Defined in: [src/entities/MediaItem.ts:89](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L89)
 
 ***
 
@@ -54,9 +42,7 @@
 
 > **duration**: `null` \| `number`
 
-#### Defined in
-
-[src/entities/MediaItem.ts:86](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L86)
+Defined in: [src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L88)
 
 ***
 
@@ -64,13 +50,11 @@
 
 > **filename**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L4)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`filename`](MediaLike.md#filename)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L4)
 
 ***
 
@@ -78,13 +62,11 @@
 
 > **id**: `string`
 
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L3)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`id`](MediaLike.md#id)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L3)
 
 ***
 
@@ -92,19 +74,19 @@
 
 > **mimeType**: `null` \| `string`
 
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L5)
+
 #### Inherited from
 
 [`MediaLike`](MediaLike.md).[`mimeType`](MediaLike.md#mimetype)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L5)
 
 ***
 
 ### size
 
 > **size**: `object`
+
+Defined in: [src/entities/MediaItem.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L84)
 
 #### height
 
@@ -114,9 +96,13 @@
 
 > **width**: `null` \| `number`
 
-#### Defined in
+***
 
-[src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L82)
+### thumbnailURL
+
+> **thumbnailURL**: `null` \| `string`
+
+Defined in: [src/entities/MediaItem.ts:91](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L91)
 
 ***
 
@@ -124,10 +110,8 @@
 
 > **type**: `"video"`
 
+Defined in: [src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L82)
+
 #### Overrides
 
 [`MediaLike`](MediaLike.md).[`type`](MediaLike.md#type)
-
-#### Defined in
-
-[src/entities/MediaItem.ts:80](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/MediaItem.ts#L80)

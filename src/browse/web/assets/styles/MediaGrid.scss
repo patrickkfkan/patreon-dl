@@ -1,0 +1,104 @@
+.lg-video-poster {
+  object-fit: contain;
+}
+
+.media-grid {
+  display: grid;
+  position: relative;
+  max-height: 32em;
+  gap: 1px;
+  background: var(--bs-card-border-color);
+  border-bottom: var(--bs-card-border-color);
+
+  &--1 {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'a';
+  }
+
+  &--2 {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'a b';
+  }
+
+  &--3 {
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'a b' 'a c';
+  }
+
+  &--4 {
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'a b' 'c d';
+  }
+
+  &__item-wrapper {
+    width: 100%;
+    position: relative;
+
+    &:nth-child(1) {
+      grid-area: a;
+    }
+
+    &:nth-child(2) {
+      grid-area: b;
+    }
+
+    &:nth-child(3) {
+      grid-area: c;
+    }
+
+    &:nth-child(4) {
+      grid-area: d;
+    }
+  }
+
+  &__thumbnail-backdrop {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-size: cover;
+    filter: blur(1em);
+    transform: scale(1.5);
+  }
+
+  &__thumbnail-wrapper {
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    cursor: pointer;
+
+    &--video::before {
+      content: '\e1c4';
+      font-family: 'Material Icons Outlined';
+      font-size: 4em;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      transition: opacity 150ms ease-in-out;
+      opacity: 0.8;
+    }
+
+    &--video:hover::before {
+      opacity: 1;
+    }
+  }
+
+  &__thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &__badge {
+    position: absolute;
+    font-size: 1em;
+    bottom: 1em;
+    left: 1em;
+    z-index: 1001;
+  }
+}

@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,35 +6,31 @@
 
 # Interface: Post
 
+Defined in: [src/entities/Post.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L21)
+
 ## Properties
 
 ### attachments
 
-> **attachments**: [`Downloadable`](../type-aliases/Downloadable.md)[]
+> **attachments**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`AttachmentMediaItem`](AttachmentMediaItem.md)\>[]
 
-#### Defined in
-
-[src/entities/Post.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L50)
+Defined in: [src/entities/Post.ts:65](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L65)
 
 ***
 
 ### audio
 
-> **audio**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
+> **audio**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`AudioMediaItem`](AudioMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L56)
+Defined in: [src/entities/Post.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L71)
 
 ***
 
 ### audioPreview
 
-> **audioPreview**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
+> **audioPreview**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`AudioMediaItem`](AudioMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L62)
+Defined in: [src/entities/Post.ts:77](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L77)
 
 ***
 
@@ -42,9 +38,7 @@
 
 > **campaign**: `null` \| [`Campaign`](Campaign.md)
 
-#### Defined in
-
-[src/entities/Post.ts:85](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L85)
+Defined in: [src/entities/Post.ts:100](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L100)
 
 ***
 
@@ -52,9 +46,7 @@
 
 > **commentCount**: `number`
 
-#### Defined in
-
-[src/entities/Post.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L35)
+Defined in: [src/entities/Post.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L50)
 
 ***
 
@@ -62,19 +54,15 @@
 
 > **content**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L31)
+Defined in: [src/entities/Post.ts:46](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L46)
 
 ***
 
 ### coverImage
 
-> **coverImage**: `null` \| [`PostCoverImageMediaItem`](PostCoverImageMediaItem.md)
+> **coverImage**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`PostCoverImageMediaItem`](PostCoverImageMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L36)
+Defined in: [src/entities/Post.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L51)
 
 ***
 
@@ -82,19 +70,15 @@
 
 > **editedAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L34)
+Defined in: [src/entities/Post.ts:49](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L49)
 
 ***
 
 ### embed
 
-> **embed**: `null` \| [`PostEmbed`](PostEmbed.md)
+> **embed**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`PostEmbed`](PostEmbed.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L44)
+Defined in: [src/entities/Post.ts:59](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L59)
 
 ***
 
@@ -102,19 +86,15 @@
 
 > **id**: `string`
 
-#### Defined in
-
-[src/entities/Post.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L11)
+Defined in: [src/entities/Post.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L23)
 
 ***
 
 ### images
 
-> **images**: [`Downloadable`](../type-aliases/Downloadable.md)[]
+> **images**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`DefaultImageMediaItem`](DefaultImageMediaItem.md)\>[]
 
-#### Defined in
-
-[src/entities/Post.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L68)
+Defined in: [src/entities/Post.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L83)
 
 ***
 
@@ -122,9 +102,7 @@
 
 > **isViewable**: `boolean`
 
-#### Defined in
-
-[src/entities/Post.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L28)
+Defined in: [src/entities/Post.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L43)
 
 ***
 
@@ -132,9 +110,7 @@
 
 > **postType**: `string`
 
-#### Defined in
-
-[src/entities/Post.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L27)
+Defined in: [src/entities/Post.ts:42](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L42)
 
 ***
 
@@ -142,9 +118,7 @@
 
 > **publishedAt**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L33)
+Defined in: [src/entities/Post.ts:48](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L48)
 
 ***
 
@@ -152,9 +126,7 @@
 
 > **raw**: `object`
 
-#### Defined in
-
-[src/entities/Post.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L87)
+Defined in: [src/entities/Post.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L102)
 
 ***
 
@@ -162,19 +134,15 @@
 
 > **teaserText**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L32)
+Defined in: [src/entities/Post.ts:47](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L47)
 
 ***
 
 ### thumbnail
 
-> **thumbnail**: `null` \| [`PostThumbnailMediaItem`](PostThumbnailMediaItem.md)
+> **thumbnail**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`PostThumbnailMediaItem`](PostThumbnailMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L37)
+Defined in: [src/entities/Post.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L52)
 
 ***
 
@@ -182,9 +150,7 @@
 
 > **tiers**: [`Tier`](../type-aliases/Tier.md)[]
 
-#### Defined in
-
-[src/entities/Post.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L38)
+Defined in: [src/entities/Post.ts:53](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L53)
 
 ***
 
@@ -192,9 +158,7 @@
 
 > **title**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L30)
+Defined in: [src/entities/Post.ts:45](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L45)
 
 ***
 
@@ -202,9 +166,7 @@
 
 > **type**: `"post"`
 
-#### Defined in
-
-[src/entities/Post.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L10)
+Defined in: [src/entities/Post.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L22)
 
 ***
 
@@ -212,26 +174,20 @@
 
 > **url**: `null` \| `string`
 
-#### Defined in
-
-[src/entities/Post.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L29)
+Defined in: [src/entities/Post.ts:44](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L44)
 
 ***
 
 ### video
 
-> **video**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
+> **video**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`VideoMediaItem`](VideoMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L83)
+Defined in: [src/entities/Post.ts:98](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L98)
 
 ***
 
 ### videoPreview
 
-> **videoPreview**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
+> **videoPreview**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)\<[`VideoMediaItem`](VideoMediaItem.md)\>
 
-#### Defined in
-
-[src/entities/Post.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/entities/Post.ts#L75)
+Defined in: [src/entities/Post.ts:90](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/Post.ts#L90)

@@ -16,6 +16,7 @@ export interface SingleImageMediaItem extends MediaLike {
   type: 'image';
   imageType: 'single';
   imageURL: string | null;
+  thumbnailURL: string | null;
 }
 
 export interface DefaultImageMediaItem extends MediaLike {
@@ -30,7 +31,8 @@ export interface DefaultImageMediaItem extends MediaLike {
     thumbnail: string | null;
     thumbnailLarge: string | null;
     thumbnailSmall: string | null;
-  }
+  };
+  thumbnailURL: string | null;
 }
 
 export interface CampaignCoverPhotoMediaItem extends MediaLike {
@@ -85,16 +87,15 @@ export interface VideoMediaItem extends MediaLike {
   },
   duration: number | null; // Seconds
   downloadURL: string | null;
-  displayURLs: {
-    thumbnail: string | null;
-    video: string | null; // URL of video displayed on-screen
-  }
+  displayURL: string | null; // URL of video displayed on-screen
+  thumbnailURL: string | null;
 }
 
 export interface AudioMediaItem extends MediaLike {
   type: 'audio';
   createdAt: string | null;
   url: string | null;
+  thumbnailURL: string | null;
 }
 
 export interface FileMediaItem extends MediaLike {

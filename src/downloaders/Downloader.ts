@@ -23,10 +23,11 @@ import InnertubeLoader from '../utils/yt/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
+import DB, { type DBInstance } from '../browse/db/index.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
-  Omit<DownloaderBootstrapData<T>, 'type'>;
+  DownloaderBootstrapData<T>;
 
 export interface DownloaderStartParams {
   signal?: AbortSignal;
@@ -35,7 +36,11 @@ export interface DownloaderStartParams {
 interface CreateDownloadTaskParams {
   target: Downloadable[];
   targetName: string;
-  destDir: string;
+  dirs: {
+    campaign: string | null;
+    main: string;
+    thumbnails: string | null;
+  };
   fileExistsAction: FileExistsAction;
 }
 
@@ -45,23 +50,20 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
   protected fetcher: Fetcher;
   protected fsHelper: FSHelper;
+  protected db: DBInstance;
   protected config: DownloaderConfig<T>;
   protected logger?: Logger | null;
 
   #hasEmittedEndEventOnAbort: boolean;
 
-  constructor(bootstrap: DownloaderBootstrapData<T>, options?: DownloaderOptions) {
+  constructor(config: DownloaderConfig<T>, db: DBInstance, logger?: Logger | null) {
     super();
-    this.#validateOptions(options);
 
-    this.config = {
-      ...bootstrap,
-      ...getDownloaderInit(options)
-    };
-
-    this.fetcher = new Fetcher(this.config, options?.logger);
-    this.fsHelper = new FSHelper(this.config, this.logger);
-    this.logger = options?.logger;
+    this.config = config;
+    this.fetcher = new Fetcher(this.config, logger);
+    this.fsHelper = new FSHelper(this.config, logger);
+    this.db = db;
+    this.logger = logger;
 
     if (this.config.pathToFFmpeg) {
       ffmpeg.setFfmpegPath(this.config.pathToFFmpeg);
@@ -75,7 +77,11 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     this.#hasEmittedEndEventOnAbort = false;
   }
 
-  protected createDownloadTaskBatch(name: string, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>): Promise<{ batch: DownloadTaskBatch; errorCount: number; }> {
+  protected createDownloadTaskBatch(
+    name: string,
+    signal?: AbortSignal,
+    ...createTasks: Array<CreateDownloadTaskParams | null>
+  ): Promise<{ batch: DownloadTaskBatch; errorCount: number; }> {
 
     const __getDownloadIdString = (task: IDownloadTask, batch: DownloadTaskBatch) => {
       let result = `#${batch.id}.${task.id}`;
@@ -165,25 +171,29 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return this.addToDownloadTaskBatch(batch, signal, ...createTasks);
   }
 
-  protected async addToDownloadTaskBatch(batch: DownloadTaskBatch, signal?: AbortSignal, ...createTasks: Array<CreateDownloadTaskParams | null>) {
+  protected async addToDownloadTaskBatch(
+    batch: DownloadTaskBatch,
+    signal?: AbortSignal,
+    ...createTasks: Array<CreateDownloadTaskParams | null>
+  ) {
     let failedCreateTaskCount = 0;
     for (const task of createTasks) {
       if (!task) {
         continue;
       }
-      const { target, targetName, destDir } = task;
+      const { target, targetName, dirs } = task;
       this.log('info', `Create download tasks for ${targetName}`);
       if (task.target.length === 0) {
         this.log('warn', `No items in ${targetName}`);
         continue;
       }
-      let createdCount = 0;
+      let ensureDirs: string[] = [];
       for (const tt of target) {
         try {
           const tasks = await DownloadTaskFactory.createFromDownloadable({
             config: this.config,
+            dirs,
             item: tt,
-            destDir,
             fetcher: this.fetcher,
             fileExistsAction: task.fileExistsAction,
             limiter: batch.limiter,
@@ -202,8 +212,15 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
               failedCreateTaskCount++;
             }
           }
-          batch.addTasks(tasks.filter((task) => !task.doa));
-          createdCount += tasks.length;
+          const createdTasks = tasks.filter((task) => !task.doa);
+          batch.addTasks(createdTasks);
+          ensureDirs = createdTasks.reduce<string[]>((result, task) => {
+            const dir = task.resolvedDestPath ? path.dirname(task.resolvedDestPath) : null;
+            if (dir && !result.includes(dir)) {
+              result.push(dir);
+            }
+            return result;
+          }, ensureDirs);
         }
         catch (error) {
           if (signal?.aborted) {
@@ -214,8 +231,8 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
           failedCreateTaskCount++;
         }
       }
-      if (createdCount > 0) {
-        this.fsHelper.createDir(destDir);
+      for (const dir of ensureDirs) {
+        this.fsHelper.createDir(dir);
       }
     }
     if (failedCreateTaskCount > 0) {
@@ -231,14 +248,24 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     if (!bootstrap) {
       throw Error('Could not determine downloader type from URL');
     }
-    switch (bootstrap.type) {
+    this.#validateOptions(options);
+
+    const config = {
+      ...bootstrap,
+      ...getDownloaderInit(options)
+    };
+    const logger = options?.logger;
+    const fsHelper = new FSHelper(config, logger);
+    const db = await DB.getInstance(fsHelper.getDBFilePath(), config.dryRun, logger);
+    
+    switch (config.type) {
       case 'product': {
         const ProductDownloader = (await import('./ProductDownloader.js')).default;
-        return new ProductDownloader(bootstrap, options);
+        return new ProductDownloader(config, db, logger);
       }
       case 'post': {
         const PostDownloader = (await import('./PostDownloader.js')).default;
-        return new PostDownloader(bootstrap, options);
+        return new PostDownloader(config, db, logger);
       }
     }
   }
@@ -258,7 +285,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     throw Error('Type mismatch: PostDownloader expected');
   }
 
-  #validateOptions(options?: DownloaderOptions) {
+  static #validateOptions(options?: DownloaderOptions) {
     if (!options) {
       return true;
     }
@@ -311,6 +338,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return new Promise<void>((resolve) => {
       void (async () => {
         if (!this.config.include.campaignInfo) {
+          if (campaign) {
+            await this.db.saveCampaign(campaign, new Date());
+          }
           resolve();
           return;
         }
@@ -399,7 +429,11 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
           {
             target: campaignMedia,
             targetName: `campaign #${campaign.id} -> images`,
-            destDir: campaignDirs.info,
+            dirs: {
+              campaign: campaignDirs.root,
+              main: campaignDirs.info,
+              thumbnails: null
+            },
             fileExistsAction: this.config.fileExistsAction.info
           }
         )).batch;
@@ -419,6 +453,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
+
+        // Step 4: save to DB
+        await this.db.saveCampaign(campaign, new Date());
   
         // Done
         this.log('info', 'Done saving campaign info');

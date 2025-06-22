@@ -1,0 +1,40 @@
+@use "./mixins";
+
+.campaign-header {
+
+  &__cover {
+    max-height: 10em;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  &__avatar {
+    height: 8em;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  &__title {
+    @include mixins.line-clamp();
+    
+    font-weight: bold;
+  }
+
+  &__creation-name {
+    @include mixins.line-clamp(); 
+  }
+
+  &__nav {
+    border-bottom: 1px solid var(--bs-secondary);
+
+    a {
+      padding-bottom: 0.5em;
+      position: relative;
+      top: 1px;
+
+      &.active {
+        border-bottom: 2px solid var(--bs-link-color);
+      }
+    }
+  }
+}

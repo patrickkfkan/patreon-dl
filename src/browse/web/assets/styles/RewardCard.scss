@@ -1,0 +1,29 @@
+@use "./mixins";
+
+.reward-card {
+  width: 100%;
+  height: 100%;
+
+  &__image {
+    max-height: 10em;
+    object-fit: contain;
+  }
+
+  &__title {
+    @include mixins.line-clamp();
+    
+    font-weight: bold;
+  }
+
+  &__content {
+    font-size: 0.9em;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    ul {
+      padding-left: 1em;
+    }
+  }
+}

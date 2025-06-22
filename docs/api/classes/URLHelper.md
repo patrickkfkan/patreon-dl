@@ -1,4 +1,4 @@
-[**patreon-dl**](../README.md) • **Docs**
+[**patreon-dl**](../README.md)
 
 ***
 
@@ -6,15 +6,17 @@
 
 # Class: URLHelper
 
+Defined in: [src/utils/URLHelper.ts:170](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L170)
+
 ## Constructors
 
-### new URLHelper()
+### Constructor
 
-> **new URLHelper**(): [`URLHelper`](URLHelper.md)
+> **new URLHelper**(): `URLHelper`
 
 #### Returns
 
-[`URLHelper`](URLHelper.md)
+`URLHelper`
 
 ## Methods
 
@@ -22,17 +24,17 @@
 
 > `static` **analyzeURL**(`url`): `null` \| [`URLAnalysis`](../type-aliases/URLAnalysis.md)
 
+Defined in: [src/utils/URLHelper.ts:286](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L286)
+
 #### Parameters
 
-• **url**: `string`
+##### url
+
+`string`
 
 #### Returns
 
 `null` \| [`URLAnalysis`](../type-aliases/URLAnalysis.md)
-
-#### Defined in
-
-[src/utils/URLHelper.ts:286](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L286)
 
 ***
 
@@ -40,17 +42,17 @@
 
 > `static` **constructCampaignAPIURL**(`campaignId`): `string`
 
+Defined in: [src/utils/URLHelper.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L206)
+
 #### Parameters
 
-• **campaignId**: `string`
+##### campaignId
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:206](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L206)
 
 ***
 
@@ -58,17 +60,17 @@
 
 > `static` **constructCampaignPageURL**(`user`): `string`
 
+Defined in: [src/utils/URLHelper.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L182)
+
 #### Parameters
 
-• **user**: [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
+##### user
+
+[`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:182](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L182)
 
 ***
 
@@ -76,17 +78,17 @@
 
 > `static` **constructCollectionURL**(`collectionId`): `string`
 
+Defined in: [src/utils/URLHelper.ts:198](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L198)
+
 #### Parameters
 
-• **collectionId**: `string`
+##### collectionId
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:198](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L198)
 
 ***
 
@@ -94,17 +96,17 @@
 
 > `static` **constructPostCommentsAPIURL**(`params`): `string`
 
+Defined in: [src/utils/URLHelper.ts:250](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L250)
+
 #### Parameters
 
-• **params**: `object` \| `object`
+##### params
+
+\{ `count?`: `number`; `postId`: `string`; `replies?`: `false`; \} | \{ `commentId`: `string`; `count?`: `number`; `replies`: `true`; \}
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:250](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L250)
 
 ***
 
@@ -112,27 +114,35 @@
 
 > `static` **constructPostsAPIURL**(`params`): `string`
 
+Defined in: [src/utils/URLHelper.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L210)
+
 #### Parameters
 
-• **params**
+##### params
 
-• **params.campaignId?**: `string`
+###### campaignId?
 
-• **params.currentUserId?**: `string`
+`string`
 
-• **params.filters?**: `Record`\<`string`, `any`\>
+###### currentUserId?
 
-• **params.postId?**: `string`
+`string`
 
-• **params.sort?**: [`PostSortOrder`](../enumerations/PostSortOrder.md)
+###### filters?
+
+`Record`\<`string`, `any`\>
+
+###### postId?
+
+`string`
+
+###### sort?
+
+[`PostSortOrder`](../enumerations/PostSortOrder.md)
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:210](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L210)
 
 ***
 
@@ -140,17 +150,17 @@
 
 > `static` **constructProductAPIURL**(`productId`): `string`
 
+Defined in: [src/utils/URLHelper.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L172)
+
 #### Parameters
 
-• **productId**: `string`
+##### productId
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:172](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L172)
 
 ***
 
@@ -158,17 +168,17 @@
 
 > `static` **constructUserAPIURL**(`userId`): `string`
 
+Defined in: [src/utils/URLHelper.ts:202](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L202)
+
 #### Parameters
 
-• **userId**: `string`
+##### userId
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:202](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L202)
 
 ***
 
@@ -176,17 +186,17 @@
 
 > `static` **constructUserPostsURL**(`user`): `string`
 
+Defined in: [src/utils/URLHelper.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L190)
+
 #### Parameters
 
-• **user**: [`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
+##### user
+
+[`UserIdOrVanityParam`](../type-aliases/UserIdOrVanityParam.md)
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:190](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L190)
 
 ***
 
@@ -194,17 +204,17 @@
 
 > `static` **getExtensionFromURL**(`url`): `string`
 
+Defined in: [src/utils/URLHelper.ts:400](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L400)
+
 #### Parameters
 
-• **url**: `string`
+##### url
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:400](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L400)
 
 ***
 
@@ -212,17 +222,17 @@
 
 > `static` **stripSearchParamsFromURL**(`url`): `string`
 
+Defined in: [src/utils/URLHelper.ts:391](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L391)
+
 #### Parameters
 
-• **url**: `string`
+##### url
+
+`string`
 
 #### Returns
 
 `string`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:391](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L391)
 
 ***
 
@@ -230,14 +240,14 @@
 
 > `static` **validateURL**(`url`): `boolean`
 
+Defined in: [src/utils/URLHelper.ts:405](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/URLHelper.ts#L405)
+
 #### Parameters
 
-• **url**: `any`
+##### url
+
+`any`
 
 #### Returns
 
 `boolean`
-
-#### Defined in
-
-[src/utils/URLHelper.ts:405](https://github.com/patrickkfkan/patreon-dl/blob/0f374425151a1d535f98dea530b43394331b4977/src/utils/URLHelper.ts#L405)
