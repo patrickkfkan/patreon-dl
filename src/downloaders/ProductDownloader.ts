@@ -141,7 +141,7 @@ export default class ProductDownloader extends Downloader<Product> {
           ['content items']: incContent === true ? 'yes' : incContent === false ? 'no' : JSON.stringify(incContent)
         });
   
-        const __inc = <T>(inc: boolean | Array<T>, target: Downloadable) => {
+        const __inc = (inc: boolean | Array<any>, target: Downloadable) => {
           if (typeof inc === 'boolean') {
             return inc;
           }
