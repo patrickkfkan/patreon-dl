@@ -157,7 +157,7 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
             <Form.Check
               key={`${section.searchParam}:${option.value}`}
               type="radio"
-              mediaId={`${section.searchParam}:${option.value}`}
+              id={`filter-select-${section.searchParam}:${option.value}`}
               name={section.searchParam}
               label={option.title}
               checked={isSelected(modalFilter, section, option)}
@@ -174,9 +174,9 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
           const variant = settings.theme.toLowerCase() === 'vapor' ? 'outline-secondary' : 'outline-primary';
           const optionEls = section.options.map((option) => (
             <ToggleButton
-              mediaId={`${section.searchParam}:${option.value}`}
               key={`${section.searchParam}:${option.value}`}
               type="checkbox"
+              id={`filter-select-${section.searchParam}:${option.value}`}
               checked={isSelected(modalFilter, section, option)}
               value={option.value || ''}
               variant={variant}
