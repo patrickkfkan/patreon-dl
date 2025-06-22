@@ -59,6 +59,7 @@
     "typedoc-plugin-rename-defaults": "^0.7.3",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.18.0",
+    "vite": "^6.3.5",
     "vite-plugin-static-copy": "^3.0.0",
     "vite-plugin-svgr": "^4.3.0"
   },
@@ -118,7 +119,6 @@
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "undici": "^7.3.0",
-    "vite": "^6.3.5",
     "yargs-parser": "^21.1.1",
     "youtubei.js": "^13.4.0"
   },
