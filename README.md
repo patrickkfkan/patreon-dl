@@ -8,7 +8,7 @@ This repo contains the `patreon-dl` library and its command-line tool. For GUI a
 
 ### Features
 - Access to patron-only content through cookie. This refers to content you have access to under your account. It does not include locked content that you don't have a subscription for.
-- Download posts by user, in a collection or single post
+- Download posts by user, in a collection or single post.
 - Download products (aka shop purchases)
 - Items included in downloads:
     - videos
@@ -17,9 +17,10 @@ This repo contains the `patreon-dl` library and its command-line tool. For GUI a
     - attachments
     - embedded videos
       - YouTube downloader built-in
-      - Supports [external downloader](#embedded-videos---external-downloader)
+      - Supports [external downloader](#embedded-videos--links---external-downloader)
 - Save campaign and content info 
 - Extensively configurable
+- Browse downloaded content through integrated web server
 
 You can run `patreon-dl` from the command-line or [use it as a library](./docs/Library.md) for your project. Node.js v20 or higher required.
 
@@ -28,6 +29,8 @@ You can run `patreon-dl` from the command-line or [use it as a library](./docs/L
 - Embedded links are not followed; only info about the embed is saved. Exception:
   - YouTube video link - in which case the video is downloaded; or
   - An external downloader is configured for the link provider.
+
+For information on external downloaders, see the [Embedded videos / links - external downloader](#embedded-videos--links---external-downloader) section. Example config is provided for fetching YouTube (replacing the built-in downloader) and Vimeo videos.
 
 ### FFmpeg dependency
 
@@ -49,9 +52,9 @@ $ patreon-dl --configure-youtube
 
 ### Embedded videos / links - external downloader
 
-You can specify external programs to download embedded videos or from embedded links. For YouTube videos, this will replace the built-in downloader. See the [example config](./example-embed.conf) on how to do this.
+You can specify external programs to download embedded videos or from embedded links. For YouTube videos, this will replace the built-in downloader.
 
-> The example config utilizes [yt-dlp](https://github.com/yt-dlp/yt-dlp), a popular program capable of downloading YouTube and Vimeo content. As of current release, `yt-dlp` is also able to download Premium-quality YouTube videos without a Premium account.
+See the [example config](./example-embed.conf) on how to configure an external downloader to fetch YouTube and Vimeo videos through [yt-dlp](https://github.com/yt-dlp/yt-dlp). For Vimeo videos, a [helper script](./bin/patreon-dl-vimeo.js) bundled with `patreon-dl` is used.
 
 ## Installation
 
@@ -242,7 +245,7 @@ $ patreon-dl-server [OPTION]
 | `--log-file <file>` | `-f` | Save logs to `<file>`. |
 
 
-### Example
+### Example usage
 
 Say you downloaded something with `patreon-dl`:
 
