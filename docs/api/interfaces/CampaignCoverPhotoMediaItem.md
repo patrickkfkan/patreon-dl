@@ -6,7 +6,7 @@
 
 # Interface: CampaignCoverPhotoMediaItem
 
-Defined in: [src/entities/MediaItem.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L38)
+Defined in: [src/entities/MediaItem.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L38)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/entities/MediaItem.ts:38](https://github.com/patrickkfkan/patre
 
 > **filename**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L4)
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L4)
 
 #### Inherited from
 
@@ -30,7 +30,7 @@ Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreo
 
 > **id**: `string`
 
-Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L3)
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L3)
 
 #### Inherited from
 
@@ -42,7 +42,7 @@ Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreo
 
 > **imageType**: `"campaignCoverPhoto"`
 
-Defined in: [src/entities/MediaItem.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L40)
+Defined in: [src/entities/MediaItem.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L40)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [src/entities/MediaItem.ts:40](https://github.com/patrickkfkan/patre
 
 > **imageURLs**: `object`
 
-Defined in: [src/entities/MediaItem.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L41)
+Defined in: [src/entities/MediaItem.ts:41](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L41)
 
 #### large
 
@@ -78,7 +78,7 @@ Defined in: [src/entities/MediaItem.ts:41](https://github.com/patrickkfkan/patre
 
 > **mimeType**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L5)
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L5)
 
 #### Inherited from
 
@@ -90,7 +90,7 @@ Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreo
 
 > **type**: `"image"`
 
-Defined in: [src/entities/MediaItem.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/entities/MediaItem.ts#L39)
+Defined in: [src/entities/MediaItem.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/MediaItem.ts#L39)
 
 #### Overrides
 

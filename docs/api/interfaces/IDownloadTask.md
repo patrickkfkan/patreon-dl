@@ -6,7 +6,7 @@
 
 # Interface: IDownloadTask
 
-Defined in: [src/downloaders/task/DownloadTask.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L87)
+Defined in: [src/downloaders/task/DownloadTask.ts:87](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L87)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:87](https://github.com/patrick
 
 > **getProgress**: () => `null` \| [`DownloadProgress`](DownloadProgress.md)
 
-Defined in: [src/downloaders/task/DownloadTask.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L94)
+Defined in: [src/downloaders/task/DownloadTask.ts:94](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L94)
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:94](https://github.com/patrick
 
 > **id**: `number`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L88)
+Defined in: [src/downloaders/task/DownloadTask.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L88)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:88](https://github.com/patrick
 
 > **resolvedDestFilename**: `null` \| `string`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L92)
+Defined in: [src/downloaders/task/DownloadTask.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L92)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:92](https://github.com/patrick
 
 > **resolvedDestPath**: `null` \| `string`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L93)
+Defined in: [src/downloaders/task/DownloadTask.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L93)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:93](https://github.com/patrick
 
 > **retryCount**: `number`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:91](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L91)
+Defined in: [src/downloaders/task/DownloadTask.ts:91](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L91)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:91](https://github.com/patrick
 
 > **src**: `string`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:89](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L89)
+Defined in: [src/downloaders/task/DownloadTask.ts:89](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L89)
 
 ***
 
@@ -66,4 +66,4 @@ Defined in: [src/downloaders/task/DownloadTask.ts:89](https://github.com/patrick
 
 > **srcEntity**: [`Downloadable`](../type-aliases/Downloadable.md)
 
-Defined in: [src/downloaders/task/DownloadTask.ts:90](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L90)
+Defined in: [src/downloaders/task/DownloadTask.ts:90](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L90)

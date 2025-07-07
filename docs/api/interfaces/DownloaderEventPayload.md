@@ -6,7 +6,7 @@
 
 # Interface: DownloaderEventPayload
 
-Defined in: [src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L23)
+Defined in: [src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L23)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:23](https://github.com/patrickkf
 
 > **end**: \{ `aborted`: `true`; `error?`: `undefined`; `message`: `string`; \} \| \{ `aborted`: `false`; `error?`: `any`; `message`: `string`; \}
 
-Defined in: [src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L57)
+Defined in: [src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L57)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:57](https://github.com/patrickkf
 
 > **fetchBegin**: `object`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L25)
+Defined in: [src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L25)
 
 #### targetType
 
@@ -34,7 +34,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:25](https://github.com/patrickkf
 
 > **phaseBegin**: `object` & \{ `phase`: `"saveInfo"` \| `"saveMedia"`; \} \| \{ `batch`: [`IDownloadTaskBatch`](IDownloadTaskBatch.md); `phase`: `"batchDownload"`; \}
 
-Defined in: [src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L43)
+Defined in: [src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L43)
 
 #### Type declaration
 
@@ -48,7 +48,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:43](https://github.com/patrickkf
 
 > **phaseEnd**: `object`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L52)
+Defined in: [src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L52)
 
 #### phase
 
@@ -64,7 +64,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:52](https://github.com/patrickkf
 
 > **targetBegin**: `object`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L29)
+Defined in: [src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L29)
 
 #### target
 
@@ -76,7 +76,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:29](https://github.com/patrickkf
 
 > **targetEnd**: `object` & \{ `isSkipped`: `false`; \} \| \{ `isSkipped`: `true`; `skipMessage`: `string`; `skipReason`: [`TargetSkipReason`](../enumerations/TargetSkipReason.md); \}
 
-Defined in: [src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/DownloaderEvent.ts#L33)
+Defined in: [src/downloaders/DownloaderEvent.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L33)
 
 #### Type declaration
 

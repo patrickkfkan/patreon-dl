@@ -8,4 +8,4 @@
 
 > **DownloadTaskStatus** = `"pending"` \| `"pending-retry"` \| `"downloading"` \| `"error"` \| `"completed"` \| `"aborted"` \| `"skipped"`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/task/DownloadTask.ts#L71)
+Defined in: [src/downloaders/task/DownloadTask.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/task/DownloadTask.ts#L71)

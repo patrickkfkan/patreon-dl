@@ -6,7 +6,7 @@
 
 # Interface: ProxyAgentInfo
 
-Defined in: [src/utils/Proxy.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/Proxy.ts#L6)
+Defined in: [src/utils/Proxy.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/Proxy.ts#L6)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/Proxy.ts:6](https://github.com/patrickkfkan/patreon-dl/bl
 
 > **agent**: `Dispatcher`
 
-Defined in: [src/utils/Proxy.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/Proxy.ts#L9)
+Defined in: [src/utils/Proxy.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/Proxy.ts#L9)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/Proxy.ts:9](https://github.com/patrickkfkan/patreon-dl/bl
 
 > **protocol**: `"http"` \| `"https"` \| `"socks4"` \| `"socks5"`
 
-Defined in: [src/utils/Proxy.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/Proxy.ts#L7)
+Defined in: [src/utils/Proxy.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/Proxy.ts#L7)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [src/utils/Proxy.ts:7](https://github.com/patrickkfkan/patreon-dl/bl
 
 > **proxyURL**: `string`
 
-Defined in: [src/utils/Proxy.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/utils/Proxy.ts#L8)
+Defined in: [src/utils/Proxy.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/Proxy.ts#L8)

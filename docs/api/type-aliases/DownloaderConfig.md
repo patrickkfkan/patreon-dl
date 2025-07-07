@@ -8,7 +8,7 @@
 
 > **DownloaderConfig**\<`T`\> = [`DownloaderInit`](DownloaderInit.md) & [`DownloaderBootstrapData`](DownloaderBootstrapData.md)\<`T`\>
 
-Defined in: [src/downloaders/Downloader.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/4dbe5b7f9bc86c654049194392d94f0aeefc44c0/src/downloaders/Downloader.ts#L28)
+Defined in: [src/downloaders/Downloader.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/Downloader.ts#L28)
 
 ## Type Parameters
 
