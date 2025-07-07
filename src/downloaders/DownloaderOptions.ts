@@ -3,6 +3,9 @@ import type Logger from '../utils/logging/Logger.js';
 import { type DeepRequired, pickDefined } from '../utils/Misc.js';
 import type DateTime from '../utils/DateTime.js';
 
+const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0';
+
+
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
 export type StopOnCondition = 'never' | 'postPreviouslyDownloaded' | 'postPublishDateOutOfRange';
 
@@ -57,6 +60,7 @@ export interface DownloaderOptions {
     maxConcurrent?: number;
     minTime?: number;
     proxy?: ProxyOptions | null;
+    userAgent?: string;
   };
   fileExistsAction?: {
     content?: FileExistsAction;
@@ -125,6 +129,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
       url: '',
       rejectUnauthorizedTLS: true
     },
+    userAgent: DEFAULT_USER_AGENT
   },
   fileExistsAction: {
     content: 'skip',
@@ -187,7 +192,8 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       maxRetries: pickDefined(options?.request?.maxRetries, defaults.request.maxRetries),
       maxConcurrent: pickDefined(options?.request?.maxConcurrent, defaults.request.maxConcurrent),
       minTime: pickDefined(options?.request?.minTime, defaults.request.minTime),
-      proxy
+      proxy,
+      userAgent: pickDefined(options?.request?.userAgent, defaults.request.userAgent)
     },
     fileExistsAction: {
       content: options?.fileExistsAction?.content || defaults.fileExistsAction.content,

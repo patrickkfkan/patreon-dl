@@ -46,7 +46,8 @@ const CONFIG_FILE_PROPS = {
     proxy: {
       url: 'request:proxy.url',
       rejectUnauthorizedTLS: 'request:proxy.reject.unauthorized.tls'
-    }
+    },
+    userAgent: 'request:user.agent'
   },
   consoleLogger: {
     enabled: 'logger.console:enabled',
@@ -136,7 +137,8 @@ export default class ConfigFileParser {
         proxy: {
           url: __getValue(CONFIG_FILE_PROPS.request.proxy.url),
           rejectUnauthorizedTLS: __getValue(CONFIG_FILE_PROPS.request.proxy.rejectUnauthorizedTLS),
-        }
+        },
+        userAgent: __getValue(CONFIG_FILE_PROPS.request.userAgent),
       },
       fileExistsAction: {
         content: __getValue(CONFIG_FILE_PROPS.fileExistsAction.content),

@@ -48,8 +48,6 @@ export type FetcherGetResultOf<T extends FetcherGetType> =
   T extends 'json' ? any :
   never;
 
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0';
-
 export default class Fetcher {
 
   name = 'Fetcher';
@@ -59,6 +57,7 @@ export default class Fetcher {
   #dryRun: boolean;
   #fsHelper: FSHelper;
   #proxyAgent?: Dispatcher;
+  #userAgent: string;
 
   constructor(config: DownloaderConfig<any>, logger?: Logger | null) {
     this.#cookie = config.cookie;
@@ -66,6 +65,7 @@ export default class Fetcher {
     this.#dryRun = config.dryRun;
     this.#fsHelper = new FSHelper(config, logger);
     this.#proxyAgent = createProxyAgent(config)?.agent || undefined;
+    this.#userAgent = config.request.userAgent;
   }
 
   async get<T extends FetcherGetType>(args: {
@@ -302,7 +302,7 @@ export default class Fetcher {
     if (setReferer) {
       request.headers.set('referer', SITE_URL);
     }
-    request.headers.set('User-Agent', USER_AGENT);
+    request.headers.set('User-Agent', this.#userAgent);
     if (type === 'json') {
       request.headers.set('Content-Type', 'application/vnd.api+json');
     }

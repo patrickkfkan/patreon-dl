@@ -183,7 +183,8 @@ export default class CommandLineParser {
       request: {
         maxRetries: undefined,
         maxConcurrent: undefined,
-        minTime: undefined
+        minTime: undefined,
+        userAgent: undefined
       },
       fileExistsAction: {
         content: undefined,
