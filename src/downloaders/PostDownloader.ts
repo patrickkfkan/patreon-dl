@@ -13,6 +13,7 @@ import CommentParser from '../parsers/CommentParser.js';
 import { type Comment, type CommentCollection, type CommentReply, type CommentReplyCollection } from '../entities/Comment.js';
 import { generatePostCommentsSummary } from './templates/CommentInfo.js';
 import { type PostDirectories } from '../utils/FSHelper.js';
+import { type DBInstance } from '../browse/db/index.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -32,6 +33,7 @@ export default class PostDownloader extends Downloader<Post> {
       void (async () => {
         const { signal } = params || {};
         const postFetch = this.config.postFetch;
+        const db = await this.db();
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
@@ -158,7 +160,15 @@ export default class PostDownloader extends Downloader<Post> {
               continue;
             }
             
-            switch ((await this.#doDownload(post, postDirs, statusCacheValidation.scope, statusCache, resolve, signal)).status) {
+            switch ((await this.#doDownload(
+              post,
+              postDirs,
+              statusCacheValidation.scope,
+              statusCache,
+              db,
+              resolve,
+              signal
+            )).status) {
               case 'aborted':
                 return;
               case 'downloaded':
@@ -251,7 +261,15 @@ export default class PostDownloader extends Downloader<Post> {
     return this.#startPromise;
   }
 
-  async #doDownload(post: Post, postDirs: PostDirectories, scope: StatusCacheValidationScope<Post>, statusCache: StatusCache, resolve: () => void, signal?: AbortSignal): Promise<{status: 'skippedUnviewable' | 'skippedUnmetMediaTypeCriteria' | 'skippedNotInTier' | 'skippedPublishDateOutOfRange' | 'aborted' | 'downloaded' }> {
+  async #doDownload(
+    post: Post,
+    postDirs: PostDirectories,
+    scope: StatusCacheValidationScope<Post>,
+    statusCache: StatusCache,
+    db: DBInstance,
+    resolve: () => void,
+    signal?: AbortSignal
+  ): Promise<{status: 'skippedUnviewable' | 'skippedUnmetMediaTypeCriteria' | 'skippedNotInTier' | 'skippedPublishDateOutOfRange' | 'aborted' | 'downloaded' }> {
     this.log('info', `Download post #${post.id} (${post.title})`);
 
     const downloadPost = scope.includes('post');
@@ -599,13 +617,13 @@ export default class PostDownloader extends Downloader<Post> {
     let skipDB = false;
     if (!post.isViewable) {
       // Skip if existing db record (if any) refers to viewable post
-      const dbPost = await this.db.getContent(post.id, 'post');
+      const dbPost = await db.getContent(post.id, 'post');
       skipDB = dbPost !== null && dbPost.isViewable;
     }
     if (!skipDB) {
-      await this.db.saveContent(post);
+      await db.saveContent(post);
       if (comments) {
-        await this.db.savePostComments(post, comments);
+        await db.savePostComments(post, comments);
       }
     }
     else {
