@@ -267,6 +267,11 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.1.0
+- Defer database initialization until downloader starts
+- UI: fix post column width possibly exceeding screen width
+- Add `request.userAgent` option
+
 v3.0.0
 - Add support for browsing downloaded content through integrated web server. Note: this feature will not work for downloads made with previous versions of `patreon-dl`.
 
