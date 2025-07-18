@@ -539,7 +539,7 @@ export default abstract class Parser {
     // PATCH: External images support
     const $ = cheerioLoad(content);
 
-    // Patreon images (оригинальная логика)
+    // Patreon images
     // <img data-media-id="279317228" src="https://c10.patreonusercontent.com/4...">
     const imgMediaIDs = $('img').toArray().reduce<Array<{ id: string, src?: string }>>((result, el) => {
       const id = $(el).attr('data-media-id');
@@ -563,7 +563,7 @@ export default abstract class Parser {
       } : undefined))
       .filter((item) => item !== null) as Downloadable<DefaultImageMediaItem>[];
 
-    // PATCH: Внешние изображения (новая логика)
+    // External images support
     const externalImages: Downloadable<DefaultImageMediaItem>[] = [];
     const allImgs = $('img').toArray();
     
@@ -571,28 +571,27 @@ export default abstract class Parser {
       const src = $(el).attr('src');
       const mediaId = $(el).attr('data-media-id');
       
-      // Обрабатываем только изображения без data-media-id (внешние)
+      // Process only images without data-media-id (external images)
       if (src && !mediaId) {
-        // Проверяем, что это валидный URL
+                  // Validate URL
         try {
           const url = new URL(src);
-          // Поддерживаем популярные домены для изображений
-          // Скачиваем изображения с любых доменов
+          // Support images from any domain (not just Patreon)
           if (url.protocol === 'https:' || url.protocol === 'http:') {
-            // Универсальная логика извлечения имени файла из URL
+            // Universal filename extraction logic
             let originalFilename = '';
             
-            // 1. Берем последний сегмент пути (самое распространенное)
+            // 1. Extract the last path segment (most common case)
             const pathSegments = url.pathname.split('/').filter(segment => segment.length > 0);
             if (pathSegments.length > 0) {
               originalFilename = pathSegments[pathSegments.length - 1];
             }
             
-            // 2. Убираем query параметры
+            // 2. Remove query parameters
             originalFilename = originalFilename.split('?')[0];
             
-            // 3. Если имя файла подозрительно короткое или не содержит точку,
-            //    попробуем найти лучший кандидат в других сегментах пути
+            // 3. If filename is suspiciously short or has no extension,
+            //    try to find a better candidate in other path segments
             if (originalFilename.length < 5 || !originalFilename.includes('.')) {
               const betterCandidate = pathSegments.find(segment => 
                 segment.includes('.') && segment.length > 5 && !segment.includes('v1')
@@ -602,12 +601,12 @@ export default abstract class Parser {
               }
             }
             
-            // 4. Fallback: если имя файла все еще плохое
+            // 4. Fallback: if filename is still invalid
             if (!originalFilename || originalFilename.length < 3 || originalFilename === '/') {
               originalFilename = `external_${postId}_${index}`;
             }
             
-            // 5. Добавляем расширение если его нет
+            // 5. Add extension if missing
             const hasValidExtension = originalFilename.includes('.') && 
               originalFilename.split('.').pop()!.length >= 2 && 
               originalFilename.split('.').pop()!.length <= 5;
@@ -616,7 +615,7 @@ export default abstract class Parser {
               originalFilename += extension;
             }
             
-            // 6. Ограничиваем длину имени файла
+            // 6. Limit filename length
             if (originalFilename.length > 150) {
               const extension = originalFilename.split('.').pop();
               const nameWithoutExt = originalFilename.substring(0, originalFilename.lastIndexOf('.'));

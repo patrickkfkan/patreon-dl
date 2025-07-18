@@ -195,7 +195,7 @@ export default class DownloadTaskFactory {
         }
 
         if (url) {
-          // Проверяем существование файла ДО создания задачи для оптимизации
+          // Check file existence BEFORE creating task for optimization
           if (fileExistsAction === 'skip') {
             try {
               const destFilePath = await fetcher.resolveDestFilePath({
@@ -205,7 +205,7 @@ export default class DownloadTaskFactory {
                 signal
               });
               if (destFilePath && fs.existsSync(path.dirname(destFilePath)) && fs.existsSync(destFilePath)) {
-                // Файл уже существует и нужно пропустить - не создаем задачу
+                // File already exists and should be skipped - don't create task
                 skippedExistingFiles++;
                 if (logger) {
                   logger.log({
@@ -217,8 +217,8 @@ export default class DownloadTaskFactory {
                 continue;
               }
             } catch (error) {
-              // Если не удалось определить путь, создаем задачу как обычно
-              // (ошибка будет обработана позже в DownloadTask.create)
+              // If unable to determine path, create task as usual
+              // (error will be handled later in DownloadTask.create)
             }
           }
           
@@ -243,7 +243,7 @@ export default class DownloadTaskFactory {
       }
       tasks.push(...urlToTasks);
       
-      // Если все файлы были пропущены, сообщаем об этом вместо ошибки
+              // If all files were skipped, report this instead of throwing error
       if (tasks.length === 0 && skippedExistingFiles > 0) {
         if (logger) {
           logger.log({
@@ -252,7 +252,7 @@ export default class DownloadTaskFactory {
             message: [`Item #${item.id}: All ${skippedExistingFiles} file(s) already exist on disk - skipped`]
           });
         }
-        return []; // Возвращаем пустой массив вместо генерации ошибки
+                  return []; // Return empty array instead of throwing error
       }
     }
 
