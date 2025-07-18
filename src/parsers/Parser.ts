@@ -536,9 +536,10 @@ export default abstract class Parser {
   }
 
   protected parseInlineMedia(postId: string, content: string, included: Array<any>) {
+    // PATCH: External images support
     const $ = cheerioLoad(content);
 
-    // Patreon images
+    // Patreon images (оригинальная логика)
     // <img data-media-id="279317228" src="https://c10.patreonusercontent.com/4...">
     const imgMediaIDs = $('img').toArray().reduce<Array<{ id: string, src?: string }>>((result, el) => {
       const id = $(el).attr('data-media-id');
@@ -548,7 +549,8 @@ export default abstract class Parser {
       }
       return result;
     }, []);
-    const images = imgMediaIDs
+    
+    const patreonImages = imgMediaIDs
       .map(({id, src}) => this.findInAPIResponseIncludedArray(included, id, 'media', 'image', src ? {
         id,
         attributes: {
@@ -560,10 +562,103 @@ export default abstract class Parser {
         }
       } : undefined))
       .filter((item) => item !== null) as Downloadable<DefaultImageMediaItem>[];
-    this.log('debug', `Parse inline media - got ${images.length} images`);
+
+    // PATCH: Внешние изображения (новая логика)
+    const externalImages: Downloadable<DefaultImageMediaItem>[] = [];
+    const allImgs = $('img').toArray();
+    
+    allImgs.forEach((el, index) => {
+      const src = $(el).attr('src');
+      const mediaId = $(el).attr('data-media-id');
+      
+      // Обрабатываем только изображения без data-media-id (внешние)
+      if (src && !mediaId) {
+        // Проверяем, что это валидный URL
+        try {
+          const url = new URL(src);
+          // Поддерживаем популярные домены для изображений
+          // Скачиваем изображения с любых доменов
+          if (url.protocol === 'https:' || url.protocol === 'http:') {
+            // Универсальная логика извлечения имени файла из URL
+            let originalFilename = '';
+            
+            // 1. Берем последний сегмент пути (самое распространенное)
+            const pathSegments = url.pathname.split('/').filter(segment => segment.length > 0);
+            if (pathSegments.length > 0) {
+              originalFilename = pathSegments[pathSegments.length - 1];
+            }
+            
+            // 2. Убираем query параметры
+            originalFilename = originalFilename.split('?')[0];
+            
+            // 3. Если имя файла подозрительно короткое или не содержит точку,
+            //    попробуем найти лучший кандидат в других сегментах пути
+            if (originalFilename.length < 5 || !originalFilename.includes('.')) {
+              const betterCandidate = pathSegments.find(segment => 
+                segment.includes('.') && segment.length > 5 && !segment.includes('v1')
+              );
+              if (betterCandidate) {
+                originalFilename = betterCandidate;
+              }
+            }
+            
+            // 4. Fallback: если имя файла все еще плохое
+            if (!originalFilename || originalFilename.length < 3 || originalFilename === '/') {
+              originalFilename = `external_${postId}_${index}`;
+            }
+            
+            // 5. Добавляем расширение если его нет
+            const hasValidExtension = originalFilename.includes('.') && 
+              originalFilename.split('.').pop()!.length >= 2 && 
+              originalFilename.split('.').pop()!.length <= 5;
+            if (!hasValidExtension) {
+              const extension = URLHelper.getExtensionFromURL(src) || '.jpg';
+              originalFilename += extension;
+            }
+            
+            // 6. Ограничиваем длину имени файла
+            if (originalFilename.length > 150) {
+              const extension = originalFilename.split('.').pop();
+              const nameWithoutExt = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+              originalFilename = nameWithoutExt.substring(0, 140 - index.toString().length) + `_${index}.${extension}`;
+            }
+            
+            const externalId = `external_${postId}_${index}`;
+            const filename = FSHelper.sanitizeFilename(originalFilename);
+            
+                                      const externalImage: Downloadable<DefaultImageMediaItem> = {
+               type: 'image',
+               id: externalId,
+               filename: filename,
+               mimeType: null,
+               imageType: 'default',
+               createdAt: null,
+               downloadURL: src,
+               imageURLs: {
+                 default: src,
+                 defaultSmall: null,
+                 original: src,
+                 thumbnail: null,
+                 thumbnailLarge: null,
+                 thumbnailSmall: null
+               },
+               thumbnailURL: null
+             };
+            
+            externalImages.push(externalImage);
+            this.log('debug', `Found external image: ${src}`);
+          }
+        } catch (error) {
+          this.log('debug', `Invalid image URL: ${src}`);
+        }
+      }
+    });
+
+    const allImages = [...patreonImages, ...externalImages];
+    this.log('debug', `Parse inline media - got ${patreonImages.length} Patreon images + ${externalImages.length} external images = ${allImages.length} total`);
 
     return {
-      images
+      images: allImages
     };
   }
 
