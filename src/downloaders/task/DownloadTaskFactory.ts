@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { type DummyMediaItem } from '../../entities/MediaItem.js';
 import type Fetcher from '../../utils/Fetcher.js';
 import MediaFilenameResolver from '../../utils/MediaFilenameResolver.js';
@@ -182,6 +183,8 @@ export default class DownloadTaskFactory {
     else {
       const srcURLs = this.#getSrcURLs(item, downloadAllVariants);
       const urlToTasks: DownloadTask[] = [];
+      let skippedExistingFiles = 0;
+      
       for (const [ variant, url ] of Object.entries(srcURLs)) {
         const destFilenameResolver = 
           new MediaFilenameResolver(item, url, destFilenameFormat,
@@ -192,6 +195,33 @@ export default class DownloadTaskFactory {
         }
 
         if (url) {
+          // Проверяем существование файла ДО создания задачи для оптимизации
+          if (fileExistsAction === 'skip') {
+            try {
+              const destFilePath = await fetcher.resolveDestFilePath({
+                url,
+                destDir: dirs.main,
+                destFilenameResolver,
+                signal
+              });
+              if (destFilePath && fs.existsSync(path.dirname(destFilePath)) && fs.existsSync(destFilePath)) {
+                // Файл уже существует и нужно пропустить - не создаем задачу
+                skippedExistingFiles++;
+                if (logger) {
+                  logger.log({
+                    level: 'debug',
+                    originator: 'DownloadTaskFactory',
+                    message: [`Skipping existing file: ${destFilePath}`]
+                  });
+                }
+                continue;
+              }
+            } catch (error) {
+              // Если не удалось определить путь, создаем задачу как обычно
+              // (ошибка будет обработана позже в DownloadTask.create)
+            }
+          }
+          
           urlToTasks.push(await DownloadTask.create(FetcherDownloadTask, {
             downloadType: 'variant',
             config,
@@ -212,6 +242,18 @@ export default class DownloadTaskFactory {
         urlToTasks[0].downloadType = 'main';
       }
       tasks.push(...urlToTasks);
+      
+      // Если все файлы были пропущены, сообщаем об этом вместо ошибки
+      if (tasks.length === 0 && skippedExistingFiles > 0) {
+        if (logger) {
+          logger.log({
+            level: 'info',
+            originator: 'DownloadTaskFactory',
+            message: [`Item #${item.id}: All ${skippedExistingFiles} file(s) already exist on disk - skipped`]
+          });
+        }
+        return []; // Возвращаем пустой массив вместо генерации ошибки
+      }
     }
 
     if (dirs.thumbnails && isDownloadableWithThumbnail(item)) {
