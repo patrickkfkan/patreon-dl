@@ -124,7 +124,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
             this.resolvedDestPath = inc.filePath;
             lastDownloadedFilePath = inc.preceding;
           }
-          else if (fileExistsAction === 'skip' && fs.existsSync(destFilePath)) {
+          else if (fileExistsAction === 'skip' && fs.existsSync(path.dirname(destFilePath)) && fs.existsSync(destFilePath)) {
             const isM3U8 = this.srcEntity.type === 'video' && this.#isM3U8FilePath(destFilePath);
             const mp4FilePath = this.fsHelper.changeFilePathExtension(destFilePath, '.mp4');
             if (isM3U8 && !fs.existsSync(mp4FilePath)) {
