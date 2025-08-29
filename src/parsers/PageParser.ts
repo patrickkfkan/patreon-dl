@@ -1,3 +1,4 @@
+import { writeFile, writeFileSync, writeSync } from 'fs';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
 
@@ -35,6 +36,45 @@ export default class PageParser extends Parser {
       }
     }
     this.log('debug', `No match for pattern: ${initialDataRegex2}`);
+
+    this.log('debug', 'Check Next.js streaming response');
+    const isNextJSStreamingResponse = html.includes('self.__next_f.push');
+    if (isNextJSStreamingResponse) {
+      this.log('debug', 'Detected Next.js streaming response');
+
+      const currentUserIdRegex = /currentUser\\":(?:(null)|{.+\\"id\\":\\"(.+?)\\")/gm;
+      this.log('debug', `Trying pattern in Next.js streaming response: ${currentUserIdRegex}`);
+      const currentUserIdMatch = currentUserIdRegex.exec(html);
+      if (!currentUserIdMatch || (!currentUserIdMatch[1] && !currentUserIdMatch[2])) {
+        throw Error(`Initial data not found - no match for pattern in Next.js streaming response: ${currentUserIdRegex}`);
+      }
+
+      const campaignIdRegex = /campaign_id\\",\\"unit_id\\":\\"(.+?)\\"/gm;
+      this.log('debug', `Trying pattern in Next.js streaming response: ${campaignIdRegex}`);
+      const campaignIdMatch = campaignIdRegex.exec(html);
+      if (!campaignIdMatch || !campaignIdMatch[1]) {
+        throw Error(`Initial data not found - no match for pattern in Next.js streaming response: ${campaignIdRegex}`);
+      }
+
+      const currentUserId = currentUserIdMatch[1] || currentUserIdMatch[2] || undefined;
+      const campaignId = campaignIdMatch ? campaignIdMatch[1] : undefined;
+      return {
+        pageBootstrap: {
+          campaign: {
+            data: {
+              id: campaignId
+            }
+          }
+        },
+        commonBootstrap: {
+          currentUser: {
+            data: {
+              id: currentUserId === 'null' ? undefined : currentUserId
+            }
+          }
+        }
+      };
+    }
 
     throw Error('Initial data not found - no regex matches');
   }
