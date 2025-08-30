@@ -15,6 +15,10 @@
  * --video-password "<password>": for password-protected videos
  * --yt-dlp "</path/to/yt-dlp>": if yt-dlp is not in the PATH
  * 
+ * You can pass options directly to yt-dlp. To do so, add '--' to the end of the exec line, followed by the options.
+ * For example:
+ * exec = patreon-dl-vimeo -o "{dest.dir}/%(title)s.%(ext)s" --embed-html "{embed.html}" --embed-url "{embed.url}" -- --cookies-from-browser firefox
+ * 
  * Upon encountering a post with embedded Vimeo content, 'patreon-dl' will call this script. The following then happens:
  * - This script obtains the video URL from 'embed.html' or 'embed.url'. The former ("player URL") is always preferable 
  *   since it is what's actually played within the Patreon post, and furthermore 'embed.url' sometimes returns
@@ -81,18 +85,23 @@ function getCommandString(cmd, args) {
   ].join(' ');
 }
 
-async function download(url, o, videoPassword, ytdlpPath) {
+async function download(url, o, videoPassword, ytdlpPath, ytdlpArgs) {
   let proc;
   const ytdlp = ytdlpPath || 'yt-dlp';
+  const parsedYtdlpArgs = parseArgs(ytdlpArgs);
   try {
     return await new Promise((resolve, reject) => {
       let settled = false;
-      const args = [
-        '-o', o,
-        '--referer', 'https://patreon.com/'
-      ];
+      const args = [];
+      if (!parsedYtdlpArgs['o'] && !parsedYtdlpArgs['output']) {
+        args.push('-o', o);
+      }
+      if (!parsedYtdlpArgs['referrer']) {
+        args.push('--referer', 'https://patreon.com/');
+      }
+      args.push(...ytdlpArgs);
       const printArgs = [...args];
-      if (videoPassword) {
+      if (videoPassword && !parsedYtdlpArgs['video-password']) {
         args.push('--video-password', videoPassword);
         printArgs.push('--video-password', '******');
       }
@@ -147,6 +156,7 @@ const o = _o?.trim() ? path.resolve(_o.trim()) : null;
 const embedHTML = _embedHTML?.trim();
 const embedURL = _embedURL?.trim();
 const ytdlpPath = _ytdlpPath?.trim() ? path.resolve(_ytdlpPath.trim()) : null;
+const ytdlpArgs = args['_'];
 
 if (!o) {
   console.error('No output file specified');
@@ -166,7 +176,7 @@ if (!url) {
 }
 
 async function doDownload(_url) {
-  let code = await download(_url, o, videoPassword, ytdlpPath);
+  let code = await download(_url, o, videoPassword, ytdlpPath, ytdlpArgs);
   if (code !== 0 && _url !== embedURL && embedURL) {
     console.log(`Download failed - retrying with embed URL "${embedURL}"`);
     return await doDownload(embedURL);
