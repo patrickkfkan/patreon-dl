@@ -375,7 +375,7 @@ export default abstract class DownloadTask<T extends Downloadable = Downloadable
   }
 
   async setDownloaded(filePath: string) {
-    if (!['main', 'thumbnail'].includes(this.downloadType)) {
+    if (this.dryRun || !['main', 'thumbnail'].includes(this.downloadType)) {
       return;
     }
     if (!this.#srcEntity.downloaded) {

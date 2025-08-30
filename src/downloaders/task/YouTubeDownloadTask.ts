@@ -248,8 +248,15 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
 
     try {
       if (streamDownloadsResult === 'complete')  {
-        this.log('debug', 'YouTube stream(s) downloaded - going to run FFmpeg on downloaded stream(s)');
-        await super.doStart();
+        if (this.config.dryRun) {
+          this.log('debug', 'YouTube stream(s) downloaded');
+          this.log('debug', '(dry-run) -> Skip FFmpeg processing on downloaded stream(s)');
+          this.notifyComplete();
+        }
+        else {
+          this.log('debug', 'YouTube stream(s) downloaded - going to run FFmpeg on downloaded stream(s)');
+          await super.doStart();
+        }
         return;
       }
   
