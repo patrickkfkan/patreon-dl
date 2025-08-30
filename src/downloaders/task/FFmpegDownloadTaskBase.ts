@@ -1,5 +1,6 @@
 import fs from 'fs';
 import ffmpeg, { type FfmpegCommand } from 'fluent-ffmpeg';
+import { sync as spawnSync } from '@patrickkfkan/cross-spawn';
 import DownloadTask, { type DownloadProgress, type DownloadTaskParams } from './DownloadTask.js';
 import { type FileExistsAction } from './../DownloaderOptions.js';
 import { type Downloadable } from '../../entities/Downloadable.js';
@@ -34,6 +35,8 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
   abstract name: string;
 
+  static #ffmpegVersion: string | null = null;
+
   #fileExistsAction: FileExistsAction;
   #ffmpegCommand: FfmpegCommand | null;
   #commandLine: string | null;
@@ -43,6 +46,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
   constructor(params: FFmpegDownloadTaskBaseParams<T>) {
     super(params);
+
     this.#fileExistsAction = params.fileExistsAction;
     this.#commandLine = null;
 
@@ -339,5 +343,40 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
     }
 
     return secs;
+  }
+
+  protected getFFmpegVersion() {
+    if (FFmpegDownloadTaskBase.#ffmpegVersion) {
+      return FFmpegDownloadTaskBase.#ffmpegVersion;
+    }
+    try {
+      const args = ['-version'];
+      const result = spawnSync(this.config.pathToFFmpeg || 'ffmpeg', args, {
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      const versionLine = result.stdout.toString('utf8').split('\n')[0];
+      const versionMatch = versionLine.match(/ffmpeg version (\S+)/);
+      FFmpegDownloadTaskBase.#ffmpegVersion = versionMatch ? versionMatch[1] : null;
+      if (!FFmpegDownloadTaskBase.#ffmpegVersion) {
+        throw new Error('No match for version string found in ffmpeg output');
+      }
+      this.log('debug', `FFmpeg version: ${FFmpegDownloadTaskBase.#ffmpegVersion}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.log('error', 'Failed to get FFmpeg version:', error);
+      } else {
+        this.log('error', 'Failed to get FFmpeg version:', String(error));
+      }
+      this.log('warn', 'FFmpeg command might fail');
+      FFmpegDownloadTaskBase.#ffmpegVersion = 'error';
+    }
+
+    return FFmpegDownloadTaskBase.#ffmpegVersion;
   }
 }

@@ -22,16 +22,20 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
   }
 
   protected async getFFmpegCommandParams(): Promise<FFmpegCommandParams> {
+    const inputOptions = [
+      '-protocol_whitelist',
+      'http,https,tcp,tls',
+      '-headers',
+      `Referer: ${SITE_URL}`
+    ];
+    if (this.getFFmpegVersion().startsWith('7.')) {
+      inputOptions.push('-extension_picky', '0');
+    }
     return Promise.resolve({
       inputs: [
         {
           input: this.src,
-          options: [
-            '-protocol_whitelist',
-            'http,https,tcp,tls',
-            '-headers',
-            `Referer: ${SITE_URL}`
-          ]
+          options: inputOptions
         }
       ],
       output: this.#destFilePath
