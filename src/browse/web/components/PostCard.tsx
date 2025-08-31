@@ -14,14 +14,16 @@ import "lightgallery/css/lg-video.css";
 import lgThumbnail from 'lightgallery/plugins/thumbnail';
 import lgZoom from 'lightgallery/plugins/zoom';
 import lgVideo from 'lightgallery/plugins/video';
+import FadeContent from "./FadeContent";
 
 interface PostCardProps {
   post: Post;
   showCampaign?: boolean;
+  useShowMore?: boolean;
 }
 
 function PostCard(props: PostCardProps) {
-  const { post, showCampaign = false } = props;
+  const { post, showCampaign = false, useShowMore = false } = props;
   const location = useLocation();
 
   const mediaItems: Downloadable<any> = [];
@@ -141,6 +143,47 @@ function PostCard(props: PostCardProps) {
   const hasInlineMedia = inlineMediaRegex.test(post.content || '');
   const hasGallery = mediaItems.length > 0 || hasInlineMedia;
 
+  let body = (
+    <Stack>
+      <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
+        <Card.Title className="m-0">{titleEl}</Card.Title>
+        {
+          !post.isViewable ? (
+            <span className="material-icons text-body-secondary">lock</span>
+          ) : null
+        }
+      </Stack>
+      <Stack direction="horizontal" className="mb-3 text-body-secondary" gap={4}>
+        {
+          post.publishedAt ? (
+            <span>
+              {new Date(post.publishedAt).toLocaleString()}
+            </span>
+          ) : null
+        }
+        {
+          post.commentCount > 0 ? (
+            <Stack direction="horizontal" gap={2}>
+              <span className="material-icons" style={{ fontSize: '1.2em' }}>comment</span>
+              <span>{post.commentCount}</span>
+            </Stack>
+          ) : null
+        }
+      </Stack>
+      { audio }
+      <Card.Text dangerouslySetInnerHTML={{__html: post.content || ''}} />
+      { attachments }
+    </Stack>
+  );
+
+  if (useShowMore) {
+    body = (
+      <FadeContent>
+        {body}
+      </FadeContent>
+    );
+  }
+
   const contents = (
     <Card className="post-card">
       {
@@ -165,36 +208,7 @@ function PostCard(props: PostCardProps) {
       <MediaGrid items={mediaItems} title={post.title || ''} noGallery />
       { externalEmbed }
       <Card.Body>
-        <Stack>
-          <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
-            <Card.Title className="m-0">{titleEl}</Card.Title>
-            {
-              !post.isViewable ? (
-                <span className="material-icons text-body-secondary">lock</span>
-              ) : null
-            }
-          </Stack>
-          <Stack direction="horizontal" className="mb-3 text-body-secondary" gap={4}>
-            {
-              post.publishedAt ? (
-                <span>
-                  {new Date(post.publishedAt).toLocaleString()}
-                </span>
-              ) : null
-            }
-            {
-              post.commentCount > 0 ? (
-                <Stack direction="horizontal" gap={2}>
-                  <span className="material-icons" style={{ fontSize: '1.2em' }}>comment</span>
-                  <span>{post.commentCount}</span>
-                </Stack>
-              ) : null
-            }
-          </Stack>
-          { audio }
-          <Card.Text dangerouslySetInnerHTML={{__html: post.content || ''}} />
-          { attachments }
-        </Stack>
+        {body}
       </Card.Body>
     </Card>
   );

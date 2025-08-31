@@ -206,7 +206,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
         <Stack className="mb-4" gap={4}>
           {
             (list as ContentList<'post'>).items.map((item) => (
-              <PostCard key={`post-card-${item.id}`} post={item} />
+              <PostCard key={`post-card-${item.id}`} post={item} useShowMore />
             ))
           }
         </Stack>
