@@ -3,7 +3,6 @@ import { type APIConstructor } from ".";
 import { Post } from "../../entities";
 import { type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
-import { has } from 'cheerio/dist/commonjs/api/traversing';
 
 const DEFAULT_CONTENT_LIST_SIZE = 10;
 const DEFAULT_CONTENT_LIST_SORT_BY: ContentListSortBy = 'a-z';

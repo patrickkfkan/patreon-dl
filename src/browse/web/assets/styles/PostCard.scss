@@ -11,7 +11,19 @@
     }
   }
 
-  &__inline-media-caption {
+  &__inline-media-caption,
+  &__external-embed-caption {
     font-size: smaller;
+  }
+
+  &__external-embed-wrapper {
+    text-align: center;
+  }
+
+  &__external-embed {
+    > iframe {
+      width: 100%;
+      height: 100%;
+    }
   }
 }

@@ -101,6 +101,42 @@ function PostCard(props: PostCardProps) {
     )
   }, [post, location]);
 
+  // If there's an embed but no local video, and it's a known provider (YouTube), show the embed.
+  const externalEmbed = useMemo(() => {
+    // Only YouTube embeds for now
+    // Vimeo can't be reliably embedded due to CORS restrictions
+    if (post.embed && !post.embed.downloaded?.path && post.embed.html && post.embed.provider?.toLowerCase() === 'youtube') {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(post.embed.html, 'text/html');
+      // Select the iframe and get attributes
+      const iframe = doc.querySelector('iframe');
+      const width = iframe ? iframe.getAttribute('width') : null;
+      const height = iframe ? iframe.getAttribute('height') : null;
+      let aspectRatio = '';
+      if (width && height) {
+        aspectRatio = `${width} / ${height}`;
+      }
+      const style: React.CSSProperties = {
+        width: '100%'
+      };
+      if (aspectRatio) {
+        style.aspectRatio = aspectRatio;
+      }
+      const caption = post.embed.provider ? `(Embedded from ${post.embed.provider} - not stored locally)` : '(Embedded content - not stored locally)';
+      return (
+        <div className="post-card__external-embed-wrapper">
+          <div
+            className="post-card__external-embed"
+            style={style}
+            dangerouslySetInnerHTML={{__html: post.embed.html}}
+          />
+          <span className="post-card__external-embed-caption">{caption}</span>
+        </div>
+      )
+    }
+    return null;
+  }, [post]);
+
   const inlineMediaRegex = /class=\".*?\s*?lightgallery-item.*?\s*?\"/gm;
   const hasInlineMedia = inlineMediaRegex.test(post.content || '');
   const hasGallery = mediaItems.length > 0 || hasInlineMedia;
@@ -127,6 +163,7 @@ function PostCard(props: PostCardProps) {
         ) : null
       }
       <MediaGrid items={mediaItems} title={post.title || ''} noGallery />
+      { externalEmbed }
       <Card.Body>
         <Stack>
           <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
