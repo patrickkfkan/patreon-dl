@@ -1,7 +1,6 @@
 import "../assets/styles/RewardCard.scss";
 import { Card, Stack } from "react-bootstrap";
 import { type Reward } from "../../../entities";
-import sanitize from "sanitize-html";
 
 interface RewardCardProps {
   reward: Reward;
@@ -23,7 +22,7 @@ function RewardCard(props: RewardCardProps) {
             <div className="reward-card__title">{reward.title}</div>
             <div>{reward.amount || ''}</div>
           </Stack>
-          <div className="reward-card__content w-100" dangerouslySetInnerHTML={{__html: sanitize(reward.description || '')}}/>
+          <div className="reward-card__content w-100" dangerouslySetInnerHTML={{__html: reward.description || ''}}/>
         </Stack>
       </Card.Body>
     </Card>

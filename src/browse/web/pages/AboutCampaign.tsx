@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useAPI } from "../contexts/APIProvider";
 import { type Campaign, type Reward } from "../../../entities";
 import { useParams } from "react-router";
-import sanitize from "sanitize-html";
 import RewardCard from "../components/RewardCard";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -124,7 +123,7 @@ function AboutCampaign() {
         campaign ? (
           <div
             className="mb-4"
-            dangerouslySetInnerHTML={{__html: sanitize(campaign.summary || '')}}
+            dangerouslySetInnerHTML={{__html: campaign.summary || ''}}
           />
         ) : null
       }

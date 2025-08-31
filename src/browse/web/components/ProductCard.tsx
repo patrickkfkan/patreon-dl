@@ -1,13 +1,11 @@
 import "../assets/styles/ProductCard.scss";
 import { type Downloadable, type Product } from "../../../entities";
-import sanitize from "sanitize-html";
 import { Card, Col, Nav, Row, Stack, Tab } from "react-bootstrap";
 import { useCallback, useMemo } from "react";
 import MediaGrid from "./MediaGrid";
 import MediaGallery from "./MediaGallery";
 import { type MediaListItem } from "../../types/Media";
 import { Link, useLocation } from "react-router";
-import RawDataExtractor from "../utils/RawDataExtractor";
 import ObjectHelper from "../../../utils/ObjectHelper";
 import path from "path";
 import MediaImage from "./MediaImage";
@@ -256,7 +254,7 @@ function ProductCard(props: ProductCardProps) {
           </Stack>
           <Card.Text
             className="product-card__description"
-            dangerouslySetInnerHTML={{ __html: sanitize(RawDataExtractor.getProductRichTextDescription(product) || '') }}
+            dangerouslySetInnerHTML={{ __html: product.description || '' }}
           />
         </Stack>
         {mediaViewEl}

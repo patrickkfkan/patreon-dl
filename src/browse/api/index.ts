@@ -1,3 +1,4 @@
+import _sanitizeHTML from 'sanitize-html';
 import type Logger from '../../utils/logging/Logger.js';
 import { commonLog, type LogLevel } from '../../utils/logging/Logger.js';
 import { CampaignAPIMixin } from './CampaignAPIMixin.js';
@@ -9,6 +10,14 @@ import { FilterAPIMixin } from './FilterAPIMixin.js';
 
 export type APIConstructor = new (...args: any[]) => APIBase;
 export type APIInstance = InstanceType<typeof API>;
+
+const SANITIZE_HTML_OPTIONS = {
+  allowedTags: _sanitizeHTML.defaults.allowedTags.concat(['img']),
+  allowedAttributes: {
+    ..._sanitizeHTML.defaults.allowedAttributes,
+    '*': ['class']
+  }
+};
 
 export class APIBase {
   name = 'API';
@@ -27,6 +36,10 @@ export class APIBase {
       this.instance = new API(db, logger);
     }
     return this.instance;
+  }
+
+  sanitizeHTML(html: string) {
+    return _sanitizeHTML(html, SANITIZE_HTML_OPTIONS);
   }
 
   log(level: LogLevel, ...msg: any[]) {

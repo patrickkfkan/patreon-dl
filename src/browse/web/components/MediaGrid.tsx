@@ -15,6 +15,7 @@ import LightGalleryItem, { type LightGalleryItemProps } from "./LightGalleryItem
 interface MediaGridProps {
   items: Downloadable[];
   title: string;
+  noGallery?: boolean;
 }
 
 type MediaGridItemProps =
@@ -35,7 +36,7 @@ function MediaGridItem(props: MediaGridItemProps) {
 }
 
 function MediaGrid(props: MediaGridProps) {
-  const { items: _mi, title } = props;
+  const { items: _mi, title, noGallery = false } = props;
   const mediaItems = _mi.filter((mi) => mi.downloaded?.path);
   const lgItemProps = mediaItems.reduce<MediaGridItemProps[]>((result, mi) => {
     const isImage = !mi.downloaded?.mimeType || mi.downloaded.mimeType.startsWith('image/');
@@ -91,6 +92,31 @@ function MediaGrid(props: MediaGridProps) {
       </Stack>
     ));
 
+  const contents = (
+    <div className={`media-grid media-grid--${cells}`}>
+      {items}
+      {
+        lgItemProps.length > 4 ?
+          lgItemProps.slice(4).map((lg) => (
+            <MediaGridItem {...lg} hidden />
+          ))
+          : null
+      }
+      {
+        lgItemProps.length > 1 ?
+          <Badge className="media-grid__badge d-flex align-items-center">
+            <span className="material-icons me-2">image</span>
+            {lgItemProps.length}
+          </Badge>
+          : null
+      }
+    </div>
+  );
+
+  if (noGallery) {
+    return contents;
+  }
+
   return (
     <LightGallery
       speed={500}
@@ -98,24 +124,7 @@ function MediaGrid(props: MediaGridProps) {
       videojs
       selector=".lightgallery-item"
     >
-      <div className={`media-grid media-grid--${cells}`}>
-        {items}
-        {
-          lgItemProps.length > 4 ?
-            lgItemProps.slice(4).map((lg) => (
-              <MediaGridItem {...lg} hidden />
-            ))
-            : null
-        }
-        {
-          lgItemProps.length > 1 ?
-            <Badge className="media-grid__badge d-flex align-items-center">
-              <span className="material-icons me-2">image</span>
-              {lgItemProps.length}
-            </Badge>
-            : null
-        }
-      </div>
+      {contents}
     </LightGallery>
   )
 }

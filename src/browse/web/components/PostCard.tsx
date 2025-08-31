@@ -1,11 +1,19 @@
+import "../assets/styles/PostCard.scss";
 import { type Downloadable, type Post } from "../../../entities";
-import sanitize from "sanitize-html";
 import { Card, Stack } from "react-bootstrap";
 import MediaGrid from "./MediaGrid";
 import path from "path";
 import { useMemo } from "react";
 import { Link, useLocation } from "react-router";
 import MediaImage from "./MediaImage";
+import LightGallery from "lightgallery/react";
+import "lightgallery/css/lightgallery.css";
+import "lightgallery/css/lg-zoom.css";
+import "lightgallery/css/lg-thumbnail.css";
+import "lightgallery/css/lg-video.css";
+import lgThumbnail from 'lightgallery/plugins/thumbnail';
+import lgZoom from 'lightgallery/plugins/zoom';
+import lgVideo from 'lightgallery/plugins/video';
 
 interface PostCardProps {
   post: Post;
@@ -92,9 +100,13 @@ function PostCard(props: PostCardProps) {
       <Link to={url.toString()}>{post.title}</Link>
     )
   }, [post, location]);
-  
-  return (
-    <Card className="overflow-hidden">
+
+  const inlineMediaRegex = /class=\".*?\s*?lightgallery-item.*?\s*?\"/gm;
+  const hasInlineMedia = inlineMediaRegex.test(post.content || '');
+  const hasGallery = mediaItems.length > 0 || hasInlineMedia;
+
+  const contents = (
+    <Card className="post-card">
       {
         showCampaign && post.campaign && post.campaign.name ? (
           <Card.Header>
@@ -114,7 +126,7 @@ function PostCard(props: PostCardProps) {
           </Card.Header>
         ) : null
       }
-      <MediaGrid items={mediaItems} title={post.title || ''} />
+      <MediaGrid items={mediaItems} title={post.title || ''} noGallery />
       <Card.Body>
         <Stack>
           <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
@@ -143,11 +155,26 @@ function PostCard(props: PostCardProps) {
             }
           </Stack>
           { audio }
-          <Card.Text dangerouslySetInnerHTML={{__html: sanitize(post.content || '')}} />
+          <Card.Text dangerouslySetInnerHTML={{__html: post.content || ''}} />
           { attachments }
         </Stack>
       </Card.Body>
     </Card>
+  );
+
+  if (!hasGallery) {
+    return contents;
+  }
+  
+  return (
+    <LightGallery
+      speed={500}
+      plugins={[lgThumbnail, lgZoom, lgVideo]}
+      videojs
+      selector=".lightgallery-item"
+    >
+      {contents}
+    </LightGallery>
   )
 }
 

@@ -1,0 +1,17 @@
+@use "./mixins";
+
+.post-card {
+  overflow: hidden;
+
+  &__inline-media-wrapper {
+    text-align: center;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+  &__inline-media-caption {
+    font-size: smaller;
+  }
+}
