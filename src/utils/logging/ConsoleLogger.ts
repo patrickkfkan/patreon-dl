@@ -98,6 +98,12 @@ export default class ConsoleLogger extends Logger {
   }
 
   protected errorToStrings(m: Error, forceNoStack = false): string[] {
+    if (m instanceof AggregateError) {
+      return m.errors.reduce<string[]>((result, err) => {
+        result.push(...this.errorToStrings(err, forceNoStack));
+        return result;
+      }, []);
+    }
     const result: string[] = [];
     const msg = m.cause ? `${m.message}:` : m.message;
     if (m.name !== 'Error') {
