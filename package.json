@@ -70,7 +70,6 @@
     "@types/deep-freeze": "^0.1.5",
     "@types/jsdom": "^21.1.7",
     "argv-split": "^3.2.1",
-    "bgutils-js": "^3.2.0",
     "bootstrap": "^5.3.6",
     "bootswatch": "^5.3.6",
     "bottleneck": "^2.19.5",
@@ -120,7 +119,7 @@
     "sqlite3": "^5.1.7",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^13.4.0"
+    "youtubei.js": "^15.0.1"
   },
   "keywords": [
     "patreon",

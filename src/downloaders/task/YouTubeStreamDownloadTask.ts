@@ -203,12 +203,12 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
 
       // Throw if the response is not 2xx
       if (!response.ok)
-        throw Error('Innertube error: The server responded with a non 2xx status code');
+        throw Error(`Innertube error: failed to fetch YouTube stream - the server responded with a non 2xx status code (${response.status} - ${response.statusText})`);
 
       const body = response.body;
 
       if (!body)
-        throw new Error('Innertube error: Could not get ReadableStream from fetch Response.');
+        throw Error('Innertube error: failed to fetch YouTube stream - fetch response missing body');
 
       return body;
     }
@@ -240,25 +240,21 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
           void (async () => {
             try {
               cancel = new AbortController();
-  
-              const response = await actions.session.http.fetch_function(`${stream.url}&cpn=${stream.cpn}&range=${chunk_start}-${chunk_end || ''}`, {
-                method: 'GET',
-                headers: {
-                  ...InnertubeLib.Constants.STREAM_HEADERS
-                  // XXX: use YouTube's range parameter instead of a Range header.
-                  // Range: `bytes=${chunk_start}-${chunk_end}`
-                },
-                signal: cancel.signal
-              });
+              const response = await this.#fetchStreamResponse(
+                stream,
+                [chunk_start, chunk_end],
+                actions,
+                cancel.signal
+              );
   
               // Throw if the response is not 2xx
               if (!response.ok)
-                throw Error('Innertube error: The server responded with a non 2xx status code');
+                throw Error(`Innertube error: failed to fetch YouTube stream - the server responded with a non 2xx status code (${response.status} - ${response.statusText})`);
   
               const body = response.body;
   
               if (!body)
-                throw Error('Innertube error: Could not get ReadableStream from fetch Response.');
+                throw Error('Innertube error: failed to fetch YouTube stream - fetch response missing body');
   
               for await (const chunk of InnertubeLib.Utils.streamToIterable(body)) {
                 controller.enqueue(chunk);
@@ -286,4 +282,39 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
     });
   }
 
+  async #fetchStreamResponse<T>(
+    stream: YouTubeStream<YouTubeStreamType>,
+    range: [number, number?],
+    actions: InnertubeLib.Actions,
+    signal?: AbortSignal,
+    retries = 3,
+    delayMs = 2000
+  ): Promise<Response> {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const response = await actions.session.http.fetch_function(`${stream.url}&cpn=${stream.cpn}&range=${range[0]}-${range[1] || ''}`, {
+          method: 'GET',
+          headers: {
+            ...InnertubeLib.Constants.STREAM_HEADERS
+            // XXX: use YouTube's range parameter instead of a Range header.
+            // Range: `bytes=${chunk_start}-${chunk_end}`
+          },
+          signal
+        });
+
+        return response;
+
+      } catch (error: unknown) {
+        const isLastAttempt = attempt === retries;
+        const retriedMsg = isLastAttempt ? `- Retried ${retries} times - giving up` : `- ${attempt > 1 ? `Retried ${attempt} times - ` : ''}will retry after ${delayMs / 1000} seconds`;
+        this.log('error', `Error fetching YouTube stream chunks in range ${range[0]} - ${range[1]}:`, error, retriedMsg);
+        if (isLastAttempt) {
+          throw error;
+        }
+        await new Promise((res) => setTimeout(res, delayMs));
+      }
+    }
+
+    throw Error(`Unexpected failure in fetching YouTube stream chunks (retried ${retries} times)`);
+  }
 }
