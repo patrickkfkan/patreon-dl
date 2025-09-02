@@ -585,6 +585,12 @@ export default class PostDownloader extends Downloader<Post> {
       }
     }
 
+    if (this.checkAbortSignal(signal, resolve)) {
+      return {
+        status: 'aborted'
+      };
+    }
+
     // Step 6: Fetch and save comments (only available if post is viewable)
     let comments: Comment[] | null = null;
     if (downloadComments && this.config.include.comments && post.isViewable) {
