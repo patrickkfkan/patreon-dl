@@ -193,6 +193,30 @@ export default class PatreonDownloaderCLI {
     if (config.cookie) {
       displayConfig.cookie = cliTruncate(displayConfig.cookie, 20, { position: 'middle', space: true });
     }
+    if (config.include?.mediaByFilename) {
+      for (const [k, v] of Object.entries(config.include.mediaByFilename)) {
+        if (v) {
+          if (v.startsWith('!')) {
+            const stripped = v.substring(1);
+            if (!stripped) {
+              delete displayConfig.include.mediaByFilename[k];
+            }
+            else {
+              displayConfig.include.mediaByFilename[k] = {
+                pattern: v.substring(1),
+                'case-sensitive': false
+              };
+            }
+          }
+          else {
+            displayConfig.include.mediaByFilename[k] = {
+              pattern: v,
+              'case-sensitive': true
+            };
+          }
+        }
+      }
+    }
     return  ObjectHelper.clean(displayConfig, {
       deep: true, cleanNulls: true, cleanEmptyObjects: true
     });

@@ -291,17 +291,22 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
       default:
         prop = null;
     }
-    const pattern = prop ? this.config.include.mediaByFilename[prop] : null;
-    const dest = this.resolvedDestFilename?.toLowerCase();
+    let pattern = prop ? this.config.include.mediaByFilename[prop] : null;
+    let nocase = false;
+    if (pattern && pattern.startsWith('!')) {
+      pattern = pattern.substring(1);
+      nocase = true;
+    }
+    const dest = this.resolvedDestFilename;
     if (prop && pattern) {
       const confName = `include.mediaByFilename.${prop}`;
       if (!dest) {
         this.log('warn', `Skipped config '${confName}': destination filename unavailable`);
         return { ok: true };
       }
-      const patternMatched = minimatch(dest, pattern);
+      const patternMatched = minimatch(dest, pattern, { nocase });
       const matchString = patternMatched ? 'OK' : 'failed';
-      this.log('debug', `Config '${confName}': test "${pattern}" <-> "${dest}" ${matchString}`);
+      this.log('debug', `Config '${confName}': test "${pattern}" <-> "${dest}" ${matchString} (${nocase ? 'case-insensitive' : 'case-sensitive'})`);
       if (patternMatched) {
         return { ok: true };
       }
