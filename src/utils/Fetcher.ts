@@ -44,8 +44,8 @@ export class FetcherError extends Error {
 
 export type FetcherGetType = 'html' | 'json';
 export type FetcherGetResultOf<T extends FetcherGetType> =
-  T extends 'html' ? string :
-  T extends 'json' ? any :
+  T extends 'html' ? { html: string; lastUrl: string; }:
+  T extends 'json' ? { json: any; lastUrl: string; } :
   never;
 
 export default class Fetcher {
@@ -95,7 +95,21 @@ export default class Fetcher {
     }
     try {
       const res = await fetch(request, { signal: internalAbortController.signal, dispatcher: this.#proxyAgent });
-      return await (type === 'html' ? res.text() : res.json()) as FetcherGetResultOf<T>;
+      const lastUrl = res.url;
+      switch (type) {
+        case 'html':
+          return {
+            html: await res.text(),
+            lastUrl
+          } as FetcherGetResultOf<T>;
+        case 'json':
+          return {
+            json: await res.json(),
+            lastUrl
+          } as FetcherGetResultOf<T>;
+        default:
+          return undefined as never;
+      }
     }
     catch (error: any) {
       if (signal?.aborted) {

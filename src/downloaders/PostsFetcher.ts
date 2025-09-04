@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import puppeteer from 'puppeteer';
 import { type Post } from '../entities/index.js';
 import { type Logger } from '../utils/logging/index.js';
 import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
@@ -273,7 +274,12 @@ export default class PostsFetcher extends EventEmitter {
     this.log('debug', `Fetch initial data from "${url}"`);
     let page;
     try {
-      page = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal: this.signal });
+      const { html, lastUrl } = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal: this.signal });
+      page = html;
+      if (new URL(lastUrl).pathname === '/login-sync-domains') {
+        this.log('debug', `Detected Cloudflare challenge flow at "${lastUrl}"`);
+        page = await this.#fetchPageWithPuppeteer(url);
+      }
     }
     catch (error) {
       if (this.signal?.aborted) {
@@ -303,8 +309,18 @@ export default class PostsFetcher extends EventEmitter {
     return { campaignId, currentUserId };
   }
 
+  async #fetchPageWithPuppeteer(url: string) {
+    this.log('debug', `Fetch "${url}" with Puppeteer`);
+    const browser = await puppeteer.launch({ headless: true }); // Set to false if you want to see the browser
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'networkidle2' });
+    const html = await page.evaluate(() => document.documentElement.innerHTML);
+    await browser.close();
+    return html;
+  }
+
   async #fetchAPI(url: string) {
-    return this.fetcher.get({ url, type: 'json', maxRetries: this.config.request.maxRetries, signal: this.signal });
+    return (await this.fetcher.get({ url, type: 'json', maxRetries: this.config.request.maxRetries, signal: this.signal })).json;
   }
 
   protected checkAbortSignal() {

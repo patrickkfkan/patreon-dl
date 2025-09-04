@@ -511,7 +511,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   protected async commonFetchAPI(url: string, signal?: AbortSignal) {
     let json, requestAPIError: any;
     try {
-      json = await this.fetcher.get({ url, type: 'json', maxRetries: this.config.request.maxRetries, signal });
+      json = (await this.fetcher.get({ url, type: 'json', maxRetries: this.config.request.maxRetries, signal })).json;
     }
     catch (error) {
       if (signal?.aborted) {
