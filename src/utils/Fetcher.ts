@@ -3,6 +3,7 @@ import { pipeline } from 'stream/promises';
 import { fetch, Request, type Response } from 'undici';
 import path from 'path';
 import { type Dispatcher } from 'undici';
+import puppeteer from 'puppeteer';
 import FetcherProgressMonitor from './FetcherProgressMonitor.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import type FilenameResolver from './FllenameResolver.js';
@@ -338,6 +339,17 @@ export default class Fetcher {
       throw new FetcherError('Empty response body', originURL, method);
     }
     return true;
+  }
+
+  async getPageWithPuppeteer(url: string) {
+    this.log('debug', `Fetch "${url}" with Puppeteer`);
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setUserAgent(this.#userAgent);
+    await page.goto(url, { waitUntil: 'networkidle2' });
+    const html = await page.evaluate(() => document.documentElement.innerHTML);
+    await browser.close();
+    return html;
   }
 
   protected log(level: LogLevel, ...msg: Array<any>) {

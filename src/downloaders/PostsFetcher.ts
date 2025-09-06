@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import puppeteer from 'puppeteer';
 import { type Post } from '../entities/index.js';
 import { type Logger } from '../utils/logging/index.js';
 import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
@@ -310,13 +309,7 @@ export default class PostsFetcher extends EventEmitter {
   }
 
   async #fetchPageWithPuppeteer(url: string) {
-    this.log('debug', `Fetch "${url}" with Puppeteer`);
-    const browser = await puppeteer.launch({ headless: true }); // Set to false if you want to see the browser
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle2' });
-    const html = await page.evaluate(() => document.documentElement.innerHTML);
-    await browser.close();
-    return html;
+    return this.fetcher.getPageWithPuppeteer(url);
   }
 
   async #fetchAPI(url: string) {
