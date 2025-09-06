@@ -21,9 +21,9 @@ import URLHelper from '../utils/URLHelper.js';
 import ffmpeg from 'fluent-ffmpeg';
 import InnertubeLoader from '../utils/yt/InnertubeLoader.js';
 import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
-import { type UserIdOrVanityParam } from '../entities/User.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
 import DB, { type DBInstance } from '../browse/db/index.js';
+import PostParser from '../parsers/PostParser.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -32,6 +32,12 @@ export type DownloaderConfig<T extends DownloaderType> =
 export interface DownloaderStartParams {
   signal?: AbortSignal;
 }
+
+export type GetCampaignParams = 
+  string |
+  { userId: string; vanity?: never, campaignId?: never; } |
+  { userId?: never; vanity: string, campaignId?: never; } |
+  { vanity?: never; userId?: never; campaignId: string; };
 
 interface CreateDownloadTaskParams {
   target: Downloadable[];
@@ -278,15 +284,30 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   }
 
   static async getCampaign(
-    creator: string | UserIdOrVanityParam,
+    params: GetCampaignParams,
     signal?: AbortSignal,
     logger?: Logger | null
   ) {
-    // Backwards compatibility - if 'creator' is string type, then it is vanity
-    const url = URLHelper.constructUserPostsURL(typeof creator === 'object' ? creator : { vanity: creator });
+    // Backwards compatibility - if 'params' is string type, then it is vanity
+    let url: string;
+    if (typeof params === 'string') {
+      url = URLHelper.constructUserPostsURL({ vanity: params });
+    }
+    else if (params.userId || params.vanity) {
+      url = URLHelper.constructUserPostsURL(params);
+    }
+    else {
+      // Sole purpose of passing 'dummy' vanity is to create the PostDownloader instance
+      url = URLHelper.constructUserPostsURL({ vanity: 'dummy' });
+    }
     const downloader = await this.getInstance(url, { logger });
     const PostDownloader = (await import('./PostDownloader.js')).default;
     if (downloader instanceof PostDownloader) {
+      if (typeof params === 'object' && params.campaignId) {
+        const { json } = await downloader.fetchCampaign(params.campaignId, signal);
+        const parser = new PostParser(logger);
+        return parser.parseCampaignAPIResponse(json);
+      }
       return downloader.__getCampaign(signal);
     }
     throw Error('Type mismatch: PostDownloader expected');
