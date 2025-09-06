@@ -100,11 +100,9 @@ export default class InnertubeLoader {
   static #resolveGetInstanceResult(innertube: Innertube, resolve: (value: InnertubeLoaderGetInstanceResult) => void) {
     this.#pendingPromise = null;
     const signedIn = innertube.session.logged_in;
-    let getVideoInfoFn: InnertubeLoaderGetInstanceResult['getVideoInfo'];
-    getVideoInfoFn = (videoId) => innertube.getBasicInfo(videoId, { client: 'TV'});
     this.#instanceResult = {
       innertube,
-      getVideoInfo: getVideoInfoFn
+      getVideoInfo: (videoId) => innertube.getBasicInfo(videoId, { client: 'TV'})
     };
     this.log('info', `YouTube downloader initialized (signed-in: ${signedIn ? 'yes' : 'no'})`);
     resolve(this.#instanceResult);

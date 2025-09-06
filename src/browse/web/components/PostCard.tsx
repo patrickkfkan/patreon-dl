@@ -139,7 +139,7 @@ function PostCard(props: PostCardProps) {
     return null;
   }, [post]);
 
-  const inlineMediaRegex = /class=\".*?\s*?lightgallery-item.*?\s*?\"/gm;
+  const inlineMediaRegex = /class=".*?\s*?lightgallery-item.*?\s*?"/gm;
   const hasInlineMedia = inlineMediaRegex.test(post.content || '');
   const hasGallery = mediaItems.length > 0 || hasInlineMedia;
 

@@ -1,6 +1,6 @@
 import { load as cheerioLoad } from 'cheerio';
 import { type APIConstructor } from ".";
-import { Post } from "../../entities";
+import { type Post } from "../../entities";
 import { type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
 
@@ -23,10 +23,11 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
             this.#processPostContentInlineMedia(item);
             item.content = this.sanitizeHTML(item.content || '');
             break;
-          case 'product':
+          case 'product': {
             const description = RawDataExtractor.getProductRichTextDescription(item);
             item.description = description ? this.sanitizeHTML(description) : null;
             break;
+          }
         }
       }
       return list;

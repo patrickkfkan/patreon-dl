@@ -4,8 +4,6 @@ import { type APIInstance } from '../../api';
 import Basehandler from './BaseHandler.js';
 import { getYearMonthString } from '../../../utils/Misc.js';
 import { type ContentListSortBy, type ContentType } from '../../types/Content.js';
-import { Post } from '../../../entities';
-import { load as cheerioLoad } from 'cheerio';
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 

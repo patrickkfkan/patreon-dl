@@ -282,7 +282,7 @@ export default class YouTubeStreamDownloadTask<T extends YouTubeStreamType> exte
     });
   }
 
-  async #fetchStreamResponse<T>(
+  async #fetchStreamResponse(
     stream: YouTubeStream<YouTubeStreamType>,
     range: [number, number?],
     actions: InnertubeLib.Actions,
