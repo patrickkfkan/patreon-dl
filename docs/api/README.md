@@ -89,6 +89,7 @@
 - [FileLoggerConfig](type-aliases/FileLoggerConfig.md)
 - [FileLoggerGetPathInfoParams](type-aliases/FileLoggerGetPathInfoParams.md)
 - [FileLoggerOptions](type-aliases/FileLoggerOptions.md)
+- [GetCampaignParams](type-aliases/GetCampaignParams.md)
 - [ImageMediaItem](type-aliases/ImageMediaItem.md)
 - [ImageType](type-aliases/ImageType.md)
 - [LogLevel](type-aliases/LogLevel.md)

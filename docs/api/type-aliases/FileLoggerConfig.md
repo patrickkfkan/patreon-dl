@@ -8,7 +8,7 @@
 
 > **FileLoggerConfig**\<`T`\> = [`DeepRequired`](DeepRequired.md)\<[`FileLoggerOptions`](FileLoggerOptions.md)\<`T`\>\> & `object`
 
-Defined in: [src/utils/logging/FileLogger.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/logging/FileLogger.ts#L36)
+Defined in: [src/utils/logging/FileLogger.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/FileLogger.ts#L36)
 
 ## Type declaration
 

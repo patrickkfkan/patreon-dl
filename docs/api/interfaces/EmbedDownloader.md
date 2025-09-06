@@ -6,7 +6,7 @@
 
 # Interface: EmbedDownloader
 
-Defined in: [src/downloaders/DownloaderOptions.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderOptions.ts#L38)
+Defined in: [src/downloaders/DownloaderOptions.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderOptions.ts#L38)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/downloaders/DownloaderOptions.ts:38](https://github.com/patrick
 
 > **exec**: `string`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderOptions.ts#L40)
+Defined in: [src/downloaders/DownloaderOptions.ts:40](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderOptions.ts#L40)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/downloaders/DownloaderOptions.ts:40](https://github.com/patrick
 
 > **provider**: `string`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderOptions.ts#L39)
+Defined in: [src/downloaders/DownloaderOptions.ts:39](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderOptions.ts#L39)

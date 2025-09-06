@@ -6,7 +6,7 @@
 
 # Interface: Downloaded
 
-Defined in: [src/entities/Downloadable.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Downloadable.ts#L4)
+Defined in: [src/entities/Downloadable.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Downloadable.ts#L4)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/entities/Downloadable.ts:4](https://github.com/patrickkfkan/pat
 
 > `optional` **mimeType**: `null` \| `string`
 
-Defined in: [src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Downloadable.ts#L5)
+Defined in: [src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Downloadable.ts#L5)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/entities/Downloadable.ts:5](https://github.com/patrickkfkan/pat
 
 > `optional` **path**: `null` \| `string`
 
-Defined in: [src/entities/Downloadable.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Downloadable.ts#L9)
+Defined in: [src/entities/Downloadable.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Downloadable.ts#L9)
 
 Path of downloaded file, relative to out directory.
 
@@ -32,7 +32,7 @@ Path of downloaded file, relative to out directory.
 
 > `optional` **thumbnail**: `object`
 
-Defined in: [src/entities/Downloadable.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Downloadable.ts#L10)
+Defined in: [src/entities/Downloadable.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Downloadable.ts#L10)
 
 #### height?
 

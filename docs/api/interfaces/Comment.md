@@ -6,7 +6,7 @@
 
 # Interface: Comment
 
-Defined in: [src/entities/Comment.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L7)
+Defined in: [src/entities/Comment.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L7)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/entities/Comment.ts:7](https://github.com/patrickkfkan/patreon-
 
 > **body**: `string`
 
-Defined in: [src/entities/Comment.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L10)
+Defined in: [src/entities/Comment.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L10)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/entities/Comment.ts:10](https://github.com/patrickkfkan/patreon
 
 > **commenter**: `null` \| [`User`](User.md)
 
-Defined in: [src/entities/Comment.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L11)
+Defined in: [src/entities/Comment.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L11)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/entities/Comment.ts:11](https://github.com/patrickkfkan/patreon
 
 > **createdAt**: `null` \| `string`
 
-Defined in: [src/entities/Comment.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L12)
+Defined in: [src/entities/Comment.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L12)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/entities/Comment.ts:12](https://github.com/patrickkfkan/patreon
 
 > **id**: `string`
 
-Defined in: [src/entities/Comment.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L9)
+Defined in: [src/entities/Comment.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L9)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/entities/Comment.ts:9](https://github.com/patrickkfkan/patreon-
 
 > **isByCreator**: `boolean`
 
-Defined in: [src/entities/Comment.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L13)
+Defined in: [src/entities/Comment.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L13)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [src/entities/Comment.ts:13](https://github.com/patrickkfkan/patreon
 
 > **replies**: [`CommentReply`](../type-aliases/CommentReply.md)[]
 
-Defined in: [src/entities/Comment.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L15)
+Defined in: [src/entities/Comment.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L15)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [src/entities/Comment.ts:15](https://github.com/patrickkfkan/patreon
 
 > **replyCount**: `number`
 
-Defined in: [src/entities/Comment.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L14)
+Defined in: [src/entities/Comment.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L14)
 
 ***
 
@@ -70,4 +70,4 @@ Defined in: [src/entities/Comment.ts:14](https://github.com/patrickkfkan/patreon
 
 > **type**: `"comment"`
 
-Defined in: [src/entities/Comment.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/entities/Comment.ts#L8)
+Defined in: [src/entities/Comment.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/Comment.ts#L8)

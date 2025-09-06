@@ -6,7 +6,7 @@
 
 # Enumeration: TargetSkipReason
 
-Defined in: [src/downloaders/DownloaderEvent.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L15)
+Defined in: [src/downloaders/DownloaderEvent.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L15)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:15](https://github.com/patrickkf
 
 > **AlreadyDownloaded**: `1`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L17)
+Defined in: [src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L17)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:17](https://github.com/patrickkf
 
 > **Inaccessible**: `0`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L16)
+Defined in: [src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L16)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:16](https://github.com/patrickkf
 
 > **NotInTier**: `3`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L19)
+Defined in: [src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L19)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/downloaders/DownloaderEvent.ts:19](https://github.com/patrickkf
 
 > **PublishDateOutOfRange**: `4`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L20)
+Defined in: [src/downloaders/DownloaderEvent.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L20)
 
 ***
 
@@ -46,4 +46,4 @@ Defined in: [src/downloaders/DownloaderEvent.ts:20](https://github.com/patrickkf
 
 > **UnmetMediaTypeCriteria**: `2`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/DownloaderEvent.ts#L18)
+Defined in: [src/downloaders/DownloaderEvent.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/DownloaderEvent.ts#L18)

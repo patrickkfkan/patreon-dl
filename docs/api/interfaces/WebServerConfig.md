@@ -6,7 +6,7 @@
 
 # Interface: WebServerConfig
 
-Defined in: [src/browse/server/WebServer.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/browse/server/WebServer.ts#L13)
+Defined in: [src/browse/server/WebServer.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/browse/server/WebServer.ts#L13)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/browse/server/WebServer.ts:13](https://github.com/patrickkfkan/
 
 > `optional` **dataDir**: `string`
 
-Defined in: [src/browse/server/WebServer.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/browse/server/WebServer.ts#L14)
+Defined in: [src/browse/server/WebServer.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/browse/server/WebServer.ts#L14)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/browse/server/WebServer.ts:14](https://github.com/patrickkfkan/
 
 > `optional` **logger**: `null` \| [`Logger`](../classes/Logger.md)
 
-Defined in: [src/browse/server/WebServer.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/browse/server/WebServer.ts#L16)
+Defined in: [src/browse/server/WebServer.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/browse/server/WebServer.ts#L16)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [src/browse/server/WebServer.ts:16](https://github.com/patrickkfkan/
 
 > `optional` **port**: `null` \| `number`
 
-Defined in: [src/browse/server/WebServer.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/browse/server/WebServer.ts#L15)
+Defined in: [src/browse/server/WebServer.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/browse/server/WebServer.ts#L15)

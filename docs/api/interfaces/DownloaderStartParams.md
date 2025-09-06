@@ -6,7 +6,7 @@
 
 # Interface: DownloaderStartParams
 
-Defined in: [src/downloaders/Downloader.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/Downloader.ts#L32)
+Defined in: [src/downloaders/Downloader.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L32)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [src/downloaders/Downloader.ts:32](https://github.com/patrickkfkan/p
 
 > `optional` **signal**: `AbortSignal`
 
-Defined in: [src/downloaders/Downloader.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/downloaders/Downloader.ts#L33)
+Defined in: [src/downloaders/Downloader.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L33)

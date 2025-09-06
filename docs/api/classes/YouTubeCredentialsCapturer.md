@@ -6,7 +6,7 @@
 
 # Class: YouTubeCredentialsCapturer
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L9)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L9)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:9](https://github.com/patri
 
 > **new YouTubeCredentialsCapturer**(): `YouTubeCredentialsCapturer`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L17)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L17)
 
 #### Returns
 
@@ -34,7 +34,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:17](https://github.com/patr
 
 > **abort**(): `void`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L33)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L33)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:33](https://github.com/patr
 
 > **begin**(): `Promise`\<`void`\>
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L26)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L26)
 
 #### Returns
 
@@ -60,7 +60,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:26](https://github.com/patr
 
 > **emit**(`eventName`, `data`): `boolean`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L68)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L68)
 
 Synchronously calls each of the listeners registered for the event named `eventName`, in the order they were registered, passing the supplied arguments
 to each.
@@ -126,7 +126,7 @@ v0.1.26
 
 > **emit**(`eventName`, `credentials`): `boolean`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L69)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L69)
 
 ##### Parameters
 
@@ -154,7 +154,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:69](https://github.com/patr
 
 > **off**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L62)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L62)
 
 Alias for `emitter.removeListener()`.
 
@@ -184,7 +184,7 @@ v10.0.0
 
 > **off**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L63)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L63)
 
 ##### Parameters
 
@@ -212,7 +212,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:63](https://github.com/patr
 
 > **on**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L50)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:50](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L50)
 
 Adds the `listener` function to the end of the listeners array for the event
 named `eventName`. No checks are made to see if the `listener` has already
@@ -271,7 +271,7 @@ v0.1.101
 
 > **on**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L51)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L51)
 
 ##### Parameters
 
@@ -299,7 +299,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:51](https://github.com/patr
 
 > **once**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L56)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:56](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L56)
 
 Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
@@ -356,7 +356,7 @@ v0.3.0
 
 > **once**(`eventName`, `listener`): `this`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/13dcc2ff5398507f6088673ed657c12686142841/src/utils/YouTubeCredentialsCapturer.ts#L57)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:57](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L57)
 
 ##### Parameters
 
