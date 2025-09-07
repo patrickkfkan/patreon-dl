@@ -227,11 +227,12 @@ export default class FSHelper {
 
   static sanitizeFilePath(filePath: string) {
     const splitted = filePath.split(path.sep);
-    const root = path.isAbsolute(filePath) ? splitted.shift() || '' : null;
-    const sanitized = splitted.map((s) => this.sanitizeFilename(s));
-    if (root !== null) {
-      sanitized.unshift(root);
-    }
+    const sanitized = splitted.map((s) => {
+      if (!s || s === '.') {
+        return s;
+      }
+      return this.sanitizeFilename(s);
+    });
     return sanitized.join(path.sep);
   }
 
