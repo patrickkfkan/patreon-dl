@@ -48,6 +48,7 @@ interface CreateDownloadTaskParams {
     thumbnails: string | null;
   };
   fileExistsAction: FileExistsAction;
+  isAttachment?: boolean;
 }
 
 export default abstract class Downloader<T extends DownloaderType> extends EventEmitter {
@@ -209,6 +210,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             item: tt,
             fetcher: this.fetcher,
             fileExistsAction: task.fileExistsAction,
+            isAttachment: task.isAttachment,
             limiter: batch.limiter,
             signal,
             logger: this.logger

@@ -15,6 +15,7 @@ export interface FetcherDownloadTaskParams<T extends Downloadable> extends Downl
   destDir: string;
   destFilenameResolver: FilenameResolver<T>;
   fileExistsAction: FileExistsAction;
+  isAttachment?: boolean;
 }
 
 export default class FetcherDownloadTask<T extends Downloadable> extends DownloadTask {
@@ -26,6 +27,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
   #destDir: string;
   #destFilenameResolver: FilenameResolver<T>;
   #fileExistsAction: FileExistsAction;
+  #isAttachment: boolean;
   #abortController: AbortController | null;
   #progressMonitor: FetcherProgressMonitor | null;
   #abortingCallback: (() => void) | null;
@@ -36,6 +38,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
     this.#destDir = params.destDir;
     this.#destFilenameResolver = params.destFilenameResolver;
     this.#fileExistsAction = params.fileExistsAction;
+    this.#isAttachment = params.isAttachment ?? false;
     this.#abortController = null;
     this.#progressMonitor = null;
     this.#abortingCallback = null;
@@ -278,18 +281,23 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
   #checkIncludeMediaByFilenameOption(): { ok: true; } | { ok: false; reason: DownloadTaskSkipReason; } {
     const itemType = this.srcEntity.type;
     let prop: keyof typeof this.config.include.mediaByFilename | null;
-    switch (itemType) {
-      case 'image':
-        prop = 'images';
-        break;
-      case 'audio':
-        prop = 'audio';
-        break;
-      case 'attachment':
-        prop = 'attachments';
-        break;
-      default:
-        prop = null;
+    if (this.#isAttachment) {
+      prop = 'attachments';
+    }
+    else {
+      switch (itemType) {
+        case 'image':
+          prop = 'images';
+          break;
+        case 'audio':
+          prop = 'audio';
+          break;
+        case 'attachment':
+          prop = 'attachments';
+          break;
+        default:
+          prop = null;
+      }
     }
     let pattern = prop ? this.config.include.mediaByFilename[prop] : null;
     let nocase = false;

@@ -130,6 +130,7 @@ export default class DownloadTaskFactory {
       thumbnails: string | null;
     },
     item: Downloadable,
+    isAttachment?: boolean,
     fetcher: Fetcher,
     fileExistsAction: FileExistsAction,
     callbacks?: DownloadTaskCallbacks | null,
@@ -142,6 +143,7 @@ export default class DownloadTaskFactory {
       config,
       dirs,
       item,
+      isAttachment = false,
       fetcher,
       fileExistsAction,
       callbacks,
@@ -200,6 +202,7 @@ export default class DownloadTaskFactory {
             destDir: dirs.main,
             destFilenameResolver,
             fileExistsAction,
+            isAttachment,
             srcEntity: item,
             callbacks: callbacks || null,
             logger

@@ -814,7 +814,8 @@ export default class PostDownloader extends Downloader<Post> {
           main: postDirs.attachments,
           thumbnails: postDirs.thumbnails
         },
-        fileExistsAction: this.config.fileExistsAction.content
+        fileExistsAction: this.config.fileExistsAction.content,
+        isAttachment: true
       } : null,
 
       __getEmbedTask()
