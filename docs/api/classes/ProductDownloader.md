@@ -6,7 +6,7 @@
 
 # Class: ProductDownloader
 
-Defined in: [src/downloaders/ProductDownloader.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/ProductDownloader.ts#L12)
+Defined in: [src/downloaders/ProductDownloader.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/ProductDownloader.ts#L12)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/downloaders/ProductDownloader.ts:12](https://github.com/patrick
 
 > **new ProductDownloader**(`config`, `db`, `logger?`): `ProductDownloader`
 
-Defined in: [src/downloaders/Downloader.ts:66](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L66)
+Defined in: [src/downloaders/Downloader.ts:67](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L67)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [src/downloaders/Downloader.ts:66](https://github.com/patrickkfkan/p
 
 > **name**: `string` = `'ProductDownloader'`
 
-Defined in: [src/downloaders/ProductDownloader.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/ProductDownloader.ts#L16)
+Defined in: [src/downloaders/ProductDownloader.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/ProductDownloader.ts#L16)
 
 #### Overrides
 
@@ -60,7 +60,7 @@ Defined in: [src/downloaders/ProductDownloader.ts:16](https://github.com/patrick
 
 > `static` **version**: `string` = `'1.0.1'`
 
-Defined in: [src/downloaders/ProductDownloader.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/ProductDownloader.ts#L14)
+Defined in: [src/downloaders/ProductDownloader.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/ProductDownloader.ts#L14)
 
 ## Methods
 
@@ -68,7 +68,7 @@ Defined in: [src/downloaders/ProductDownloader.ts:14](https://github.com/patrick
 
 > **emit**\<`T`\>(`event`, `args`): `boolean`
 
-Defined in: [src/downloaders/Downloader.ts:577](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L577)
+Defined in: [src/downloaders/Downloader.ts:579](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L579)
 
 Synchronously calls each of the listeners registered for the event named `eventName`, in the order they were registered, passing the supplied arguments
 to each.
@@ -142,7 +142,7 @@ v0.1.26
 
 > **getConfig**(): `object`
 
-Defined in: [src/downloaders/Downloader.ts:503](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L503)
+Defined in: [src/downloaders/Downloader.ts:505](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L505)
 
 #### Returns
 
@@ -330,7 +330,7 @@ Defined in: [src/downloaders/Downloader.ts:503](https://github.com/patrickkfkan/
 
 > **off**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/Downloader.ts:572](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L572)
+Defined in: [src/downloaders/Downloader.ts:574](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L574)
 
 Alias for `emitter.removeListener()`.
 
@@ -368,7 +368,7 @@ v10.0.0
 
 > **on**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/Downloader.ts:562](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L562)
+Defined in: [src/downloaders/Downloader.ts:564](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L564)
 
 Adds the `listener` function to the end of the listeners array for the event
 named `eventName`. No checks are made to see if the `listener` has already
@@ -433,7 +433,7 @@ v0.1.101
 
 > **once**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/Downloader.ts:567](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L567)
+Defined in: [src/downloaders/Downloader.ts:569](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L569)
 
 Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
@@ -496,7 +496,7 @@ v0.3.0
 
 > **start**(`params?`): `Promise`\<`void`\>
 
-Defined in: [src/downloaders/ProductDownloader.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/ProductDownloader.ts#L20)
+Defined in: [src/downloaders/ProductDownloader.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/ProductDownloader.ts#L20)
 
 #### Parameters
 
@@ -518,7 +518,7 @@ Defined in: [src/downloaders/ProductDownloader.ts:20](https://github.com/patrick
 
 > `static` **getCampaign**(`params`, `signal?`, `logger?`): `Promise`\<`null` \| [`Campaign`](../interfaces/Campaign.md)\>
 
-Defined in: [src/downloaders/Downloader.ts:286](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L286)
+Defined in: [src/downloaders/Downloader.ts:288](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L288)
 
 #### Parameters
 
@@ -548,7 +548,7 @@ Defined in: [src/downloaders/Downloader.ts:286](https://github.com/patrickkfkan/
 
 > `static` **getInstance**(`url`, `options?`): `Promise`\<[`PostDownloader`](PostDownloader.md) \| `ProductDownloader`\>
 
-Defined in: [src/downloaders/Downloader.ts:259](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Downloader.ts#L259)
+Defined in: [src/downloaders/Downloader.ts:261](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Downloader.ts#L261)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Interface: User
 
-Defined in: [src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L4)
+Defined in: [src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L4)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/entities/User.ts:4](https://github.com/patrickkfkan/patreon-dl/
 
 > **createdAt**: `null` \| `string`
 
-Defined in: [src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L10)
+Defined in: [src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L10)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/entities/User.ts:10](https://github.com/patrickkfkan/patreon-dl
 
 > **firstName**: `string`
 
-Defined in: [src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L7)
+Defined in: [src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L7)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/entities/User.ts:7](https://github.com/patrickkfkan/patreon-dl/
 
 > **fullName**: `string`
 
-Defined in: [src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L9)
+Defined in: [src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L9)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/entities/User.ts:9](https://github.com/patrickkfkan/patreon-dl/
 
 > **id**: `string`
 
-Defined in: [src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L6)
+Defined in: [src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L6)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/entities/User.ts:6](https://github.com/patrickkfkan/patreon-dl/
 
 > **image**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`SingleImageMediaItem`](SingleImageMediaItem.md)\>
 
-Defined in: [src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L11)
+Defined in: [src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L11)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [src/entities/User.ts:11](https://github.com/patrickkfkan/patreon-dl
 
 > **lastName**: `string`
 
-Defined in: [src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L8)
+Defined in: [src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L8)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [src/entities/User.ts:8](https://github.com/patrickkfkan/patreon-dl/
 
 > **raw**: `object`
 
-Defined in: [src/entities/User.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L15)
+Defined in: [src/entities/User.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L15)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [src/entities/User.ts:15](https://github.com/patrickkfkan/patreon-dl
 
 > **thumbnail**: [`Downloadable`](../type-aliases/Downloadable.md)\<[`SingleImageMediaItem`](SingleImageMediaItem.md)\>
 
-Defined in: [src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L12)
+Defined in: [src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L12)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [src/entities/User.ts:12](https://github.com/patrickkfkan/patreon-dl
 
 > **type**: `"user"`
 
-Defined in: [src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L5)
+Defined in: [src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L5)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [src/entities/User.ts:5](https://github.com/patrickkfkan/patreon-dl/
 
 > **url**: `string`
 
-Defined in: [src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L13)
+Defined in: [src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L13)
 
 ***
 
@@ -94,4 +94,4 @@ Defined in: [src/entities/User.ts:13](https://github.com/patrickkfkan/patreon-dl
 
 > **vanity**: `null` \| `string`
 
-Defined in: [src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/entities/User.ts#L14)
+Defined in: [src/entities/User.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/User.ts#L14)

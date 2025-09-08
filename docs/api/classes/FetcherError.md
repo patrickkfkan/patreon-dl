@@ -6,7 +6,7 @@
 
 # Class: FetcherError
 
-Defined in: [src/utils/Fetcher.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/Fetcher.ts#L32)
+Defined in: [src/utils/Fetcher.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/Fetcher.ts#L33)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/utils/Fetcher.ts:32](https://github.com/patrickkfkan/patreon-dl
 
 > **new FetcherError**(`message`, `url`, `method`): `FetcherError`
 
-Defined in: [src/utils/Fetcher.ts:37](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/Fetcher.ts#L37)
+Defined in: [src/utils/Fetcher.ts:38](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/Fetcher.ts#L38)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [src/utils/Fetcher.ts:37](https://github.com/patrickkfkan/patreon-dl
 
 > **method**: `string`
 
-Defined in: [src/utils/Fetcher.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/Fetcher.ts#L35)
+Defined in: [src/utils/Fetcher.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/Fetcher.ts#L36)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [src/utils/Fetcher.ts:35](https://github.com/patrickkfkan/patreon-dl
 
 > **url**: `string`
 
-Defined in: [src/utils/Fetcher.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/Fetcher.ts#L34)
+Defined in: [src/utils/Fetcher.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/Fetcher.ts#L35)

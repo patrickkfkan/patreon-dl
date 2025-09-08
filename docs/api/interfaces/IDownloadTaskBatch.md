@@ -6,7 +6,7 @@
 
 # Interface: IDownloadTaskBatch
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L21)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L21)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:21](https://github.com/pa
 
 > **allTasksEnded**: () => `boolean`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L24)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L24)
 
 #### Returns
 
@@ -30,7 +30,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:24](https://github.com/pa
 
 > **getTasks**: (`status?`) => [`IDownloadTask`](IDownloadTask.md)[]
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L28)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L28)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:28](https://github.com/pa
 
 > **hasErrors**: () => `boolean`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L25)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L25)
 
 #### Returns
 
@@ -60,7 +60,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:25](https://github.com/pa
 
 > **id**: `number`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L22)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L22)
 
 ***
 
@@ -68,7 +68,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:22](https://github.com/pa
 
 > **isAborted**: () => `boolean`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L27)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L27)
 
 #### Returns
 
@@ -80,7 +80,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:27](https://github.com/pa
 
 > **isDestroyed**: () => `boolean`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L26)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L26)
 
 #### Returns
 
@@ -92,7 +92,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:26](https://github.com/pa
 
 > **name**: `string`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L23)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L23)
 
 ## Methods
 
@@ -100,7 +100,7 @@ Defined in: [src/downloaders/task/DownloadTaskBatch.ts:23](https://github.com/pa
 
 > **off**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L31)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L31)
 
 Alias for `emitter.removeListener()`.
 
@@ -138,7 +138,7 @@ v10.0.0
 
 > **on**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L29)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:29](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L29)
 
 Adds the `listener` function to the end of the listeners array for the event
 named `eventName`. No checks are made to see if the `listener` has already
@@ -203,7 +203,7 @@ v0.1.101
 
 > **once**\<`T`\>(`event`, `listener`): `this`
 
-Defined in: [src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/task/DownloadTaskBatch.ts#L30)
+Defined in: [src/downloaders/task/DownloadTaskBatch.ts:30](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/task/DownloadTaskBatch.ts#L30)
 
 Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.

@@ -6,7 +6,7 @@
 
 # Class: ConsoleLogger
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L43)
+Defined in: [src/utils/logging/ConsoleLogger.ts:43](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L43)
 
 ## Extends
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:43](https://github.com/patrickkf
 
 > **new ConsoleLogger**(`options?`): `ConsoleLogger`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L55)
+Defined in: [src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L55)
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:55](https://github.com/patrickkf
 
 > **end**(): `Promise`\<`void`\>
 
-Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/Logger.ts#L12)
+Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L12)
 
 #### Returns
 
@@ -60,7 +60,7 @@ Defined in: [src/utils/logging/Logger.ts:12](https://github.com/patrickkfkan/pat
 
 > **getConfig**(): `object`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L84)
+Defined in: [src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L84)
 
 #### Returns
 
@@ -108,7 +108,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:84](https://github.com/patrickkf
 
 > **log**(`entry`): `void`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L75)
+Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L75)
 
 #### Parameters
 
@@ -130,7 +130,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkf
 
 > **setLevel**(`value`): `void`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L92)
+Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L92)
 
 #### Parameters
 
@@ -148,7 +148,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkf
 
 > `static` **getDefaultConfig**(): `object`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/ConsoleLogger.ts#L88)
+Defined in: [src/utils/logging/ConsoleLogger.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/ConsoleLogger.ts#L88)
 
 #### Returns
 

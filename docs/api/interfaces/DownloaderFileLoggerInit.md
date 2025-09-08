@@ -6,7 +6,7 @@
 
 # Interface: DownloaderFileLoggerInit
 
-Defined in: [src/utils/logging/FileLogger.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/FileLogger.ts#L68)
+Defined in: [src/utils/logging/FileLogger.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L68)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/FileLogger.ts:68](https://github.com/patrickkfkan
 
 > `optional` **date**: `Date`
 
-Defined in: [src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/FileLogger.ts#L71)
+Defined in: [src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L71)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/logging/FileLogger.ts:71](https://github.com/patrickkfkan
 
 > `optional` **outDir**: `string`
 
-Defined in: [src/utils/logging/FileLogger.ts:70](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/FileLogger.ts#L70)
+Defined in: [src/utils/logging/FileLogger.ts:70](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L70)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [src/utils/logging/FileLogger.ts:70](https://github.com/patrickkfkan
 
 > **targetURL**: `string`
 
-Defined in: [src/utils/logging/FileLogger.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/logging/FileLogger.ts#L69)
+Defined in: [src/utils/logging/FileLogger.ts:69](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L69)

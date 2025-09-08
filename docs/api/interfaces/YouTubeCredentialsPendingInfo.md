@@ -6,7 +6,7 @@
 
 # Interface: YouTubeCredentialsPendingInfo
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L4)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/YouTubeCredentialsCapturer.ts#L4)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:4](https://github.com/patri
 
 > **code**: `string`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L6)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/YouTubeCredentialsCapturer.ts#L6)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/utils/YouTubeCredentialsCapturer.ts:6](https://github.com/patri
 
 > **verificationURL**: `string`
 
-Defined in: [src/utils/YouTubeCredentialsCapturer.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/utils/YouTubeCredentialsCapturer.ts#L5)
+Defined in: [src/utils/YouTubeCredentialsCapturer.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/YouTubeCredentialsCapturer.ts#L5)

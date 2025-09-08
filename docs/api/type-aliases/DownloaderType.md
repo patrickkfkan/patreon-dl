@@ -8,4 +8,4 @@
 
 > **DownloaderType** = [`Product`](../interfaces/Product.md) \| [`Post`](../interfaces/Post.md)
 
-Defined in: [src/downloaders/Bootstrap.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Bootstrap.ts#L5)
+Defined in: [src/downloaders/Bootstrap.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Bootstrap.ts#L5)

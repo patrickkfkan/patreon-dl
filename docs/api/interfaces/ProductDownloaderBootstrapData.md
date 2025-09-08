@@ -6,7 +6,7 @@
 
 # Interface: ProductDownloaderBootstrapData
 
-Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Bootstrap.ts#L12)
+Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Bootstrap.ts#L12)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/pa
 
 > **productId**: `string`
 
-Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Bootstrap.ts#L14)
+Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Bootstrap.ts#L14)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/pa
 
 > **targetURL**: `string`
 
-Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Bootstrap.ts#L9)
+Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Bootstrap.ts#L9)
 
 #### Inherited from
 
@@ -38,7 +38,7 @@ Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/pat
 
 > **type**: `"product"`
 
-Defined in: [src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/564e431e409ad640819c7b5ad600451c2bd07930/src/downloaders/Bootstrap.ts#L13)
+Defined in: [src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/Bootstrap.ts#L13)
 
 #### Overrides
 
