@@ -267,6 +267,23 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.2.0
+- Fix:
+  - "Initial data not found" error in `patreon.com/cw` pages ([#85](https://github.com/patrickkfkan/patreon-dl/issues/85)) and custom-domain pages
+  - FFmpeg v7.x compatibility issues ([#86](https://github.com/patrickkfkan/patreon-dl/issues/86))
+  - Dry-run mode executing ops that should have been skipped
+  - Wrong log file path returned in some cases
+  - Various YouTube downloading issues
+- Add:
+  - Support passing options to `yt-dlp` in Vimeo download script
+  - Support case-sensitivity flag in `config.include.mediaByFilename` options
+- Browse:
+  - Show inline images within post body
+  - Show YouTube embed HTML content if video not downloaded ([#87](https://github.com/patrickkfkan/patreon-dl/issues/87))
+  - Display "show more" toggle for long post bodies
+- API:
+  - `Downloader.getCampaign(params)`: enable lookup by `params.campaignId`
+
 v3.1.0
 - Defer database initialization until downloader starts
 - UI: fix post column width possibly exceeding screen width
