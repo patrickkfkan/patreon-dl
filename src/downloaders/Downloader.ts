@@ -6,7 +6,7 @@ import Bootstrap, { type DownloaderBootstrapData, type DownloaderType } from './
 import { type DownloaderInit, type DownloaderOptions, type FileExistsAction, getDownloaderInit } from './DownloaderOptions.js';
 import { type DownloaderEvent, type DownloaderEventPayloadOf } from './DownloaderEvent.js';
 import {type LogLevel} from '../utils/logging/Logger.js';
-import type Logger from '../utils/logging/Logger.js';
+import Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
 import { type Campaign } from '../entities/Campaign.js';
 import FSHelper, { type WriteTextFileResult } from '../utils/FSHelper.js';
@@ -288,7 +288,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   static async getCampaign(
     params: GetCampaignParams,
     signal?: AbortSignal,
-    logger?: Logger | null
+    options?: Logger | null | Pick<DownloaderOptions, 'cookie' | 'request' | 'logger'>
   ) {
     // Backwards compatibility - if 'params' is string type, then it is vanity
     let url: string;
@@ -302,12 +302,15 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       // Sole purpose of passing 'dummy' vanity is to create the PostDownloader instance
       url = URLHelper.constructUserPostsURL({ vanity: 'dummy' });
     }
-    const downloader = await this.getInstance(url, { logger });
+    const downloader = await this.getInstance(
+      url,
+      options instanceof Logger ? { logger: options } : (options || undefined)
+    );
     const PostDownloader = (await import('./PostDownloader.js')).default;
     if (downloader instanceof PostDownloader) {
       if (typeof params === 'object' && params.campaignId) {
         const { json } = await downloader.fetchCampaign(params.campaignId, signal);
-        const parser = new PostParser(logger);
+        const parser = new PostParser(options instanceof Logger ? options : options?.logger);
         return parser.parseCampaignAPIResponse(json);
       }
       return downloader.__getCampaign(signal);
