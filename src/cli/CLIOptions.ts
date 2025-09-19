@@ -35,28 +35,31 @@ export type CLIOptionParserEntry = ({
   value?: string;
 }
 
-export function getCLIOptions(): CLIOptions {
+export function getCLIOptions(skipTargetURLs: true): Omit<CLIOptions, 'targetURLs'>;
+export function getCLIOptions(skipTargetURLs?: false): CLIOptions;
+export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOptions, 'targetURLs'> {
   const commandLineOptions = CommandLineParser.parse();
 
   const configFileOptions = commandLineOptions.configFile?.value ? ConfigFileParser.parse(commandLineOptions.configFile.value) : null;
 
-  let targetURLs: CLITargetURLEntry[];
-  const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
-  const targetsFile = path.resolve(targetURLValue);
-  if (fs.existsSync(targetsFile)) {
-    targetURLs = readTargetsFile(targetsFile);
-  }
-  else {
-    targetURLs = CLIOptionValidator
-      .validateTargetURLs(targetURLValue)
-      .map((url) => ({ url }));
+  let targetURLs: CLITargetURLEntry[] = [];
+  if (!skipTargetURLs) {
+    const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
+    const targetsFile = path.resolve(targetURLValue);
+    if (fs.existsSync(targetsFile)) {
+      targetURLs = readTargetsFile(targetsFile);
+    }
+    else {
+      targetURLs = CLIOptionValidator
+        .validateTargetURLs(targetURLValue)
+        .map((url) => ({ url }));
+    }
   }
 
   const { consoleLogger, fileLoggers } = getCLILoggerOptions(commandLineOptions, configFileOptions);
   const proxy = getProxyOptions(configFileOptions);
 
-  const options: CLIOptions = {
-    targetURLs,
+  const options = {
     cookie: CLIOptionValidator.validateString(pickDefined(commandLineOptions.cookie, configFileOptions?.cookie)),
     useStatusCache: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.useStatusCache, configFileOptions?.useStatusCache)),
     stopOn: CLIOptionValidator.validateString(pickDefined(commandLineOptions.stopOn, configFileOptions?.stopOn), 'never', 'postPreviouslyDownloaded', 'postPublishDateOutOfRange'),
@@ -87,9 +90,16 @@ export function getCLIOptions(): CLIOptions {
     dryRun: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.dryRun, configFileOptions?.dryRun)) || false,
     consoleLogger,
     fileLoggers
-  };
+  } satisfies Omit<CLIOptions, 'targetURLs'>;
 
-  return options;
+  if (skipTargetURLs) {
+    return options;
+  }
+
+  return {
+    targetURLs,
+    ...options
+  } satisfies CLIOptions;
 }
 
 export function getCLILoggerOptions(commandLineOptions?: CommandLineParseResult, configFileOptions?: ReturnType<typeof ConfigFileParser['parse']> | null) {

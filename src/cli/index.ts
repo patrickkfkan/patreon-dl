@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import Downloader, { type DownloaderConfig } from '../downloaders/Downloader.js';
 import ConsoleLogger from '../utils/logging/ConsoleLogger.js';
-import { type CLIOptions, type CLITargetURLEntry, getCLILoggerOptions, getCLIOptions } from './CLIOptions.js';
+import { type CLIOptions, type CLITargetURLEntry, getCLIOptions } from './CLIOptions.js';
 import CommandLineParser from './CommandLineParser.js';
 import type Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
@@ -75,8 +75,8 @@ export default class PatreonDownloaderCLI {
     if (listTiersTargets) {
       const { byVanity: vanities, byUserId: userIds } = listTiersTargets;
       let hasError = false;
-      const { consoleLogger: consoleLoggerOptions } = getCLILoggerOptions();
-      const consoleLogger = new ConsoleLogger(consoleLoggerOptions);
+      const options = getCLIOptions(true);
+      const consoleLogger = new ConsoleLogger(options.consoleLogger);
 
       const __doList = async (targets: string[], targetType: 'vanity' | 'userId') => {
         for (const target of targets) {
@@ -84,7 +84,10 @@ export default class PatreonDownloaderCLI {
             const campaign = await Downloader.getCampaign(
               targetType === 'vanity' ? target : { userId: target },
               undefined,
-              consoleLogger
+              {
+                ...options,
+                logger: consoleLogger
+              }
             );
             if (campaign) {
               const p = targetType === 'userId' ? 'user #' : '';
