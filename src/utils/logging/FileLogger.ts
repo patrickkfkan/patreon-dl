@@ -136,7 +136,7 @@ export default class FileLogger<T extends FileLoggerType = FileLoggerType.Downlo
       }
       return dateTimeFields.reduce<Record<string, string>>((result, field) => {
         if (!result[field.name]) {
-          result[field.name] = dateFormat(date, field.pattern);
+          result[field.name] = FSHelper.sanitizeFilename(dateFormat(date, field.pattern));
         }
         return result;
       }, addTo);
@@ -170,7 +170,7 @@ export default class FileLogger<T extends FileLoggerType = FileLoggerType.Downlo
 
     const logDir = path.resolve(
       process.cwd(),
-      FSHelper.sanitizeFilePath(Formatter.format(dirNameFormat, logDirDict).result)
+      Formatter.format(dirNameFormat, logDirDict).result
     );
     const filename = FSHelper.sanitizeFilename(Formatter.format(filenameFormat, logFilenameDict).result);
     const filePath = path.resolve(logDir, filename);
@@ -187,7 +187,7 @@ export default class FileLogger<T extends FileLoggerType = FileLoggerType.Downlo
   static #getPathInfoForServerType(params: FileLoggerGetPathInfoParams<FileLoggerType.Server>) {
     const filePath = path.resolve(
       process.cwd(),
-      FSHelper.sanitizeFilePath(params.logFilePath)
+      params.logFilePath
     );
     const { dir: logDir, base: filename } = path.parse(filePath);
     return {

@@ -225,17 +225,6 @@ export default class FSHelper {
     };
   }
 
-  static sanitizeFilePath(filePath: string) {
-    const splitted = filePath.split(path.sep);
-    const sanitized = splitted.map((s) => {
-      if (!s || s === '.') {
-        return s;
-      }
-      return this.sanitizeFilename(s);
-    });
-    return sanitized.join(path.sep);
-  }
-
   static createFilename(parts: { name: string, suffix?: string, ext?: string }) {
     const { name, suffix = '', ext = '' } = parts;
     const sanitizedName = _sanitizeFilename(name);
