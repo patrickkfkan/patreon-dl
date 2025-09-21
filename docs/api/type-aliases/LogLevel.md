@@ -8,4 +8,4 @@
 
 > **LogLevel** = `"info"` \| `"debug"` \| `"warn"` \| `"error"`
 
-Defined in: [src/utils/logging/Logger.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L1)
+Defined in: [src/utils/logging/Logger.ts:1](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/Logger.ts#L1)

@@ -6,7 +6,7 @@
 
 # Interface: ServerFileLoggerOptions
 
-Defined in: [src/utils/logging/FileLogger.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L31)
+Defined in: [src/utils/logging/FileLogger.ts:31](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L31)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/FileLogger.ts:31](https://github.com/patrickkfkan
 
 > `optional` **fileExistsAction**: `"append"` \| `"overwrite"`
 
-Defined in: [src/utils/logging/FileLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L33)
+Defined in: [src/utils/logging/FileLogger.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L33)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/utils/logging/FileLogger.ts:33](https://github.com/patrickkfkan
 
 > **logFilePath**: `string`
 
-Defined in: [src/utils/logging/FileLogger.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L32)
+Defined in: [src/utils/logging/FileLogger.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L32)

@@ -6,7 +6,7 @@
 
 # Interface: LogEntry
 
-Defined in: [src/utils/logging/Logger.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L3)
+Defined in: [src/utils/logging/Logger.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/Logger.ts#L3)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/Logger.ts:3](https://github.com/patrickkfkan/patr
 
 > **level**: [`LogLevel`](../type-aliases/LogLevel.md)
 
-Defined in: [src/utils/logging/Logger.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L4)
+Defined in: [src/utils/logging/Logger.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/Logger.ts#L4)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/logging/Logger.ts:4](https://github.com/patrickkfkan/patr
 
 > **message**: `any`[]
 
-Defined in: [src/utils/logging/Logger.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L6)
+Defined in: [src/utils/logging/Logger.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/Logger.ts#L6)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [src/utils/logging/Logger.ts:6](https://github.com/patrickkfkan/patr
 
 > `optional` **originator**: `string`
 
-Defined in: [src/utils/logging/Logger.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/Logger.ts#L5)
+Defined in: [src/utils/logging/Logger.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/Logger.ts#L5)

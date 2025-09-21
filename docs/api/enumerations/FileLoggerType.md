@@ -6,7 +6,7 @@
 
 # Enumeration: FileLoggerType
 
-Defined in: [src/utils/logging/FileLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L12)
+Defined in: [src/utils/logging/FileLogger.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L12)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/FileLogger.ts:12](https://github.com/patrickkfkan
 
 > **Downloader**: `"downloader"`
 
-Defined in: [src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L13)
+Defined in: [src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L13)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/utils/logging/FileLogger.ts:13](https://github.com/patrickkfkan
 
 > **Server**: `"server"`
 
-Defined in: [src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/utils/logging/FileLogger.ts#L14)
+Defined in: [src/utils/logging/FileLogger.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/FileLogger.ts#L14)

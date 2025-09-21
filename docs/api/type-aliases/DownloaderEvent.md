@@ -8,4 +8,4 @@
 
 > **DownloaderEvent** = `"fetchBegin"` \| `"targetBegin"` \| `"targetEnd"` \| `"phaseBegin"` \| `"phaseEnd"` \| `"end"`
 
-Defined in: [src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/DownloaderEvent.ts#L6)
+Defined in: [src/downloaders/DownloaderEvent.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderEvent.ts#L6)

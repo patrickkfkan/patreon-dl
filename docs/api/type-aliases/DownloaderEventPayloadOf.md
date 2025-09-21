@@ -8,7 +8,7 @@
 
 > **DownloaderEventPayloadOf**\<`T`\> = [`DownloaderEventPayload`](../interfaces/DownloaderEventPayload.md)\[`T`\]
 
-Defined in: [src/downloaders/DownloaderEvent.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/downloaders/DownloaderEvent.ts#L68)
+Defined in: [src/downloaders/DownloaderEvent.ts:68](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderEvent.ts#L68)
 
 ## Type Parameters
 

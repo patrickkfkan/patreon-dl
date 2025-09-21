@@ -8,4 +8,4 @@
 
 > **CommentReply** = `Omit`\<[`Comment`](../interfaces/Comment.md), `"replyCount"` \| `"replies"`\>
 
-Defined in: [src/entities/Comment.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/Comment.ts#L18)
+Defined in: [src/entities/Comment.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/Comment.ts#L18)

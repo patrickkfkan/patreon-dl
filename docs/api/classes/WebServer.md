@@ -6,7 +6,7 @@
 
 # Class: WebServer
 
-Defined in: [src/browse/server/WebServer.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L19)
+Defined in: [src/browse/server/WebServer.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L19)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/browse/server/WebServer.ts:19](https://github.com/patrickkfkan/
 
 > **new WebServer**(`config`): `WebServer`
 
-Defined in: [src/browse/server/WebServer.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L28)
+Defined in: [src/browse/server/WebServer.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L28)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/browse/server/WebServer.ts:28](https://github.com/patrickkfkan/
 
 > **name**: `string` = `'WebServer'`
 
-Defined in: [src/browse/server/WebServer.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L20)
+Defined in: [src/browse/server/WebServer.ts:20](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L20)
 
 ## Methods
 
@@ -40,7 +40,7 @@ Defined in: [src/browse/server/WebServer.ts:20](https://github.com/patrickkfkan/
 
 > **getConfig**(): [`WebServerConfig`](../interfaces/WebServerConfig.md)
 
-Defined in: [src/browse/server/WebServer.ts:107](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L107)
+Defined in: [src/browse/server/WebServer.ts:107](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L107)
 
 #### Returns
 
@@ -52,7 +52,7 @@ Defined in: [src/browse/server/WebServer.ts:107](https://github.com/patrickkfkan
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [src/browse/server/WebServer.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L36)
+Defined in: [src/browse/server/WebServer.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L36)
 
 #### Returns
 
@@ -64,7 +64,7 @@ Defined in: [src/browse/server/WebServer.ts:36](https://github.com/patrickkfkan/
 
 > **stop**(): `undefined` \| `Promise`\<`void`\>
 
-Defined in: [src/browse/server/WebServer.ts:78](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/browse/server/WebServer.ts#L78)
+Defined in: [src/browse/server/WebServer.ts:78](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/browse/server/WebServer.ts#L78)
 
 #### Returns
 

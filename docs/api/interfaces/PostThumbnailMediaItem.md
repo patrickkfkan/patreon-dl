@@ -6,7 +6,7 @@
 
 # Interface: PostThumbnailMediaItem
 
-Defined in: [src/entities/MediaItem.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L62)
+Defined in: [src/entities/MediaItem.ts:62](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L62)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/entities/MediaItem.ts:62](https://github.com/patrickkfkan/patre
 
 > **filename**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L4)
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L4)
 
 #### Inherited from
 
@@ -30,7 +30,7 @@ Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreo
 
 > **id**: `string`
 
-Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L3)
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L3)
 
 #### Inherited from
 
@@ -42,7 +42,7 @@ Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreo
 
 > **imageType**: `"postThumbnail"`
 
-Defined in: [src/entities/MediaItem.ts:64](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L64)
+Defined in: [src/entities/MediaItem.ts:64](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L64)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [src/entities/MediaItem.ts:64](https://github.com/patrickkfkan/patre
 
 > **imageURLs**: `object`
 
-Defined in: [src/entities/MediaItem.ts:65](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L65)
+Defined in: [src/entities/MediaItem.ts:65](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L65)
 
 #### default
 
@@ -74,7 +74,7 @@ Defined in: [src/entities/MediaItem.ts:65](https://github.com/patrickkfkan/patre
 
 > **mimeType**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L5)
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L5)
 
 #### Inherited from
 
@@ -86,7 +86,7 @@ Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreo
 
 > **type**: `"image"`
 
-Defined in: [src/entities/MediaItem.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/4add035452a0337eb07608bde52caecf1dcf43e7/src/entities/MediaItem.ts#L63)
+Defined in: [src/entities/MediaItem.ts:63](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/entities/MediaItem.ts#L63)
 
 #### Overrides
 
