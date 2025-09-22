@@ -267,6 +267,11 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.2.1
+- Fix log file path sometimes not sanitized properly on Windows
+- API: add support for passing request options to `getCampaign()`
+- CLI: add support for using request options from conf file when running with `--list-tiers` / `--list-tiers-uid`
+
 v3.2.0
 - Fix:
   - "Initial data not found" error in `patreon.com/cw` pages ([#85](https://github.com/patrickkfkan/patreon-dl/issues/85)) and custom-domain pages
