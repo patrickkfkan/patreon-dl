@@ -174,6 +174,7 @@ export default class DownloadTaskFactory {
           destDir: dirs.main,
           fileExistsAction,
           srcEntity: item,
+          fetcher,
           callbacks: callbacks || null,
           logger
         },

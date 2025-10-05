@@ -54,7 +54,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
     this.#abortingCallback = null;
   }
 
-  protected abstract getFFmpegCommandParams(): Promise<FFmpegCommandParams>;
+  protected abstract getFFmpegCommandParams(signal?: AbortSignal): Promise<FFmpegCommandParams>;
   protected abstract getTargetDuration(): number | null;
 
   protected doStart() {
@@ -75,8 +75,27 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
   
         try {
           this.#abortController = new AbortController();
+          this.#abortController.signal.onabort = () => {
+            if (this.#ffmpegCommand) {
+              this.#ffmpegCommand.kill('SIGKILL');
+            }
+            else if (this.#abortingCallback) {
+              this.#abortingCallback();
+              __cleanup();
+              resolve();
+            }
+          };
   
-          const ffmpegCommandParams = await this.getFFmpegCommandParams();
+          let ffmpegCommandParams;
+          try {
+            ffmpegCommandParams = await this.getFFmpegCommandParams(this.#abortController.signal);
+          }
+          catch (error) {
+            if (this.#abortController.signal.aborted) {
+              return;
+            }
+            throw error;
+          }
   
           const destFilePath = ffmpegCommandParams.output;
           this.resolvedDestPath = destFilePath;
@@ -159,17 +178,6 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
             __cleanup();
             resolve();
           });
-  
-          this.#abortController.signal.onabort = () => {
-            if (this.#ffmpegCommand) {
-              this.#ffmpegCommand.kill('SIGKILL');
-            }
-            else if (this.#abortingCallback) {
-              this.#abortingCallback();
-              __cleanup();
-              resolve();
-            }
-          };
   
           this.#ffmpegCommand.run();
         }

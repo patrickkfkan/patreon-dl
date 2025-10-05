@@ -9,9 +9,12 @@ import fs from 'fs';
 import DownloadTask from './DownloadTask.js';
 import YouTubeStreamDownloadTask from './YouTubeStreamDownloadTask.js';
 import { type FileExistsAction } from '../DownloaderOptions.js';
+import type Fetcher from '../../utils/Fetcher.js';
+import { fetch } from 'undici';
 
 export interface YouTubeDownloadTaskParams extends FFmpegDownloadTaskBaseParams<YouTubePostEmbed> {
   destDir: string;
+  fetcher: Fetcher;
 }
 
 interface ItagFormat {
@@ -181,6 +184,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
   #fileExistsAction: FileExistsAction;
   #video: YT.VideoInfo | null;
   #ffmpegCommandParams: YouTubeFFmpegCommandParams | null;
+  #fetcher: Fetcher;
 
   constructor(params: YouTubeDownloadTaskParams) {
     super(params);
@@ -188,10 +192,11 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     this.#fileExistsAction = params.fileExistsAction;
     this.#video = null;
     this.#ffmpegCommandParams = null;
+    this.#fetcher = params.fetcher;
   }
 
-  protected async resolveDestPath() {
-    const params = await this.getFFmpegCommandParams();
+  protected async resolveDestPath(signal?: AbortSignal) {
+    const params = await this.getFFmpegCommandParams(signal);
     return params.output;
   }
 
@@ -280,7 +285,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
   }
 
-  protected async getFFmpegCommandParams(): Promise<YouTubeFFmpegCommandParams> {
+  protected async getFFmpegCommandParams(signal?: AbortSignal): Promise<YouTubeFFmpegCommandParams> {
     if (this.#ffmpegCommandParams) {
       return this.#ffmpegCommandParams;
     }
@@ -297,6 +302,40 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       const errMsg = `Stream not found for YouTube video #${video.basic_info.id}`;
       this.log('error', errMsg);
       throw Error(errMsg);
+    }
+
+    // Test streams - YT sometimes imposes a delay before the streams become accessible
+    const streamURLs: {label: string; url: string; }[] = [];
+    if (stream.type === 'separateAV') {
+      streamURLs.push(
+        { label: 'video stream', url: stream.video.url },
+        { label: 'audio stream', url: stream.audio.url }
+      );
+    }
+    else {
+      streamURLs.push({ label: 'stream', url: stream.stream.url });
+    }
+    for (const { label, url } of streamURLs) {
+      const startTime = new Date().getTime();
+      let tries = 0;
+      let testStreamResult = await this.#head(url, signal);
+      while (!testStreamResult.ok && tries < 3) {
+        if (signal?.aborted) {
+          throw Error('Aborted');
+        }
+        this.log('debug', `(#${video.basic_info.id}) YouTube ${label} validation failed (${testStreamResult.status} - ${testStreamResult.statusText}); retrying after 2s...`);
+        await this.#sleep(2000, signal);
+        tries++;
+        testStreamResult = await this.#head(url, signal);
+      }
+      const endTime = new Date().getTime();
+      const timeTaken = (endTime - startTime) / 1000;
+      if (tries === 3) {
+        this.log('warn', `(#${video.basic_info.id}) failed to validate YouTube ${label} URL "${url}" (retried ${tries} times in ${timeTaken}s).`);
+      }
+      else {
+        this.log('debug', `(#${video.basic_info.id}) YouTube ${label} validated in ${timeTaken}s.`);
+      }
     }
 
     this.#video = video;
@@ -500,5 +539,34 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
 
     return null;
+  }
+
+  #sleep(ms: number, signal?: AbortSignal) {
+    return new Promise<void>((resolve, reject) => {
+      if (signal?.aborted) {
+        return reject(new Error('Aborted'));
+      }
+
+      const timer = setTimeout(() => {
+        signal?.removeEventListener('abort', onAbort);
+        resolve();
+      }, ms);
+
+      const onAbort = () => {
+        clearTimeout(timer);
+        reject(new Error('Aborted'));
+      };
+
+      signal?.addEventListener('abort', onAbort);
+    });
+  }
+
+  async #head(url: string, signal?: AbortSignal) {
+    const res = await fetch(url, { method: 'HEAD', signal, dispatcher: this.#fetcher.proxyAgent });
+    return {
+      ok: res.ok,
+      status: res.status,
+      statusText: res.statusText
+    };
   }
 }
