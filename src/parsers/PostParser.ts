@@ -1,7 +1,7 @@
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
-import { PostType, type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
+import { type LinkedAttachment, PostType, type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
 import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
@@ -124,10 +124,12 @@ export default class PostParser extends Parser {
         attachments = downloadables.attachments_media as Downloadable<AttachmentMediaItem>[] || [];
       }
 
-      // Get inline media from content (currently only images supported)
+      // Get inline media from content (currently only images and linked attachments supported)
+      const linkedAttachments: LinkedAttachment[] = [];
       if (hasIncludedJSON && attributes.content) {
         const inlineMedia = this.parseInlineMedia(id, attributes.content, includedJSON);
         images.push(...inlineMedia.images);
+        linkedAttachments.push(...inlineMedia.linkedAttachments);
       }
 
       // Video preview
@@ -277,6 +279,7 @@ export default class PostParser extends Parser {
         tiers,
         embed,
         attachments,
+        linkedAttachments,
         audio,
         audioPreview,
         images,

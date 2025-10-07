@@ -3,6 +3,7 @@ import { type APIConstructor } from ".";
 import { type Post } from "../../entities";
 import { type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
+import { URLHelper } from '../../utils/index.js';
 
 const DEFAULT_CONTENT_LIST_SIZE = 10;
 const DEFAULT_CONTENT_LIST_SORT_BY: ContentListSortBy = 'a-z';
@@ -48,39 +49,74 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
 
     #processPostContentInlineMedia(post: Post) {
       const html = post.content || '';
-      if (!html || post.images.length === 0) {
+      const hasImages = post.images.length > 0;
+      const hasLinkedAttachments = post.linkedAttachments && post.linkedAttachments.length > 0;
+      if (!html || (!hasImages && !hasLinkedAttachments)) {
         return;
       }
+
       const $ = cheerioLoad(html);
       const replacedMediaIds: string[] = [];
-      $('img').each((_, _el) => {
-        const el = $(_el);
-        const id = el.attr('data-media-id');
-        const matched = id ? post.images.find(img => img.id === id && img.downloaded) : null;
-        const src = matched ? `/media/${matched.id}` : el.attr('src');
-        const imgEl = $('<img>').attr('src', src);
-        const aEl = $('<a>')
-          .attr('href', src)
-          .attr('class', 'lightgallery-item')
-          .append(imgEl);
-        const wrapperEl = $('<div>')
-          .attr('class', 'post-card__inline-media-wrapper')
-          .append(aEl);
-        if (!matched) {
-          const caption = "(Externally hosted - not stored locally)";
-          wrapperEl.append(
-            $('<span>').attr('class', 'post-card__inline-media-caption').append(caption)
-          );
+      let hasModified = false;
+
+      if (hasImages) {
+        $('img').each((_, _el) => {
+          const el = $(_el);
+          const id = el.attr('data-media-id');
+          const matched = id ? post.images.find(img => img.id === id && img.downloaded) : null;
+          const src = matched ? `/media/${matched.id}` : el.attr('src');
+          const imgEl = $('<img>').attr('src', src);
+          const aEl = $('<a>')
+            .attr('href', src)
+            .attr('class', 'lightgallery-item')
+            .append(imgEl);
+          const wrapperEl = $('<div>')
+            .attr('class', 'post-card__inline-media-wrapper')
+            .append(aEl);
+          if (!matched) {
+            const caption = "(Externally hosted - not stored locally)";
+            wrapperEl.append(
+              $('<span>').attr('class', 'post-card__inline-media-caption').append(caption)
+            );
+          }
+          el.replaceWith(wrapperEl);
+          if (id && matched) {
+            replacedMediaIds.push(id);
+          }
+        });
+        if (replacedMediaIds.length > 0) {
+          hasModified = true;
+          // Remove images that have been inlined
+          post.images = post.images.filter((img) => !replacedMediaIds.includes(img.id));
         }
-        el.replaceWith(wrapperEl);
-        if (id && matched) {
-          replacedMediaIds.push(id);
-        }
-      });
-      if (replacedMediaIds.length > 0) {
+      }
+
+      // Linked attachments
+      if (hasLinkedAttachments) {
+        $('a').each((_, _el) => {
+          const aEl = $(_el);
+          const href = aEl.attr('href') || '';
+          const { validated, ownerId, mediaId } = URLHelper.isAttachmentLink(href);
+          if (validated) {
+            let modifiedPath: string | undefined;
+            if (post.id !== ownerId) {
+              const isDownloaded = post.linkedAttachments?.find((att) => att.postId === ownerId && att.mediaId === mediaId)?.downloadable?.downloaded;
+              modifiedPath = isDownloaded && `/media/${mediaId}?lapid=${post.id}`;
+            }
+            else {
+              const isDownloaded = post.attachments.find((att) => att.id === mediaId)?.downloaded;
+              modifiedPath = isDownloaded && `/media/${mediaId}`;
+            }
+            if (modifiedPath) {
+              aEl.attr('href', modifiedPath);
+              hasModified = true;
+            }
+          }
+        });
+      }
+
+      if (hasModified) {
         post.content = $.html();
-        // Remove images that have been inlined
-        post.images = post.images.filter((img) => !replacedMediaIds.includes(img.id));
       }
     }
   }

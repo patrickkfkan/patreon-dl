@@ -27,9 +27,11 @@ export type RecursivePropsTo<T, U, E = NoDeepTypes> =
 
 // https://www.totaltypescript.com/get-keys-of-an-object-where-values-are-of-a-given-type
 export type KeysOfValue<T, TCondition> = {
-  [K in keyof T]: T[K] extends TCondition
-    ? K
-    : never;
+  [K in keyof T]-?: undefined extends T[K]
+    ? never
+    : T[K] extends TCondition
+      ? K
+      : never;
 }[keyof T];
 
 // https://stackoverflow.com/questions/69676439/create-constant-array-type-from-an-object-type/69676731#69676731

@@ -4,6 +4,7 @@ import { type DBInstance } from '../../db';
 import path from 'path';
 import fs from 'fs';
 import Basehandler from './BaseHandler.js';
+import { type Downloaded } from '../../../entities';
 
 export default class MediaRequestHandler extends Basehandler {
   name = 'MediaRequestHandler';
@@ -19,7 +20,16 @@ export default class MediaRequestHandler extends Basehandler {
 
   async handleMediaRequest(req: Request, res: Response, id: string) {
     const { t: isRequestingThumbnail } = req.query;
-    const downloaded = await this.#db.getMediaByID(id);
+    const { lapid } = req.query; // Linked attachment parent post Id
+    let downloaded: Downloaded | null | undefined = null;
+    if (lapid) {
+      const post = await this.#db.getContent(lapid as string, 'post');
+      const la = post?.linkedAttachments?.find((att) => att.mediaId === id);
+      downloaded = la?.downloadable?.downloaded;
+    }
+    else {
+      downloaded = await this.#db.getMediaByID(id);
+    }
     let mediaFilePath: string | null = null, isThumbnail = false;
     if (isRequestingThumbnail && downloaded?.thumbnail?.path) {
       const thumbnailFilePath = path.resolve(this.#dataDir, downloaded.thumbnail.path);
