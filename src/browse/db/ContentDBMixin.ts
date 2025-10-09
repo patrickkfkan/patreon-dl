@@ -1,6 +1,6 @@
 import { type Comment, type Downloadable, type Post, type Product, type Tier, type Campaign } from '../../entities';
 import { getYearMonthString, type KeysOfValue } from '../../utils/Misc.js';
-import { type ContentList, type ContentType, type GetContentListParams, type PostWithComments } from '../types/Content.js';
+import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy } from '../types/Content.js';
 import { type CampaignDBConstructor } from './CampaignDBMixin.js';
 
 export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase) {
@@ -373,8 +373,124 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       return result ? this.#parseContentRowJoinedComments(result) : null;
     }
 
-    async getContentList<T extends ContentType>(params: GetContentListParams<T>): Promise<ContentList<T>> {
+    async getPreviousNextContent<T extends ContentType>(
+      content: Post | Product,
+      context: GetContentContext<T>
+    ): Promise<GetPreviousNextContentResult<T>> {
+      let previousWhere: string;
+      let previousSortBy: ContentListSortBy;
+      let nextWhere: string;
+      let nextSortBy: ContentListSortBy;
+      let whereValues: any[];
+      const sortBy = context.sortBy ?? 'latest';
+      const publishedAt = this.#publishedAtToTime(content.publishedAt);
+      const title = content.type === 'post' ? content.title : content.name;
+      switch (sortBy) {
+        case 'a-z':
+        case 'z-a': {
+          const p = `
+            (
+              (title < ?)
+              OR
+              (title = ? AND published_at > ?)
+              OR
+              (title = ? AND published_at = ? AND content_id > ?)
+            )
+          `;
+          const n = `
+            (
+              (title > ?)
+              OR
+              (title = ? AND published_at < ?)
+              OR
+              (title = ? AND published_at = ? AND content_id < ?)
+            )
+          `;
+          whereValues = [title, title, publishedAt, title, publishedAt, content.id];
+          if (sortBy === 'a-z') {
+            previousWhere = p;
+            previousSortBy = 'z-a';
+            nextWhere = n;
+            nextSortBy = 'a-z';
+          }
+          else { // z-a
+            previousWhere = n;
+            previousSortBy = 'a-z';
+            nextWhere = p;
+            nextSortBy = 'z-a';
+          }
+          break;
+        }
+        case 'latest':
+        case 'oldest': {
+          const older = `
+            (
+              (published_at < ?)
+              OR
+              (published_at = ? AND content_id < ?)
+            )
+          `;
+          const newer = `
+            (
+              (published_at > ?)
+              OR
+              (published_at = ? AND content_id > ?)
+            )
+          `;
+          whereValues = [publishedAt, publishedAt, content.id];
+          if (sortBy === 'latest') {
+            previousWhere = newer;
+            previousSortBy = 'oldest';
+            nextWhere = older;
+            nextSortBy = 'latest';
+          }
+          else { // oldest
+            previousWhere = older;
+            previousSortBy = 'latest';
+            nextWhere = newer;
+            nextSortBy = 'oldest';
+          }
+          break;
+        }
+      }
+      const previous = (await this.getContentList(
+        {
+          ...context,
+          sortBy: previousSortBy,
+          limit: 1, offset: 0
+        },
+        {
+          whereClauses: [previousWhere],
+          whereValues
+        },
+        false
+      )).items[0] || null;
+      const next = (await this.getContentList(
+        {
+          ...context,
+          sortBy: nextSortBy,
+          limit: 1, offset: 0
+        },
+        {
+          whereClauses: [nextWhere],
+          whereValues
+        },
+        false
+      )).items[0] || null;
+
+      return {
+        previous,
+        next
+      } as GetPreviousNextContentResult<T>;
+    }
+
+    async getContentList<T extends ContentType>(
+      params: GetContentListParams<T>,
+      db?: { whereClauses: string[]; whereValues: any[]; },
+      includeTotal = true
+    ): Promise<ContentList<T>> {
       const { campaign, type: contentType, isViewable, datePublished, sortBy, limit, offset } = params;
+      const { whereClauses: extraWhereClauses = [], whereValues: extraWhereValues = [] } = db || {};
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
       this.log('debug', `Get ${contentType}s from DB:`, {
         campaign: campaignId,
@@ -428,13 +544,15 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       if (whereIns.length > 0) {
         whereClauseParts.push(...whereIns.map((wi) => `${wi.column} IN (${wi.values.map(() => '?').join(', ')})`));
       }
+      whereClauseParts.push(...extraWhereClauses);
       const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
       const whereValues = [
         ...whereEquals.map(({value}) => value),
         ...whereIns.reduce<(string | number)[]>((result, {values}) => {
           result.push(...values);
           return result;
-        }, [])
+        }, []),
+        ...extraWhereValues
       ];
       let orderByClause: string;
       switch (sortBy) {
@@ -484,10 +602,10 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         [ ...whereValues, ...limitOffsetValues ]
       );
       const items = rows.map<T extends 'post' ? PostWithComments : T extends 'product' ? Product : PostWithComments | Product>((row) => this.#parseContentRowJoinedComments(row));
-      const totalResult = await this.get(
+      const totalResult = includeTotal ? await this.get(
           `SELECT COUNT(*) AS content_count FROM content ${join} ${whereClause}`,
           [...whereValues]
-      );
+      ) : null;
       const total = totalResult ? (totalResult.content_count as number) : 0;
       return {
         items,

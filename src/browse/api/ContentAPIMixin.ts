@@ -1,7 +1,7 @@
 import { load as cheerioLoad } from 'cheerio';
 import { type APIConstructor } from ".";
-import { type Post } from "../../entities";
-import { type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
+import { type Product, type Post } from "../../entities";
+import { type GetContentContext, type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
 import { URLHelper } from '../../utils/index.js';
 
@@ -45,6 +45,10 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
 
     getProduct(id: string) {
       return this.db.getContent(id, 'product');
+    }
+
+    async getPreviousNextContent<T extends ContentType>(content: Post | Product, context: GetContentContext<T>) {
+      return this.db.getPreviousNextContent(content, context);
     }
 
     #processPostContentInlineMedia(post: Post) {

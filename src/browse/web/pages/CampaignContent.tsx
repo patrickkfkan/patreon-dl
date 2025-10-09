@@ -59,6 +59,7 @@ const viewParamsReducer = (
 function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) {
   const { type: contentType } = props;
   const { id: campaignId } = useParams();
+  const [ contextQS, setContextQS ] = useState('');
 
   let subject: { singular: string; plural: string };
   switch (contentType) {
@@ -197,6 +198,21 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
     }
   }, [viewParams, gotoPage]);
 
+  useEffect(() => {
+    const filter = viewParams.filter;
+    if (!filter) {
+      setContextQS('');
+      return;
+    }
+    const params = new URLSearchParams();
+    for (const { searchParam, value } of filter.options) {
+      if (value) {
+        params.set(searchParam, value);
+      }
+    }
+    setContextQS(params.toString());
+  }, [viewParams.filter]);
+
   const listEl = useMemo(() => {
     if (!list || list.items.length === 0) {
       return null;
@@ -206,7 +222,12 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
         <Stack className="mb-4" gap={4}>
           {
             (list as ContentList<'post'>).items.map((item) => (
-              <PostCard key={`post-card-${item.id}`} post={item} useShowMore />
+              <PostCard
+                key={`post-card-${item.id}`}
+                post={item}
+                useShowMore
+                contextQS={contextQS}
+              />
             ))
           }
         </Stack>
@@ -218,7 +239,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
       )
     }
     return null;
-  }, [list]);
+  }, [list, contextQS]);
 
   if (!campaign || !filterOptions) {
     return;
