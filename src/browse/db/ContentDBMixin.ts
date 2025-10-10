@@ -720,12 +720,11 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         SELECT
           COUNT(post_id) as post_count, tier_id, reward.title
         FROM post_tier
-          LEFT JOIN campaign ON campaign.campaign_id = post_tier.campaign_id
           RIGHT JOIN reward ON reward.reward_id = post_tier.tier_id AND reward.campaign_id = post_tier.campaign_id
         WHERE
           post_tier.campaign_id = ?
         GROUP BY
-          post_tier.campaign_id, tier_id
+          tier_id
         `,
         [campaignId]
       );
