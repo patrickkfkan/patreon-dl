@@ -53,6 +53,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("creator_id") REFERENCES "user"("user_id")
       );
 
+      CREATE INDEX IF NOT EXISTS campaign_by_creator ON campaign(creator_id);
+
       CREATE TABLE IF NOT EXISTS "reward" (
         "reward_id" TEXT,
         "campaign_id" TEXT,
@@ -61,6 +63,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         PRIMARY KEY("reward_id","campaign_id")
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
+
+      CREATE INDEX IF NOT EXISTS reward_by_campaign ON reward(campaign_id);
 
       CREATE TABLE IF NOT EXISTS "content" (
         "content_id" TEXT,
@@ -75,6 +79,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
 
+      CREATE INDEX IF NOT EXISTS content_by_campaign ON content(campaign_id);
+
       CREATE TABLE IF NOT EXISTS "post_tier" (
         "post_id" TEXT,
         "tier_id" TEXT,
@@ -84,6 +90,10 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("tier_id", "campaign_id") REFERENCES "reward"("reward_id", "campaign_id"),
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
+
+      CREATE INDEX IF NOT EXISTS post_tier_by_post ON post_tier(post_id);
+      CREATE INDEX IF NOT EXISTS post_tier_by_tier_and_campaign ON post_tier(tier_id, campaign_id);
+      CREATE INDEX IF NOT EXISTS post_tier_by_campaign ON post_tire(campaign_id);
 
       CREATE TABLE IF NOT EXISTS "media" (
         "media_id" TEXT,
@@ -110,6 +120,10 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
 
+      CREATE INDEX IF NOT EXISTS content_media_by_media ON content_media(media_id);
+      CREATE INDEX IF NOT EXISTS content_media_by_content_and_type ON content_media(content_id, content_type);
+      CREATE INDEX IF NOT EXISTS content_media_by_campaign ON content_media(campaign_id);
+
       CREATE TABLE IF NOT EXISTS "post_comments" (
         "post_id" TEXT,
         "comment_count" TEXT NOT NULL,
@@ -117,6 +131,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         PRIMARY KEY("post_id"),
         FOREIGN KEY("post_id") REFERENCES "content"("content_id")
       );
+
+      CREATE INDEX IF NOT EXISTS post_comments_by_post ON post_comments(post_id);
 
       CREATE TABLE IF NOT EXISTS "env" (
         "env_key" TEXT,
