@@ -530,12 +530,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         });
       }
       const whereIns: { column: string; values: (string | number)[] }[] = [];
+      if (contentSubtypes && contentSubtypes.length > 0) {
+        whereIns.push({ column: 'content_subtype', values: contentSubtypes})
+      }
       if (tiers && tiers.length > 0) {
         const ids = tiers.map((tier) => typeof tier === 'string' ? tier : tier.id);
         whereIns.push({ column: 'tier_id', values: ids });
-      }
-      if (contentSubtypes && contentSubtypes.length > 0) {
-        whereIns.push({ column: 'content_subtype', values: contentSubtypes})
       }
       const whereClauseParts: string[] = [];
       if (whereEquals.length > 0) {
