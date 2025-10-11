@@ -69,6 +69,7 @@
     "@patrickkfkan/cross-spawn": "^7.1.0",
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
+    "@types/better-sqlite3": "^7.6.13",
     "argv-split": "^3.2.1",
     "better-sqlite3": "^12.4.1",
     "bootstrap": "^5.3.6",
