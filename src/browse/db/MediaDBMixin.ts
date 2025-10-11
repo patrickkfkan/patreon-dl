@@ -13,7 +13,7 @@ type DBMediaType = 'image' | 'video' | 'audio' | 'other';
 
 export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
   return class MediaDB extends Base {
-    async saveMedia(
+    saveMedia(
       media: Downloadable
     ) {
       if (!media.downloaded || !media.downloaded.path) {
@@ -35,9 +35,9 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }
       this.log('debug', `Save media #${media.id} to DB`);
       try {
-        const mediaExists = await this.checkMediaExists(media);
+        const mediaExists = this.checkMediaExists(media);
         if (!mediaExists) {
-          await this.run(
+          this.run(
             `
             INSERT INTO media (
               media_id,
@@ -65,7 +65,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         }
         else {
           this.log('debug', `Media #${media.id} already exists in DB - update record`);
-          await this.run(
+          this.run(
             `
             UPDATE media
             SET
@@ -102,10 +102,10 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }
     }
 
-    async checkMediaExists(media: Downloadable): Promise<boolean> {
+    checkMediaExists(media: Downloadable) {
       this.log('debug', `Check if media #${media.id} exists in DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `SELECT COUNT(*) as count FROM media WHERE media_id = ?`,
           [ media.id ]
         );
@@ -120,14 +120,14 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }
     }
 
-    async checkContentMediaExists(content: Post | Product, media: Downloadable): Promise<boolean> {
+    checkContentMediaExists(content: Post | Product, media: Downloadable) {
       this.log(
         'debug',
         `Check if content media exists in DB`,
         `(${content.type} ID: ${content.id}, media ID: ${media.id})`,
       );
       try {
-        const result = await this.get(
+        const result = this.get(
           `
           SELECT COUNT(*) as count
           FROM content_media
@@ -156,9 +156,9 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }
     }
 
-    async getMediaByID(id: string): Promise<Downloaded | null> {
+    getMediaByID(id: string): Downloaded | null {
       this.log('debug', `Get media #${id} from DB`);
-      const result = await this.get(
+      const result = this.get(
         `
         SELECT 
           mime_type,
@@ -186,7 +186,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       } : null;
     }
 
-    async getMediaList<T extends ContentType>(params: GetMediaListParams<T>): Promise<MediaList<T>> {
+    getMediaList<T extends ContentType>(params: GetMediaListParams<T>): MediaList<T> {
       const { campaign, sourceType, isViewable, datePublished, sortBy, limit, offset } = params;
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id );
       const tiers = params.sourceType === 'post' ? (params as GetMediaListParams<'post'>).tiers : null;
@@ -282,7 +282,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         orderBy: orderByClause,
         limitOffset: limitOffsetClause
       });
-      const rows = await this.all(
+      const rows = this.all(
         sql,
         [ ...whereValues, ...limitOffsetValues ]
       );
@@ -302,7 +302,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         join,
         where: whereClause,
       });
-      const totalResult = await this.get(totalSql, whereValues);
+      const totalResult = this.get(totalSql, whereValues);
       const total = totalResult ? (totalResult.media_count as number) : 0;
       return {
         items,
@@ -310,7 +310,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       };
     }
 
-    async getMediaCountByDate(
+    getMediaCountByDate(
       groupBy: 'year' | 'month',
       filter?: {
         campaign?: Campaign | string | null,
@@ -347,14 +347,14 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         groupBy: 'dt',
         orderBy: 'dt DESC'
       })
-      const rows = await this.all(sql, whereValues);
+      const rows = this.all(sql, whereValues);
       return rows.map((row) => ({
         dt: row.dt as string,
         count: row.media_count as number
       }));
     }
 
-    async getMediaCountByContentType(campaign?: Campaign | string | null) {
+    getMediaCountByContentType(campaign?: Campaign | string | null) {
       const campaignId = typeof campaign === 'string' ? campaign : campaign?.id;
       this.log('debug', `Get media count by content type for campaign #${campaignId}`);
       const whereClauseParts: string[] = [];
@@ -370,14 +370,14 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         groupBy: 'content.content_type',
         orderBy: 'content.content_type DESC'
       });
-      const rows = await this.all(sql, whereValues);
+      const rows = this.all(sql, whereValues);
       return rows.map((row) => ({
         contentType: row.content_type as 'post' | 'product',
         count: row.media_count as number
       }));
     }
 
-    async getMediaCountByTier(campaign: Campaign | string) {
+    getMediaCountByTier(campaign: Campaign | string) {
       const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
       this.log('debug', `Get media count by tier for campaign #${campaignId}`);
       const sql = this.getMediaListSQL({
@@ -388,7 +388,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
           post_tier.campaign_id = ?`,
         groupBy: 'post_tier.campaign_id, tier_id'
       })
-      const rows = await this.all(sql, [campaignId]);
+      const rows = this.all(sql, [campaignId]);
       return rows.map((row) => ({
         tierId: row.tier_id as string,
         title: row.title as string,

@@ -50,7 +50,7 @@ export class WebServer {
     if (!fs.existsSync(dbFile)) {
       throw Error(`DB file "${dbFile}" does not exist`);
     }
-    const db = await DB.getInstance(dbFile, false, this.#config.logger);
+    const db = DB.getInstance(dbFile, false, this.#config.logger);
     const api = API.getInstance(db, this.#config.logger);
     const router = getRouter(db, api, dataDir, this.#config.logger);
 

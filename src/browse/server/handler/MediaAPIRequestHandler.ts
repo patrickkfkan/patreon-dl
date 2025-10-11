@@ -18,7 +18,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
     this.#api = api;
   }
 
-  async handleListRequest(req: Request, res: Response, campaignId?: string) {
+  handleListRequest(req: Request, res: Response, campaignId?: string) {
     const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
     const {
       tier_ids,
@@ -55,7 +55,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
     const datePublished = date_published === 'this_month' ? getYearMonthString() : date_published as string | undefined;
     switch (sourceType) {
       case 'post':
-        res.json(await this.#api.getMediaList({
+        res.json(this.#api.getMediaList({
           campaign: campaignId,
           sourceType,
           isViewable,
@@ -67,7 +67,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
         }));
         break;
       default:
-        res.json(await this.#api.getMediaList({
+        res.json(this.#api.getMediaList({
           campaign: campaignId,
           sourceType,
           isViewable,
@@ -80,7 +80,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
     }
   }
 
-  async handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string) {
-    res.json(await this.#api.getMediaFilterData(campaignId));
+  handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string) {
+    res.json(this.#api.getMediaFilterData(campaignId));
   }
 }

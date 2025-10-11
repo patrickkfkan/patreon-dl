@@ -10,9 +10,9 @@ const DEFAULT_CONTENT_LIST_SORT_BY: ContentListSortBy = 'a-z';
 
 export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
   return class ContentAPI extends Base {
-    async getContentList<T extends ContentType>(params: GetContentListParams<T>) {
+    getContentList<T extends ContentType>(params: GetContentListParams<T>) {
       const { sortBy = DEFAULT_CONTENT_LIST_SORT_BY, limit = DEFAULT_CONTENT_LIST_SIZE, offset = 0 } = params;
-      const list = await this.db.getContentList({
+      const list = this.db.getContentList({
         ...params,
         sortBy,
         limit,
@@ -34,8 +34,8 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
       return list;
     }
 
-    async getPost(id: string) {
-      const post = await this.db.getContent(id, 'post');
+    getPost(id: string) {
+      const post = this.db.getContent(id, 'post');
       if (post) {
         this.#processPostContentInlineMedia(post);
         post.content = this.sanitizeHTML(post.content || '');
@@ -47,7 +47,7 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
       return this.db.getContent(id, 'product');
     }
 
-    async getPreviousNextContent<T extends ContentType>(content: Post | Product, context: GetContentContext<T>) {
+    getPreviousNextContent<T extends ContentType>(content: Post | Product, context: GetContentContext<T>) {
       return this.db.getPreviousNextContent(content, context);
     }
 

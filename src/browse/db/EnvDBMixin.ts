@@ -6,11 +6,11 @@ export type EnvDBConstructor = new (
 
 export function EnvDBMixin<TBase extends DBConstructor>(Base: TBase) {
   return class EnvDB extends Base {
-    async saveEnvValue(key: string, value: any) {
+    saveEnvValue(key: string, value: any) {
       this.log('debug', `Save env value for "${key}" to DB`);
-      const exists = await this.checkEnvExists(key);
+      const exists = this.checkEnvExists(key);
       if (!exists) {
-        await this.run(
+        this.run(
           `
           INSERT INTO env (
             env_key,
@@ -25,7 +25,7 @@ export function EnvDBMixin<TBase extends DBConstructor>(Base: TBase) {
         );
       } else {
         this.log('debug', `Env value for "${key}" already exists in DB - update record`);
-        await this.run(`
+        this.run(`
           UPDATE env
           SET
             value = ?
@@ -39,19 +39,20 @@ export function EnvDBMixin<TBase extends DBConstructor>(Base: TBase) {
       }
     }
 
-    async getEnvValue<T = any>(key: string): Promise<T | null> {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+    getEnvValue<T = any>(key: string): T | null {
       this.log('debug', `Get env value for "${key}" from DB`);
-      const result = await this.get(
+      const result = this.get(
         `SELECT value FROM env WHERE env_key = ?`,
         [key]
       );
       return result ? JSON.parse(result.value) : null;
     }
 
-    async checkEnvExists(key: string): Promise<boolean> {
+    checkEnvExists(key: string) {
       this.log('debug', `Check if env value for "${key}" exists in DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `
           SELECT COUNT(*) as count
           FROM env

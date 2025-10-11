@@ -51,8 +51,8 @@ const DEFAULT_BROWSE_SETTINGS: BrowseSettings = {
 
 export function SettingsAPIMixin<TBase extends APIConstructor>(Base: TBase) {
   return class SettingsAPI extends Base {
-    async getBrowseSettings() {
-      const settings = await this.db.getEnvValue<BrowseSettings>(BROWSE_SETTINGS_ENV_KEY);
+    getBrowseSettings() {
+      const settings = this.db.getEnvValue<BrowseSettings>(BROWSE_SETTINGS_ENV_KEY);
       if (settings) {
         return {
           ...DEFAULT_BROWSE_SETTINGS,

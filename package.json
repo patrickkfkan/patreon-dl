@@ -31,6 +31,7 @@
     "node": ">=20.18.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/capitalize": "^2.0.2",
     "@types/command-line-args": "^5.2.2",
     "@types/command-line-usage": "^5.0.4",
@@ -69,6 +70,7 @@
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
     "argv-split": "^3.2.1",
+    "better-sqlite3": "^12.4.1",
     "bootstrap": "^5.3.6",
     "bootswatch": "^5.3.6",
     "bottleneck": "^2.19.5",
@@ -114,8 +116,6 @@
     "semver": "^7.7.2",
     "slick-carousel": "^1.8.1",
     "speedometer": "^1.1.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
     "youtubei.js": "^15.0.1"

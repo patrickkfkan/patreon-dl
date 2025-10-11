@@ -59,24 +59,17 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
   protected fsHelper: FSHelper;
   protected config: DownloaderConfig<T>;
   protected logger?: Logger | null;
-  protected db: () => Promise<DBInstance>;
-  #dbPromise: Promise<DBInstance> | null;
+  protected db: DBInstance;
 
   #hasEmittedEndEventOnAbort: boolean;
 
-  constructor(config: DownloaderConfig<T>, db: () => Promise<DBInstance>, logger?: Logger | null) {
+  constructor(config: DownloaderConfig<T>, db: DBInstance, logger?: Logger | null) {
     super();
 
     this.config = config;
     this.fetcher = new Fetcher(this.config, logger);
     this.fsHelper = new FSHelper(this.config, logger);
-    this.#dbPromise = null;
-    this.db = async () => {
-      if (!this.#dbPromise) {
-        this.#dbPromise = db();
-      }
-      return this.#dbPromise;
-    }
+    this.db = db;
     this.logger = logger;
 
     if (this.config.pathToFFmpeg) {
@@ -271,7 +264,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     };
     const logger = options?.logger;
     const fsHelper = new FSHelper(config, logger);
-    const db = () => DB.getInstance(fsHelper.getDBFilePath(), config.dryRun, logger);
+    const db = DB.getInstance(fsHelper.getDBFilePath(), config.dryRun, logger);
     
     switch (config.type) {
       case 'product': {
@@ -370,10 +363,9 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
     return new Promise<void>((resolve) => {
       void (async () => {
-        const db = await this.db();
         if (!this.config.include.campaignInfo) {
           if (campaign) {
-            await db.saveCampaign(campaign, new Date());
+            this.db.saveCampaign(campaign, new Date());
           }
           resolve();
           return;
@@ -489,7 +481,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         }
 
         // Step 4: save to DB
-        await db.saveCampaign(campaign, new Date());
+        this.db.saveCampaign(campaign, new Date());
   
         // Done
         this.log('info', 'Done saving campaign info');

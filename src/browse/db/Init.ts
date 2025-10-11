@@ -1,12 +1,11 @@
-import { type Database, open } from 'sqlite';
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 import type Logger from '../../utils/logging/Logger.js';
 import { existsSync } from 'fs';
 import { commonLog } from '../../utils/logging/Logger.js';
 
 const DB_SCHEMA_VERSION = '1.0.0';
 
-export async function openDB(file: string, dryRun = false, logger?: Logger | null) {
+export function openDB(file: string, dryRun = false, logger?: Logger | null): Database.Database {
   const dbFileExists = dryRun ? false : existsSync(file);
 
   if (dryRun) {
@@ -26,13 +25,16 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
     );
   }
 
-  const db = await open({
-    filename: dryRun ? ':memory:' : file,
-    driver: sqlite3.cached.Database
-  });
+  const db = new Database(
+    dryRun ? ':memory:' : file,
+    {
+      verbose: logger ? (msg) => commonLog(logger, 'debug', 'DB', msg) : undefined
+    }
+  );
 
   try {
-    await db.exec(`
+    db.exec('PRAGMA foreign_keys = OFF;');
+    db.exec(`
       BEGIN TRANSACTION;
 
       CREATE TABLE IF NOT EXISTS "user" (
@@ -176,7 +178,7 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
   catch (error: any) {
     let rollbackError: any = null;
     try {
-      await db.exec('ROLLBACK');
+      db.exec('ROLLBACK');
     } catch (_rollbackError) {
       rollbackError = _rollbackError;
     }
@@ -185,21 +187,21 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
   }
 
   if (!dbFileExists) {
-    await db.run(`INSERT INTO env (env_key, value) VALUES (?, ?)`, [
+    db.prepare(`INSERT INTO env (env_key, value) VALUES (?, ?)`).run(
       'db_schema_version',
       DB_SCHEMA_VERSION
-    ]);
+    );
   } else {
-    await checkDBSchemaVersion(db, logger);
+    checkDBSchemaVersion(db, logger);
   }
 
   return db;
 }
 
-async function checkDBSchemaVersion(db: Database, logger?: Logger | null) {
-  const result = await db.get(`SELECT value FROM env WHERE env_key = ?`, [
-    'db_schema_version'
-  ]);
+function checkDBSchemaVersion(db: Database.Database, logger?: Logger | null) {
+  const result = db
+    .prepare(`SELECT value FROM env WHERE env_key = ?`)
+    .get('db_schema_version') as { value: string } | undefined;
   const version = result?.value || '';
   if (version) {
     commonLog(logger, 'debug', 'DB', `DB schema version: ${version}`);

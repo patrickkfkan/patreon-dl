@@ -56,7 +56,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
     };
   }
 
-  async handleListRequest(req: Request, res: Response, campaignId?: string, contentType?: ContentType) {
+  handleListRequest(req: Request, res: Response, campaignId?: string, contentType?: ContentType) {
     const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
     const {
       campaign,
@@ -70,7 +70,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
     
     switch (contentType) {
       case 'post':
-        res.json(await this.#api.getContentList({
+        res.json(this.#api.getContentList({
           campaign,
           type,
           postTypes,
@@ -83,7 +83,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
         }));
         break;
       default:
-        res.json(await this.#api.getContentList({
+        res.json(this.#api.getContentList({
           campaign,
           type,
           isViewable,
@@ -96,12 +96,12 @@ export default class ContentAPIRequestHandler extends Basehandler {
     }
   }
 
-  async handleGetRequest(req: Request, res: Response, contentType: ContentType, id: string) {
+  handleGetRequest(req: Request, res: Response, contentType: ContentType, id: string) {
     switch (contentType) {
       case 'post': {
-        const post = await this.#api.getPost(id);
+        const post = this.#api.getPost(id);
         const context = this.#getContext(req, post?.campaign?.id, contentType) as GetContentContext<'post'>;
-        const { previous = null, next = null } = post ? await this.#api.getPreviousNextContent(post, context) : {};
+        const { previous = null, next = null } = post ? this.#api.getPreviousNextContent(post, context) : {};
         res.json({
           post,
           previous,
@@ -111,18 +111,18 @@ export default class ContentAPIRequestHandler extends Basehandler {
         break;
       }
       case 'product':
-        res.json(await this.#api.getProduct(id));
+        res.json(this.#api.getProduct(id));
         break;
     }
   }
 
-  async handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string, contentType: ContentType) {
+  handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string, contentType: ContentType) {
     switch (contentType) {
       case 'post':
-        res.json(await this.#api.getPostFilterData(campaignId));
+        res.json(this.#api.getPostFilterData(campaignId));
         break;
       case 'product':
-        res.json(await this.#api.getProductFilterData(campaignId));
+        res.json(this.#api.getProductFilterData(campaignId));
         break;
     }
   }

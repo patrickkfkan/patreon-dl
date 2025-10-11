@@ -27,7 +27,6 @@ export default class ProductDownloader extends Downloader<Product> {
       void (async () => {
         const { signal } = params || {};
         let batch: DownloadTaskBatch | null = null;
-        const db = await this.db();
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
@@ -210,11 +209,11 @@ export default class ProductDownloader extends Downloader<Product> {
         let skipDB = false;
         if (!product.isAccessible) {
           // Skip if existing db record (if any) refers to accessible product
-          const dbProduct = await db.getContent(product.id, 'product');
+          const dbProduct = this.db.getContent(product.id, 'product');
           skipDB = dbProduct !== null && dbProduct.isAccessible;
         }
         if (!skipDB) {
-          await db.saveContent(product);
+          this.db.saveContent(product);
         }
         else {
           this.log('info', `Skip overwrite existing accessible product #${product.id} in DB with current unviewable version`);

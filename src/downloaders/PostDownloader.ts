@@ -34,7 +34,6 @@ export default class PostDownloader extends Downloader<Post> {
       void (async () => {
         const { signal } = params || {};
         const postFetch = this.config.postFetch;
-        const db = await this.db();
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
@@ -166,7 +165,7 @@ export default class PostDownloader extends Downloader<Post> {
               postDirs,
               statusCacheValidation.scope,
               statusCache,
-              db,
+              this.db,
               resolve,
               signal
             )).status) {
@@ -624,13 +623,13 @@ export default class PostDownloader extends Downloader<Post> {
     let skipDB = false;
     if (!post.isViewable) {
       // Skip if existing db record (if any) refers to viewable post
-      const dbPost = await db.getContent(post.id, 'post');
+      const dbPost = db.getContent(post.id, 'post');
       skipDB = dbPost !== null && dbPost.isViewable;
     }
     if (!skipDB) {
-      await db.saveContent(post);
+      db.saveContent(post);
       if (comments) {
-        await db.savePostComments(post, comments);
+        db.savePostComments(post, comments);
       }
     }
     else {

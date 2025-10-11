@@ -18,17 +18,17 @@ export default class MediaRequestHandler extends Basehandler {
     this.#dataDir = dataDir;
   }
 
-  async handleMediaRequest(req: Request, res: Response, id: string) {
+  handleMediaRequest(req: Request, res: Response, id: string) {
     const { t: isRequestingThumbnail } = req.query;
     const { lapid } = req.query; // Linked attachment parent post Id
     let downloaded: Downloaded | null | undefined = null;
     if (lapid) {
-      const post = await this.#db.getContent(lapid as string, 'post');
+      const post = this.#db.getContent(lapid as string, 'post');
       const la = post?.linkedAttachments?.find((att) => att.mediaId === id);
       downloaded = la?.downloadable?.downloaded;
     }
     else {
-      downloaded = await this.#db.getMediaByID(id);
+      downloaded = this.#db.getMediaByID(id);
     }
     let mediaFilePath: string | null = null, isThumbnail = false;
     if (isRequestingThumbnail && downloaded?.thumbnail?.path) {
