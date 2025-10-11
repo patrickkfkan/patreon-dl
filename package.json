@@ -118,7 +118,7 @@
     "speedometer": "^1.1.0",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^15.0.1"
+    "youtubei.js": "^15.1.1"
   },
   "keywords": [
     "patreon",
