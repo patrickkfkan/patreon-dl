@@ -1,6 +1,6 @@
 {
   "name": "patreon-dl",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Patreon Downloader",
   "type": "module",
   "exports": "./dist/index.js",
@@ -31,7 +31,6 @@
     "node": ">=20.18.1"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
     "@types/capitalize": "^2.0.2",
     "@types/command-line-args": "^5.2.2",
     "@types/command-line-usage": "^5.0.4",
