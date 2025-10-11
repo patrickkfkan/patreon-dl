@@ -5,7 +5,7 @@ import { commonLog } from '../../utils/logging/Logger.js';
 
 const DB_SCHEMA_VERSION = '1.0.0';
 
-export function openDB(file: string, dryRun = false, logger?: Logger | null): Database.Database {
+export async function openDB(file: string, dryRun = false, logger?: Logger | null): Promise<Database.Database> {
   const dbFileExists = dryRun ? false : existsSync(file);
 
   if (dryRun) {

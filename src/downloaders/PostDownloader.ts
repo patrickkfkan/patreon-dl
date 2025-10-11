@@ -34,6 +34,7 @@ export default class PostDownloader extends Downloader<Post> {
       void (async () => {
         const { signal } = params || {};
         const postFetch = this.config.postFetch;
+        const db = await this.db();
   
         if (this.checkAbortSignal(signal, resolve)) {
           return;
@@ -165,7 +166,7 @@ export default class PostDownloader extends Downloader<Post> {
               postDirs,
               statusCacheValidation.scope,
               statusCache,
-              this.db,
+              db,
               resolve,
               signal
             )).status) {
