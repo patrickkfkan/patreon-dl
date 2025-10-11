@@ -2,8 +2,10 @@ import Database from 'better-sqlite3';
 import type Logger from '../../utils/logging/Logger.js';
 import { existsSync } from 'fs';
 import { commonLog } from '../../utils/logging/Logger.js';
+import { updateDB } from './Update.js';
+import semver from 'semver';
 
-const DB_SCHEMA_VERSION = '1.0.0';
+const DB_SCHEMA_VERSION = '1.1.0';
 
 export async function openDB(file: string, dryRun = false, logger?: Logger | null): Promise<Database.Database> {
   const dbFileExists = dryRun ? false : existsSync(file);
@@ -192,19 +194,16 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
       DB_SCHEMA_VERSION
     );
   } else {
-    checkDBSchemaVersion(db, logger);
+    await checkDBSchemaVersion(db, logger);
   }
 
   return db;
 }
 
-function checkDBSchemaVersion(db: Database.Database, logger?: Logger | null) {
-  const result = db
-    .prepare(`SELECT value FROM env WHERE env_key = ?`)
-    .get('db_schema_version') as { value: string } | undefined;
-  const version = result?.value || '';
+async function checkDBSchemaVersion(db: Database.Database, logger?: Logger | null) {
+  const version = getSchemaVersionFromDB(db);
   if (version) {
-    commonLog(logger, 'debug', 'DB', `DB schema version: ${version}`);
+    commonLog(logger, 'info', 'DB', `DB schema version: ${version}`);
   } else {
     commonLog(
       logger,
@@ -215,5 +214,23 @@ function checkDBSchemaVersion(db: Database.Database, logger?: Logger | null) {
     return;
   }
 
-  // Code to be added here if schema needs to be updatd
+  if (semver.lt(DB_SCHEMA_VERSION, version)) {
+    throw Error(`DB schema version v${version} is newer than v${DB_SCHEMA_VERSION} supported by this version of patreon-dl. Update patreon-dl and try again.`);
+  }
+  if (semver.gt(DB_SCHEMA_VERSION, version)) {
+    await updateDB(db, version, logger);
+    commonLog(
+      logger,
+      'info',
+      'DB',
+      `Updated DB schema version: ${getSchemaVersionFromDB(db)}`
+    );
+  }
+}
+
+function getSchemaVersionFromDB(db: Database.Database) {
+  const result = db
+    .prepare(`SELECT value FROM env WHERE env_key = ?`)
+    .get('db_schema_version') as { value: string } | undefined;
+  return result?.value || '';
 }
