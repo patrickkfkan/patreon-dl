@@ -1,6 +1,6 @@
 {
   "name": "patreon-dl",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Patreon Downloader",
   "type": "module",
   "exports": "./dist/index.js",
@@ -68,7 +68,9 @@
     "@patrickkfkan/cross-spawn": "^7.1.0",
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
+    "@types/better-sqlite3": "^7.6.13",
     "argv-split": "^3.2.1",
+    "better-sqlite3": "^12.4.1",
     "bootstrap": "^5.3.6",
     "bootswatch": "^5.3.6",
     "bottleneck": "^2.19.5",
@@ -111,14 +113,12 @@
     "react-slick": "^0.30.3",
     "sanitize-filename": "^1.6.3",
     "sanitize-html": "^2.17.0",
-    "semver": "^7.5.4",
+    "semver": "^7.7.2",
     "slick-carousel": "^1.8.1",
     "speedometer": "^1.1.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^15.0.1"
+    "youtubei.js": "^15.1.1"
   },
   "keywords": [
     "patreon",

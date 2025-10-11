@@ -55,27 +55,27 @@ const NULL_CAMPAIGN: Campaign = {
 
 export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
   return class CampaignDB extends Base {
-    async saveCampaign(campaign: Campaign | null, downloadDate: Date, overwriteIfExists = true) {
+    saveCampaign(campaign: Campaign | null, downloadDate: Date, overwriteIfExists = true) {
       if (!campaign) {
         campaign = NULL_CAMPAIGN; 
       }
       this.log('debug', `Save campaign #${campaign.id} (${campaign.name}) to DB`);
       try {
-        const campaignExists = await this.checkCampaignExists(campaign.id);
+        const campaignExists = this.checkCampaignExists(campaign.id);
         if (campaignExists && !overwriteIfExists) {
           return;
         }
 
-        await this.exec('BEGIN TRANSACTION');
+        this.exec('BEGIN TRANSACTION');
 
         // Save creator
-        await this.saveUser(campaign.creator);
+        this.saveUser(campaign.creator);
 
-        await this.saveMedia(campaign.avatarImage);
-        await this.saveMedia(campaign.coverPhoto);
+        this.saveMedia(campaign.avatarImage);
+        this.saveMedia(campaign.coverPhoto);
 
         if (!campaignExists) {
-          await this.run(
+          this.run(
             `
             INSERT INTO campaign (
               campaign_id,
@@ -96,7 +96,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
           );
         } else {
           this.log('debug', `Campaign #${campaign.id} already exists in DB - update record`);
-          await this.run(`
+          this.run(`
             UPDATE campaign
             SET
               creator_id = ?,
@@ -116,20 +116,20 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         }
 
         // Save rewards
-        await this.#saveRewards(campaign);
+        this.#saveRewards(campaign);
 
-        await this.exec('COMMIT');
+        this.exec('COMMIT');
       } catch (error) {
         this.log(
           'error',
           `Failed to save campaign #${campaign.id} (${campaign.name}) to DB:`,
           error
         );
-        await this.exec('ROLLBACK');
+        this.exec('ROLLBACK');
       }
     }
 
-    async getCampaign(params: GetCampaignParams)
+    getCampaign(params: GetCampaignParams)
       {
         const { id, vanity, withCounts = false } = params;
         if (id) {
@@ -146,13 +146,13 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         }
         let result;
         if (id) {
-          result = await this.get(
+          result = this.get(
             `SELECT details FROM campaign WHERE campaign_id = ?`,
             [params.id]
           );
         }
         else {
-          result = await this.get(
+          result = this.get(
             `
             SELECT campaign.details
             FROM campaign
@@ -165,26 +165,26 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         return result ? JSON.parse(result.details) as Campaign : null;
     }
 
-    async #saveRewards(campaign: Campaign) {
+    #saveRewards(campaign: Campaign) {
       if (campaign.id === NULL_CAMPAIGN.id) {
         this.log('warn', 'Skip save rewards to DB because campaign is null');
         return;
       }
       // Clear existing rewards for campaign
       this.log('debug', `Clear existing rewards in DB for campaign #${campaign.id} before saving current ones`);
-      await this.run(`DELETE FROM reward WHERE campaign_id = ?`, [
+      this.run(`DELETE FROM reward WHERE campaign_id = ?`, [
         campaign.id
       ]);
-      await Promise.all(campaign.rewards.map((reward) => this.#doSaveReward(campaign, reward)));
+      campaign.rewards.forEach((reward) => this.#doSaveReward(campaign, reward));
     }
 
-    async #doSaveReward(campaign: Campaign, reward: Reward) {
+    #doSaveReward(campaign: Campaign, reward: Reward) {
       this.log('debug', `Add reward #${reward.id} (${reward.title}) to DB`);
       try {
         if (reward.image) {
-          await this.saveMedia(reward.image);
+          this.saveMedia(reward.image);
         }
-        await this.run(`
+        this.run(`
           INSERT INTO reward (
             reward_id,
             campaign_id,
@@ -210,7 +210,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
       }
     }
 
-    async getCampaignList(params: GetCampaignListParams): Promise<CampaignList> {
+    getCampaignList(params: GetCampaignListParams): CampaignList {
       const { sortBy, limit, offset } = params;
       this.log('debug', 'Get campaigns from DB:', params);
       let orderByClause: string;
@@ -265,7 +265,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         groupBy: 'content_media.campaign_id'
       });
       try {
-        const rows = await this.all(
+        const rows = this.all(
           `
           SELECT
             details,
@@ -288,7 +288,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
           productCount: (row.product_count || 0) as number,
           mediaCount: (row.media_count || 0) as number
         }));
-        const totalResult = await this.get(
+        const totalResult = this.get(
           `SELECT COUNT(*) AS campaign_count FROM campaign`
         );
         const total = totalResult ? (totalResult.campaign_count as number) : 0;
@@ -305,12 +305,12 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
       }
     }
 
-    async #getCampaignWithCounts(params: GetCampaignParams): Promise<CampaignWithCounts | null> {
+    #getCampaignWithCounts(params: GetCampaignParams): CampaignWithCounts | null {
       const { id, vanity } = params;
       const joinUser = vanity ? `LEFT JOIN user ON user.user_id = campaign.creator_id` : ''
       const whereClause = vanity ? `WHERE user.vanity = ?` : `WHERE campaign.campaign_id = ?`;
       const whereValues = vanity ? [ vanity ] : [ id ];
-      const row = await this.get(
+      const row = this.get(
         `
         SELECT
           campaign.details,
@@ -320,8 +320,8 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         FROM
           campaign
           ${joinUser}
-          LEFT JOIN (SELECT COUNT(content_id) AS post_count, campaign_id FROM content WHERE content_type = "post" GROUP BY campaign_id) postc ON postc.campaign_id = campaign.campaign_id
-          LEFT JOIN (SELECT COUNT(content_id) AS product_count, campaign_id FROM content WHERE content_type = "product" GROUP BY campaign_id) productc ON productc.campaign_id = campaign.campaign_id
+          LEFT JOIN (SELECT COUNT(content_id) AS post_count, campaign_id FROM content WHERE content_type = 'post' GROUP BY campaign_id) postc ON postc.campaign_id = campaign.campaign_id
+          LEFT JOIN (SELECT COUNT(content_id) AS product_count, campaign_id FROM content WHERE content_type = 'product' GROUP BY campaign_id) productc ON productc.campaign_id = campaign.campaign_id
           LEFT JOIN (SELECT COUNT(media_id) AS media_count, campaign_id FROM content_media GROUP BY campaign_id) mc ON mc.campaign_id = campaign.campaign_id
         ${whereClause}
         `,
@@ -336,10 +336,10 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
       : null;
     }
 
-    async checkCampaignExists(id: string): Promise<boolean> {
+    checkCampaignExists(id: string) {
       this.log('debug', `Check if campaign #${id} exists in DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `SELECT COUNT(*) as count FROM campaign WHERE campaign_id = ?`,
           [id]
         );

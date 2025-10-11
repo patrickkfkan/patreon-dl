@@ -3,7 +3,7 @@ import { type Logger } from '../../../utils/logging';
 import { type APIInstance } from '../../api';
 import Basehandler from './BaseHandler.js';
 import { getYearMonthString } from '../../../utils/Misc.js';
-import { type ContentListSortBy, type ContentType } from '../../types/Content.js';
+import { type GetContentContext, type ContentListSortBy, type ContentType } from '../../types/Content.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
@@ -17,8 +17,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
     this.#api = api;
   }
 
-  async handleListRequest(req: Request, res: Response, campaignId?: string, contentType?: ContentType) {
-    const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
+  #getContext(req: Request, campaignId?: string, contentType?: ContentType) {
     const {
       tier_ids,
       post_types,
@@ -46,11 +45,34 @@ export default class ContentAPIRequestHandler extends Basehandler {
       'a-z'
     );
     const datePublished = date_published === 'this_month' ? getYearMonthString() : date_published as string | undefined;
+    return {
+      campaign: campaignId,
+      type: contentType,
+      postTypes,
+      isViewable,
+      datePublished,
+      tiers,
+      sortBy
+    };
+  }
+
+  handleListRequest(req: Request, res: Response, campaignId?: string, contentType?: ContentType) {
+    const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
+    const {
+      campaign,
+      type,
+      postTypes,
+      isViewable,
+      datePublished,
+      tiers,
+      sortBy
+    } = this.#getContext(req, campaignId, contentType);
+    
     switch (contentType) {
       case 'post':
-        res.json(await this.#api.getContentList({
-          campaign: campaignId,
-          type: contentType,
+        res.json(this.#api.getContentList({
+          campaign,
+          type,
           postTypes,
           isViewable,
           datePublished,
@@ -61,9 +83,9 @@ export default class ContentAPIRequestHandler extends Basehandler {
         }));
         break;
       default:
-        res.json(await this.#api.getContentList({
-          campaign: campaignId,
-          type: contentType,
+        res.json(this.#api.getContentList({
+          campaign,
+          type,
           isViewable,
           datePublished,
           sortBy,
@@ -74,24 +96,33 @@ export default class ContentAPIRequestHandler extends Basehandler {
     }
   }
 
-  async handleGetRequest(_req: Request, res: Response, contentType: ContentType, id: string) {
+  handleGetRequest(req: Request, res: Response, contentType: ContentType, id: string) {
     switch (contentType) {
-      case 'post':
-        res.json(await this.#api.getPost(id));
+      case 'post': {
+        const post = this.#api.getPost(id);
+        const context = this.#getContext(req, post?.campaign?.id, contentType) as GetContentContext<'post'>;
+        const { previous = null, next = null } = post ? this.#api.getPreviousNextContent(post, context) : {};
+        res.json({
+          post,
+          previous,
+          next
+        });
+
         break;
+      }
       case 'product':
-        res.json(await this.#api.getProduct(id));
+        res.json(this.#api.getProduct(id));
         break;
     }
   }
 
-  async handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string, contentType: ContentType) {
+  handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string, contentType: ContentType) {
     switch (contentType) {
       case 'post':
-        res.json(await this.#api.getPostFilterData(campaignId));
+        res.json(this.#api.getPostFilterData(campaignId));
         break;
       case 'product':
-        res.json(await this.#api.getProductFilterData(campaignId));
+        res.json(this.#api.getProductFilterData(campaignId));
         break;
     }
   }

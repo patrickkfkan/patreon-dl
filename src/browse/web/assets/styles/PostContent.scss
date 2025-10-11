@@ -1,0 +1,42 @@
+@use "./mixins";
+
+.post-nav {
+  &__previous,
+  &__next {
+    display: flex;
+    align-items: center;
+    width: calc(50% - 2rem);
+
+    &--fill {
+      width: calc(90% - 2rem);
+    }
+  }
+
+  &__previous-label,
+  &__next-label {
+    width: calc(100% - 1.7rem);
+    @include mixins.line-clamp(2);
+  }
+
+  &__next-label {
+    text-align: right;
+  }
+
+  &__next {
+    justify-content: end;
+  }
+
+  &__previous::before {
+    content: "\eac3"; // keyboard_double_arrow_left
+    font-family: "Material Icons";
+    font-size: 1.2em;
+    margin-right: 0.5em;
+  }
+
+  &__next::after {
+    content: "\eac9"; // keyboard_double_arrow_right
+    font-family: "Material Icons";
+    font-size: 1.2em;
+    margin-left: 0.5em;
+  }
+}

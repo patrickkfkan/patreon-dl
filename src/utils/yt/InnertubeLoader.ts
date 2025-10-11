@@ -63,6 +63,7 @@ export default class InnertubeLoader {
     const credentials = this.#loadCredentials();
     const innertube = await Innertube.create({
       client_type: InnertubeLib.ClientType.TV,
+      player_id: '0004de42', // https://github.com/LuanRT/YouTube.js/issues/1043
       fetch: (input, init) => Platform.shim.fetch(input, { ...init, dispatcher: this.#proxy } as any)
     });
     if (credentials) {

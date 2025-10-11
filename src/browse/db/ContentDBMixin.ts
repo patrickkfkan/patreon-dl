@@ -1,11 +1,11 @@
 import { type Comment, type Downloadable, type Post, type Product, type Tier, type Campaign } from '../../entities';
 import { getYearMonthString, type KeysOfValue } from '../../utils/Misc.js';
-import { type ContentList, type ContentType, type GetContentListParams, type PostWithComments } from '../types/Content.js';
+import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy } from '../types/Content.js';
 import { type CampaignDBConstructor } from './CampaignDBMixin.js';
 
 export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase) {
   return class ContentDB extends Base {
-    async saveContent(content: Post | Product) {
+    saveContent(content: Post | Product) {
       const title = content.type === 'post' ? content.title : content.name;
       this.log('debug', `Save ${content.type} #${content.id} (${title}) to DB`);
       try {
@@ -13,14 +13,14 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         // downloader logic, but we should still save it one more
         // time just in case. Difference is, we do not overwrite 
         // DB entry if it already exists.
-        await this.saveCampaign(content.campaign, new Date(), false);
+        this.saveCampaign(content.campaign, new Date(), false);
 
-        const contentExists = await this.checkContentExists(content.id, content.type, content.campaign);
-        await this.exec('BEGIN TRANSACTION');
+        const contentExists = this.checkContentExists(content.id, content.type, content.campaign);
+        this.exec('BEGIN TRANSACTION');
 
         if (!contentExists) {
           this.log('debug', `INSERT post "${title}" (${content.id})`);
-          await this.run(
+          this.run(
             `
             INSERT INTO content (
               content_id,
@@ -47,7 +47,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           );
         } else {
           this.log('debug', `${content.type} #${content.id} already exists in DB - update record`);
-          await this.run(`
+          this.run(`
             UPDATE content
             SET
               content_type = ?,
@@ -73,39 +73,39 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         }
 
         // Save content media
-        await this.#saveContentMedia(content);
+        this.#saveContentMedia(content);
 
         // Save tiers
         if (content.type === 'post') {
-          await this.#savePostTiers(content);
+          this.#savePostTiers(content);
         }
 
-        await this.exec('COMMIT');
+        this.exec('COMMIT');
       } catch (error) {
         this.log(
           'error',
           `Failed to save content "${title}" (${content.id}) to DB:`,
           error
         );
-        await this.exec('ROLLBACK');
+        this.exec('ROLLBACK');
       }
     }
 
-    async #saveContentMedia(
+    #saveContentMedia(
       content: Post | Product
     ) {
       this.log('debug', `Save media for ${content.type} #${content.id} to DB`);
       switch (content.type) {
         case 'post':
-          await this.#savepostMedia(content);
+          this.#savepostMedia(content);
           break;
         case 'product':
-          await this.#saveProductMedia(content);
+          this.#saveProductMedia(content);
           break;
       }
     }
 
-    async #savepostMedia(post: Post) {
+    #savepostMedia(post: Post) {
       const mediaProps: KeysOfValue<Post, Downloadable | Downloadable[] | null>[] = [
         'embed',
         'attachments',
@@ -116,31 +116,29 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         'video'
       ];
       if (post.coverImage) {
-        await this.saveMedia(post.coverImage);
+        this.saveMedia(post.coverImage);
       }
       if (post.thumbnail) {
-        await this.saveMedia(post.thumbnail);
+        this.saveMedia(post.thumbnail);
       }
       for (const prop of mediaProps) {
         if (post[prop]) {
           const data = post[prop];
           const downloadables = (Array.isArray(data) ? data : [data])
             .filter((data) => data !== undefined);
-          await Promise.all(
-            downloadables.map((dl, index) => this.#doSaveContentMedia(
-              post,
-              dl,
-              index,
-              prop === 'audioPreview'||
-              prop === 'videoPreview' ||
-              (prop === 'images' && !post.isViewable)
-            ))
-          );
+          downloadables.forEach((dl, index) => this.#doSaveContentMedia(
+            post,
+            dl,
+            index,
+            prop === 'audioPreview'||
+            prop === 'videoPreview' ||
+            (prop === 'images' && !post.isViewable)
+          ));
         }
       }
     }
 
-    async #saveProductMedia(product: Product) {
+    #saveProductMedia(product: Product) {
       const mediaProps: KeysOfValue<Product, Downloadable[]>[] = [
         'contentMedia',
         'previewMedia'
@@ -150,19 +148,17 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           const data = product[prop];
           const downloadables = (Array.isArray(data) ? data : [data])
             .filter((data) => data !== undefined);
-          await Promise.all(
-            downloadables.map((dl, index) => this.#doSaveContentMedia(
-              product,
-              dl,
-              index,
-              prop === 'previewMedia'
-            ))
-          );
+          downloadables.forEach((dl, index) => this.#doSaveContentMedia(
+            product,
+            dl,
+            index,
+            prop === 'previewMedia'
+          ));
         }
       }
     }
 
-    async #doSaveContentMedia(
+    #doSaveContentMedia(
       content: Post | Product,
       media: Downloadable,
       mediaIndex: number,
@@ -175,11 +171,11 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         `Save ${content.type} media to DB`,
         `(${content.type} ID: ${content.id}, media ID: ${media.id})`
       );
-      await this.saveMedia(media);
+      this.saveMedia(media);
       try {
-        const contentMediaExists = await this.checkContentMediaExists(content, media);
+        const contentMediaExists = this.checkContentMediaExists(content, media);
         if (!contentMediaExists) {
-          await this.run(
+          this.run(
             `
             INSERT INTO content_media (
               media_id,
@@ -207,7 +203,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
             `(${content.type} ID: ${content.id}, media ID: ${media.id})`,
             '- update record'
           );
-          await this.run(
+          this.run(
             `
             UPDATE content_media
             SET
@@ -253,19 +249,19 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
-    async #savePostTiers(post: Post) {
+    #savePostTiers(post: Post) {
       this.log('debug', `Save tiers for post #${post.id} to DB`);
       // Clear existing tiers for post
       this.log('debug', `Clear existing tiers in DB for post #${post.id} before saving current ones`);
-      await this.run(`DELETE FROM post_tier WHERE post_id = ?`, [
+      this.run(`DELETE FROM post_tier WHERE post_id = ?`, [
         post.id
       ]);
-      await Promise.all(post.tiers.map((tier) => this.#doSaveTier(post, tier)));
+      post.tiers.forEach((tier) => this.#doSaveTier(post, tier));
     }
 
-    async #doSaveTier(post: Post, tier: Tier) {
+    #doSaveTier(post: Post, tier: Tier) {
       this.log('debug', `Add post tier #${tier.id} (${tier.title}) to DB`);
-      await this.run(`
+      this.run(`
         INSERT INTO post_tier (
           post_id,
           tier_id,
@@ -280,12 +276,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       ]);
     }
 
-    async savePostComments(post: Post, comments: Comment[]) {
+    savePostComments(post: Post, comments: Comment[]) {
       try {
         this.log('debug', `Save comments for post #${post.id}`);
-        const commentsExist = await this.checkPostCommentsExist(post);
+        const commentsExist = this.checkPostCommentsExist(post);
         if (!commentsExist) {
-          await this.run(
+          this.run(
             `
             INSERT INTO post_comments (
               post_id,
@@ -303,7 +299,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         }
         else {
           this.log('debug', `Comments for post #${post.id} already exists in DB - update record`);
-          await this.run(
+          this.run(
             `
             UPDATE post_comments
             SET
@@ -330,9 +326,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
-    async checkPostCommentsExist(post: Post): Promise<boolean> {
+    checkPostCommentsExist(post: Post) {
       try {
-        const result = await this.get(
+        const result = this.get(
           `
           SELECT COUNT(*) as count
           FROM post_comments
@@ -352,11 +348,11 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
-    async getContent(id: string, contentType: 'post'): Promise<PostWithComments | null>;
-    async getContent(id: string, contentType: 'product'): Promise<Product | null>;
-    async getContent(id: string, contentType: ContentType) {
+    getContent(id: string, contentType: 'post'): PostWithComments | null;
+    getContent(id: string, contentType: 'product'): Product | null;
+    getContent(id: string, contentType: ContentType) {
       this.log('debug', `Get ${contentType} #${id} from DB`);
-      const result = await this.get(
+      const result = this.get(
         `
         SELECT
           details,
@@ -373,8 +369,124 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       return result ? this.#parseContentRowJoinedComments(result) : null;
     }
 
-    async getContentList<T extends ContentType>(params: GetContentListParams<T>): Promise<ContentList<T>> {
+    getPreviousNextContent<T extends ContentType>(
+      content: Post | Product,
+      context: GetContentContext<T>
+    ): GetPreviousNextContentResult<T> {
+      let previousWhere: string;
+      let previousSortBy: ContentListSortBy;
+      let nextWhere: string;
+      let nextSortBy: ContentListSortBy;
+      let whereValues: any[];
+      const sortBy = context.sortBy ?? 'latest';
+      const publishedAt = this.#publishedAtToTime(content.publishedAt);
+      const title = content.type === 'post' ? content.title : content.name;
+      switch (sortBy) {
+        case 'a-z':
+        case 'z-a': {
+          const p = `
+            (
+              (title < ?)
+              OR
+              (title = ? AND published_at > ?)
+              OR
+              (title = ? AND published_at = ? AND content_id > ?)
+            )
+          `;
+          const n = `
+            (
+              (title > ?)
+              OR
+              (title = ? AND published_at < ?)
+              OR
+              (title = ? AND published_at = ? AND content_id < ?)
+            )
+          `;
+          whereValues = [title, title, publishedAt, title, publishedAt, content.id];
+          if (sortBy === 'a-z') {
+            previousWhere = p;
+            previousSortBy = 'z-a';
+            nextWhere = n;
+            nextSortBy = 'a-z';
+          }
+          else { // z-a
+            previousWhere = n;
+            previousSortBy = 'a-z';
+            nextWhere = p;
+            nextSortBy = 'z-a';
+          }
+          break;
+        }
+        case 'latest':
+        case 'oldest': {
+          const older = `
+            (
+              (published_at < ?)
+              OR
+              (published_at = ? AND content_id < ?)
+            )
+          `;
+          const newer = `
+            (
+              (published_at > ?)
+              OR
+              (published_at = ? AND content_id > ?)
+            )
+          `;
+          whereValues = [publishedAt, publishedAt, content.id];
+          if (sortBy === 'latest') {
+            previousWhere = newer;
+            previousSortBy = 'oldest';
+            nextWhere = older;
+            nextSortBy = 'latest';
+          }
+          else { // oldest
+            previousWhere = older;
+            previousSortBy = 'latest';
+            nextWhere = newer;
+            nextSortBy = 'oldest';
+          }
+          break;
+        }
+      }
+      const previous = (this.getContentList(
+        {
+          ...context,
+          sortBy: previousSortBy,
+          limit: 1, offset: 0
+        },
+        {
+          whereClauses: [previousWhere],
+          whereValues
+        },
+        false
+      )).items[0] || null;
+      const next = (this.getContentList(
+        {
+          ...context,
+          sortBy: nextSortBy,
+          limit: 1, offset: 0
+        },
+        {
+          whereClauses: [nextWhere],
+          whereValues
+        },
+        false
+      )).items[0] || null;
+
+      return {
+        previous,
+        next
+      } as GetPreviousNextContentResult<T>;
+    }
+
+    getContentList<T extends ContentType>(
+      params: GetContentListParams<T>,
+      db?: { whereClauses: string[]; whereValues: any[]; },
+      includeTotal = true
+    ): ContentList<T> {
       const { campaign, type: contentType, isViewable, datePublished, sortBy, limit, offset } = params;
+      const { whereClauses: extraWhereClauses = [], whereValues: extraWhereValues = [] } = db || {};
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
       this.log('debug', `Get ${contentType}s from DB:`, {
         campaign: campaignId,
@@ -414,12 +526,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         });
       }
       const whereIns: { column: string; values: (string | number)[] }[] = [];
+      if (contentSubtypes && contentSubtypes.length > 0) {
+        whereIns.push({ column: 'content_subtype', values: contentSubtypes})
+      }
       if (tiers && tiers.length > 0) {
         const ids = tiers.map((tier) => typeof tier === 'string' ? tier : tier.id);
         whereIns.push({ column: 'tier_id', values: ids });
-      }
-      if (contentSubtypes && contentSubtypes.length > 0) {
-        whereIns.push({ column: 'content_subtype', values: contentSubtypes})
       }
       const whereClauseParts: string[] = [];
       if (whereEquals.length > 0) {
@@ -428,13 +540,15 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       if (whereIns.length > 0) {
         whereClauseParts.push(...whereIns.map((wi) => `${wi.column} IN (${wi.values.map(() => '?').join(', ')})`));
       }
+      whereClauseParts.push(...extraWhereClauses);
       const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
       const whereValues = [
         ...whereEquals.map(({value}) => value),
         ...whereIns.reduce<(string | number)[]>((result, {values}) => {
           result.push(...values);
           return result;
-        }, [])
+        }, []),
+        ...extraWhereValues
       ];
       let orderByClause: string;
       switch (sortBy) {
@@ -466,7 +580,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         limitOffsetClause = 'LIMIT ?';
         limitOffsetValues.push(limit);
       }
-      const rows = await this.all(
+      const rows = this.all(
         `
         SELECT DISTINCT
           details,
@@ -484,10 +598,10 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         [ ...whereValues, ...limitOffsetValues ]
       );
       const items = rows.map<T extends 'post' ? PostWithComments : T extends 'product' ? Product : PostWithComments | Product>((row) => this.#parseContentRowJoinedComments(row));
-      const totalResult = await this.get(
+      const totalResult = includeTotal ? this.get(
           `SELECT COUNT(*) AS content_count FROM content ${join} ${whereClause}`,
           [...whereValues]
-      );
+      ) : null;
       const total = totalResult ? (totalResult.content_count as number) : 0;
       return {
         items,
@@ -521,7 +635,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
-    async getContentCountByDate(
+    getContentCountByDate(
       contentType: ContentType,
       groupBy: 'year' | 'month',
       filter?: {
@@ -553,7 +667,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
       const whereClause = `WHERE ${whereClauseParts.join(' AND ')}`;
       const strftimeFormat = groupBy === 'year' ? '%Y' : '%Y-%m'
-      const rows = await this.all(
+      const rows = this.all(
         `
         SELECT
           COUNT(content_id) AS content_count,
@@ -573,17 +687,17 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }));
     }
 
-    async getPostCountByType(campaign: Campaign | string) {
+    getPostCountByType(campaign: Campaign | string) {
       const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
       this.log('debug', `Get post count by type for campaign #${campaignId}`);
-      const rows = await this.all(
+      const rows = this.all(
         `
         SELECT
           COUNT(content_id) AS post_count, content_subtype AS post_type
         FROM
           content
         WHERE
-          content_type = "post" AND campaign_id = ?
+          content_type = 'post' AND campaign_id = ?
         GROUP BY content_subtype 
         `,
         [campaignId]
@@ -594,20 +708,19 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }));
     }
 
-    async getPostCountByTier(campaign: Campaign | string) {
+    getPostCountByTier(campaign: Campaign | string) {
       const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
       this.log('debug', `Get post count by tier for campaign #${campaignId}`);
-      const rows = await this.all(
+      const rows = this.all(
         `
         SELECT
           COUNT(post_id) as post_count, tier_id, reward.title
         FROM post_tier
-          LEFT JOIN campaign ON campaign.campaign_id = post_tier.campaign_id
           RIGHT JOIN reward ON reward.reward_id = post_tier.tier_id AND reward.campaign_id = post_tier.campaign_id
         WHERE
           post_tier.campaign_id = ?
         GROUP BY
-          post_tier.campaign_id, tier_id
+          tier_id
         `,
         [campaignId]
       );
@@ -618,10 +731,10 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }));
     }
 
-    async checkContentExists(id: string, contentType: ContentType, campaign: Campaign | null): Promise<boolean> {
+    checkContentExists(id: string, contentType: ContentType, campaign: Campaign | null) {
       this.log('debug', `Check if ${contentType} #${id} exists in DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `
           SELECT COUNT(*) as count
           FROM content
@@ -643,10 +756,10 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
-    async getPostComments(post: Post | string): Promise<Comment[] | null> {
+    getPostComments(post: Post | string): Comment[] | null {
       const postId = typeof post === 'string' ? post : post.id;
       this.log('debug', `Get comments for post #${postId}`);
-      const result = await this.get(
+      const result = this.get(
         `SELECT comments FROM post_comments WHERE post_id = ?`,
         [postId]
       );

@@ -6,15 +6,15 @@ import { type MediaListSortBy } from "../types/Media.js";
 
 export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
   return class FilterAPI extends Base {
-    async getPostFilterData(
+    getPostFilterData(
       campaignId: string
-    ): Promise<FilterData<PostFilterSearchParams>> {
-      const postCountByTier = await this.db.getPostCountByTier(campaignId);
-      const postCountByType = await this.db.getPostCountByType(campaignId);
-      const postCountByYear = await this.db.getContentCountByDate('post', 'year', {
+    ): FilterData<PostFilterSearchParams> {
+      const postCountByTier = this.db.getPostCountByTier(campaignId);
+      const postCountByType = this.db.getPostCountByType(campaignId);
+      const postCountByYear = this.db.getContentCountByDate('post', 'year', {
         campaign: campaignId
       });
-      const postCountThisMonth = (await this.db.getContentCountByDate('post', 'month', {
+      const postCountThisMonth = (this.db.getContentCountByDate('post', 'month', {
         campaign: campaignId,
         date: new Date()
       }))[0];
@@ -163,13 +163,13 @@ export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
       }
     }
 
-    async getProductFilterData(
+    getProductFilterData(
       campaignId: string
-    ): Promise<FilterData<ProductFilterSearchParams>> {
-      const productCountByYear = await this.db.getContentCountByDate('product', 'year', {
+    ): FilterData<ProductFilterSearchParams> {
+      const productCountByYear = this.db.getContentCountByDate('product', 'year', {
         campaign: campaignId
       });
-      const productCountThisMonth = (await this.db.getContentCountByDate('product', 'month', {
+      const productCountThisMonth = (this.db.getContentCountByDate('product', 'month', {
         campaign: campaignId,
         date: new Date()
       }))[0];
@@ -245,15 +245,15 @@ export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
       return { sections };
     }
 
-    async getMediaFilterData(
+    getMediaFilterData(
       campaignId: string
-    ): Promise<FilterData<MediaFilterSearchParams>> {
-      const mediaCountByTier = await this.db.getMediaCountByTier(campaignId);
-      const mediaCountByType = await this.db.getMediaCountByContentType(campaignId);
-      const mediaCountByYear = await this.db.getMediaCountByDate('year', {
+    ): FilterData<MediaFilterSearchParams> {
+      const mediaCountByTier = this.db.getMediaCountByTier(campaignId);
+      const mediaCountByType = this.db.getMediaCountByContentType(campaignId);
+      const mediaCountByYear = this.db.getMediaCountByDate('year', {
         campaign: campaignId
       });
-      const postCountThisMonth = (await this.db.getMediaCountByDate('month', {
+      const postCountThisMonth = (this.db.getMediaCountByDate('month', {
         campaign: campaignId,
         date: new Date()
       }))[0];

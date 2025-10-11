@@ -412,4 +412,32 @@ export default class URLHelper {
     }
     return !!urlObj;
   }
+
+  // Validates whether `url` is in format: https://www.patreon.com/file?h=...&m=...
+  static isAttachmentLink(url: string) {
+    if (this.validateURL(url)) {
+      const urlObj = new URL(url);
+      // Get 'h' (ownerId) and 'm' (mediaId)
+      const ownerId = urlObj.searchParams.get('h');
+      const mediaId = urlObj.searchParams.get('m');
+      if (
+        [
+          'www.patreon.com',
+          'patreon.com'
+        ].includes(urlObj.hostname) &&
+        urlObj.pathname === '/file' &&
+        ownerId &&
+        mediaId
+      ) {
+        return {
+          validated: true as const,
+          ownerId,
+          mediaId
+        };
+      }
+    }
+    return {
+      validated: false as const
+    };
+  }
 }

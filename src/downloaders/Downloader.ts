@@ -373,7 +373,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         const db = await this.db();
         if (!this.config.include.campaignInfo) {
           if (campaign) {
-            await db.saveCampaign(campaign, new Date());
+            db.saveCampaign(campaign, new Date());
           }
           resolve();
           return;
@@ -489,7 +489,7 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
         }
 
         // Step 4: save to DB
-        await db.saveCampaign(campaign, new Date());
+        db.saveCampaign(campaign, new Date());
   
         // Done
         this.log('info', 'Done saving campaign info');

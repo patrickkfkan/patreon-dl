@@ -66,6 +66,13 @@ export interface Post {
 
   /**
    * @privateRemarks
+   * Obtained from parsing links found in post content.
+   * See Parser#parseInlineMedia()
+   */
+  linkedAttachments?: LinkedAttachment[];
+
+  /**
+   * @privateRemarks
    * `data.relationships.audio`
    */
   audio: Downloadable<AudioMediaItem> | null;
@@ -114,6 +121,14 @@ export interface PostEmbed {
   subject: string | null;
   url: string | null;
   thumbnailURL: string | null;
+}
+
+export type LinkedAttachment = {
+  type: 'linkedAttachment';
+  url: string;
+  postId: string;
+  mediaId: string;
+  downloadable?: Downloadable<AttachmentMediaItem>;
 }
 
 export type YouTubePostEmbed = PostEmbed & { provider: 'YouTube' }

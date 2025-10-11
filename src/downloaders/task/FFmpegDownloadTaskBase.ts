@@ -6,6 +6,7 @@ import { type FileExistsAction } from './../DownloaderOptions.js';
 import { type Downloadable } from '../../entities/Downloadable.js';
 import FSHelper from '../../utils/FSHelper.js';
 import { createProxyAgent } from '../../utils/Proxy.js';
+import semver from 'semver';
 
 export interface FFmpegDownloadTaskBaseParams<T extends Downloadable> extends DownloadTaskParams<T> {
   fileExistsAction: FileExistsAction;
@@ -54,7 +55,7 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
     this.#abortingCallback = null;
   }
 
-  protected abstract getFFmpegCommandParams(): Promise<FFmpegCommandParams>;
+  protected abstract getFFmpegCommandParams(signal?: AbortSignal): Promise<FFmpegCommandParams>;
   protected abstract getTargetDuration(): number | null;
 
   protected doStart() {
@@ -75,8 +76,27 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
   
         try {
           this.#abortController = new AbortController();
+          this.#abortController.signal.onabort = () => {
+            if (this.#ffmpegCommand) {
+              this.#ffmpegCommand.kill('SIGKILL');
+            }
+            else if (this.#abortingCallback) {
+              this.#abortingCallback();
+              __cleanup();
+              resolve();
+            }
+          };
   
-          const ffmpegCommandParams = await this.getFFmpegCommandParams();
+          let ffmpegCommandParams;
+          try {
+            ffmpegCommandParams = await this.getFFmpegCommandParams(this.#abortController.signal);
+          }
+          catch (error) {
+            if (this.#abortController.signal.aborted) {
+              return;
+            }
+            throw error;
+          }
   
           const destFilePath = ffmpegCommandParams.output;
           this.resolvedDestPath = destFilePath;
@@ -159,17 +179,6 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
             __cleanup();
             resolve();
           });
-  
-          this.#abortController.signal.onabort = () => {
-            if (this.#ffmpegCommand) {
-              this.#ffmpegCommand.kill('SIGKILL');
-            }
-            else if (this.#abortingCallback) {
-              this.#abortingCallback();
-              __cleanup();
-              resolve();
-            }
-          };
   
           this.#ffmpegCommand.run();
         }
@@ -362,9 +371,13 @@ export default abstract class FFmpegDownloadTaskBase<T extends Downloadable> ext
 
       const versionLine = result.stdout.toString('utf8').split('\n')[0];
       const versionMatch = versionLine.match(/ffmpeg version (\S+)/);
-      FFmpegDownloadTaskBase.#ffmpegVersion = versionMatch ? versionMatch[1] : null;
-      if (!FFmpegDownloadTaskBase.#ffmpegVersion) {
+      const rawVersionString = versionMatch ? versionMatch[1] : null;
+      if (!rawVersionString) {
         throw new Error('No match for version string found in ffmpeg output');
+      }
+      FFmpegDownloadTaskBase.#ffmpegVersion = semver.coerce(rawVersionString)?.version || null;
+      if (!FFmpegDownloadTaskBase.#ffmpegVersion) {
+        throw new Error(`Could not obtain semver from version string "${rawVersionString}"`);
       }
       this.log('debug', `FFmpeg version: ${FFmpegDownloadTaskBase.#ffmpegVersion}`);
     } catch (error) {

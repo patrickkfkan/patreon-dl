@@ -20,10 +20,11 @@ interface PostCardProps {
   post: Post;
   showCampaign?: boolean;
   useShowMore?: boolean;
+  contextQS?: string;
 }
 
 function PostCard(props: PostCardProps) {
-  const { post, showCampaign = false, useShowMore = false } = props;
+  const { post, showCampaign = false, useShowMore = false, contextQS } = props;
   const location = useLocation();
 
   const mediaItems: Downloadable<any> = [];
@@ -95,13 +96,16 @@ function PostCard(props: PostCardProps) {
 
   const titleEl = useMemo(() => {
     const url = new URL(`/posts/${post.id}`, window.location.href);
+    if (contextQS) {
+      url.search = contextQS;
+    }
     if (location.pathname === url.pathname) {
       return post.title;
     }
     return (
       <Link to={url.toString()}>{post.title}</Link>
     )
-  }, [post, location]);
+  }, [post, location, contextQS]);
 
   // If there's an embed but no local video, and it's a known provider (YouTube), show the embed.
   const externalEmbed = useMemo(() => {

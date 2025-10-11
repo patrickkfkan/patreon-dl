@@ -14,6 +14,7 @@ import { type Comment, type CommentCollection, type CommentReply, type CommentRe
 import { generatePostCommentsSummary } from './templates/CommentInfo.js';
 import { type PostDirectories } from '../utils/FSHelper.js';
 import { type DBInstance } from '../browse/db/index.js';
+import { type AttachmentMediaItem } from '../entities/MediaItem.js';
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -623,13 +624,13 @@ export default class PostDownloader extends Downloader<Post> {
     let skipDB = false;
     if (!post.isViewable) {
       // Skip if existing db record (if any) refers to viewable post
-      const dbPost = await db.getContent(post.id, 'post');
+      const dbPost = db.getContent(post.id, 'post');
       skipDB = dbPost !== null && dbPost.isViewable;
     }
     if (!skipDB) {
-      await db.saveContent(post);
+      db.saveContent(post);
       if (comments) {
-        await db.savePostComments(post, comments);
+        db.savePostComments(post, comments);
       }
     }
     else {
@@ -681,7 +682,7 @@ export default class PostDownloader extends Downloader<Post> {
     return postsParser.parseCampaignAPIResponse(res.json);
   }
 
-  #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof this.fsHelper['getPostDirs']>, signal?: AbortSignal) {
+  async #createDownloadTaskBatchForPost(post: Post, postDirs: ReturnType<typeof this.fsHelper['getPostDirs']>, signal?: AbortSignal) {
 
     const incPreview = this.config.include.previewMedia;
     const incContent = this.config.include.contentMedia;
@@ -727,6 +728,16 @@ export default class PostDownloader extends Downloader<Post> {
     }
 
     const campaignDir = post.campaign ? this.fsHelper.getCampaignDirs(post.campaign).root : null;
+
+    await this.#processLinkedAttachments(post);
+    const downloadableLinkedAttachments = post.linkedAttachments?.reduce<Downloadable<AttachmentMediaItem>[]>((result, att) => {
+      if (att.downloadable) {
+        result.push(att.downloadable);
+      }
+      return result;
+    }, []) || [];
+
+    const allAttachments = [...post.attachments, ...downloadableLinkedAttachments];
 
     const batchResult = this.createDownloadTaskBatch(
       `Post #${post.id} (${post.title})`,
@@ -806,8 +817,8 @@ export default class PostDownloader extends Downloader<Post> {
         fileExistsAction: this.config.fileExistsAction.content
       } : null,
 
-      __incContent('attachment') && post.attachments.length > 0 ? {
-        target: post.attachments,
+      __incContent('attachment') && allAttachments.length > 0 ? {
+        target: allAttachments,
         targetName: `post #${post.id} -> attachments`,
         dirs: {
           campaign: campaignDir,
@@ -822,6 +833,65 @@ export default class PostDownloader extends Downloader<Post> {
     );
 
     return batchResult;
+  }
+
+  async #processLinkedAttachments(post: Post, signal?: AbortSignal) {
+    if (!post.linkedAttachments || post.linkedAttachments.length === 0) {
+      return;
+    }
+    this.log('debug', `Process linked attachments of post #${post.id}`);
+    for (const la of post.linkedAttachments) {
+      const laStr = `[#${post.id} -> #${la.mediaId}]`;
+      // Only process linked attachment where its postId is not the same as current one being processed.
+      // If same as current one, then linked attachment would already be in the current post data.
+      if (la.postId === post.id) {
+        this.log('debug', `Linked attachment ${laStr} has same parent post`);
+      }
+      else {
+        const apiURL = URLHelper.constructPostsAPIURL({ postId: la.postId });
+        let json;
+        try {
+          this.log('debug', `Linked attachment ${laStr} belongs to post #${la.postId}`);
+          json = (await this.fetcher.get({
+            url: apiURL,
+            type: 'json',
+            maxRetries: this.config.request.maxRetries,
+            signal }
+          )).json;
+        }
+        catch (error) {
+          if (signal?.aborted) {
+            throw error;
+          }
+          else {
+            this.log('error', `Error fetching linked attachment ${laStr} from parent post #${la.postId}: API request failed for "${apiURL}": `, error);
+          }
+          json = null;
+        }
+        if (json) {
+          const parser = new PostParser();
+          const parentPost = parser.parsePostsAPIResponse(json, apiURL).items[0];
+          if (!parentPost) {
+            this.log('error', `Error fetching linked attachment ${laStr} from parent post #${la.postId}: post data not found in response of "${apiURL}"`);
+          }
+          else {
+            if (!parentPost.isViewable) {
+              this.log('warn', `Parent post #${la.postId} of linked attachment ${laStr} is not viewable by user`);
+            }
+            else {
+              const attachment = parentPost.attachments.find((att) => att.id === la.mediaId);
+              if (!attachment) {
+                this.log('warn', `Attachment not found in parent post #${la.postId} of linked attachment ${laStr}`);
+              }
+              else {
+                la.downloadable = attachment;
+                this.log('debug', `Obtained attachment from parent post #${la.postId} of linked attachment ${laStr}`);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   async #fetchComments(post: Post, resolve: () => void, signal?: AbortSignal, accumulated?: CommentCollection & { nextURL: string; }): Promise<Comment[]> {

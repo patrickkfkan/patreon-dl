@@ -16,7 +16,7 @@ export default class CampaignAPIRequestHandler extends Basehandler {
     this.#api = api;
   }
 
-  async handleListRequest(req: Request, res: Response) {
+  handleListRequest(req: Request, res: Response) {
     const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
     const sortBy = this.getQueryParamValue<CampaignListSortBy>(
       req,
@@ -24,7 +24,7 @@ export default class CampaignAPIRequestHandler extends Basehandler {
       ['a-z', 'z-a', 'most_content', 'most_media', 'last_downloaded'],
       'a-z'
     );
-    const list = await this.#api.getCampaignList({
+    const list = this.#api.getCampaignList({
       sortBy,
       limit,
       offset
@@ -32,12 +32,12 @@ export default class CampaignAPIRequestHandler extends Basehandler {
     res.json(list);
   }
 
-  async handleGetRequest(req: Request, res: Response, id: string) {
+  handleGetRequest(req: Request, res: Response, id: string) {
     const withCounts = req.query['with_counts'] ? this.getQueryParamValue<'true' | 'false'>(
       req,
       'with_counts',
       ['true', 'false']
     ) === 'true' ? true : false : undefined;
-    res.json(await this.#api.getCampaign({id, withCounts}));
+    res.json(this.#api.getCampaign({id, withCounts}));
   }
 }

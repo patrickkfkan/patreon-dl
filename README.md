@@ -267,6 +267,16 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.3.0
+- Fix:
+  - YouTube stream fetching error ([patreon-dl-gui#28](https://github.com/patrickkfkan/patreon-dl-gui/issues/28))
+  - Unsupported option error with FFmpeg v7.1.0 ([#97](https://github.com/patrickkfkan/patreon-dl/issues/97))
+- Browse:
+  - Add next / previous links to post page ([#93](https://github.com/patrickkfkan/patreon-dl/issues/93))
+  - Fix media filter error when tier selected but not "Post"
+- Process linked attachments in body of posts ([patreon-dl-gui#27](https://github.com/patrickkfkan/patreon-dl-gui/issues/27))
+- Some DB optimizations (contrib by @[piperswe](https://github.com/piperswe) - PR #[95](https://github.com/patrickkfkan/patreon-dl/pull/95))
+
 v3.2.1
 - Fix log file path sometimes not sanitized properly on Windows
 - API: add support for passing request options to `getCampaign()`

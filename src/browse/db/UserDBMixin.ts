@@ -37,19 +37,19 @@ const NULL_USER: User = {
 
 export function UserDBMixin<TBase extends MediaDBConstructor>(Base: TBase) {
   return class UserDB extends Base {
-    async saveUser(user: User | null) {
+    saveUser(user: User | null) {
       if (!user) {
         user = NULL_USER; 
       }
       this.log('debug', `Save user #${user.id} (${user.vanity}) to DB`);
       try {
-        const userExists = await this.checkUserExists(user.id);
+        const userExists = this.checkUserExists(user.id);
 
-        await this.saveMedia(user.image);
-        await this.saveMedia(user.thumbnail);
+        this.saveMedia(user.image);
+        this.saveMedia(user.thumbnail);
         
         if (!userExists) {
-          await this.run(
+          this.run(
             `
             INSERT INTO user (
               user_id,
@@ -68,7 +68,7 @@ export function UserDBMixin<TBase extends MediaDBConstructor>(Base: TBase) {
           );
         } else {
           this.log('debug', `User #${user.id} already exists in DB - update record`);
-          await this.run(
+          this.run(
             `
             UPDATE user
             SET
@@ -95,10 +95,10 @@ export function UserDBMixin<TBase extends MediaDBConstructor>(Base: TBase) {
       }
     }
 
-    async getUserByID(id: string): Promise<User | null> {
+    getUserByID(id: string): User | null {
       this.log('debug', `Get user #${id} from DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `SELECT details FROM user WHERE user_id = ?`,
           [id]
         );
@@ -109,10 +109,10 @@ export function UserDBMixin<TBase extends MediaDBConstructor>(Base: TBase) {
       }
     }
 
-    async checkUserExists(id: string): Promise<boolean> {
+    checkUserExists(id: string) {
       this.log('debug', `Check if user #${id} exists in DB`);
       try {
-        const result = await this.get(
+        const result = this.get(
           `SELECT COUNT(*) as count FROM user WHERE user_id = ?`,
           [id]
         );

@@ -34,3 +34,16 @@ export interface ContentList<T extends ContentType> {
   )[];
   total: number;
 }
+
+export type GetContentContext<T extends ContentType> = Omit<GetContentListParams<T>, 'limit' | 'offset'>;
+
+export type GetPreviousNextContentResult<T extends ContentType> =
+  T extends 'post' ? {
+    previous: PostWithComments | null;
+    next: PostWithComments | null;
+  }
+  : T extends 'product' ? {
+    previous: Product | null;
+    next: Product | null;
+  }
+  : never;

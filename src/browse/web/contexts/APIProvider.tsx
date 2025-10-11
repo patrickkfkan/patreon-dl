@@ -83,8 +83,11 @@ class API {
     return await result.json();
   }
 
-  async getPost(id: string): Promise<PostWithComments> {
-    const urlObj = new URL(`/api/posts/${id}`, window.location.href).toString();
+  async getPost(id: string, contextQS = ''): Promise<{ post: PostWithComments; previous: PostWithComments | null; next: PostWithComments | null; }> {
+    const urlObj = new URL(`/api/posts/${id}`, window.location.href);
+    if (contextQS) {
+      urlObj.search = contextQS;
+    }
     const result = await fetch(urlObj.toString());
     return await result.json();
   }

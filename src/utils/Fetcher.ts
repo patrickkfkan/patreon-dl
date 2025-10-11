@@ -355,4 +355,8 @@ export default class Fetcher {
   protected log(level: LogLevel, ...msg: Array<any>) {
     commonLog(this.#logger, level, this.name, ...msg);
   }
+
+  get proxyAgent() {
+    return this.#proxyAgent;
+  }
 }

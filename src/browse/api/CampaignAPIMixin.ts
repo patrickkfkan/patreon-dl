@@ -9,9 +9,9 @@ const DEFAULT_CAMPAIGN_LIST_SORT_BY: CampaignListSortBy = 'a-z';
 
 export function CampaignAPIMixin<TBase extends APIConstructor>(Base: TBase) {
   return class CampaignAPI extends Base {
-    async getCampaignList(params: GetCampaignListParams): Promise<CampaignList> {
+    getCampaignList(params: GetCampaignListParams): CampaignList {
       const { sortBy = DEFAULT_CAMPAIGN_LIST_SORT_BY, limit = DEFAULT_CAMPAIGN_LIST_SIZE, offset = 0 } = params;
-      const list = await this.db.getCampaignList({
+      const list = this.db.getCampaignList({
         sortBy,
         limit,
         offset
@@ -22,11 +22,11 @@ export function CampaignAPIMixin<TBase extends APIConstructor>(Base: TBase) {
       return list;
     }
 
-    async getCampaign(params: GetCampaignParams & { withCounts: true }): Promise<CampaignWithCounts | null>;
-    async getCampaign(params: GetCampaignParams & { withCounts?: false }): Promise<Campaign | null>;
-    async getCampaign(params: GetCampaignParams): Promise<Campaign | CampaignWithCounts | null>;
-    async getCampaign(params: GetCampaignParams) {
-      const campaign = await this.db.getCampaign(params);
+    getCampaign(params: GetCampaignParams & { withCounts: true }): CampaignWithCounts | null;
+    getCampaign(params: GetCampaignParams & { withCounts?: false }): Campaign | null;
+    getCampaign(params: GetCampaignParams): Campaign | CampaignWithCounts | null;
+    getCampaign(params: GetCampaignParams) {
+      const campaign = this.db.getCampaign(params);
       if (campaign) {
         this.#sanitizeCampaign(campaign);
       }

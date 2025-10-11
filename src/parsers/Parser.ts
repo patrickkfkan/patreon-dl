@@ -11,6 +11,7 @@ import ObjectHelper from '../utils/ObjectHelper.js';
 import { type Reward, type Tier } from '../entities/Reward.js';
 import URLHelper from '../utils/URLHelper.js';
 import FSHelper from '../utils/FSHelper.js';
+import { type LinkedAttachment } from '../entities/Post.js';
 
 const DOWNLOADABLE_TYPES = [ 'media' ] as const;
 
@@ -562,8 +563,25 @@ export default abstract class Parser {
       .filter((item) => item !== null) as Downloadable<DefaultImageMediaItem>[];
     this.log('debug', `Parse inline media - got ${images.length} images`);
 
+    // Links that point to attachments with URL format: https://www.patreon.com/file?h=...&m=...
+    const linkedAttachments = $('a').toArray().reduce<LinkedAttachment[]>((result, _el) => {
+      const el = $(_el);
+      const href = el.attr('href') || '';
+      const { validated, ownerId: postId, mediaId } = URLHelper.isAttachmentLink(href);
+      if (validated && !result.some((att) => att.url === href)) {
+        result.push({
+          type: 'linkedAttachment',
+          url: href,
+          postId,
+          mediaId
+        });
+      }
+      return result;
+    }, []);
+
     return {
-      images
+      images,
+      linkedAttachments
     };
   }
 

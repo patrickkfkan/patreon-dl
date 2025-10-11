@@ -18,7 +18,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
     this.#api = api;
   }
 
-  async handleListRequest(req: Request, res: Response, campaignId?: string) {
+  handleListRequest(req: Request, res: Response, campaignId?: string) {
     const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
     const {
       tier_ids,
@@ -30,7 +30,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
       if (!campaignId) {
         throw Error('Invalid params: "tier_ids" must be used with "campaign_id"');
       }
-      if (source_type !== 'post') {
+      if (source_type !== undefined && source_type !== 'post') {
         throw Error('Invalid params: "tier_ids" is only applicable for posts');
       }
     }
@@ -38,7 +38,9 @@ export default class MediaAPIRequestHandler extends Basehandler {
       req,
       'source_type',
       ['post', 'product']
-    ) : undefined;
+    ) : (
+      tiers && tiers.length > 0 ? 'post' : undefined
+    );
     const isViewable = req.query['is_viewable'] ? this.getQueryParamValue<'true' | 'false'>(
       req,
       'is_viewable',
@@ -51,9 +53,9 @@ export default class MediaAPIRequestHandler extends Basehandler {
       'latest'
     );
     const datePublished = date_published === 'this_month' ? getYearMonthString() : date_published as string | undefined;
-    switch (source_type) {
+    switch (sourceType) {
       case 'post':
-        res.json(await this.#api.getMediaList({
+        res.json(this.#api.getMediaList({
           campaign: campaignId,
           sourceType,
           isViewable,
@@ -65,7 +67,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
         }));
         break;
       default:
-        res.json(await this.#api.getMediaList({
+        res.json(this.#api.getMediaList({
           campaign: campaignId,
           sourceType,
           isViewable,
@@ -78,7 +80,7 @@ export default class MediaAPIRequestHandler extends Basehandler {
     }
   }
 
-  async handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string) {
-    res.json(await this.#api.getMediaFilterData(campaignId));
+  handleFilterOptionsRequest(_req: Request, res: Response, campaignId: string) {
+    res.json(this.#api.getMediaFilterData(campaignId));
   }
 }

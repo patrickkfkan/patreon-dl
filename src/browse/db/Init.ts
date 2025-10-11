@@ -1,12 +1,13 @@
-import { type Database, open } from 'sqlite';
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 import type Logger from '../../utils/logging/Logger.js';
 import { existsSync } from 'fs';
 import { commonLog } from '../../utils/logging/Logger.js';
+import { updateDB } from './Update.js';
+import semver from 'semver';
 
-const DB_SCHEMA_VERSION = '1.0.0';
+const DB_SCHEMA_VERSION = '1.1.0';
 
-export async function openDB(file: string, dryRun = false, logger?: Logger | null) {
+export async function openDB(file: string, dryRun = false, logger?: Logger | null): Promise<Database.Database> {
   const dbFileExists = dryRun ? false : existsSync(file);
 
   if (dryRun) {
@@ -26,13 +27,16 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
     );
   }
 
-  const db = await open({
-    filename: dryRun ? ':memory:' : file,
-    driver: sqlite3.cached.Database
-  });
+  const db = new Database(
+    dryRun ? ':memory:' : file,
+    {
+      verbose: logger ? (msg) => commonLog(logger, 'debug', 'DB', msg) : undefined
+    }
+  );
 
   try {
-    await db.exec(`
+    db.exec('PRAGMA foreign_keys = OFF;');
+    db.exec(`
       BEGIN TRANSACTION;
 
       CREATE TABLE IF NOT EXISTS "user" (
@@ -53,6 +57,9 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("creator_id") REFERENCES "user"("user_id")
       );
 
+      CREATE INDEX IF NOT EXISTS campaign_by_last_download ON campaign(last_download);
+      CREATE INDEX IF NOT EXISTS campaign_by_name ON campaign(campaign_name);
+
       CREATE TABLE IF NOT EXISTS "reward" (
         "reward_id" TEXT,
         "campaign_id" TEXT,
@@ -61,6 +68,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         PRIMARY KEY("reward_id","campaign_id")
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
+
+      CREATE INDEX IF NOT EXISTS reward_by_campaign ON reward(campaign_id);
 
       CREATE TABLE IF NOT EXISTS "content" (
         "content_id" TEXT,
@@ -75,6 +84,42 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
 
+      CREATE INDEX IF NOT EXISTS viewable_posts_by_campaign_and_published_and_subtype ON content(
+        campaign_id,
+        published_at,
+        content_subtype
+      ) WHERE content_type = 'post' AND is_viewable = 1;
+
+      CREATE INDEX IF NOT EXISTS posts_by_campaign_and_published_and_subtype ON content(
+        campaign_id,
+        published_at,
+        content_subtype
+      ) WHERE content_type = 'post';
+
+      CREATE INDEX IF NOT EXISTS viewable_posts_by_campaign_and_subtype_and_title ON content(
+        campaign_id,
+        content_subtype,
+        title
+      ) WHERE content_type = 'post' AND is_viewable = 1;
+
+      CREATE INDEX IF NOT EXISTS posts_by_campaign_and_subtype_and_title ON content(
+        campaign_id,
+        content_subtype,
+        title
+      ) WHERE content_type = 'post';
+
+      CREATE INDEX IF NOT EXISTS viewable_products_by_campaign_and_published ON content(
+        campaign_id,
+        published_at
+      ) WHERE content_type = 'product' AND is_viewable = 1;
+
+      CREATE INDEX IF NOT EXISTS products_by_campaign_and_published ON content(
+        campaign_id,
+        published_at
+      ) WHERE content_type = 'product';
+
+      CREATE INDEX IF NOT EXISTS content_by_campaign_and_type_and_published ON content(content_id, campaign_id, content_type, published_at);
+
       CREATE TABLE IF NOT EXISTS "post_tier" (
         "post_id" TEXT,
         "tier_id" TEXT,
@@ -84,6 +129,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("tier_id", "campaign_id") REFERENCES "reward"("reward_id", "campaign_id"),
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
+
+      CREATE INDEX IF NOT EXISTS post_tier_by_campaign_and_tier ON post_tier(campaign_id, tier_id);
 
       CREATE TABLE IF NOT EXISTS "media" (
         "media_id" TEXT,
@@ -110,6 +157,9 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
       );
 
+      CREATE INDEX IF NOT EXISTS content_media_by_content_and_type ON content_media(content_id, content_type);
+      CREATE INDEX IF NOT EXISTS content_media_by_campaign_and_index ON content_media(campaign_id, media_index);
+
       CREATE TABLE IF NOT EXISTS "post_comments" (
         "post_id" TEXT,
         "comment_count" TEXT NOT NULL,
@@ -130,7 +180,7 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
   catch (error: any) {
     let rollbackError: any = null;
     try {
-      await db.exec('ROLLBACK');
+      db.exec('ROLLBACK');
     } catch (_rollbackError) {
       rollbackError = _rollbackError;
     }
@@ -139,10 +189,10 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
   }
 
   if (!dbFileExists) {
-    await db.run(`INSERT INTO env (env_key, value) VALUES (?, ?)`, [
+    db.prepare(`INSERT INTO env (env_key, value) VALUES (?, ?)`).run(
       'db_schema_version',
       DB_SCHEMA_VERSION
-    ]);
+    );
   } else {
     await checkDBSchemaVersion(db, logger);
   }
@@ -150,13 +200,10 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
   return db;
 }
 
-async function checkDBSchemaVersion(db: Database, logger?: Logger | null) {
-  const result = await db.get(`SELECT value FROM env WHERE env_key = ?`, [
-    'db_schema_version'
-  ]);
-  const version = result?.value || '';
+async function checkDBSchemaVersion(db: Database.Database, logger?: Logger | null) {
+  const version = getSchemaVersionFromDB(db);
   if (version) {
-    commonLog(logger, 'debug', 'DB', `DB schema version: ${version}`);
+    commonLog(logger, 'info', 'DB', `DB schema version: ${version}`);
   } else {
     commonLog(
       logger,
@@ -167,5 +214,23 @@ async function checkDBSchemaVersion(db: Database, logger?: Logger | null) {
     return;
   }
 
-  // Code to be added here if schema needs to be updatd
+  if (semver.lt(DB_SCHEMA_VERSION, version)) {
+    throw Error(`DB schema version v${version} is newer than v${DB_SCHEMA_VERSION} supported by this version of patreon-dl. Update patreon-dl and try again.`);
+  }
+  if (semver.gt(DB_SCHEMA_VERSION, version)) {
+    await updateDB(db, version, logger);
+    commonLog(
+      logger,
+      'info',
+      'DB',
+      `Updated DB schema version: ${getSchemaVersionFromDB(db)}`
+    );
+  }
+}
+
+function getSchemaVersionFromDB(db: Database.Database) {
+  const result = db
+    .prepare(`SELECT value FROM env WHERE env_key = ?`)
+    .get('db_schema_version') as { value: string } | undefined;
+  return result?.value || '';
 }

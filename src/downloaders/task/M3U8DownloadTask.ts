@@ -1,6 +1,7 @@
 import { type VideoMediaItem } from '../../entities/MediaItem.js';
 import { SITE_URL } from '../../utils/URLHelper.js';
 import FFmpegDownloadTaskBase, { type FFmpegCommandParams, type FFmpegDownloadTaskBaseParams } from './FFmpegDownloadTaskBase.js';
+import semver from 'semver';
 
 export interface M3U8DownloadTaskParams extends FFmpegDownloadTaskBaseParams<VideoMediaItem> {
   destFilePath: string;
@@ -28,7 +29,8 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
       '-headers',
       `Referer: ${SITE_URL}`
     ];
-    if (this.getFFmpegVersion().startsWith('7.')) {
+    // `extension_picky` introduced in v7.1.1
+    if (semver.satisfies(this.getFFmpegVersion(), '>=7.1.1')) {
       inputOptions.push('-extension_picky', '0');
     }
     return Promise.resolve({

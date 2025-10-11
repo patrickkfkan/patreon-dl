@@ -1,4 +1,4 @@
-import { type ISqlite, type Database } from 'sqlite';
+import type Database from 'better-sqlite3';
 import type Logger from '../../utils/logging/Logger.js';
 import { commonLog, type LogLevel } from '../../utils/logging/Logger.js';
 import { openDB } from './Init.js';
@@ -9,58 +9,54 @@ import { ContentDBMixin } from './ContentDBMixin.js';
 import { EnvDBMixin } from './EnvDBMixin.js';
 
 export type DBConstructor = new (...args: any[]) => DBBase;
-
-type DatabaseExecFn = Database['exec'];
-type DatabaseRunFn = Database['run'];
-type DatabaseGetFn = Database['get'];
-type DatabaseAllFn = Database['all'];
+export type DBInstance = InstanceType<typeof DB>;
 
 export class DBBase {
   name = 'DB';
 
-  db: Database;
+  static instance: DBInstance | null = null;
+  db: Database.Database;
   logger?: Logger | null;
 
-  constructor(db: Database, logger?: Logger | null) {
+  constructor(db: Database.Database, logger?: Logger | null) {
     this.db = db;
     this.logger = logger;
   }
 
-  exec(...args: Parameters<DatabaseExecFn>) {
-    const [ sql ] = args;
-    this.log('debug', '(db.exec):', sql);
-    return this.db.exec(...args);
+  static async getInstance(file: string, dryRun = false, logger?: Logger | null) {
+    if (!this.instance) {
+      const db = await openDB(file, dryRun, logger);
+      this.instance = new DB(db, logger);
+    }
+    return this.instance;
   }
 
-  run(...args: Parameters<DatabaseRunFn>) {
-    const [ sql, params ] = args;
-    this.log('debug', '(db.run):', this.#interpolateSqlParams(sql, params));
-    return this.db.run(...args);
+  exec(sql: string): void {
+    this.db.exec(sql);
   }
 
-  get<T = any>(...args: Parameters<DatabaseGetFn>) {
-    const [ sql, params ] = args;
-    this.log('debug', '(db.get):', this.#interpolateSqlParams(sql, params));
-    return this.db.get<T>(...args);
+  run(sql: string, params?: any[]): Database.RunResult {
+    const stmt = this.db.prepare(sql);
+    return params ? stmt.run(...params) : stmt.run();
   }
 
-  all<T = any[]>(...args: Parameters<DatabaseAllFn>) {
-    const [ sql, params ] = args;
-    this.log('debug', '(db.all):', this.#interpolateSqlParams(sql, params));
-    return this.db.all<T>(...args);
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  get<T = any>(sql: string, params?: any[]): T | undefined {
+    const stmt = this.db.prepare(sql);
+    return (params ? stmt.get(...params) : stmt.get()) as T | undefined;
   }
 
-  #interpolateSqlParams(sql: ISqlite.SqlType | string, params: any[]) {
-    const _sql = typeof sql === 'string' ? sql : sql.sql;
-    let i = 0;
-    return _sql.replace(/\?/g, () => {
-      const val = params[i++];
-      const replaced = typeof val === 'string' ? `'${val.replace(/'/g, "''")}'` : val;
-      if (typeof replaced === 'string' && replaced.length > 100) {
-        return `${replaced.substring(0, 99)}...'`;
-      }
-      return replaced;
-    });
+  all<T = any>(sql: string, params?: any[]): T[] {
+    const stmt = this.db.prepare(sql);
+    return (params ? stmt.all(...params) : stmt.all()) as T[];
+  }
+
+  close(): void {
+    this.db.close();
+  }
+
+  transaction(fn: (...args: any[]) => any): (...args: any[]) => any {
+    return this.db.transaction(fn);
   }
 
   log(level: LogLevel, ...msg: any[]) {
@@ -74,7 +70,7 @@ export class DBBase {
   }
 }
 
-export class DBInstance extends EnvDBMixin(
+const DB = EnvDBMixin(
   ContentDBMixin(
     CampaignDBMixin(
       UserDBMixin(
@@ -82,16 +78,6 @@ export class DBInstance extends EnvDBMixin(
       )
     )
   )
-) {}
+);
 
-export default class DB {
-  protected static instance: DBInstance | null = null;
-
-  static async getInstance(file: string, dryRun = false, logger?: Logger | null) {
-    if (!this.instance) {
-      const db = await openDB(file, dryRun, logger);
-      this.instance = new DBInstance(db, logger);
-    }
-    return this.instance;
-  }
-}
+export default DB;
