@@ -22,7 +22,6 @@ const SANITIZE_HTML_OPTIONS = {
 export class APIBase {
   name = 'API';
 
-  protected static instance: APIInstance | null = null;
   db: DBInstance;
   logger?: Logger | null;
 
@@ -32,10 +31,7 @@ export class APIBase {
   }
 
   static getInstance(db: DBInstance, logger?: Logger | null) {
-    if (!this.instance) {
-      this.instance = new API(db, logger);
-    }
-    return this.instance;
+    return new API(db, logger);
   }
 
   sanitizeHTML(html: string) {
