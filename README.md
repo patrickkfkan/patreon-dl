@@ -267,6 +267,12 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.3.1
+- Fix bugs affecting library usage:
+  - `DB.getInstance()` returning same instance despite different DB path
+  - `API.getInstance()` returning same instance despite different DB instance
+  - DB not closed when downloader ends or web server stops
+
 v3.3.0
 - Fix:
   - YouTube stream fetching error ([patreon-dl-gui#28](https://github.com/patrickkfkan/patreon-dl-gui/issues/28))
