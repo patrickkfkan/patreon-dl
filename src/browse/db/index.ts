@@ -7,28 +7,64 @@ import { UserDBMixin } from './UserDBMixin.js';
 import { CampaignDBMixin } from './CampaignDBMixin.js';
 import { ContentDBMixin } from './ContentDBMixin.js';
 import { EnvDBMixin } from './EnvDBMixin.js';
+import path from 'path';
 
 export type DBConstructor = new (...args: any[]) => DBBase;
 export type DBInstance = InstanceType<typeof DB>;
 
+interface DBPool {
+  [dbPath: string]: { db: Database.Database; count: number; } | undefined;
+}
+
 export class DBBase {
   name = 'DB';
 
-  static instance: DBInstance | null = null;
+  dbPath: string | null;
+  static dbPool: DBPool = {};
   db: Database.Database;
   logger?: Logger | null;
 
-  constructor(db: Database.Database, logger?: Logger | null) {
+  constructor(dbPath: string | null, db: Database.Database, logger?: Logger | null) {
+    this.dbPath = dbPath;
     this.db = db;
     this.logger = logger;
   }
 
-  static async getInstance(file: string, dryRun = false, logger?: Logger | null) {
-    if (!this.instance) {
-      const db = await openDB(file, dryRun, logger);
-      this.instance = new DB(db, logger);
+  static async getInstance(file: string, dryRun = false, logger?: Logger | null): Promise<DBInstance> {
+    let db: Database.Database;
+    let dbPath: string | null;
+    if (dryRun) {
+      dbPath = null;
+      db = await openDB(file, dryRun, logger);
     }
-    return this.instance;
+    else {
+      dbPath = path.resolve(file);
+      const poolEntry = this.dbPool[dbPath];
+      if (poolEntry) {
+        db = poolEntry.db;
+        poolEntry.count++;
+        commonLog(
+          logger,
+          'debug',
+          'DB',
+          `Obtained DB from pool (shares: ${poolEntry.count})`
+        );
+      }
+      else {
+        db = await openDB(file, dryRun, logger);
+        this.dbPool[dbPath] = {
+          db,
+          count: 1
+        };
+        commonLog(
+          logger,
+          'debug',
+          'DB',
+          `Added DB to pool`
+        );
+      }
+    }
+    return new DB(dbPath, db, logger);
   }
 
   exec(sql: string): void {
@@ -52,7 +88,23 @@ export class DBBase {
   }
 
   close(): void {
-    this.db.close();
+    if (!this.dbPath) {
+      this.log('debug', '(dry-run) Close in-memory DB');
+      this.db.close();
+      return;
+    }
+    const poolEntry = DBBase.dbPool[this.dbPath];
+    if (poolEntry && poolEntry.count > 0) {
+      poolEntry.count--;
+      if (poolEntry.count === 0) {
+        this.log('debug', 'Close DB (no shares remaining)');
+        delete DBBase.dbPool[this.dbPath];
+        this.db.close();
+      }
+      else {
+        this.log('debug', `Close DB skipped - ${poolEntry.count} shares remaining`)
+      }
+    }
   }
 
   transaction(fn: (...args: any[]) => any): (...args: any[]) => any {
