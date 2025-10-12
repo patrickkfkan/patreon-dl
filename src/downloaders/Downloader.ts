@@ -564,6 +564,13 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return this.commonFetchAPI(url, signal);
   }
 
+  protected async closeDB() {
+    if (this.#dbPromise) {
+      (await this.#dbPromise).close();
+      this.#dbPromise = null;
+    }
+  }
+
   on<T extends DownloaderEvent>(event: T, listener: (args: DownloaderEventPayloadOf<T>) => void): this;
   on(event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener);

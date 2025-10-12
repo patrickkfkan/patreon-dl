@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import DB from '../db/index.js';
+import DB, { type DBInstance } from '../db/index.js';
 import { type Server } from 'http';
 import getPort from 'get-port';
 import { type Logger } from '../../utils/logging/index.js';
@@ -25,12 +25,15 @@ export class WebServer {
   #status: 'stopped' | 'started';
   #port: number | null;
 
+  #db: DBInstance | null;
+
   constructor(config: WebServerConfig) {
     this.#config = config;
     this.#app = express();
     this.#server = null;
     this.#status = 'stopped';
     this.#port = config.port || null;
+    this.#db = null;
   }
 
   async start() {
@@ -61,6 +64,7 @@ export class WebServer {
     this.#app.use('/images', express.static(path.resolve(import.meta.dirname, '../web/images')));
     this.#app.use(router);
 
+    this.#db = db;
     this.#port = await this.#getPort();
 
     return new Promise<void>((resolve, reject) => {
@@ -83,12 +87,19 @@ export class WebServer {
       if (this.#server) {
         this.#server.close((error) => {
           if (error) {
-            reject(error);
-            return;
+            return reject(error);;
           }
           this.#server = null;
           this.#port = null;
           this.#status = 'stopped';
+          if (this.#db) {
+            try {
+              this.#db.close();
+            }
+            catch (error) {
+              return reject(error instanceof Error ? error : Error(String(error)));
+            }
+          }
           resolve();
         });
       } else {

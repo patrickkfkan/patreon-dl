@@ -233,6 +233,7 @@ export default class ProductDownloader extends Downloader<Product> {
     })
     .finally(() => {
       void (async () => {
+        await this.closeDB();
         if (this.logger) {
           await this.logger.end();
         }
