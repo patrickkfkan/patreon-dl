@@ -150,9 +150,25 @@ export default class FSHelper {
     };
   }
 
+  /**
+   * Check whether a path refers to a directory, or a symlink which resolves to
+   * a directory
+   */
+  private isDirectory(path: string): boolean {
+    if (!fse.existsSync(path)) {
+      return false;
+    }
+    const resolved = fse.realpathSync(path);
+    if (!fse.existsSync(resolved)) {
+      return false;
+    }
+    const stat = fse.lstatSync(resolved);
+    return stat.isDirectory();
+  }
+
   createDir(dir: string, parents = true) {
     if (fse.existsSync(dir)) {
-      if (!fse.lstatSync(dir).isDirectory()) {
+      if (!this.isDirectory(dir)) {
         throw Error(`"${dir}" exists but is not a directory`);
       }
       return dir;
