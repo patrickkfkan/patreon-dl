@@ -2,3 +2,13 @@ dist/
 node_modules/
 test/
 .vscode/
+
+# Test files and personal configs
+test-output/
+test-config.conf
+test-diff.js
+my-test.conf
+
+# Claude Code specific
+.claude/
+CLAUDE.md

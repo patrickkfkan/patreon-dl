@@ -16,9 +16,10 @@ This repo contains the `patreon-dl` library and its command-line tool. For GUI a
     - audio
     - attachments
     - embedded videos
-      - YouTube downloader built-in
+      - YouTube downloader built-in with **configurable max resolution**
       - Supports [external downloader](#embedded-videos--links---external-downloader)
-- Save campaign and content info 
+- Save campaign and content info
+- **Automatic change tracking** - when content updates, keeps old versions and generates diffs showing what changed
 - Extensively configurable
 - Browse downloaded content through integrated web server
 
@@ -266,6 +267,10 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 > Keep in mind that the web server is in no way secure. It is meant for local browsing and should not be exposed to outside parties!
 
 ## Changelog
+
+v3.3.2
+- Add `max.video.resolution` option to limit YouTube video downloads to a maximum resolution ([example.conf](./example.conf))
+- Add automatic diff tracking for updated content - generates diffs, maintains changelog, and tracks media changes when using `content.file.exists.action = saveAsCopyIfNewer`
 
 v3.3.1
 - Fix bugs affecting library usage:

@@ -13,6 +13,8 @@ import { type FileExistsAction } from '../downloaders/DownloaderOptions.js';
 import {type LogLevel} from './logging/Logger.js';
 import type Logger from './logging/Logger.js';
 import { commonLog } from './logging/Logger.js';
+import DiffGenerator from './DiffGenerator.js';
+import dateFormat from 'dateformat';
 
 const CAMPAIGN_FIXED_DIR_NAMES = {
   INFO: 'campaign_info'
@@ -76,10 +78,12 @@ export default class FSHelper {
 
   protected config: DownloaderConfig<any>;
   protected logger?: Logger | null;
+  protected diffGenerator: DiffGenerator;
 
   constructor(config: DownloaderConfig<any>, logger?: Logger | null) {
     this.config = config;
     this.logger = logger;
+    this.diffGenerator = new DiffGenerator({ logger });
   }
 
   getDBFilePath() {
@@ -295,6 +299,30 @@ export default class FSHelper {
             message: `Destination file exists with same content (${resolvedFile.incrementedFrom})`
           };
         }
+
+        // Generate diff for JSON files
+        if (typeof data === 'object' && !this.config.dryRun) {
+          const fileDir = path.dirname(resolvedFile.final);
+          const fileName = path.basename(resolvedFile.final, path.extname(resolvedFile.final));
+          const timestamp = dateFormat('yyyymmdd-HHMMss');
+          const diffPath = path.resolve(fileDir, `${fileName}-diff-${timestamp}.txt`);
+
+          // Generate the diff
+          const diff = await this.diffGenerator.generateJSONDiff(
+            resolvedFile.incrementedFrom,
+            tmpFile,
+            diffPath
+          );
+
+          // Update changelog if diff was generated
+          if (diff) {
+            const changelogPath = path.resolve(fileDir, 'CHANGELOG.md');
+            // Extract post ID from file path if possible
+            const postIdMatch = resolvedFile.final.match(/\/(\d+)[\s-]/);
+            const postId = postIdMatch ? postIdMatch[1] : 'unknown';
+            await this.diffGenerator.updateChangelog(changelogPath, diff, postId);
+          }
+        }
       }
 
       this.rename(tmpFile, resolvedFile.final);
@@ -378,6 +406,54 @@ export default class FSHelper {
 
   static rename(oldPath: string, newPath: string) {
     fse.renameSync(oldPath, newPath);
+  }
+
+  /**
+   * Track media file changes and generate a media report
+   * Call this when media files are downloaded with saveAsCopyIfNewer
+   */
+  async trackMediaChange(
+    contentDir: string,
+    filename: string,
+    oldFilePath: string | null,
+    newFilePath: string
+  ): Promise<void> {
+    try {
+      if (this.config.dryRun) {
+        return;
+      }
+
+      const mediaReportPath = path.resolve(contentDir, 'media-changes.md');
+      const mediaDiffs: Array<{
+        type: 'added' | 'removed' | 'modified' | 'unchanged';
+        filename: string;
+        oldSize?: number;
+        newSize?: number;
+        oldResolution?: string;
+        newResolution?: string;
+      }> = [];
+
+      // Get file sizes
+      const newSize = fse.existsSync(newFilePath) ? fse.statSync(newFilePath).size : undefined;
+      const oldSize = oldFilePath && fse.existsSync(oldFilePath)
+        ? fse.statSync(oldFilePath).size
+        : undefined;
+
+      const changeType = oldFilePath ? 'modified' : 'added';
+
+      mediaDiffs.push({
+        type: changeType,
+        filename,
+        oldSize,
+        newSize
+      });
+
+      // Append to media report
+      await this.diffGenerator.generateMediaReport(mediaReportPath, mediaDiffs);
+    }
+    catch (error) {
+      this.log('error', `Failed to track media change: ${error}`);
+    }
   }
 
   protected log(level: LogLevel, ...msg: Array<any>) {

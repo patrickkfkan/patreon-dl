@@ -68,6 +68,7 @@ export interface DownloaderOptions {
     infoAPI?: FileExistsAction;
   };
   embedDownloaders?: EmbedDownloader[];
+  maxVideoResolution?: number | null;
   logger?: Logger | null;
   dryRun?: boolean;
 }
@@ -86,6 +87,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'embedDownloaders' |
   'dryRun'>> & {
     cookie?: string;
+    maxVideoResolution?: number | null;
   };
 
 const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
@@ -137,6 +139,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
     infoAPI: 'overwrite'
   },
   embedDownloaders: [],
+  maxVideoResolution: null,
   dryRun: false
 };
 
@@ -201,6 +204,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       infoAPI: options?.fileExistsAction?.infoAPI || defaults.fileExistsAction.infoAPI
     },
     embedDownloaders: pickDefined(options?.embedDownloaders, defaults.embedDownloaders),
+    maxVideoResolution: pickDefined(options?.maxVideoResolution, defaults.maxVideoResolution),
     dryRun: pickDefined(options?.dryRun, defaults.dryRun)
   };
 }
@@ -213,6 +217,7 @@ export function getDefaultDownloaderOptions(): DeepRequired<DownloaderOptions> {
   return {
     ...getDownloaderInit(),
     cookie: '',
+    maxVideoResolution: null,
     logger: null
   };
 }
