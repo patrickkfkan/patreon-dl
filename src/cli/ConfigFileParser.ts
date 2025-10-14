@@ -9,6 +9,7 @@ const CONFIG_FILE_PROPS = {
   stopOn: 'downloader:stop.on',
   noPrompt: 'downloader:no.prompt',
   pathToFFmpeg: 'downloader:path.to.ffmpeg',
+  maxVideoResolution: 'downloader:max.video.resolution',
   dryRun: 'downloader:dry.run',
   outDir: 'output:out.dir',
   dirNameFormat: {
@@ -102,6 +103,7 @@ export default class ConfigFileParser {
       useStatusCache: __getValue(CONFIG_FILE_PROPS.useStatusCache),
       stopOn: __getValue(CONFIG_FILE_PROPS.stopOn),
       pathToFFmpeg: __getValue(CONFIG_FILE_PROPS.pathToFFmpeg),
+      maxVideoResolution: __getValue(CONFIG_FILE_PROPS.maxVideoResolution),
       outDir: __getValue(CONFIG_FILE_PROPS.outDir),
       dirNameFormat: {
         campaign: __getValue(CONFIG_FILE_PROPS.dirNameFormat.campaign),

@@ -86,6 +86,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
       infoAPI: CLIOptionValidator.validateString(pickDefined(commandLineOptions.fileExistsAction?.infoAPI, configFileOptions?.fileExistsAction?.infoAPI), 'overwrite', 'skip', 'saveAsCopy', 'saveAsCopyIfNewer')
     },
     embedDownloaders: getEmbedDownloaderOptions(configFileOptions),
+    maxVideoResolution: CLIOptionValidator.validateNumber(pickDefined(commandLineOptions.maxVideoResolution, configFileOptions?.maxVideoResolution)),
     noPrompt: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.noPrompt, configFileOptions?.noPrompt)) || false,
     dryRun: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.dryRun, configFileOptions?.dryRun)) || false,
     consoleLogger,
