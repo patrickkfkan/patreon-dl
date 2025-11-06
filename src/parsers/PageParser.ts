@@ -41,11 +41,21 @@ export default class PageParser extends Parser {
     if (isNextJSStreamingResponse) {
       this.log('debug', 'Detected Next.js streaming response');
 
-      const currentUserIdRegex = /currentUser\\":(?:(null)|{.+\\"id\\":\\"(.+?)\\")/gm;
-      this.log('debug', `Trying pattern in Next.js streaming response: ${currentUserIdRegex}`);
-      const currentUserIdMatch = currentUserIdRegex.exec(html);
-      if (!currentUserIdMatch || (!currentUserIdMatch[1] && !currentUserIdMatch[2])) {
-        throw Error(`Initial data not found - no match for pattern in Next.js streaming response: ${currentUserIdRegex}`);
+      let currentUserId: string | null = null;
+      for (const { data: currentUser } of this.#extractJsonFromKey(html, 'currentUser')) {
+        if (currentUser) {
+          currentUserId = ObjectHelper.getProperty(currentUser, 'data.id');
+          if (currentUserId) {
+            break;
+          }
+        }
+      }
+      if (!currentUserId) {
+        const matchCurrentUserNullRegex = /\\"currentUser\\"\s*:\s*null/g;
+        const matchCurrentUserNull = matchCurrentUserNullRegex.exec(html);
+        if (!matchCurrentUserNull) {
+          throw Error(`Failed to obtain initial data - "currentUserId" not found in Next.js streaming response`);
+        }
       }
 
       const campaignIdRegex = /campaign_id\\",\\"unit_id\\":\\"(.+?)\\"/gm;
@@ -55,7 +65,6 @@ export default class PageParser extends Parser {
         throw Error(`Initial data not found - no match for pattern in Next.js streaming response: ${campaignIdRegex}`);
       }
 
-      const currentUserId = currentUserIdMatch[1] || currentUserIdMatch[2] || undefined;
       const campaignId = campaignIdMatch ? campaignIdMatch[1] : undefined;
       return {
         pageBootstrap: {
@@ -68,7 +77,7 @@ export default class PageParser extends Parser {
         commonBootstrap: {
           currentUser: {
             data: {
-              id: currentUserId === 'null' ? undefined : currentUserId
+              id: currentUserId === null || currentUserId === 'null' ? undefined : currentUserId
             }
           }
         }
@@ -76,5 +85,35 @@ export default class PageParser extends Parser {
     }
 
     throw Error('Initial data not found - no regex matches');
+  }
+
+  *#extractJsonFromKey(input: string, key: string) {
+    const keyPattern = `\\\\"${key}\\\\"\\s*:\\s*{`;
+    const keyRegex = new RegExp(keyPattern, 'g');
+
+    let match;
+    while ((match = keyRegex.exec(input)) !== null) {
+      const start = match.index + match[0].length - 1; // position of opening {
+      let end = start;
+      let braceCount = 1;
+
+      while (end < input.length && braceCount > 0) {
+        end++;
+        if (input[end] === '{') braceCount++;
+        if (input[end] === '}') braceCount--;
+      }
+
+      const jsonFragment = input.slice(start, end + 1).replaceAll('\\', '');
+      try {
+        yield {
+          data: JSON.parse(jsonFragment)
+        };
+      } catch (error) {
+        this.log('debug', 'Error parsing JSON fragment:', error);
+        yield {
+          data: null,
+        };
+      }
+    }
   }
 }
