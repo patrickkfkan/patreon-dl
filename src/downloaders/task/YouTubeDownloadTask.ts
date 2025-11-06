@@ -429,9 +429,13 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
 
   async #pickStream(video: YT.VideoInfo): Promise<StreamBundle | null> {
     const innertube = await this.getInnertube();
+    const maxResolution = this.config.maxVideoResolution ?? null;
+
+    // First, get the best streams without filtering
     let bestVideoWithAudio: Misc.Format | null;
     let bestVideo: Misc.Format | null;
     let bestAudio: Misc.Format | null;
+
     try {
       bestVideoWithAudio = video.chooseFormat({ quality: 'best', type: 'video+audio', format: 'any' });
     }
@@ -451,6 +455,45 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     }
     catch (_error: unknown) {
       bestAudio = null;
+    }
+
+    // If max resolution is set and video exceeds it, find a lower resolution
+    if (maxResolution !== null && maxResolution > 0) {
+      const checkAndDowngrade = (format: Misc.Format | null, type: 'video+audio' | 'video'): Misc.Format | null => {
+        if (!format || !format.height) {
+          return format;
+        }
+
+        if (format.height <= maxResolution) {
+          // Current format is within limit
+          return format;
+        }
+
+        // Current format exceeds limit, find best format at or below max resolution
+        this.log('debug', `Video resolution ${format.height}p exceeds max ${maxResolution}p, finding lower resolution...`);
+
+        const availableFormats = type === 'video+audio'
+          ? (video.streaming_data?.formats || [])
+          : (video.streaming_data?.adaptive_formats || []).filter(f => f.has_video);
+
+        // Sort by height descending and find the best one at or below maxResolution
+        const suitableFormats = availableFormats
+          .filter(f => f.height && f.height <= maxResolution)
+          .sort((a, b) => (b.height || 0) - (a.height || 0));
+
+        if (suitableFormats.length > 0) {
+          this.log('debug', `Selected ${suitableFormats[0].height}p as alternative`);
+          return suitableFormats[0];
+        }
+
+        // No suitable format found, use original (better to have high res than nothing)
+        this.log('warn', `No video format found at or below ${maxResolution}p, using original ${format.height}p`);
+        return format;
+      };
+
+      bestVideoWithAudio = checkAndDowngrade(bestVideoWithAudio, 'video+audio');
+      bestVideo = checkAndDowngrade(bestVideo, 'video');
+      // Audio doesn't need downgrading
     }
 
     if (!bestVideoWithAudio && !bestVideo && !bestAudio) {
