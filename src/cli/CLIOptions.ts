@@ -64,6 +64,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
     useStatusCache: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.useStatusCache, configFileOptions?.useStatusCache)),
     stopOn: CLIOptionValidator.validateString(pickDefined(commandLineOptions.stopOn, configFileOptions?.stopOn), 'never', 'postPreviouslyDownloaded', 'postPublishDateOutOfRange'),
     pathToFFmpeg: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToFFmpeg, configFileOptions?.pathToFFmpeg)),
+    pathToDeno: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToDeno, configFileOptions?.pathToDeno)),
     outDir: CLIOptionValidator.validateString(pickDefined(commandLineOptions.outDir, configFileOptions?.outDir)),
     dirNameFormat: {
       campaign: CLIOptionValidator.validateString(pickDefined(commandLineOptions.dirNameFormat?.campaign, configFileOptions?.dirNameFormat?.campaign)),

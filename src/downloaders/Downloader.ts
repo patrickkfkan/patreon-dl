@@ -24,6 +24,7 @@ import FFmpegDownloadTaskBase from './task/FFmpegDownloadTaskBase.js';
 import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
 import DB, { type DBInstance } from '../browse/db/index.js';
 import PostParser from '../parsers/PostParser.js';
+import { isDenoInstalled } from '../utils/Misc.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -330,6 +331,20 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
       }
       else if (!fs.lstatSync(options.pathToFFmpeg).isFile()) {
         throw Error(`Path to FFmpeg executable "${options.pathToFFmpeg}" does not point to a file`);
+      }
+    }
+
+    // Check Deno path exists and startable
+    if (options.pathToDeno) {
+      if (!fs.existsSync(options.pathToDeno)) {
+        throw Error(`Path to Deno executable "${options.pathToDeno}" does not exist`);
+      }
+      else if (!fs.lstatSync(options.pathToDeno).isFile()) {
+        throw Error(`Path to Deno executable "${options.pathToDeno}" does not point to a file`);
+      }
+      const di = isDenoInstalled(options.pathToDeno);
+      if (!di.installed) {
+        throw Error(`Could not start Deno executable "${options.pathToDeno}"`, { cause: di.error });
       }
     }
 

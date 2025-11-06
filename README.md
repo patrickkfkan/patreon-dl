@@ -40,9 +40,29 @@ For information on external downloaders, see the [Embedded videos / links - exte
 
 Not all video downloads require FFmpeg, but you should have it installed on your system anyway.
 
-### Embedded YouTube videos / links - Premium access
+### Embedded YouTube videos / links
 
-`patreon-dl` supports downloading embedded YouTube videos or from embedded YouTube video links. In addition, if you have a YouTube Premium subscription, you can connect `patreon-dl` to your account and download videos at qualities available only to Premium accounts (e.g. '1080p Premium'). For CLI users, you would configure `patreon-dl` as follows:
+`patreon-dl` supports downloading embedded YouTube videos or from embedded YouTube video links.
+
+#### Deno dependency
+
+The built-in YouTube downloader runs code retrieved from YouTube or Google servers. If [Deno](https://deno.com/) is installed on your system, it will be used to execute this code within a secure, sandboxed environment. Without Deno, the code runs without isolation, increasing the risk of security vulnerabilities such as unauthorized access, data corruption, or malicious behavior. For this reason, installing Deno is strongly recommended.
+
+When needed, the downloader will attempt to invoke the `deno` command. If it’s not found, it will default to unsafe execution. If Deno is installed but the `deno` executable isn’t available in your system’s PATH, you can manually specify its location using the `--deno` CLI option or `path.to.deno` config file option:
+
+```
+// CLI
+$ patreon-dl --deno path/to/deno ...
+
+// Config file
+[downloader]
+path.to.deno = "path/to/deno"
+...
+```
+
+#### Premium access
+
+If you have a YouTube Premium subscription, you can connect `patreon-dl` to your account and download videos at qualities available only to Premium accounts (e.g. '1080p Premium'). For CLI users, you would configure `patreon-dl` as follows:
 
 ```
 $ patreon-dl --configure-youtube
@@ -82,6 +102,7 @@ $ patreon-dl [OPTION]... URL
 | <code><nobr>--config-file &lt;path&gt;</nobr></code> | `-C` | Load [configuration file](#configuration-file) at `<path>` for setting full options |
 | `--cookie <string>` | `-c` | Cookie for accessing patron-only content; [how to obtain cookie](https://github.com/patrickkfkan/patreon-dl/wiki/How-to-obtain-Cookie). |
 | `--ffmpeg <path>` | `-f` | Path to FFmpeg executable |
+| `--deno <path>` | `-d` | Path to Deno executable |
 | `--out-dir <path>` |`-o` | Directory to save content |
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
 | `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |

@@ -46,6 +46,7 @@ export interface DownloaderOptions {
   stopOn?: StopOnCondition;
   pathToFFmpeg?: string | null;
   pathToYouTubeCredentials?: string | null;
+  pathToDeno?: string | null;
   outDir?: string;
   dirNameFormat?: {
     campaign?: string;
@@ -79,6 +80,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'stopOn' |
   'pathToFFmpeg' |
   'pathToYouTubeCredentials' |
+  'pathToDeno' |
   'dirNameFormat' |
   'filenameFormat' |
   'include' |
@@ -96,6 +98,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
   stopOn: 'never',
   pathToFFmpeg: null,
   pathToYouTubeCredentials: null,
+  pathToDeno: null,
   dirNameFormat: {
     campaign: '{creator.vanity}[ - ]?{campaign.name}',
     content: '{content.id}[ - ]?{content.name}'
@@ -164,6 +167,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     stopOn: pickDefined(options?.stopOn, defaults.stopOn),
     pathToFFmpeg: pickDefined(options?.pathToFFmpeg, defaults.pathToFFmpeg),
     pathToYouTubeCredentials: pickDefined(options?.pathToYouTubeCredentials, defaults.pathToYouTubeCredentials),
+    pathToDeno: pickDefined(options?.pathToDeno, defaults.pathToDeno),
     dirNameFormat: {
       campaign: options?.dirNameFormat?.campaign || defaults.dirNameFormat.campaign,
       content: options?.dirNameFormat?.content || defaults.dirNameFormat.content

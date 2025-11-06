@@ -17,6 +17,7 @@ const COMMAND_LINE_ARGS = {
   targetURL: 'target-url',
   cookie: 'cookie',
   ffmpeg: 'ffmpeg',
+  deno: 'deno',
   outDir: 'out-dir',
   logLevel: 'log-level',
   noPrompt: 'no-prompt',
@@ -56,6 +57,13 @@ const OPT_DEFS = [
     name: COMMAND_LINE_ARGS.ffmpeg,
     description: 'Path to FFmpeg executable',
     alias: 'f',
+    type: String,
+    typeLabel: '<string>'
+  },
+  {
+    name: COMMAND_LINE_ARGS.deno,
+    description: 'Path to Deno executable',
+    alias: 'd',
     type: String,
     typeLabel: '<string>'
   },
@@ -163,6 +171,7 @@ export default class CommandLineParser {
       cookie: __getValue(COMMAND_LINE_ARGS.cookie),
       useStatusCache: undefined,
       pathToFFmpeg: __getValue(COMMAND_LINE_ARGS.ffmpeg),
+      pathToDeno: __getValue(COMMAND_LINE_ARGS.deno),
       outDir: __getValue(COMMAND_LINE_ARGS.outDir),
       dirNameFormat: {
         campaign: undefined,

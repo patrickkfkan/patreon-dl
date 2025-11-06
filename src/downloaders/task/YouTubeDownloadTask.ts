@@ -405,9 +405,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
 
   async #resolveURL(url: string): Promise<string> {
     if (!YouTubeDownloadTask.#innertubeForResolveURL) {
-      YouTubeDownloadTask.#innertubeForResolveURL = await InnertubeLib.Innertube.create({
-        player_id: '0004de42', // https://github.com/LuanRT/YouTube.js/issues/1043
-      });
+      YouTubeDownloadTask.#innertubeForResolveURL = await InnertubeLib.Innertube.create();
     }
     const innertube = YouTubeDownloadTask.#innertubeForResolveURL;
     const endpoint = await innertube.resolveURL(url);
@@ -500,9 +498,9 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       return null;
     }
 
-    const __decipher = (format: Misc.Format) => {
+    const __decipher = async (format: Misc.Format) => {
       return {
-        url: format.decipher(innertube.session.player),
+        url: await format.decipher(innertube.session.player),
         quality: {
           video: format.quality_label || format.quality || '',
           audio: format.audio_quality || ''
@@ -515,7 +513,7 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
     if (bestVideoWithAudio && (
       (bestVideo && bestVideoWithAudio.itag === bestVideo.itag) || (!bestVideo && !bestAudio))) {
 
-      const stream = __decipher(bestVideoWithAudio);
+      const stream = await __decipher(bestVideoWithAudio);
       return {
         type: 'combinedAV',
         stream: {
@@ -529,9 +527,9 @@ export default class YouTubeDownloadTask extends FFmpegDownloadTaskBase<YouTubeP
       };
     }
 
-    const videoWithAudioStream = bestVideoWithAudio ? __decipher(bestVideoWithAudio) : null;
-    const videoStream = bestVideo ? __decipher(bestVideo) : videoWithAudioStream;
-    const audioStream = bestAudio ? __decipher(bestAudio) : videoWithAudioStream;
+    const videoWithAudioStream = bestVideoWithAudio ? await __decipher(bestVideoWithAudio) : null;
+    const videoStream = bestVideo ? await __decipher(bestVideo) : videoWithAudioStream;
+    const audioStream = bestAudio ? await __decipher(bestAudio) : videoWithAudioStream;
 
     if (videoStream && audioStream) {
       return {

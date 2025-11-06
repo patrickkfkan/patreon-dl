@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import type DateTime from "./DateTime";
 import os from 'os';
 
@@ -43,6 +44,16 @@ export type UnionToTuple<U extends string, R extends unknown[] = []> =
     S
   : never;
 
+export type DenoInstallStatus =
+  | {
+      installed: true;
+      version: string;
+    }
+  | {
+      installed: false;
+      error: Error;
+    };
+
 export function pickDefined<T>(value1: T | undefined, value2: T): T;
 export function pickDefined<T>(value1: T, value2: T | undefined): T;
 export function pickDefined(value1: undefined, value2: undefined): undefined;
@@ -76,4 +87,34 @@ export function getLocalIPAddress(): string {
   }
 
   return '127.0.0.1';
+}
+
+const denoInstalled: (DenoInstallStatus & { checkedPath?: string; })[] = [];
+
+export function isDenoInstalled(pathToDeno?: string): DenoInstallStatus {
+  const installStatus = denoInstalled.find((d) => d.checkedPath === pathToDeno);
+  if (installStatus) {
+    return installStatus;
+  }
+  let di: DenoInstallStatus;
+  try {
+    const cmd = pathToDeno || 'deno';
+    const output = execSync(`${cmd} --version`, {
+      encoding: 'utf-8'
+    });
+    di = {
+      installed: true,
+      version: output.trim().split(/\r?\n/)[0]
+    };
+  } catch (error) {
+    di = {
+      installed: false,
+      error: error instanceof Error ? error : Error(String(error))
+    };
+  }
+  denoInstalled.push({
+    checkedPath: pathToDeno,
+    ...di
+  });
+  return di;
 }

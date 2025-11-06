@@ -6,10 +6,29 @@ import type Logger from '../logging/Logger.js';
 import { commonLog, type LogLevel } from '../logging/Logger.js';
 import { type DownloaderConfig } from '../../downloaders/Downloader.js';
 import { createProxyAgent } from '../Proxy.js';
+import { spawn } from 'child_process';
+import ObjectHelper from '../ObjectHelper.js';
+import { isDenoInstalled } from '../Misc.js';
 
 export interface InnertubeLoaderGetInstanceResult {
   innertube: Innertube;
   getVideoInfo: (videoId: string) => Promise<InnertubeLib.YT.VideoInfo>
+};
+
+Platform.shim.eval = (data: InnertubeLib.Types.BuildScriptResult, env: Record<string, InnertubeLib.Types.VMPrimative>) => {
+  const properties = [];
+
+  if(env.n) {
+    properties.push(`n: exportedVars.nFunction("${env.n}")`)
+  }
+
+  if (env.sig) {
+    properties.push(`sig: exportedVars.sigFunction("${env.sig}")`)
+  }
+
+  const code = `${data.output}\nreturn { ${properties.join(', ')} }`;
+
+  return InnertubeLoader.eval(code);
 };
 
 export default class InnertubeLoader {
@@ -21,6 +40,8 @@ export default class InnertubeLoader {
   static #logger?: Logger | null;
   static #credentialsFile: string | null = null;
   static #proxy: Dispatcher | undefined = undefined;
+  static #pathToDeno: string | null = null;
+  static #denoInstalled: boolean | undefined = undefined;
 
   static setLogger(logger?: Logger | null) {
     this.#logger = logger;
@@ -44,6 +65,8 @@ export default class InnertubeLoader {
       }
     }
 
+    this.#pathToDeno = options.pathToDeno;
+
     this.#pendingPromise = this.#beginInitStage();
 
     return this.#pendingPromise;
@@ -63,7 +86,6 @@ export default class InnertubeLoader {
     const credentials = this.#loadCredentials();
     const innertube = await Innertube.create({
       client_type: InnertubeLib.ClientType.TV,
-      player_id: '0004de42', // https://github.com/LuanRT/YouTube.js/issues/1043
       fetch: (input, init) => Platform.shim.fetch(input, { ...init, dispatcher: this.#proxy } as any)
     });
     if (credentials) {
@@ -125,6 +147,81 @@ export default class InnertubeLoader {
       this.log('error', `Error loading YouTube credentials from "${this.#credentialsFile}":`, error);
       return null;
     }
+  }
+
+  static #evalByDeno(code: string) {
+    return new Promise<any>((resolve, reject) => {
+      this.log('debug', 'Begin Deno eval');
+      const safeCode = code
+        .replace(/`/g, '\\`')
+        .replace(/\\/g, '\\\\');
+      const wrappedCode = `
+        try {
+          const result = await new Function(\`${safeCode}\`)();
+          console.log(JSON.stringify({ result }));
+        }
+        catch (error) {
+          console.log(JSON.stringify({
+            result: null,
+            error: error instanceof Error ? error.message : String(error)
+          }));
+        }
+      `;
+      const denoProcess = spawn(this.#pathToDeno || 'deno', ['eval', wrappedCode]);
+      let output = '';
+
+      denoProcess.stdout.on('data', (data: Buffer) => {
+        output += data.toString();
+      });
+
+      denoProcess.stderr.on('data', (err) => {
+        this.log('error', '(stderr) Deno eval:', err.toString());
+      });
+
+      denoProcess.on('close', () => {
+        try {
+          const result = JSON.parse(output.trim());
+          const resultValue = ObjectHelper.getProperty(result, 'result');
+          const resultErr = ObjectHelper.getProperty(result, 'error');
+          if (resultErr) {
+            return reject(Error(resultErr));
+          }
+          this.log('debug', 'Deno eval result:', resultValue);
+          return resolve(resultValue);
+        } catch (e) {
+          return reject(Error('Could not parse result of Deno eval', { cause: e }));
+        }
+      });
+    });
+  }
+
+  static eval(code: string) {
+    if (this.#denoInstalled === undefined) {
+      const denoInstalled = isDenoInstalled(this.#pathToDeno || undefined);
+      if (!denoInstalled.installed) {
+        if (denoInstalled.error) {
+          this.log('warn', 'Deno not found or failed to start:', denoInstalled.error);
+        }
+        else {
+          this.log('warn', 'Deno not found or failed to start');
+        }
+        this.log('warn', 'No sandboxing available for executed code');
+      }
+      else {
+        this.log('debug', 'Deno found');
+      }
+      this.#denoInstalled = denoInstalled.installed;
+    }
+
+    return this.#denoInstalled ? this.#evalByDeno(code) : this.#unsafeEval(code);
+  }
+
+  static #unsafeEval(code: string) {
+    this.log('debug', 'Begin unsafe eval');
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    const result = new Function(code)();
+    this.log('debug', 'Unsafe eval result:', result);
+    return result;
   }
 
   protected static log(level: LogLevel, ...msg: any[]) {
