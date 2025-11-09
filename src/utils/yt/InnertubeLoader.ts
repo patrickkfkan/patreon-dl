@@ -224,6 +224,12 @@ export default class InnertubeLoader {
     return result;
   }
 
+  static reset() {
+    this.#instanceResult = null;
+    this.#pendingPromise = null;
+    this.#denoInstalled = undefined;
+  }
+
   protected static log(level: LogLevel, ...msg: any[]) {
     commonLog(this.#logger, level, this.#name, ...msg);
   }

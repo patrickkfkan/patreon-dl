@@ -257,7 +257,16 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return { batch, errorCount: failedCreateTaskCount };
   }
 
-  abstract start(params: DownloaderStartParams): Promise<void>;
+  async start(params: DownloaderStartParams) {
+    try {
+      await this.doStart(params);
+    }
+    finally {
+      InnertubeLoader.reset();
+    }
+  }
+
+  abstract doStart(params: DownloaderStartParams): Promise<void>;
 
   static async getInstance(url: string, options?: DownloaderOptions) {
     const bootstrap = Bootstrap.getDownloaderBootstrapDataByURL(url);

@@ -17,7 +17,7 @@ export default class ProductDownloader extends Downloader<Product> {
 
   #startPromise: Promise<void> | null = null;
 
-  start(params?: DownloaderStartParams): Promise<void> {
+  doStart(params?: DownloaderStartParams): Promise<void> {
 
     if (this.#startPromise) {
       throw Error('Downloader already running');
