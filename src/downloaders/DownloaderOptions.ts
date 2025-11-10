@@ -46,6 +46,7 @@ export interface DownloaderOptions {
   stopOn?: StopOnCondition;
   pathToFFmpeg?: string | null;
   pathToYouTubeCredentials?: string | null;
+  pathToDeno?: string | null;
   outDir?: string;
   dirNameFormat?: {
     campaign?: string;
@@ -68,6 +69,7 @@ export interface DownloaderOptions {
     infoAPI?: FileExistsAction;
   };
   embedDownloaders?: EmbedDownloader[];
+  maxVideoResolution?: number | null;
   logger?: Logger | null;
   dryRun?: boolean;
 }
@@ -78,6 +80,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'stopOn' |
   'pathToFFmpeg' |
   'pathToYouTubeCredentials' |
+  'pathToDeno' |
   'dirNameFormat' |
   'filenameFormat' |
   'include' |
@@ -86,6 +89,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'embedDownloaders' |
   'dryRun'>> & {
     cookie?: string;
+    maxVideoResolution?: number | null;
   };
 
 const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
@@ -94,6 +98,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
   stopOn: 'never',
   pathToFFmpeg: null,
   pathToYouTubeCredentials: null,
+  pathToDeno: null,
   dirNameFormat: {
     campaign: '{creator.vanity}[ - ]?{campaign.name}',
     content: '{content.id}[ - ]?{content.name}'
@@ -137,6 +142,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
     infoAPI: 'overwrite'
   },
   embedDownloaders: [],
+  maxVideoResolution: null,
   dryRun: false
 };
 
@@ -161,6 +167,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
     stopOn: pickDefined(options?.stopOn, defaults.stopOn),
     pathToFFmpeg: pickDefined(options?.pathToFFmpeg, defaults.pathToFFmpeg),
     pathToYouTubeCredentials: pickDefined(options?.pathToYouTubeCredentials, defaults.pathToYouTubeCredentials),
+    pathToDeno: pickDefined(options?.pathToDeno, defaults.pathToDeno),
     dirNameFormat: {
       campaign: options?.dirNameFormat?.campaign || defaults.dirNameFormat.campaign,
       content: options?.dirNameFormat?.content || defaults.dirNameFormat.content
@@ -201,6 +208,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       infoAPI: options?.fileExistsAction?.infoAPI || defaults.fileExistsAction.infoAPI
     },
     embedDownloaders: pickDefined(options?.embedDownloaders, defaults.embedDownloaders),
+    maxVideoResolution: pickDefined(options?.maxVideoResolution, defaults.maxVideoResolution),
     dryRun: pickDefined(options?.dryRun, defaults.dryRun)
   };
 }
@@ -213,6 +221,7 @@ export function getDefaultDownloaderOptions(): DeepRequired<DownloaderOptions> {
   return {
     ...getDownloaderInit(),
     cookie: '',
+    maxVideoResolution: null,
     logger: null
   };
 }

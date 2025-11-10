@@ -6,7 +6,7 @@
 
 # Class: DownloadTaskError
 
-Defined in: [src/downloaders/task/DownloadTask.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/task/DownloadTask.ts#L13)
+Defined in: [src/downloaders/task/DownloadTask.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/task/DownloadTask.ts#L13)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:13](https://github.com/patrick
 
 > **new DownloadTaskError**(`message`, `task`, `cause?`): `DownloadTaskError`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/task/DownloadTask.ts#L17)
+Defined in: [src/downloaders/task/DownloadTask.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/task/DownloadTask.ts#L17)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [src/downloaders/task/DownloadTask.ts:17](https://github.com/patrick
 
 > `optional` **cause**: `Error`
 
-Defined in: [src/downloaders/task/DownloadTask.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/task/DownloadTask.ts#L15)
+Defined in: [src/downloaders/task/DownloadTask.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/task/DownloadTask.ts#L15)
 
 #### Overrides
 
@@ -60,4 +60,4 @@ Defined in: [src/downloaders/task/DownloadTask.ts:15](https://github.com/patrick
 
 > **task**: [`IDownloadTask`](../interfaces/IDownloadTask.md)
 
-Defined in: [src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/task/DownloadTask.ts#L14)
+Defined in: [src/downloaders/task/DownloadTask.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/task/DownloadTask.ts#L14)

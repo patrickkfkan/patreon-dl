@@ -8,7 +8,7 @@
 
 > **getDefaultDownloaderOptions**(): `object`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:212](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderOptions.ts#L212)
+Defined in: [src/downloaders/DownloaderOptions.ts:220](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L220)
 
 ## Returns
 
@@ -134,9 +134,17 @@ Defined in: [src/downloaders/DownloaderOptions.ts:212](https://github.com/patric
 
 > **logger**: `null` \| \{ `end`: \{ \}; `log`: \{ \}; \}
 
+### maxVideoResolution
+
+> **maxVideoResolution**: `null` \| `number`
+
 ### outDir
 
 > **outDir**: `string`
+
+### pathToDeno
+
+> **pathToDeno**: `null` \| `string`
 
 ### pathToFFmpeg
 

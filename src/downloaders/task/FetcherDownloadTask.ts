@@ -56,6 +56,7 @@ export default class FetcherDownloadTask<T extends Downloadable> extends Downloa
         src: this.src,
         srcEntity: this.srcEntity,
         callbacks: this.callbacks,
+        fetcher: this.#fetcher,
         logger: this.logger,
         destFilePath: this.fsHelper.changeFilePathExtension(preferredOutputFilePath, '.mp4'),
         fileExistsAction: this.#fileExistsAction

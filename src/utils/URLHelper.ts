@@ -4,6 +4,7 @@ import { type UserIdOrVanityParam } from '../entities';
 
 export const SITE_URL = 'https://www.patreon.com';
 const COLLECTION_URL = `${SITE_URL}/collection`;
+const CURRENT_USER_API_URL = `${SITE_URL}/api/current_user`;
 const PRODUCT_API_URL = `${SITE_URL}/api/product`;
 const POSTS_API_URL = `${SITE_URL}/api/posts`;
 const USER_API_URL = `${SITE_URL}/api/user`;
@@ -168,6 +169,16 @@ export type URLAnalysis = {
 }
 
 export default class URLHelper {
+
+  static constructCurrentUserAPIURL() {
+    const urlObj = new URL(CURRENT_USER_API_URL);
+    urlObj.searchParams.set('include', 'active_memberships.campaign');
+    urlObj.searchParams.set('fields[campaign]', 'avatar_photo_image_urls,name,published_at,url,vanity,is_nsfw,url_for_current_user');
+    urlObj.searchParams.set('fields[member]', 'is_free_member,is_free_trial');
+    urlObj.searchParams.set('json-api-version', '1.0');
+    urlObj.searchParams.set('json-api-use-default-includes', 'false');
+    return urlObj.toString();
+  }
 
   static constructProductAPIURL(productId: string) {
     const url = `${PRODUCT_API_URL}/${productId}`;

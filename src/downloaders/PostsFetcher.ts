@@ -272,12 +272,16 @@ export default class PostsFetcher extends EventEmitter {
   async getInitialData(url: string) {
     this.log('debug', `Fetch initial data from "${url}"`);
     let page;
+    let fetchCurrentUserIdFromAPI = false;
     try {
       const { html, lastUrl } = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal: this.signal });
       page = html;
       if (new URL(lastUrl).pathname === '/login-sync-domains') {
         this.log('debug', `Detected Cloudflare challenge flow at "${lastUrl}"`);
         page = await this.#fetchPageWithPuppeteer(url);
+        // Because cookie not available to Puppeteer, we need to fetch 
+        // current user ID separately
+        fetchCurrentUserIdFromAPI = !!this.config.cookie;
       }
     }
     catch (error) {
@@ -299,12 +303,22 @@ export default class PostsFetcher extends EventEmitter {
       throw e;
     }
     const campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
-    const currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
-    this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
+    let currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
     if (!campaignId) {
       throw Error(`Campaign ID not found in initial data of "${url}"`);
     }
-
+    if (fetchCurrentUserIdFromAPI) {
+      this.log('debug', `Fetch current user ID from API`);
+      const currentUserAPIURL = URLHelper.constructCurrentUserAPIURL();
+      const { json: currentUserJson } = await this.fetcher.get({
+        url: currentUserAPIURL,
+        type: 'json',
+        maxRetries: this.config.request.maxRetries,
+        signal: this.signal
+      });
+      currentUserId = ObjectHelper.getProperty(currentUserJson, 'data.id') || undefined;
+    }
+    this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
     return { campaignId, currentUserId };
   }
 

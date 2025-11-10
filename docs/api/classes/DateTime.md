@@ -6,7 +6,7 @@
 
 # Class: DateTime
 
-Defined in: [src/utils/DateTime.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L17)
+Defined in: [src/utils/DateTime.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L17)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/DateTime.ts:17](https://github.com/patrickkfkan/patreon-d
 
 > **new DateTime**(`args`): `DateTime`
 
-Defined in: [src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L32)
+Defined in: [src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L32)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/utils/DateTime.ts:32](https://github.com/patrickkfkan/patreon-d
 
 > `static` **FORMAT**: `string` = `'yyyy-MM-dd [hh:mm[:ss] [GMT]]'`
 
-Defined in: [src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L19)
+Defined in: [src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L19)
 
 ## Methods
 
@@ -40,7 +40,7 @@ Defined in: [src/utils/DateTime.ts:19](https://github.com/patrickkfkan/patreon-d
 
 > **toString**(): `string`
 
-Defined in: [src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L113)
+Defined in: [src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L113)
 
 #### Returns
 
@@ -52,7 +52,7 @@ Defined in: [src/utils/DateTime.ts:113](https://github.com/patrickkfkan/patreon-
 
 > **valueOf**(): `Date`
 
-Defined in: [src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L109)
+Defined in: [src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L109)
 
 #### Returns
 
@@ -64,7 +64,7 @@ Defined in: [src/utils/DateTime.ts:109](https://github.com/patrickkfkan/patreon-
 
 > `static` **from**(`value`): `DateTime`
 
-Defined in: [src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/DateTime.ts#L71)
+Defined in: [src/utils/DateTime.ts:71](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/DateTime.ts#L71)
 
 #### Parameters
 

@@ -18,7 +18,7 @@ import ObjectHelper from '../utils/ObjectHelper.js';
 import copy from 'fast-copy';
 import cliTruncate from 'cli-truncate';
 import type deepFreeze from 'deep-freeze';
-import { type DeepPartial } from '../utils/Misc.js';
+import { isDenoInstalled, type DeepPartial } from '../utils/Misc.js';
 import { createProxyAgent } from '../utils/Proxy.js';
 import { type Product } from '../entities/Product.js';
 import { type Post } from '../entities/Post.js';
@@ -269,6 +269,16 @@ export default class PatreonDownloaderCLI {
       }
     }
 
+    const __checkDeno = () => {
+      const ytExternalDownloader = options.embedDownloaders && options.embedDownloaders.find((downloader) => downloader.provider === 'YouTube' && downloader.exec);
+      if(!ytExternalDownloader && !isDenoInstalled(options.pathToDeno || undefined).installed) {
+        commonLog(logger, 'warn', null,
+          `WARNING: Deno (https://deno.com) is not found on this system. For embedded YouTube videos, the downloader needs to run code obtained from YouTube / Google servers. Without Deno, such code will be executed without sandboxing. Running un-sandboxed code exposes your system to potential security vulnerabilities, including unauthorized access, data corruption, or malicious operations.`,
+          EOL
+        );
+      }
+    }
+
     if (!options.noPrompt) {
 
       const __printLoggerConfigs = () => {
@@ -299,6 +309,7 @@ export default class PatreonDownloaderCLI {
         __printLoggerConfigs();
         __printDownloaderCreated();
         __checkProxy();
+        __checkDeno();
       }
       else if (index === 0) {
         postConfirm = () => {
@@ -338,6 +349,7 @@ export default class PatreonDownloaderCLI {
           console.log('Target-specific settings may override common settings', EOL);
         }
         __checkProxy();
+        __checkDeno();
       }
       else {
         __logBegin();
@@ -355,9 +367,10 @@ export default class PatreonDownloaderCLI {
     }
     else {
       __logBegin();
-      commonLog(logger, 'debug', null, `Created ${downloaderName} instance with config: `, downloader.getConfig());
+      commonLog(logger, 'debug', null, `Created ${downloaderName} instance with config: `, this.#getDisplayConfig(downloader.getConfig()));
       if (index === 0) {
         __checkProxy();
+        __checkDeno();
       }
     }
 

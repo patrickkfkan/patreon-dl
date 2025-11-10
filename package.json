@@ -1,6 +1,6 @@
 {
   "name": "patreon-dl",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "Patreon Downloader",
   "type": "module",
   "exports": "./dist/index.js",
@@ -40,6 +40,7 @@
     "@types/express": "^5.0.2",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/fs-extra": "^9.0.0",
+    "@types/m3u8-parser": "^7.2.5",
     "@types/mime-types": "^2.1.3",
     "@types/node": "^20.17.19",
     "@types/prompt-sync": "^4.2.3",
@@ -66,9 +67,9 @@
   },
   "dependencies": {
     "@patrickkfkan/cross-spawn": "^7.1.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cli-color": "^2.0.5",
     "@types/deep-freeze": "^0.1.5",
-    "@types/better-sqlite3": "^7.6.13",
     "argv-split": "^3.2.1",
     "better-sqlite3": "^12.4.1",
     "bootstrap": "^5.3.6",
@@ -97,6 +98,7 @@
     "hasha": "^5.2.2",
     "image-size": "^2.0.2",
     "lightgallery": "^2.8.3",
+    "m3u8-parser": "^7.2.0",
     "make-dir": "^4.0.0",
     "material-icons": "^1.13.14",
     "mime-types": "^2.1.35",
@@ -118,7 +120,7 @@
     "speedometer": "^1.1.0",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
-    "youtubei.js": "^15.1.1"
+    "youtubei.js": "^16.0.1"
   },
   "keywords": [
     "patreon",

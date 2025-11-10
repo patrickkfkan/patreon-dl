@@ -8,4 +8,4 @@
 
 > **NoDeepTypes** = [`DateTime`](../classes/DateTime.md)
 
-Defined in: [src/utils/Misc.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/Misc.ts#L4)
+Defined in: [src/utils/Misc.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/Misc.ts#L5)
