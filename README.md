@@ -16,7 +16,7 @@ This repo contains the `patreon-dl` library and its command-line tool. For GUI a
     - audio
     - attachments
     - embedded videos
-      - YouTube downloader built-in with **configurable max resolution**
+      - YouTube downloader built-in with configurable max resolution
       - Supports [external downloader](#embedded-videos--links---external-downloader)
 - Save campaign and content info 
 - Extensively configurable
@@ -288,8 +288,14 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
-v3.3.2
-- Add `max.video.resolution` option to limit YouTube video downloads to a maximum resolution (see [example.conf](./example.conf))
+v3.4.0
+- Fix "no posts found" on "cw" pages ([patreon-dl-gui#30](https://github.com/patrickkfkan/patreon-dl-gui/issues/30))
+- Fix YouTube streams returning 403 error ([patreon-dl-gui#31](https://github.com/patrickkfkan/patreon-dl-gui/issues/31))
+- Add `pathToDeno` / `--deno` / `path.to.deno` option (used by built-in YouTube downloader)
+- Merged PRs:
+  - Allow directory to be a symlink ([@piperswe](https://github.com/piperswe) - [#101](https://github.com/patrickkfkan/patreon-dl/pull/101))
+  - Add Github actions ([@piperswe](https://github.com/piperswe) - [#102](https://github.com/patrickkfkan/patreon-dl/pull/102))
+  - Add `maxVideoResolution` / `max.video.resolution` option to limit video downloads to a maximum resolution (see [example.conf](./example.conf)) ([@eisenbruch](https://github.com/eisenbruch) - [#105](https://github.com/patrickkfkan/patreon-dl/pull/105)) - extended to include site-hosted videos
 
 v3.3.1
 - Fix bugs affecting library usage:
