@@ -74,6 +74,7 @@
 - [CommentReply](type-aliases/CommentReply.md)
 - [DateTimeConstructorArgs](type-aliases/DateTimeConstructorArgs.md)
 - [DeepRequired](type-aliases/DeepRequired.md)
+- [DenoInstallStatus](type-aliases/DenoInstallStatus.md)
 - [Downloadable](type-aliases/Downloadable.md)
 - [DownloaderBootstrapData](type-aliases/DownloaderBootstrapData.md)
 - [DownloaderConfig](type-aliases/DownloaderConfig.md)
@@ -110,3 +111,4 @@
 
 - [createProxyAgent](functions/createProxyAgent.md)
 - [getDefaultDownloaderOptions](functions/getDefaultDownloaderOptions.md)
+- [isDenoInstalled](functions/isDenoInstalled.md)

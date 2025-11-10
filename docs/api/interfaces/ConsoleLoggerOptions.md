@@ -6,7 +6,7 @@
 
 # Interface: ConsoleLoggerOptions
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L15)
+Defined in: [src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L15)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:15](https://github.com/patrickkf
 
 > `optional` **color**: `boolean`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L25)
+Defined in: [src/utils/logging/ConsoleLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L25)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:25](https://github.com/patrickkf
 
 > `optional` **dateTimeFormat**: `string`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L24)
+Defined in: [src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L24)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:24](https://github.com/patrickkf
 
 > `optional` **enabled**: `boolean`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L16)
+Defined in: [src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L16)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:16](https://github.com/patrickkf
 
 > `optional` **include**: `object`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L18)
+Defined in: [src/utils/logging/ConsoleLogger.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L18)
 
 #### dateTime?
 
@@ -62,4 +62,4 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:18](https://github.com/patrickkf
 
 > `optional` **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md)
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/logging/ConsoleLogger.ts#L17)
+Defined in: [src/utils/logging/ConsoleLogger.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L17)

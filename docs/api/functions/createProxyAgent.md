@@ -8,7 +8,7 @@
 
 > **createProxyAgent**(`options`): `null` \| [`ProxyAgentInfo`](../interfaces/ProxyAgentInfo.md)
 
-Defined in: [src/utils/Proxy.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/utils/Proxy.ts#L14)
+Defined in: [src/utils/Proxy.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/Proxy.ts#L14)
 
 ## Parameters
 

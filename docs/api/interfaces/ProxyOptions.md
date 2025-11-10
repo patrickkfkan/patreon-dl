@@ -6,7 +6,7 @@
 
 # Interface: ProxyOptions
 
-Defined in: [src/downloaders/DownloaderOptions.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderOptions.ts#L33)
+Defined in: [src/downloaders/DownloaderOptions.ts:33](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L33)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/downloaders/DownloaderOptions.ts:33](https://github.com/patrick
 
 > `optional` **rejectUnauthorizedTLS**: `boolean`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderOptions.ts#L35)
+Defined in: [src/downloaders/DownloaderOptions.ts:35](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L35)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/downloaders/DownloaderOptions.ts:35](https://github.com/patrick
 
 > **url**: `string`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/faebc79e7105b755ed4bb91829b93f102ad3b38c/src/downloaders/DownloaderOptions.ts#L34)
+Defined in: [src/downloaders/DownloaderOptions.ts:34](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L34)
