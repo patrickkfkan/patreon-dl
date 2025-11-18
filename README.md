@@ -116,7 +116,12 @@ $ patreon-dl [OPTION]... URL
 #### Supported URL formats
 
 ```
-// Download a product
+// Download products from a creator's shop
+https://www.patreon.com/<creator>/shop
+https://www.patreon.com/c/<creator>/shop
+https://www.patreon.com/cw/<creator>/shop
+
+// Download a single product
 https://www.patreon.com/<creator>/shop/<slug>-<product_id>
 
 // Download posts by creator

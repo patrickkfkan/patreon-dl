@@ -23,7 +23,7 @@ export enum TargetSkipReason {
 export interface DownloaderEventPayload {
 
   'fetchBegin': {
-    targetType: 'product' | 'post' | 'posts';
+    targetType: 'product' | 'products' | 'post' | 'posts';
   }
 
   'targetBegin': {

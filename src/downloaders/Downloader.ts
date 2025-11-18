@@ -4,7 +4,7 @@ import deepFreeze from 'deep-freeze';
 import Fetcher from '../utils/Fetcher.js';
 import Bootstrap, { type DownloaderBootstrapData, type DownloaderType } from './Bootstrap.js';
 import { type DownloaderInit, type DownloaderOptions, type FileExistsAction, getDownloaderInit } from './DownloaderOptions.js';
-import { type DownloaderEvent, type DownloaderEventPayloadOf } from './DownloaderEvent.js';
+import { TargetSkipReason, type DownloaderEvent, type DownloaderEventPayloadOf } from './DownloaderEvent.js';
 import {type LogLevel} from '../utils/logging/Logger.js';
 import Logger from '../utils/logging/Logger.js';
 import { commonLog } from '../utils/logging/Logger.js';
@@ -25,6 +25,8 @@ import ExternalDownloaderTask from './task/ExternalDownloaderTask.js';
 import DB, { type DBInstance } from '../browse/db/index.js';
 import PostParser from '../parsers/PostParser.js';
 import { isDenoInstalled } from '../utils/Misc.js';
+import { type Product } from '../entities/Product.js';
+import { type Post } from '../entities/Post.js';
 
 export type DownloaderConfig<T extends DownloaderType> =
   DownloaderInit &
@@ -50,6 +52,7 @@ interface CreateDownloadTaskParams {
   };
   fileExistsAction: FileExistsAction;
   isAttachment?: boolean;
+  ignoreCreateTaskErrors?: boolean;
 }
 
 export default abstract class Downloader<T extends DownloaderType> extends EventEmitter {
@@ -243,8 +246,10 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
             this.log('warn', 'Operation aborted');
             return { batch, errorCount: failedCreateTaskCount };
           }
-          this.log('error', `Failed to create download task(s) for item #${tt.id} in ${targetName}:`, error);
-          failedCreateTaskCount++;
+          if (!task.ignoreCreateTaskErrors) {
+            this.log('error', `Failed to create download task(s) for item #${tt.id} in ${targetName}:`, error);
+            failedCreateTaskCount++;
+          }
         }
       }
       for (const dir of ensureDirs) {
@@ -586,6 +591,62 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     const url = URLHelper.constructUserAPIURL(userId);
     this.log('debug', `Fetch user data from API URL "${url}"`);
     return this.commonFetchAPI(url, signal);
+  }
+
+  protected isPublishDateOutOfRange(entity: Post | Product, emit = true) {
+    const publishedAfter = entity.type === 'post' ? this.config.include.postsPublished.after : this.config.include.productsPublished.after;
+    const publishedBefore = entity.type === 'post' ? this.config.include.postsPublished.before : this.config.include.productsPublished.before;
+    if (publishedAfter || publishedBefore) {
+      const targetPublishedAt = entity.publishedAt;
+      let parsedPublishedAt: Date | null = null;
+      if (!targetPublishedAt) {
+        this.log('warn', `config.include.productsPublished: ignored - ${entity.type} #${entity.id} missing publish date`);
+      }
+      else {
+        try {
+          parsedPublishedAt = new Date(targetPublishedAt);
+        }
+        catch (error: any) {
+          this.log('error', `Failed to parse publish date of ${entity.type} #${entity.id} ("${targetPublishedAt}"): `, error);
+          this.log('warn', `config.include.productsPublished: ignored - publish date of ${entity.type} #${entity.id} could not be parsed`);
+        }
+      }
+      let skip = false;
+      if (parsedPublishedAt) {
+        const isAfter = publishedAfter ? parsedPublishedAt.getTime() >= publishedAfter.valueOf().getTime() : true;
+        const isBefore = publishedBefore ? parsedPublishedAt.getTime() < publishedBefore.valueOf().getTime() : true;
+        skip = !isAfter || !isBefore;
+        let eq: string | null = null;
+        if (publishedAfter && publishedBefore) {
+          eq = `${publishedAfter.toString()} <= *${targetPublishedAt}* < ${publishedBefore.toString()}`;
+        }
+        else if (publishedAfter) {
+          eq = `${publishedAfter.toString()} <= *${targetPublishedAt}*`;
+        }
+        else if (publishedBefore) {
+          eq = `*${targetPublishedAt}* < ${publishedBefore.toString()}`;
+        }
+        if (eq) {
+          if (skip) {
+            this.log('warn', `Skipped downloading ${entity.type} #${entity.id}: publish date out of range`);
+            this.log('debug', `Publish date test failed for ${entity.type} #${entity.id}: ${eq}`);
+          }
+          else {
+            this.log('debug', `Publish date test OK for ${entity.type} #${entity.id}: ${eq}`);
+          }
+        }
+        if (skip && emit) {
+          this.emit('targetEnd', {
+            target: entity,
+            isSkipped: true,
+            skipReason: TargetSkipReason.PublishDateOutOfRange,
+            skipMessage: 'Publish date out of range'
+          });
+        }
+        return skip;
+      }
+    }
+    return false;
   }
 
   protected async closeDB() {

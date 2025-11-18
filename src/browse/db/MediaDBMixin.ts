@@ -124,7 +124,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
       this.log(
         'debug',
         `Check if content media exists in DB`,
-        `(${content.type} ID: ${content.id}, media ID: ${media.id})`,
+        `(media ID: ${media.id})`,
       );
       try {
         const result = this.get(
@@ -132,14 +132,10 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
           SELECT COUNT(*) as count
           FROM content_media
           WHERE
-            content_id = ? AND
-            content_type = ? AND
             media_id = ? AND
             campaign_id = ?
           `,
           [
-            content.id,
-            content.type,
             media.id,
             content.campaign?.id || '-1'
           ]
@@ -149,7 +145,7 @@ export function MediaDBMixin<TBase extends DBConstructor>(Base: TBase) {
         this.log(
           'error',
           `Failed to check if content media exists in DB:`,
-          `(${content.type} ID: ${content.id}, media ID: ${media.id})`,
+          `(media ID: ${media.id})`,
           error
         );
         return false;

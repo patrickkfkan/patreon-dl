@@ -19,7 +19,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         this.exec('BEGIN TRANSACTION');
 
         if (!contentExists) {
-          this.log('debug', `INSERT post "${title}" (${content.id})`);
+          this.log('debug', `INSERT ${content.type} "${title}" (${content.id})`);
           this.run(
             `
             INSERT INTO content (
@@ -39,7 +39,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
               content.type,
               content.campaign?.id || '-1',
               title,
-              content.type === 'post' ? content.postType : null,
+              content.type === 'post' ? content.postType : content.productType || null,
               (content.type === 'post' ? content.isViewable : content.isAccessible) ? 1 : 0,
               this.#publishedAtToTime(content.publishedAt),
               JSON.stringify(content)
@@ -63,7 +63,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
               content.type,
               content.campaign?.id || '-1',
               title,
-              content.type === 'post' ? content.postType : null,
+              content.type === 'post' ? content.postType : content.productType || null,
               (content.type === 'post' ? content.isViewable : content.isAccessible) ? 1 : 0,
               this.#publishedAtToTime(content.publishedAt),
               JSON.stringify(content),

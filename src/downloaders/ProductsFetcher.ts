@@ -1,16 +1,16 @@
 import EventEmitter from 'events';
-import { type Post } from '../entities/index.js';
+import { type Campaign, type Product } from '../entities/index.js';
 import { type Logger } from '../utils/logging/index.js';
 import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
-import { type DownloaderConfig } from './Downloader.js';
-import URLHelper, { PostSortOrder } from '../utils/URLHelper.js';
+import Downloader, { type DownloaderConfig } from './Downloader.js';
+import URLHelper from '../utils/URLHelper.js';
 import type Fetcher from '../utils/Fetcher.js';
-import PostParser from '../parsers/PostParser.js';
-import { type PostCollection } from '../entities/Post.js';
+import ProductParser from '../parsers/ProductParser.js';
+import { type ProductCollection } from '../entities/Product.js';
 import Sleeper from '../utils/Sleeper.js';
 import { InitialData } from './InitialData.js';
 
-export type PostsFetcherStatus = {
+export type ProductsFetcherStatus = {
   status: 'ready' | 'running' | 'completed' | 'aborted';
   error?: undefined;
 } | {
@@ -18,32 +18,32 @@ export type PostsFetcherStatus = {
   error: any;
 };
 
-export type PostsFetcherEvent = 'fetched' | 'statusChange';
-export type PostsFetcherEventPayload<T extends PostsFetcherEvent> =
+export type ProductsFetcherEvent = 'fetched' | 'statusChange';
+export type ProductsFetcherEventPayload<T extends ProductsFetcherEvent> =
   T extends 'fetched' ? {
-    collection: PostCollection;
+    collection: ProductCollection;
     index: number;
   } :
   T extends 'statusChange' ? {
-    current: PostsFetcherStatus;
-    old: PostsFetcherStatus;
+    current: ProductsFetcherStatus;
+    old: ProductsFetcherStatus;
   } :
   never;
 
-export interface PostsFetcherResult {
-  collection: PostCollection | null;
+export interface ProductsFetcherResult {
+  collection: ProductCollection | null;
   error?: any;
   aborted: boolean;
 }
 
 const SLEEPER_INTERVAL = 900000; // 15 mins
 
-export default class PostsFetcher extends EventEmitter {
+export default class ProductsFetcher extends EventEmitter {
 
-  name = 'PostsFetcher';
+  name = 'ProductsFetcher';
 
-  protected status: PostsFetcherStatus;
-  protected config: DownloaderConfig<Post>;
+  protected status: ProductsFetcherStatus;
+  protected config: DownloaderConfig<Product>;
   protected fetcher: Fetcher;
   protected signal?: AbortSignal;
   protected logger?: Logger | null;
@@ -54,14 +54,14 @@ export default class PostsFetcher extends EventEmitter {
     returning: number | null;
     lastReturned: number | null; // Last returned in next()
   };
-  #fetched: PostCollection[];
+  #fetched: ProductCollection[];
   #total: number | null;
-  #nextPromises: Array<Promise<PostsFetcherResult> | undefined>;
+  #nextPromises: Array<Promise<ProductsFetcherResult> | undefined>;
   #sleeper: Sleeper | null;
   #noSleep: boolean;
 
   constructor(params: {
-    config: DownloaderConfig<Post>,
+    config: DownloaderConfig<Product>,
     fetcher: Fetcher,
     logger?: Logger | null,
     signal?: AbortSignal
@@ -86,18 +86,18 @@ export default class PostsFetcher extends EventEmitter {
   }
 
   isFetchingMultiple() {
-    return this.#isFetchingMultiplePosts(this.config.postFetch);
+    return this.#isFetchingMultipleProducts(this.config.productFetch);
   }
 
   getTargetType() {
-    return this.#isFetchingMultiplePosts(this.config.postFetch) ? 'posts' : 'post';
+    return this.#isFetchingMultipleProducts(this.config.productFetch) ? 'products' : 'product';
   }
 
   protected log(level: LogLevel, ...msg: any[]) {
     commonLog(this.logger, level, this.name, ...msg);
   }
 
-  #setStatus(status: PostsFetcherStatus) {
+  #setStatus(status: ProductsFetcherStatus) {
     const oldStatus = this.status;
     this.status = status;
     this.emit('statusChange', { current: status, old: oldStatus });
@@ -113,50 +113,53 @@ export default class PostsFetcher extends EventEmitter {
 
   async #doBegin() {
     if (this.status.status !== 'ready') {
-      throw Error('PostsFetcher already running or has ended');
+      throw Error('ProductsFetcher already running or has ended');
     }
 
     this.#setStatus({ status: 'running' });
 
     this.#pointers.fetching = 0;
-    const postFetch = this.config.postFetch;
-    let postsAPIURL: string;
+    const productFetch = this.config.productFetch;
+    let productsAPIURL: string;
+    let campaign: Campaign | null;
     try {
-      postsAPIURL = await this.#getInitialPostsAPIUL();
+      const ctx = await this.#getInitialContext();
+      productsAPIURL = ctx.productsAPIURL;
+      campaign = ctx.campaign;
     }
     catch (error) {
       this.#handleError(error);
       return;
     }
-    if (this.#isFetchingMultiplePosts(postFetch)) {
-      this.log('info', 'Fetch posts');
-      this.log('debug', `Request initial posts from API URL "${postsAPIURL}"`);
+    if (this.#isFetchingMultipleProducts(productFetch)) {
+      this.log('info', 'Fetch products');
+      this.log('debug', `Request initial products from API URL "${productsAPIURL}"`);
     }
     else {
-      this.log('info', 'Fetch target post');
-      this.log('debug', `Request post #${postFetch.postId} from API URL "${postsAPIURL}`);
+      this.log('info', 'Fetch target product');
+      this.log('debug', `Request product #${productFetch.productId} from API URL "${productsAPIURL}`);
     }
 
     let json;
     try {
-      json = await this.#fetchAPI(postsAPIURL);
+      json = await this.#fetchAPI(productsAPIURL);
     }
     catch (error) {
       this.#handleError(error);
       return;
     }
 
-    const postsParser = new PostParser(this.logger);
-    const collection = postsParser.parsePostsAPIResponse(json, postsAPIURL);
+    const productsParser = new ProductParser(this.logger);
+    const collection = productsParser.parseProductsAPIResponse(json, productsAPIURL, campaign);
     this.#fetched = [ collection ];
     this.#pointers.lastFetched = this.#pointers.fetching;
     this.#pointers.fetching = null;
     this.emit('fetched', { collection, index: 0 });
 
     const total = this.#total = this.#fetched[0].total;
-    if (this.#isFetchingMultiplePosts(postFetch)) {
+    if (this.#isFetchingMultipleProducts(productFetch)) {
       let totalFetched = this.#fetched[0].items.length;
-      this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
+      this.log('info', `Fetched products: ${totalFetched} / ${total}`);
       let nextURL = this.#fetched[0].nextURL;
       while (nextURL) {
         let json;
@@ -164,11 +167,11 @@ export default class PostsFetcher extends EventEmitter {
           this.#pointers.fetching = this.#pointers.lastFetched !== null ? this.#pointers.lastFetched + 1 : 1;
           const sleep = !this.#pointers.returning || this.#pointers.returning < this.#pointers.fetching;
           if (sleep && !this.#sleeper) {
-            this.log('debug', `Has more posts - will fetch in ${SLEEPER_INTERVAL / 1000} seconds`);
+            this.log('debug', `Has more products - will fetch in ${SLEEPER_INTERVAL / 1000} seconds`);
             this.#sleeper = Sleeper.getInstance(SLEEPER_INTERVAL, this.signal);
             await this.#sleeper.start();
           }
-          this.log('debug', `Request more posts from API URL "${nextURL}"`);
+          this.log('debug', `Request more products from API URL "${nextURL}"`);
           json = await this.#fetchAPI(nextURL);
         }
         catch (error) {
@@ -185,11 +188,11 @@ export default class PostsFetcher extends EventEmitter {
           nextURL = null;
         }
         else {
-          const collection = postsParser.parsePostsAPIResponse(json, nextURL);
+          const collection = productsParser.parseProductsAPIResponse(json, nextURL);
           this.#fetched.push(collection);
           const fetched = collection.items.length;
           totalFetched += fetched;
-          this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
+          this.log('info', `Fetched products: ${totalFetched} / ${total}`);
           nextURL = collection.nextURL;
           this.#pointers.lastFetched = this.#pointers.fetching;
           this.#pointers.fetching = null;
@@ -198,10 +201,10 @@ export default class PostsFetcher extends EventEmitter {
       }
       if (!this.checkAbortSignal()) {
         if (total && totalFetched < total) {
-          this.log('warn', `Done, but some posts were not fetched. Total expected: ${total}; currently fetched: ${totalFetched}`);
+          this.log('warn', `Done, but some products were not fetched. Total expected: ${total}; currently fetched: ${totalFetched}`);
         }
         else {
-          this.log('info', `Done. ${totalFetched} posts fetched`);
+          this.log('info', `Done. ${totalFetched} products fetched`);
         }
 
         if (this.#isRunning()) {
@@ -209,7 +212,7 @@ export default class PostsFetcher extends EventEmitter {
         }
       }
     }
-    // Set 'completed' if not fetching multiple posts
+    // Set 'completed' if not fetching multiple products
     else if (!this.checkAbortSignal() && this.#isRunning()) {
       this.#setStatus({ status: 'completed' });
     }
@@ -229,42 +232,33 @@ export default class PostsFetcher extends EventEmitter {
     this.#setStatus({ status: 'error', error });
   }
 
-  #isFetchingMultiplePosts(postFetch: DownloaderConfig<Post>['postFetch']): postFetch is DownloaderConfig<Post>['postFetch'] & { type: 'byUser' | 'byUserId' | 'byCollection' } {
-    return postFetch.type === 'byUser' || postFetch.type === 'byUserId' || postFetch.type === 'byCollection';
+  #isFetchingMultipleProducts(productFetch: DownloaderConfig<Product>['productFetch']): productFetch is DownloaderConfig<Product>['productFetch'] & { type: 'byShop' } {
+    return productFetch.type === 'byShop';
   }
 
-  async #getInitialPostsAPIUL() {
-    const postFetch = this.config.postFetch;
-    if (this.#isFetchingMultiplePosts(postFetch)) {
-      const pageURL = this.#getInitialDataPageURL();
-      const { campaignId, currentUserId } = await this.getInitialData(pageURL);
-      let sort: PostSortOrder | undefined;
-      if (postFetch.type === 'byCollection') {
-        sort = PostSortOrder.CollectionOrder;
-      }
-
-      return URLHelper.constructPostsAPIURL({
-        campaignId,
-        currentUserId: this.config.include.lockedContent ? undefined : currentUserId,
-        filters: postFetch.filters,
-        sort
-      });
-    }
-
-    return URLHelper.constructPostsAPIURL({ postId: postFetch.postId });
+  async #getInitialContext() {
+    const productFetch = this.config.productFetch;
+    const pageURL = this.#getInitialDataPageURL();
+    const { campaignId } = await this.getInitialData(pageURL);
+    const apiURL = this.#isFetchingMultipleProducts(productFetch) ? 
+      URLHelper.constructShopAPIURL({ campaignId })
+      : URLHelper.constructProductAPIURL(productFetch.productId);
+    // Products API does not return full campaign data (missing creator and rewards info),
+    // so we fetch campaign separately.
+    const campaign = await Downloader.getCampaign({ campaignId }, this.signal, this.config);
+    return {
+      productsAPIURL: apiURL,
+      campaign
+    };
   }
 
   #getInitialDataPageURL() {
-    const postFetch = this.config.postFetch;
-    switch (postFetch.type) {
-      case 'byUser':
-        return URLHelper.constructCampaignPageURL({ vanity: postFetch.vanity });
-      case 'byUserId':
-        return URLHelper.constructCampaignPageURL({ userId: postFetch.userId });
-      case 'byCollection':
-        return URLHelper.constructCollectionURL(postFetch.collectionId);
+    const productFetch = this.config.productFetch;
+    switch (productFetch.type) {
+      case 'byShop':
+        return URLHelper.constructCampaignPageURL({ vanity: productFetch.vanity });
       default:
-        throw Error(`postFetch type mismatch: expecting 'byUser', 'byUserId' or 'byCollection' but got '${postFetch.type}'`);
+        throw Error(`productFetch type mismatch: expecting 'byShop' but got '${productFetch.type}'`);
     }
   }
 
@@ -286,12 +280,12 @@ export default class PostsFetcher extends EventEmitter {
     return this.#isRunning() || (this.#fetched.length > 0 && lastReturned < this.#fetched.length - 1);
   }
 
-  async next(): Promise<PostsFetcherResult> {
+  async next(): Promise<ProductsFetcherResult> {
     this.#pointers.returning = this.#pointers.lastReturned !== null ? this.#pointers.lastReturned + 1 : 0;
     const ptr = this.#pointers.returning;
     this.log('debug', `next() requested (${ptr})`);
-    const __parseStatus = (status: PostsFetcherStatus) => {
-      let collection: PostCollection | null | undefined;
+    const __parseStatus = (status: ProductsFetcherStatus) => {
+      let collection: ProductCollection | null | undefined;
       let aborted = false;
       let error: any;
       switch (status.status) {
@@ -320,7 +314,7 @@ export default class PostsFetcher extends EventEmitter {
       let result = this.#nextPromises[ptr];
       if (!result) {
         let resolved = false;
-        result = new Promise<PostsFetcherResult>((resolve) => {
+        result = new Promise<ProductsFetcherResult>((resolve) => {
           const fetchedListener = () => {
             if (resolved) {
               this.off('fetched', fetchedListener);
@@ -335,7 +329,7 @@ export default class PostsFetcher extends EventEmitter {
               });
             }
           };
-          const statusListener = (args: { current: PostsFetcherStatus }) => {
+          const statusListener = (args: { current: ProductsFetcherStatus }) => {
             if (resolved) {
               this.off('statusChange', statusListener);
               return;
@@ -383,17 +377,17 @@ export default class PostsFetcher extends EventEmitter {
     return this.#total;
   }
 
-  emit<T extends PostsFetcherEvent>(eventName: T, args: PostsFetcherEventPayload<T>): boolean;
+  emit<T extends ProductsFetcherEvent>(eventName: T, args: ProductsFetcherEventPayload<T>): boolean;
   emit(eventName: string | symbol, ...args: any[]): boolean {
     return super.emit(eventName, ...args);
   }
 
-  on<T extends PostsFetcherEvent>(eventName: T, listener: (args: PostsFetcherEventPayload<T>) => void): this;
+  on<T extends ProductsFetcherEvent>(eventName: T, listener: (args: ProductsFetcherEventPayload<T>) => void): this;
   on(eventName: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(eventName, listener);
   }
 
-  off<T extends PostsFetcherEvent>(eventName: T, listener: (args: PostsFetcherEventPayload<T>) => void): this;
+  off<T extends ProductsFetcherEvent>(eventName: T, listener: (args: ProductsFetcherEventPayload<T>) => void): this;
   off(eventName: string | symbol, listener: (...args: any[]) => void): this {
     return super.off(eventName, listener);
   }

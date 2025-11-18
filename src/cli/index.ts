@@ -193,6 +193,14 @@ export default class PatreonDownloaderCLI {
     if (config.include?.postsPublished?.before) {
       displayConfig.include.postsPublished.before = config.include.postsPublished.before.toString();
     }
+    if (config.include?.productsPublished?.after) {
+      displayConfig.include.productsPublished.after = config.include.productsPublished.after.toString();
+      delete displayConfig.include.postsPublished.after;
+    }
+    if (config.include?.productsPublished?.before) {
+      displayConfig.include.productsPublished.before = config.include.productsPublished.before.toString();
+      delete displayConfig.include.postsPublished.before;
+    }
     if (config.cookie) {
       displayConfig.cookie = cliTruncate(displayConfig.cookie, 20, { position: 'middle', space: true });
     }
@@ -325,7 +333,7 @@ export default class PatreonDownloaderCLI {
         delete conf.targetURL;
         delete conf.type;
         delete conf.postFetch;
-        delete conf.productId;
+        delete conf.productFetch;
         delete conf.outDir;
         const heading = 'Target URLs';
         console.log(`${EOL}${heading}`);

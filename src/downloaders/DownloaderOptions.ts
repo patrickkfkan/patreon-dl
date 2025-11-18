@@ -7,13 +7,28 @@ const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKi
 
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
-export type StopOnCondition = 'never' | 'postPreviouslyDownloaded' | 'postPublishDateOutOfRange';
+export type StopOnCondition =
+  'never'
+  | 'previouslyDownloaded'
+  | 'publishDateOutOfRange'
+  /**
+   * @deprecated
+   */
+  | 'postPreviouslyDownloaded'
+  /**
+   * @deprecated
+   */
+  | 'postPublishDateOutOfRange';
 
 export interface DownloaderIncludeOptions {
   lockedContent?: boolean;
   postsWithMediaType?: Array<'image' | 'video' | 'audio' | 'attachment' | 'podcast'> | 'any' | 'none';
   postsInTier?: Array<string> | 'any';
   postsPublished?: {
+    after?: DateTime | null;
+    before?: DateTime | null;
+  }
+  productsPublished?: {
     after?: DateTime | null;
     before?: DateTime | null;
   };
@@ -114,6 +129,10 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
       after: null,
       before: null
     },
+    productsPublished: {
+      after: null,
+      before: null
+    },
     campaignInfo: true,
     contentInfo: true,
     previewMedia: true,
@@ -182,6 +201,10 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       postsPublished: {
         after: pickDefined(options?.include?.postsPublished?.after, defaults.include.postsPublished.after),
         before: pickDefined(options?.include?.postsPublished?.before, defaults.include.postsPublished.before)
+      },
+      productsPublished: {
+        after: pickDefined(options?.include?.productsPublished?.after, defaults.include.productsPublished.after),
+        before: pickDefined(options?.include?.productsPublished?.before, defaults.include.productsPublished.before)
       },
       campaignInfo: pickDefined(options?.include?.campaignInfo, defaults.include.campaignInfo),
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),

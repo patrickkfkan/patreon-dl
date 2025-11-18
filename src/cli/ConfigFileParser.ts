@@ -31,6 +31,8 @@ const CONFIG_FILE_PROPS = {
     postsInTier: 'include:posts.in.tier',
     postsPublishedAfter: 'include:posts.published.after',
     postsPublishedBefore: 'include:posts.published.before',
+    productsPublishedAfter: 'include:products.published.after',
+    productsPublishedBefore: 'include:products.published.before',
     campaignInfo: 'include:campaign.info',
     contentInfo: 'include:content.info',
     previewMedia: 'include:preview.media',
@@ -121,6 +123,10 @@ export default class ConfigFileParser {
         postsPublished: {
           after: __getValue(CONFIG_FILE_PROPS.include.postsPublishedAfter),
           before: __getValue(CONFIG_FILE_PROPS.include.postsPublishedBefore),
+        },
+        productsPublished: {
+          after: __getValue(CONFIG_FILE_PROPS.include.productsPublishedAfter),
+          before: __getValue(CONFIG_FILE_PROPS.include.productsPublishedBefore),
         },
         campaignInfo: __getValue(CONFIG_FILE_PROPS.include.campaignInfo),
         contentInfo: __getValue(CONFIG_FILE_PROPS.include.contentInfo),

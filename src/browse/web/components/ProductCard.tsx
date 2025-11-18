@@ -9,6 +9,7 @@ import { Link, useLocation } from "react-router";
 import ObjectHelper from "../../../utils/ObjectHelper";
 import path from "path";
 import MediaImage from "./MediaImage";
+import { ProductType } from "../../../entities/Product";
 
 interface ProductCardProps {
   product: Product;
@@ -213,7 +214,16 @@ function ProductCard(props: ProductCardProps) {
   }, [product, showCampaign]);
 
   const titleEl = useMemo(() => {
-    const url = new URL(`/products/${product.id}`, window.location.href);
+    let url: URL;
+    if (product.productType === ProductType.Post && product.referencedEntityId) {
+      url = new URL(`/posts/${product.referencedEntityId}`, window.location.href);
+    }
+    else if (product.productType === ProductType.Collection && product.referencedEntityId) {
+      url = new URL(`/collections/${product.referencedEntityId}`, window.location.href);
+    }
+    else {
+      url = new URL(`/products/${product.id}`, window.location.href);
+    }
     if (location.pathname === url.pathname) {
       return product.name;
     }

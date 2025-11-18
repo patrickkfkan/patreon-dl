@@ -15,6 +15,14 @@ import { generatePostCommentsSummary } from './templates/CommentInfo.js';
 import { type PostDirectories } from '../utils/FSHelper.js';
 import { type DBInstance } from '../browse/db/index.js';
 import { type AttachmentMediaItem } from '../entities/MediaItem.js';
+import type Logger from '../utils/logging/Logger.js';
+import { type DeepRequired } from '../utils/Misc.js';
+
+export interface PostDownloaderContext {
+  skipSaveCampaign?: boolean;
+  keepLoggerOpen?: boolean;
+  keepDBOpen?: boolean;
+}
 
 export default class PostDownloader extends Downloader<Post> {
 
@@ -23,6 +31,21 @@ export default class PostDownloader extends Downloader<Post> {
   name = 'PostDownloader';
 
   #startPromise: Promise<void> | null = null;
+  #context: DeepRequired<PostDownloaderContext>;
+
+  constructor(
+    config: DownloaderConfig<Post>,
+    db: () => Promise<DBInstance>,
+    logger?: Logger | null,
+    context?: PostDownloaderContext
+  ) {
+    super(config, db, logger);
+    this.#context = {
+      skipSaveCampaign: context?.skipSaveCampaign ?? false,
+      keepLoggerOpen: context?.keepLoggerOpen ?? false,
+      keepDBOpen: context?.keepDBOpen ?? false
+    };
+  }
 
   doStart(params?: DownloaderStartParams): Promise<void> {
 
@@ -93,7 +116,7 @@ export default class PostDownloader extends Downloader<Post> {
             resolve();
             return;
           }
-          if (!campaignSaved && collection.items[0]?.campaign) {
+          if (!this.#context.skipSaveCampaign && !campaignSaved && collection.items[0]?.campaign) {
             await this.saveCampaignInfo(collection.items[0].campaign, signal);
             campaignSaved = true;
             if (this.checkAbortSignal(signal, resolve)) {
@@ -155,7 +178,9 @@ export default class PostDownloader extends Downloader<Post> {
                 skipMessage: 'Target already downloaded and nothing has changed since last download'
               });
               skippedRedundant++;
-              if (this.config.stopOn === 'postPreviouslyDownloaded') {
+              if (this.config.stopOn === 'postPreviouslyDownloaded' || 
+                this.config.stopOn === 'previouslyDownloaded'
+              ) {
                 stopConditionMet = true;
               }
               continue;
@@ -180,7 +205,9 @@ export default class PostDownloader extends Downloader<Post> {
                 break;
               case 'skippedPublishDateOutOfRange':
                 skippedPublishDateOutOfRange++;
-                if (this.config.stopOn === 'postPublishDateOutOfRange') {
+                if (this.config.stopOn === 'postPublishDateOutOfRange' ||
+                  this.config.stopOn === 'publishDateOutOfRange'
+                ) {
                   stopConditionMet = true;
                 }
                 break;
@@ -252,8 +279,10 @@ export default class PostDownloader extends Downloader<Post> {
     })
     .finally(() => {
       void (async () => {
-        await this.closeDB();
-        if (this.logger) {
+        if (!this.#context.keepDBOpen) {
+          await this.closeDB();
+        }
+        if (this.logger && !this.#context.keepLoggerOpen) {
           await this.logger.end();
         }
         this.#startPromise = null;
@@ -379,59 +408,10 @@ export default class PostDownloader extends Downloader<Post> {
     }
 
     // -- 1.4 Config option 'include.postsPublished'
-    const postsPublishedAfter = this.config.include.postsPublished.after;
-    const postsPublishedBefore = this.config.include.postsPublished.before;
-    if (postsPublishedAfter || postsPublishedBefore) {
-      const targetPublishedAt = post.publishedAt;
-      let parsedPublishedAt: Date | null = null;
-      if (!targetPublishedAt) {
-        this.log('warn', `config.include.postsPublished: ignored - post #${post.id} missing publish date`);
-      }
-      else {
-        try {
-          parsedPublishedAt = new Date(targetPublishedAt);
-        }
-        catch (error: any) {
-          this.log('error', `Failed to parse publish date of post #${post.id} ("${targetPublishedAt}"): `, error);
-          this.log('warn', `config.include.postsPublished: ignored - publish date of post #${post.id} could not be parsed`);
-        }
-      }
-      let skip = false;
-      if (parsedPublishedAt) {
-        const isAfter = postsPublishedAfter ? parsedPublishedAt.getTime() >= postsPublishedAfter.valueOf().getTime() : true;
-        const isBefore = postsPublishedBefore ? parsedPublishedAt.getTime() < postsPublishedBefore.valueOf().getTime() : true;
-        skip = !isAfter || !isBefore;
-        let eq: string | null = null;
-        if (postsPublishedAfter && postsPublishedBefore) {
-          eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
-        }
-        else if (postsPublishedAfter) {
-          eq = `${postsPublishedAfter.toString()} <= *${targetPublishedAt}*`;
-        }
-        else if (postsPublishedBefore) {
-          eq = `*${targetPublishedAt}* < ${postsPublishedBefore.toString()}`;
-        }
-        if (eq) {
-          if (skip) {
-            this.log('warn', `Skipped downloading post #${post.id}: publish date out of range`);
-            this.log('debug', `Publish date test failed for post #${post.id}: ${eq}`);
-          }
-          else {
-            this.log('debug', `Publish date test OK for post #${post.id}: ${eq}`);
-          }
-        }
-        if (skip) {
-          this.emit('targetEnd', {
-            target: post,
-            isSkipped: true,
-            skipReason: TargetSkipReason.PublishDateOutOfRange,
-            skipMessage: 'Publish date out of range'
-          });
-          return {
-            status: 'skippedPublishDateOutOfRange'
-          }
-        }
-      }
+    if (this.isPublishDateOutOfRange(post)) {
+      return {
+        status: 'skippedPublishDateOutOfRange'
+      };
     }
 
     if (!downloadPost && downloadComments) {

@@ -55,6 +55,15 @@ export interface PostDirectories {
   statusCache: string;
 }
 
+export interface ProductDirectories {
+  root: string;
+  info: string;
+  contentMedia: string;
+  previewMedia: string;
+  thumbnails: string;
+  statusCache: string;
+}
+
 const INTERNAL_DATA_DIR_NAME = '.patreon-dl';
 const DB_FILENAME = 'db.sqlite';
 
@@ -126,7 +135,7 @@ export default class FSHelper {
     };
   }
 
-  getProductDirs(product: Product) {
+  getProductDirs(product: Product): ProductDirectories {
     const dirName = FilenameFormatHelper.getContentDirName(product, this.config.dirNameFormat.content);
     let productRootPath: string;
     let statusCachePath: string;
