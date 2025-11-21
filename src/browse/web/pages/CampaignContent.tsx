@@ -31,6 +31,11 @@ type ViewParamsValues = {
   [T in keyof ViewParams]?: ViewParams[T];
 };
 
+function getCollectionIdFromLocation() {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.get('collection_id');
+}
+
 function getInitialViewParams(settings: BrowseSettings): ViewParams {
   return {
     filter: null,
@@ -61,16 +66,6 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   const { id: campaignId } = useParams();
   const [ contextQS, setContextQS ] = useState('');
 
-  let subject: { singular: string; plural: string };
-  switch (contentType) {
-    case 'post':
-      subject = { singular: 'post', plural: 'posts' };
-      break;
-    case 'product':
-    default:
-      subject = { singular: 'product', plural: 'products' };
-      break;
-  }
   const { api } = useAPI();
   const { settings } = useBrowseSettings();
   const { scrollTo } = useScroll();
@@ -81,6 +76,21 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const isFirstLoadRef = useRef(true);
+  
+  let subject: { singular: string; plural: string };
+  switch (contentType) {
+    case 'post':
+      subject = { singular: 'post', plural: 'posts' };
+      break;
+    case 'product':
+    default:
+      subject = { singular: 'product', plural: 'products' };
+      break;
+  }
+  if (getCollectionIdFromLocation()) {
+    subject.singular += ' in collection';
+    subject.plural += ' in collection';
+  }
 
   useEffect(() => {
     if (!campaignId) {
@@ -144,6 +154,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
         campaign,
         type: contentType,
         ...viewParams,
+        collectionId: getCollectionIdFromLocation(),
         filter,
         page
       });
@@ -200,14 +211,16 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
 
   useEffect(() => {
     const filter = viewParams.filter;
-    if (!filter) {
-      setContextQS('');
-      return;
-    }
     const params = new URLSearchParams();
-    for (const { searchParam, value } of filter.options) {
-      if (value) {
-        params.set(searchParam, value);
+    const collectionId = getCollectionIdFromLocation();
+    if (collectionId) {
+      params.set('collection_id', collectionId);
+    }
+    if (filter) {
+      for (const { searchParam, value } of filter.options) {
+        if (value) {
+          params.set(searchParam, value);
+        }
       }
     }
     setContextQS(params.toString());

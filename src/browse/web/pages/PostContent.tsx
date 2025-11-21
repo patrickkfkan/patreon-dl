@@ -15,10 +15,11 @@ interface PostNav {
   next: PostWithComments | null;
 }
 
-const CONTEXT_QS_PARAMS: UnionToTuple<PostFilterSearchParams> = [
+const CONTEXT_QS_PARAMS: UnionToTuple<PostFilterSearchParams | 'collection_id'> = [
   'post_types',
   'is_viewable',
   'tier_ids',
+  'collection_id',
   'sort_by',
   'date_published'
 ];

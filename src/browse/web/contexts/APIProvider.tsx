@@ -1,10 +1,11 @@
 import { createContext, useContext } from 'react';
 import { type CampaignList, type CampaignListSortBy, type CampaignWithCounts } from '../../types/Campaign';
-import { type ContentType, type ContentList, type PostWithComments } from '../../types/Content';
+import { type ContentType, type ContentList, type PostWithComments, type CollectionListSortBy, type CollectionList } from '../../types/Content';
 import { type Campaign, type Product } from '../../../entities';
 import { type BrowseSettings, type BrowseSettingOptions as BrowseSettingOptions } from '../../types/Settings';
 import { type Filter, type FilterSearchParams, type FilterData, type MediaFilterSearchParams, type PostFilterSearchParams } from '../../types/Filter';
 import { type MediaList } from '../../types/Media';
+import { type Collection } from '../../../entities/Post';
 
 interface APIProviderProps {
   children: React.ReactNode;
@@ -33,6 +34,7 @@ class API {
   async getContentList<T extends ContentType>(params: {
     campaign: Campaign;
     type?: ContentType;
+    collectionId?: string | null,
     filter: Filter<PostFilterSearchParams>,
     page?: number;
     itemsPerPage: number;
@@ -43,6 +45,9 @@ class API {
       : params.type === 'product' ? 'products'
       : 'content';
     const urlObj = new URL(`/api/campaigns/${campaign.id}/${contentType}`, window.location.href);
+    if (params.collectionId) {
+      urlObj.searchParams.set('collection_id', params.collectionId);
+    }
     this.#setFilterParams(urlObj, filter);
     this.#setPaginationParams(urlObj, params);
     const result = await fetch(urlObj.toString());
@@ -94,6 +99,29 @@ class API {
 
   async getProduct(id: string): Promise<Product | null> {
     const urlObj = new URL(`/api/products/${id}`, window.location.href);
+    const result = await fetch(urlObj.toString());
+    return await result.json();
+  }
+
+  async getCollection(id: string): Promise<{ collection: Collection; campaignId: string; }> {
+    const urlObj = new URL(`/api/collections/${id}`, window.location.href);
+    const result = await fetch(urlObj.toString());
+    return await result.json();
+  }
+
+  async getCollectionList(params: {
+    campaign: Campaign | string;
+    sortBy?: CollectionListSortBy;
+    page?: number;
+    itemsPerPage: number;
+  }): Promise<CollectionList> {
+    const { campaign, sortBy } = params;
+    const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+    const urlObj = new URL(`/api/campaigns/${campaignId}/collections`, window.location.href);
+    if (sortBy) {
+      urlObj.searchParams.append('sort_by', sortBy);
+    }
+    this.#setPaginationParams(urlObj, params);
     const result = await fetch(urlObj.toString());
     return await result.json();
   }

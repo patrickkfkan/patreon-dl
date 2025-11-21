@@ -47,6 +47,18 @@ const POST_THUMBNAIL_URL_PRIORITY = [
   'square'
 ];
 
+const COLLECTION_THUMBNAIL_URL_PRIORITY = [
+  'original',
+  'defaultLarge',
+  'default',
+  'url',
+  'defaultSmall',
+  'defaultBlurred',
+  'thumbnailLarge',
+  'thumbnail',
+  'thumbnailSmall'
+];
+
 const NULL_VARIANT = '/*NULL*/';
 
 export default class DownloadTaskFactory {
@@ -79,6 +91,9 @@ export default class DownloadTaskFactory {
           urls = item.imageURLs;
           priority = POST_THUMBNAIL_URL_PRIORITY;
           break;
+        case 'collectionThumbnail':
+          urls = item.imageURLs;
+          priority = COLLECTION_THUMBNAIL_URL_PRIORITY;
       }
       if (allVariants) {
         return urls;

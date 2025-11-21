@@ -1,7 +1,7 @@
 import URLHelper from '../utils/URLHelper.js';
 import Downloader, { type DownloaderConfig, type DownloaderStartParams } from './Downloader.js';
 import PostParser from '../parsers/PostParser.js';
-import { type Post } from '../entities/Post.js';
+import { type Collection, type Post } from '../entities/Post.js';
 import { type Downloadable, isYouTubeEmbed } from '../entities/Downloadable.js';
 import StatusCache, { type StatusCacheValidationScope } from './cache/StatusCache.js';
 import { generatePostEmbedSummary, generatePostSummary } from './templates/PostInfo.js';
@@ -10,13 +10,16 @@ import { TargetSkipReason } from './DownloaderEvent.js';
 import DownloadTaskFactory from './task/DownloadTaskFactory.js';
 import PostsFetcher from './PostsFetcher.js';
 import CommentParser from '../parsers/CommentParser.js';
-import { type Comment, type CommentCollection, type CommentReply, type CommentReplyCollection } from '../entities/Comment.js';
+import { type Comment, type CommentList, type CommentReply, type CommentReplyList } from '../entities/Comment.js';
 import { generatePostCommentsSummary } from './templates/CommentInfo.js';
 import { type PostDirectories } from '../utils/FSHelper.js';
 import { type DBInstance } from '../browse/db/index.js';
 import { type AttachmentMediaItem } from '../entities/MediaItem.js';
 import type Logger from '../utils/logging/Logger.js';
 import { type DeepRequired } from '../utils/Misc.js';
+import { type Campaign } from '../entities/Campaign.js';
+import type DownloadTaskBatch from './task/DownloadTaskBatch.js';
+import { generateCollectionSummary } from './templates/CollectionInfo.js';
 
 export interface PostDownloaderContext {
   skipSaveCampaign?: boolean;
@@ -96,7 +99,7 @@ export default class PostDownloader extends Downloader<Post> {
         });
         postsFetcher.begin();
   
-        // Step 2: download posts in each fetched collection
+        // Step 2: download posts in each fetched list
         let downloaded = 0;
         let skippedUnviewable = 0;
         let skippedRedundant = 0;
@@ -105,32 +108,51 @@ export default class PostDownloader extends Downloader<Post> {
         let skippedPublishDateOutOfRange = 0;
         let campaignSaved = false;
         let stopConditionMet = false;
+        const savedCollectionIds: string[] = [];
         const postsParser = new PostParser(this.logger);
         while (postsFetcher.hasNext()) {
-          const { collection, aborted, error } = await postsFetcher.next();
-          if (!collection || aborted) {
+          const { list, aborted, error } = await postsFetcher.next();
+          if (!list || aborted) {
             break;
           }
-          if (!collection && error) {
+          if (!list && error) {
             this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
             resolve();
             return;
           }
-          if (!this.#context.skipSaveCampaign && !campaignSaved && collection.items[0]?.campaign) {
-            await this.saveCampaignInfo(collection.items[0].campaign, signal);
+          if (!this.#context.skipSaveCampaign && !campaignSaved && list.items[0]?.campaign) {
+            await this.saveCampaignInfo(list.items[0].campaign, signal);
             campaignSaved = true;
             if (this.checkAbortSignal(signal, resolve)) {
               return;
             }
           }
   
-          for (const _post of collection.items) {
+          for (const _post of list.items) {
   
             if (stopConditionMet) {
               break;
             }
 
             let post = _post;
+
+            // Collections
+            if (post.campaign && post.collections) {
+              for (const collection of post.collections) {
+                if (!savedCollectionIds.includes(collection.id)) {
+                  try {
+                    await this.#saveCollection(collection, post.campaign);
+                    savedCollectionIds.push(collection.id);
+                  }
+                  catch (error) {
+                    this.log('error', `Failed to save collection #${collection.id}:`, error);
+                  }
+                }
+                else {
+                  this.log('debug', `Collection #${collection.id} already processed`);
+                }
+              }
+            }
   
             if (this.#isFetchingMultiplePosts(postFetch)) {
               // Refresh to ensure media links have not expired
@@ -875,7 +897,7 @@ export default class PostDownloader extends Downloader<Post> {
     }
   }
 
-  async #fetchComments(post: Post, resolve: () => void, signal?: AbortSignal, accumulated?: CommentCollection & { nextURL: string; }): Promise<Comment[]> {
+  async #fetchComments(post: Post, resolve: () => void, signal?: AbortSignal, accumulated?: CommentList & { nextURL: string; }): Promise<Comment[]> {
     if (!post.commentCount) {
       this.log('debug', `Comment count is zero for post #${post.id}`);
       return [];
@@ -932,7 +954,7 @@ export default class PostDownloader extends Downloader<Post> {
     }
   }
 
-  async #fetchCommentReplies(comment: Comment, resolve: () => void, signal?: AbortSignal, accumulated?: CommentReplyCollection & { nextURL: string; }): Promise<CommentReply[]> {
+  async #fetchCommentReplies(comment: Comment, resolve: () => void, signal?: AbortSignal, accumulated?: CommentReplyList & { nextURL: string; }): Promise<CommentReply[]> {
     if (!comment.replyCount) {
       this.log('debug', `Reply count is zero for comment #${comment.id}`);
       return [];
@@ -983,4 +1005,98 @@ export default class PostDownloader extends Downloader<Post> {
       return [];
     }
   }
+
+  #saveCollection(collection: Collection, campaign: Campaign, signal?: AbortSignal) {
+    return new Promise<void>((resolve) => {
+      void (async () => {
+        const db = await this.db();
+
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        let batch: DownloadTaskBatch | null = null;
+        const abortHandler = () => {
+          void (async () => {
+            if (batch) {
+              await batch.abort();
+            }
+          })();
+        };
+        if (signal) {
+          signal.addEventListener('abort', abortHandler, { once: true });
+        }
+
+        this.log('info', `Save collection info #${collection.id}`);
+        this.emit('targetBegin', { target: collection });
+        this.emit('phaseBegin', { target: collection, phase: 'saveInfo' });
+  
+        // Step 1: create collection directories
+        const collectionDirs = this.fsHelper.getCollectionsDir(campaign);
+        this.log('debug', 'Campaign directories: ', collectionDirs);
+        this.fsHelper.createDir(collectionDirs.root);
+  
+        // Step 2: save summary and raw json
+        const summary = generateCollectionSummary(collection);
+        const summaryFile = path.resolve(collectionDirs.root, 'info.txt');
+        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+        this.logWriteTextFileResult(saveSummaryResult, collection, 'collection summary');
+  
+        if (this.checkAbortSignal(signal, resolve)) {
+          return;
+        }
+  
+        this.emit('phaseEnd', { target: collection, phase: 'saveInfo' });
+  
+        // Step 3: download collection media items
+        if (collection.thumbnail) {
+          this.emit('phaseBegin', { target: collection, phase: 'saveMedia' });
+          const collectionMedia: Downloadable[] = [
+            collection.thumbnail
+          ];
+          batch = (await this.createDownloadTaskBatch(
+            `Collection #${collection.id} (${collection.title})`,
+            signal,
+            {
+              target: collectionMedia,
+              targetName: `collection #${campaign.id} -> thumbnail`,
+              dirs: {
+                campaign: this.fsHelper.getCampaignDirs(campaign).root,
+                main: collectionDirs.root,
+                thumbnails: null
+              },
+              fileExistsAction: this.config.fileExistsAction.info
+            }
+          )).batch;
+          if (this.checkAbortSignal(signal, resolve)) {
+            return;
+          }
+          batch.prestart();
+          this.emit('phaseBegin', { target: collection, phase: 'batchDownload', batch });
+          await batch.start();
+          await batch.destroy();
+          this.emit('phaseEnd', { target: collection, phase: 'batchDownload' });
+          this.emit('phaseEnd', { target: collection, phase: 'saveMedia' });
+    
+          if (signal) {
+            signal.removeEventListener('abort', abortHandler);
+          }
+          if (this.checkAbortSignal(signal, resolve)) {
+            return;
+          }
+        }
+
+        // Step 4: save to DB
+        db.saveCollection(collection, campaign);
+  
+        // Done
+        this.log('info', 'Done saving collection info');
+        this.emit('targetEnd', { target: collection, isSkipped: false });
+  
+        resolve();
+      })();
+    });
+
+  }
+
 }

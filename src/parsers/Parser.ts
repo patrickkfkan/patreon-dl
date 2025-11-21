@@ -2,7 +2,7 @@ import capitalize from 'capitalize';
 import { load as cheerioLoad } from 'cheerio';
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
-import { type CampaignCoverPhotoMediaItem, type DefaultImageMediaItem, type MediaItem, type SingleImageMediaItem } from '../entities/MediaItem.js';
+import { type CollectionThumbnailMediaItem, type CampaignCoverPhotoMediaItem, type DefaultImageMediaItem, type MediaItem, type SingleImageMediaItem } from '../entities/MediaItem.js';
 import { type User } from '../entities/User.js';
 import {type LogLevel} from '../utils/logging/Logger.js';
 import type Logger from '../utils/logging/Logger.js';
@@ -11,7 +11,7 @@ import ObjectHelper from '../utils/ObjectHelper.js';
 import { type Reward, type Tier } from '../entities/Reward.js';
 import URLHelper from '../utils/URLHelper.js';
 import FSHelper from '../utils/FSHelper.js';
-import { type LinkedAttachment } from '../entities/Post.js';
+import { type Collection, type LinkedAttachment } from '../entities/Post.js';
 
 const DOWNLOADABLE_TYPES = [ 'media' ] as const;
 
@@ -150,6 +150,7 @@ export default abstract class Parser {
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'reward'): Reward | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'campaign'): Campaign | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'collection'): Collection | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: string, ...args: any[]): any {
     this.log('debug', `Find ${matchType} item #${id} in API response`);
     for (const inc of included) {
@@ -173,6 +174,9 @@ export default abstract class Parser {
         }
         else if (_matchType === 'reward') {
           return this.parseRewardAPIDataInIncludedArray(inc);
+        }
+        else if (_matchType === 'collection') {
+          return this.parseCollectionAPIDataInIncludedArray(inc);
         }
       }
     }
@@ -534,6 +538,49 @@ export default abstract class Parser {
     };
     this.log('debug', `Done parsing reward #${id}`);
     return reward;
+  }
+
+  protected parseCollectionAPIDataInIncludedArray(data: any) {
+    const { id, attributes } = data;
+    if (!id) {
+      this.log('error', 'Parse error: \'id\' field missing in API data of collection');
+      return null;
+    }
+    if (!attributes || typeof attributes !== 'object') {
+      this.log('error', `Parse error: 'attributes' field missing in API data of collection #${id} or has incorrect type`);
+      return null;
+    }
+    const thumbnail: CollectionThumbnailMediaItem | null = attributes.thumbnail ? {
+      type: 'image',
+      imageType: 'collectionThumbnail',
+      id: `collection:${id}:thumbnail`,
+      filename: `collection-${id}`,
+      mimeType: null,
+      imageURLs: {
+        url:  ObjectHelper.getProperty(attributes, 'thumbnail.url') || null,
+        original: ObjectHelper.getProperty(attributes, 'thumbnail.original') || null,
+        default:  ObjectHelper.getProperty(attributes, 'thumbnail.default') || null,
+        defaultBlurred:  ObjectHelper.getProperty(attributes, 'thumbnail.default_blurred') || null,
+        defaultLarge:  ObjectHelper.getProperty(attributes, 'thumbnail.default_large') || null,
+        defaultSmall: ObjectHelper.getProperty(attributes, 'thumbnail.default_small') || null,
+        thumbnail:  ObjectHelper.getProperty(attributes, 'thumbnail.thumbnail') || null,
+        thumbnailLarge:  ObjectHelper.getProperty(attributes, 'thumbnail.thumbnail_large') || null,
+        thumbnailSmall: ObjectHelper.getProperty(attributes, 'thumbnail.thumbnail_small') || null
+      }
+    } : null;
+    const collection: Collection = {
+      type: 'collection',
+      id,
+      title: attributes.title || null,
+      description: attributes.description || null,
+      createdAt: attributes.created_at || null,
+      editedAt: attributes.edited_at || null,
+      numPosts: attributes.num_posts || null,
+      postIds: Array.isArray(attributes.post_ids) ? attributes.post_ids : null,
+      thumbnail,
+    };
+    this.log('debug', `Done parsing collection #${id}`);
+    return collection;
   }
 
   protected parseInlineMedia(postId: string, content: string, included: Array<any>) {

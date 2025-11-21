@@ -47,6 +47,7 @@ const PRODUCT_API_URL_SEARCH_PARAMS = {
 
 const POSTS_API_URL_SEARCH_PARAMS = {
   INCLUDE: [
+    'collections',
     'campaign',
     'access_rules',
     'access_rules.tier.null',

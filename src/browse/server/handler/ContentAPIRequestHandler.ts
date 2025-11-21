@@ -3,7 +3,7 @@ import { type Logger } from '../../../utils/logging';
 import { type APIInstance } from '../../api';
 import Basehandler from './BaseHandler.js';
 import { getYearMonthString } from '../../../utils/Misc.js';
-import { type GetContentContext, type ContentListSortBy, type ContentType } from '../../types/Content.js';
+import { type GetContentContext, type ContentListSortBy, type ContentType, type CollectionListSortBy } from '../../types/Content.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 20;
 
@@ -20,6 +20,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
   #getContext(req: Request, campaignId?: string, contentType?: ContentType) {
     const {
       tier_ids,
+      collection_id,
       post_types,
       date_published
     } = req.query;
@@ -52,6 +53,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
       isViewable,
       datePublished,
       tiers,
+      collection: collection_id as string | undefined,
       sortBy
     };
   }
@@ -65,6 +67,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
       isViewable,
       datePublished,
       tiers,
+      collection,
       sortBy
     } = this.#getContext(req, campaignId, contentType);
     
@@ -77,6 +80,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
           isViewable,
           datePublished,
           tiers,
+          collection,
           sortBy,
           limit,
           offset
@@ -94,6 +98,31 @@ export default class ContentAPIRequestHandler extends Basehandler {
         }));
         break;
     }
+  }
+
+  handleCollectionRequest(_req: Request, res: Response, collectionId: string) {
+    const result = this.#api.getCollection(collectionId);
+    if (!result) {
+      throw Error('Data not found');
+    }
+    res.json(result);
+  }
+
+  handleCollectionListRequest(req: Request, res: Response, campaignId: string) {
+    const { limit, offset } = this.getPaginationParams(req, DEFAULT_ITEMS_PER_PAGE);
+    const sortBy = this.getQueryParamValue<CollectionListSortBy>(
+      req,
+      'sort_by',
+      ['a-z', 'z-a', 'last_created', 'last_updated'],
+      'last_updated'
+    );
+    const list = this.#api.getCollectionList({
+      campaign: campaignId,
+      sortBy,
+      limit,
+      offset
+    });
+    res.json(list);
   }
 
   handleGetRequest(req: Request, res: Response, contentType: ContentType, id: string) {

@@ -6,7 +6,7 @@ import Downloader, { type DownloaderConfig } from './Downloader.js';
 import URLHelper from '../utils/URLHelper.js';
 import type Fetcher from '../utils/Fetcher.js';
 import ProductParser from '../parsers/ProductParser.js';
-import { type ProductCollection } from '../entities/Product.js';
+import { type ProductList } from '../entities/Product.js';
 import Sleeper from '../utils/Sleeper.js';
 import { InitialData } from './InitialData.js';
 
@@ -21,7 +21,7 @@ export type ProductsFetcherStatus = {
 export type ProductsFetcherEvent = 'fetched' | 'statusChange';
 export type ProductsFetcherEventPayload<T extends ProductsFetcherEvent> =
   T extends 'fetched' ? {
-    collection: ProductCollection;
+    list: ProductList;
     index: number;
   } :
   T extends 'statusChange' ? {
@@ -31,7 +31,7 @@ export type ProductsFetcherEventPayload<T extends ProductsFetcherEvent> =
   never;
 
 export interface ProductsFetcherResult {
-  collection: ProductCollection | null;
+  list: ProductList | null;
   error?: any;
   aborted: boolean;
 }
@@ -54,7 +54,7 @@ export default class ProductsFetcher extends EventEmitter {
     returning: number | null;
     lastReturned: number | null; // Last returned in next()
   };
-  #fetched: ProductCollection[];
+  #fetched: ProductList[];
   #total: number | null;
   #nextPromises: Array<Promise<ProductsFetcherResult> | undefined>;
   #sleeper: Sleeper | null;
@@ -150,11 +150,11 @@ export default class ProductsFetcher extends EventEmitter {
     }
 
     const productsParser = new ProductParser(this.logger);
-    const collection = productsParser.parseProductsAPIResponse(json, productsAPIURL, campaign);
-    this.#fetched = [ collection ];
+    const list = productsParser.parseProductsAPIResponse(json, productsAPIURL, campaign);
+    this.#fetched = [ list ];
     this.#pointers.lastFetched = this.#pointers.fetching;
     this.#pointers.fetching = null;
-    this.emit('fetched', { collection, index: 0 });
+    this.emit('fetched', { list, index: 0 });
 
     const total = this.#total = this.#fetched[0].total;
     if (this.#isFetchingMultipleProducts(productFetch)) {
@@ -188,15 +188,15 @@ export default class ProductsFetcher extends EventEmitter {
           nextURL = null;
         }
         else {
-          const collection = productsParser.parseProductsAPIResponse(json, nextURL);
-          this.#fetched.push(collection);
-          const fetched = collection.items.length;
+          const list = productsParser.parseProductsAPIResponse(json, nextURL);
+          this.#fetched.push(list);
+          const fetched = list.items.length;
           totalFetched += fetched;
           this.log('info', `Fetched products: ${totalFetched} / ${total}`);
-          nextURL = collection.nextURL;
+          nextURL = list.nextURL;
           this.#pointers.lastFetched = this.#pointers.fetching;
           this.#pointers.fetching = null;
-          this.emit('fetched', { collection, index: this.#fetched.length - 1 });
+          this.emit('fetched', { list, index: this.#fetched.length - 1 });
         }
       }
       if (!this.checkAbortSignal()) {
@@ -285,30 +285,30 @@ export default class ProductsFetcher extends EventEmitter {
     const ptr = this.#pointers.returning;
     this.log('debug', `next() requested (${ptr})`);
     const __parseStatus = (status: ProductsFetcherStatus) => {
-      let collection: ProductCollection | null | undefined;
+      let list: ProductList | null | undefined;
       let aborted = false;
       let error: any;
       switch (status.status) {
         case 'aborted':
-          collection = null;
+          list = null;
           aborted = true;
           break;
         case 'error':
           if (this.#fetched[ptr]) {
-            collection = this.#fetched[ptr];
+            list = this.#fetched[ptr];
           }
           else {
-            collection = null;
+            list = null;
             error = status.error;
           }
           break;
         case 'completed':
-          collection = this.#fetched[ptr] || null;
+          list = this.#fetched[ptr] || null;
           break;
         default:
-          collection = this.#fetched[ptr] || undefined;
+          list = this.#fetched[ptr] || undefined;
       }
-      return { collection, aborted, error };
+      return { list, aborted, error };
     };
     if (this.#isRunning() && !this.#fetched[ptr]) {
       let result = this.#nextPromises[ptr];
@@ -324,7 +324,7 @@ export default class ProductsFetcher extends EventEmitter {
               this.off('fetched', fetchedListener);
               resolved = true;
               resolve({
-                collection: this.#fetched[ptr],
+                list: this.#fetched[ptr],
                 aborted: false
               });
             }
@@ -334,11 +334,11 @@ export default class ProductsFetcher extends EventEmitter {
               this.off('statusChange', statusListener);
               return;
             }
-            const { collection, aborted, error } = __parseStatus(args.current);
-            if (collection !== undefined) {
+            const { list, aborted, error } = __parseStatus(args.current);
+            if (list !== undefined) {
               this.off('statusChange', statusListener);
               resolved = true;
-              resolve({ collection, aborted, error });
+              resolve({ list, aborted, error });
             }
           };
           this.on('fetched', fetchedListener);

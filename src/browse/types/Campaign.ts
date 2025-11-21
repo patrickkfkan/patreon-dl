@@ -28,12 +28,14 @@ export interface CampaignList {
     postCount: number;
     productCount: number;
     mediaCount: number;
+    collectionCount: number;
   })[];
   total: number;
 }
 
 export interface CampaignWithCounts extends Campaign {
   postCount: number;
+  collectionCount: number;
   productCount: number;
   mediaCount: number;
 }

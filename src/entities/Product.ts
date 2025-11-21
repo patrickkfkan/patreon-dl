@@ -1,8 +1,8 @@
 import { type Campaign } from './Campaign.js';
-import { type Collection } from './Collection.js';
+import { type List } from './List.js';
 import { type Downloadable } from './Downloadable.js';
 
-export type ProductCollection = Collection<Product>;
+export type ProductList = List<Product>;
 
 // Known productType values
 export const ProductType = {

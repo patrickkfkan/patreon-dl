@@ -10,7 +10,8 @@ export type ImageType =
   'default' |
   'campaignCoverPhoto' |
   'postCoverImage' |
-  'postThumbnail';
+  'postThumbnail' |
+  'collectionThumbnail';
 
 export interface SingleImageMediaItem extends MediaLike {
   type: 'image';
@@ -70,12 +71,29 @@ export interface PostThumbnailMediaItem extends MediaLike {
   }
 }
 
+export interface CollectionThumbnailMediaItem extends MediaLike {
+  type: 'image';
+  imageType: 'collectionThumbnail';
+  imageURLs: {
+    url: string | null;
+    original: string | null;
+    default: string | null;
+    defaultBlurred: string | null;
+    defaultSmall: string | null;
+    defaultLarge: string | null;
+    thumbnail: string | null;
+    thumbnailLarge: string | null;
+    thumbnailSmall: string | null;
+  };
+}
+
 export type ImageMediaItem<T extends ImageType> =
   T extends 'single' ? SingleImageMediaItem :
   T extends 'default' ? DefaultImageMediaItem :
   T extends 'campaignCoverPhoto' ? CampaignCoverPhotoMediaItem :
   T extends 'postCoverImage' ? PostCoverImageMediaItem :
   T extends 'postThumbnail' ? PostThumbnailMediaItem :
+  T extends 'collectionThumbnail' ? CollectionThumbnailMediaItem :
   never;
 
 export interface VideoMediaItem extends MediaLike {

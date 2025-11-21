@@ -4,6 +4,7 @@ import { useAPI } from "../contexts/APIProvider";
 import { useEffect, useState } from "react";
 import CampaignHeader from "../components/CampaignHeader";
 import { type CampaignWithCounts } from "../../types/Campaign";
+import CollectionBanner from "../components/CollectionBanner";
 
 function CampaignLayout() {
   const { id: campaignId } = useParams();
@@ -38,7 +39,8 @@ function CampaignLayout() {
         </Col>
       </Row>
       <Row className="justify-content-center g-0">
-        <Col lg={8} md={10} sm={12} className="px-3 px-md-0 d-flex justify-content-center">
+        <Col lg={8} md={10} sm={12} className="px-3 px-md-0 d-flex flex-column align-items-center justify-content-center">
+          <CollectionBanner />
           <Outlet />
         </Col>
       </Row>

@@ -168,6 +168,36 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("post_id") REFERENCES "content"("content_id")
       );
 
+      CREATE TABLE IF NOT EXISTS "collection" (
+        "collection_id" TEXT,
+        "campaign_id" TEXT,
+        "title" TEXT,
+        "created_at" INTEGER,
+        "edited_at" INTEGER,
+        "details" TEXT NOT NULL,
+        PRIMARY KEY("collection_id"),
+        FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
+      );
+
+      CREATE INDEX IF NOT EXISTS collection_by_campaign_and_created ON collection(campaign_id, created_at);
+
+      CREATE INDEX IF NOT EXISTS collection_by_campaign_and_title ON collection(campaign_id, title);
+
+      CREATE INDEX IF NOT EXISTS collection_by_campaign_and_edited ON collection(campaign_id, edited_at);
+
+      CREATE TABLE IF NOT EXISTS "post_collection" (
+        "collection_id" TEXT,
+        "campaign_id" TEXT,
+        "post_id" TEXT,
+        "post_created_at" INTEGER,
+        PRIMARY KEY("collection_id", "campaign_id", "post_id"),
+        FOREIGN KEY("post_id") REFERENCES "content"("content_id"),
+        FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id"),
+        FOREIGN KEY("collection_id", "campaign_id") REFERENCES "collection"("collection_id", "campaign_id")
+      );
+
+      CREATE INDEX IF NOT EXISTS post_collection_by_created ON post_collection(collection_id, campaign_id, post_created_at);
+
       CREATE TABLE IF NOT EXISTS "env" (
         "env_key" TEXT,
         "value" TEXT,

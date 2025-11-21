@@ -1,10 +1,10 @@
 import { type Campaign } from './Campaign.js';
-import { type Collection } from './Collection.js';
+import { type List } from './List.js';
 import { type Downloadable } from './Downloadable.js';
-import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type VideoMediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem } from './MediaItem.js';
+import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type VideoMediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type CollectionThumbnailMediaItem } from './MediaItem.js';
 import { type Tier } from './Reward.js';
 
-export type PostCollection = Collection<Post>;
+export type PostList = List<Post>;
 
 // Known postType values
 export const PostType = {
@@ -51,6 +51,11 @@ export interface Post {
   coverImage: Downloadable<PostCoverImageMediaItem> | null;
   thumbnail: Downloadable<PostThumbnailMediaItem> | null;
   tiers: Tier[];
+
+  /**
+   * @since 3.5.0
+   */
+  collections?: Collection[];
 
   /**
    * @privateRemarks
@@ -131,4 +136,16 @@ export type LinkedAttachment = {
   downloadable?: Downloadable<AttachmentMediaItem>;
 }
 
-export type YouTubePostEmbed = PostEmbed & { provider: 'YouTube' }
+export type YouTubePostEmbed = PostEmbed & { provider: 'YouTube' };
+
+export interface Collection {
+  id: string;
+  type: 'collection';
+  title: string | null;
+  description: string | null;
+  createdAt: string | null;
+  editedAt: string | null;
+  numPosts: number | null;
+  postIds: string[] | null;
+  thumbnail: Downloadable<CollectionThumbnailMediaItem> | null;
+}

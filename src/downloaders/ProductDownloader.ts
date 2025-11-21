@@ -57,7 +57,7 @@ export default class ProductDownloader extends Downloader<Product> {
         });
         productsFetcher.begin();
 
-        // Step 2: download products in each fetched collection
+        // Step 2: download products in each fetched list
         let downloaded = 0;
         let skippedUnviewable = 0;
         let skippedRedundant = 0;
@@ -66,24 +66,24 @@ export default class ProductDownloader extends Downloader<Product> {
         let stopConditionMet = false;
         const productsParser = new ProductParser(this.logger);
         while (productsFetcher.hasNext()) {
-          const { collection, aborted, error } = await productsFetcher.next();
-          if (!collection || aborted) {
+          const { list, aborted, error } = await productsFetcher.next();
+          if (!list || aborted) {
             break;
           }
-          if (!collection && error) {
+          if (!list && error) {
             this.emit('end', { aborted: false, error, message: 'ProductsFetcher error' });
             resolve();
             return;
           }
-          if (!campaignSaved && collection.items[0]?.campaign) {
-            await this.saveCampaignInfo(collection.items[0].campaign, signal);
+          if (!campaignSaved && list.items[0]?.campaign) {
+            await this.saveCampaignInfo(list.items[0].campaign, signal);
             campaignSaved = true;
             if (this.checkAbortSignal(signal, resolve)) {
               return;
             }
           }
   
-          for (const _product of collection.items) {
+          for (const _product of list.items) {
   
             if (stopConditionMet) {
               break;

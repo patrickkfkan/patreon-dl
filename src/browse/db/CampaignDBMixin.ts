@@ -264,6 +264,12 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         select: 'COUNT(content_media.media_id) AS media_count, content_media.campaign_id',
         groupBy: 'content_media.campaign_id'
       });
+      const collectionCountSelect = `
+        SELECT
+          COUNT(collection_id) AS collection_count,
+          campaign_id
+        FROM collection GROUP BY campaign_id
+      `;
       try {
         const rows = this.all(
           `
@@ -272,11 +278,13 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
             IFNULL(post_count, 0) post_count,
             IFNULL(product_count, 0) product_count,
             IFNULL(media_count, 0) media_count,
+            IFNULL(collection_count, 0) AS collection_count,
             COALESCE(post_count, 0) + COALESCE(product_count, 0) content_count
           FROM campaign
             LEFT JOIN (${postCountSelect}) postc ON postc.campaign_id = campaign.campaign_id
             LEFT JOIN (${productCountSelect}) productc ON productc.campaign_id = campaign.campaign_id 
             LEFT JOIN (${mediaCountSelect}) mc ON mc.campaign_id = campaign.campaign_id 
+            LEFT JOIN (${collectionCountSelect}) cc ON cc.campaign_id = campaign.campaign_id
           ${orderByClause}
           ${limitOffsetClause}
           `,
@@ -285,6 +293,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
         const campaigns = rows.map((row) => ({
           ...JSON.parse(row.details) as Campaign,
           postCount: (row.post_count || 0) as number,
+          collectionCount: (row.collection_count || 0) as number,
           productCount: (row.product_count || 0) as number,
           mediaCount: (row.media_count || 0) as number
         }));
@@ -316,13 +325,15 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
           campaign.details,
           IFNULL(media_count, 0) AS media_count,
           IFNULL(post_count, 0) AS post_count,
-          IFNULL(product_count, 0) AS product_count
+          IFNULL(product_count, 0) AS product_count,
+          IFNULL(collection_count, 0) AS collection_count
         FROM
           campaign
           ${joinUser}
           LEFT JOIN (SELECT COUNT(content_id) AS post_count, campaign_id FROM content WHERE content_type = 'post' GROUP BY campaign_id) postc ON postc.campaign_id = campaign.campaign_id
           LEFT JOIN (SELECT COUNT(content_id) AS product_count, campaign_id FROM content WHERE content_type = 'product' GROUP BY campaign_id) productc ON productc.campaign_id = campaign.campaign_id
           LEFT JOIN (SELECT COUNT(media_id) AS media_count, campaign_id FROM content_media GROUP BY campaign_id) mc ON mc.campaign_id = campaign.campaign_id
+          LEFT JOIN (SELECT COUNT(collection_id) AS collection_count, campaign_id FROM collection GROUP BY campaign_id) collectionc ON collectionc.campaign_id = campaign.campaign_id
         ${whereClause}
         `,
         [...whereValues]
@@ -330,6 +341,7 @@ export function CampaignDBMixin<TBase extends UserDBConstructor>(Base: TBase) {
       return row ? {
         ...JSON.parse(row.details) as Campaign,
         postCount: (row.post_count || 0) as number,
+        collectionCount: (row.collection_count || 0) as number,
         productCount: (row.product_count || 0) as number,
         mediaCount: (row.media_count || 0) as number
       }

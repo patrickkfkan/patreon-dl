@@ -1,6 +1,6 @@
 import "../assets/styles/ProductCard.scss";
 import { type Downloadable, type Product } from "../../../entities";
-import { Card, Col, Nav, Row, Stack, Tab } from "react-bootstrap";
+import { Badge, Card, Col, Nav, Row, Stack, Tab } from "react-bootstrap";
 import { useCallback, useMemo } from "react";
 import MediaGrid from "./MediaGrid";
 import MediaGallery from "./MediaGallery";
@@ -237,6 +237,9 @@ function ProductCard(props: ProductCardProps) {
       {campaignEl}
       {coverImageEl}
       <Card.Body className="d-flex flex-column">
+        <div>
+          { product.productType === ProductType.Collection && <Badge bg="secondary">Collection</Badge>}
+        </div>
         <Stack>
           <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
             <Card.Title className="m-0 product-card__title">

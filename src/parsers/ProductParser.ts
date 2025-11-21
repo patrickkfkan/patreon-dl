@@ -1,6 +1,6 @@
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
-import { type ProductCollection } from '../entities/Product.js';
+import { type ProductList } from '../entities/Product.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
 
@@ -8,7 +8,7 @@ export default class ProductParser extends Parser {
 
   protected name = 'ProductParser';
 
-  parseProductsAPIResponse(json: any, _url: string, _campaign?: Campaign | null): ProductCollection {
+  parseProductsAPIResponse(json: any, _url: string, _campaign?: Campaign | null): ProductList {
 
     this.log('debug', `Parse API response of "${_url}"`);
 
@@ -33,7 +33,7 @@ export default class ProductParser extends Parser {
       // No products found
       productsJSONArray = [];
     }
-    const collection: ProductCollection = {
+    const collection: ProductList = {
       url: _url,
       items: [],
       total: ObjectHelper.getProperty(json, 'meta.count') || null,

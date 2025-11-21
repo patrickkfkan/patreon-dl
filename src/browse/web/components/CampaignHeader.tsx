@@ -23,6 +23,12 @@ function CampaignHeader(props: CampaignHeaderProps) {
         url: `/campaigns/${campaign.id}/posts`
       });
     }
+    if (campaign.collectionCount > 0) {
+      links.push({
+        title: 'Collections',
+        url: `/campaigns/${campaign.id}/collections`
+      });
+    }
     if (campaign.productCount > 0) {
       links.push({
         title: 'Shop',

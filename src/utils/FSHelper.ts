@@ -18,6 +18,10 @@ const CAMPAIGN_FIXED_DIR_NAMES = {
   INFO: 'campaign_info'
 };
 
+const COLLECTIONS_FIXED_DIR_NAMES = {
+  COLLECTIONS: 'collections'
+};
+
 const PRODUCT_FIXED_DIR_NAMES = {
   SHOP: 'shop',
   INFO: 'product_info',
@@ -102,6 +106,13 @@ export default class FSHelper {
     return {
       root,
       info: path.resolve(root, CAMPAIGN_FIXED_DIR_NAMES.INFO)
+    };
+  }
+
+  getCollectionsDir(campaign: Campaign) {
+    const campaignRootDir = this.getCampaignDirs(campaign).root;
+    return {
+      root: path.resolve(campaignRootDir, COLLECTIONS_FIXED_DIR_NAMES.COLLECTIONS)
     };
   }
 

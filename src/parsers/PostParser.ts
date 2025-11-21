@@ -1,7 +1,7 @@
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
-import { type LinkedAttachment, PostType, type Post, type PostCollection, type PostEmbed } from '../entities/Post.js';
+import { type LinkedAttachment, PostType, type Post, type PostList as PostList, type PostEmbed, type Collection } from '../entities/Post.js';
 import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
@@ -11,7 +11,7 @@ export default class PostParser extends Parser {
 
   protected name = 'PostParser';
 
-  parsePostsAPIResponse(json: any, _url: string): PostCollection {
+  parsePostsAPIResponse(json: any, _url: string): PostList {
 
     this.log('debug', `Parse API response of "${_url}"`);
 
@@ -36,7 +36,7 @@ export default class PostParser extends Parser {
       // No posts found
       postsJSONArray = [];
     }
-    const collection: PostCollection = {
+    const collection: PostList = {
       url: _url,
       items: [],
       total: ObjectHelper.getProperty(json, 'meta.pagination.total') || null,
@@ -262,6 +262,22 @@ export default class PostParser extends Parser {
         this.log('warn', `Could not obtain tier info for post #${id}`);
       }
 
+      // Collections
+      let collections: Collection[] = [];
+      const collectionsData = ObjectHelper.getProperty(postJSON, 'relationships.collections.data');
+      if (Array.isArray(collectionsData)) {
+        collections = collectionsData.reduce<Collection[]>((result, c) => {
+          const id = ObjectHelper.getProperty(c, 'id');
+          if (id) {
+            const collection = this.findInAPIResponseIncludedArray(includedJSON, id, 'collection');
+            if (collection) {
+              result.push(collection);
+            }
+          }
+          return result;
+        }, []);
+      }
+
       const post: Post = {
         id,
         type: 'post',
@@ -277,6 +293,7 @@ export default class PostParser extends Parser {
         coverImage,
         thumbnail,
         tiers,
+        collections,
         embed,
         attachments,
         linkedAttachments,

@@ -1,4 +1,5 @@
 import { type Campaign, type Comment, type Post, type Product, type Tier } from "../../entities/index.js";
+import { type Collection } from "../../entities/Post.js";
 
 export type ContentListSortBy = 'a-z' | 'z-a' | 'latest' | 'oldest';
 export type ContentType = 'post' | 'product';
@@ -21,6 +22,7 @@ export type GetContentListParams<T extends ContentType> =
   T extends 'post' ? {
     postTypes?: string[];
     tiers?: Tier[] | string[];
+    collection?: Collection | string;
   }
   : T extends 'product' ? {}
   : never
@@ -47,3 +49,17 @@ export type GetPreviousNextContentResult<T extends ContentType> =
     next: Product | null;
   }
   : never;
+
+export type CollectionListSortBy = 'a-z' | 'z-a' | 'last_created' | 'last_updated';
+
+export interface GetCollectionListParams {
+  campaign: Campaign | string;
+  sortBy?: CollectionListSortBy;
+  limit?: number;
+  offset?: number;
+}
+
+export interface CollectionList {
+  collections: Collection[];
+  total: number;
+}

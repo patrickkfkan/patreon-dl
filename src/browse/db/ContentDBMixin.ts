@@ -1,6 +1,7 @@
 import { type Comment, type Downloadable, type Post, type Product, type Tier, type Campaign } from '../../entities';
+import { type Collection } from '../../entities/Post';
 import { getYearMonthString, type KeysOfValue } from '../../utils/Misc.js';
-import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy } from '../types/Content.js';
+import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy, type GetCollectionListParams, type CollectionList } from '../types/Content.js';
 import { type CampaignDBConstructor } from './CampaignDBMixin.js';
 
 export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase) {
@@ -75,9 +76,10 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         // Save content media
         this.#saveContentMedia(content);
 
-        // Save tiers
+        // Save tiers and collections
         if (content.type === 'post') {
           this.#savePostTiers(content);
+          this.#savePostCollection(content);
         }
 
         this.exec('COMMIT');
@@ -488,20 +490,30 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const { campaign, type: contentType, isViewable, datePublished, sortBy, limit, offset } = params;
       const { whereClauses: extraWhereClauses = [], whereValues: extraWhereValues = [] } = db || {};
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
+      const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
+      const collection = params.type === 'post' ? (params as GetContentListParams<'post'>).collection : null;
       this.log('debug', `Get ${contentType}s from DB:`, {
         campaign: campaignId,
         isViewable,
         datePublished,
+        tiers: params.type === 'post' ? JSON.stringify(tiers) : 'N/A',
+        collection: params.type === 'post' ? JSON.stringify(collection) : 'N/A',
         sortBy,
         limit,
         offset
       });
-      const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
       const contentSubtypes = params.type === 'post' ? (params as GetContentListParams<'post'>).postTypes : null;
       if (tiers && tiers.length > 0 && !campaign) {
         throw Error('Invalid params: "tiers" must be used with "campaign"');
       }
-      const join = tiers && tiers.length > 0 ? 'LEFT JOIN post_tier ON post_tier.post_id = content.content_id' : '';
+      const joinParts: string[] = [];
+      if (tiers && tiers.length > 0) {
+        joinParts.push('LEFT JOIN post_tier ON post_tier.post_id = content.content_id');
+      }
+      if (collection) {
+        joinParts.push(`LEFT JOIN post_collection ON post_collection.post_id = content.content_id`);
+      }
+      const join = joinParts.join(' ');
       const whereEquals: { column: string; value: string | number; }[] = [];
       if (campaignId) {
         whereEquals.push({ column: 'content.campaign_id', value: campaignId });
@@ -523,6 +535,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         whereEquals.push({
           column: `strftime('${strftimeFormat}', datetime(published_at / 1000, 'unixepoch'))`,
           value: datePublished
+        });
+      }
+      if (collection) {
+        whereEquals.push({
+          column: 'post_collection.collection_id',
+          value: typeof collection === 'string' ? collection : collection.id
         });
       }
       const whereIns: { column: string; values: (string | number)[] }[] = [];
@@ -750,6 +768,232 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         this.log(
           'error',
           `Failed to check if ${contentType} #${id} exists in DB:`,
+          error
+        );
+        return false;
+      }
+    }
+
+    saveCollection(collection: Collection, campaign: Campaign | null, overwriteIfExists = true) {
+      this.log('debug', `Save collection #${collection.id} (${collection.title}) to DB`);
+      try {
+        // Normally, campaign would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCampaign(campaign, new Date(), false);
+
+        const collectionExists = this.checkCollectionExists(collection.id);
+        if (collectionExists && !overwriteIfExists) {
+          return;
+        }
+
+        if (collection.thumbnail) {
+          this.saveMedia(collection.thumbnail);
+        }
+
+        if (!collectionExists) {
+          this.log('debug', `INSERT collection "${collection.title}" (${collection.id})`);
+          this.run(
+            `
+            INSERT INTO collection (
+              collection_id,
+              campaign_id,
+              title,
+              created_at,
+              edited_at,
+              details
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            `,
+            [
+              collection.id,
+              campaign?.id || '-1',
+              collection.title,
+              this.#publishedAtToTime(collection.createdAt),
+              this.#publishedAtToTime(collection.editedAt),
+              JSON.stringify(collection)
+            ]
+          );
+        } else {
+          this.log('debug', `Collection #${collection.id} already exists in DB - update record`);
+          this.run(`
+            UPDATE collection
+            SET
+              title = ?,
+              created_at = ?,
+              edited_at = ?,
+              details = ?
+            WHERE
+              collection_id = ? AND
+              campaign_id = ?
+            `,
+            [
+              collection.title,
+              this.#publishedAtToTime(collection.createdAt),
+              this.#publishedAtToTime(collection.editedAt),
+              JSON.stringify(collection),
+              collection.id,
+              campaign?.id || '-1'
+            ]
+          );
+        }
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to save collection "${collection.title}" (${collection.id}) to DB:`,
+          error
+        );
+      }
+    }
+
+    getCollection(id: string) {
+      this.log('debug', `Get collection #${id} from DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT
+            campaign_id,
+            details,
+            (SELECT COUNT(post_id) AS post_count FROM post_collection WHERE collection_id = ?) AS post_count
+          FROM collection
+          WHERE collection_id = ?;
+          `,
+          [id, id]
+        );
+        if (result) {
+          const collection = JSON.parse(result.details) as Collection;
+          collection.numPosts = result.post_count || 0;
+          return {
+            collection,
+            campaignId: result.campaign_id as string
+          };
+        }
+        return null;
+      } catch (error) {
+        this.log('error', `Failed to get collection #${id} from DB:`, error);
+        return null;
+      }
+    }
+
+    #savePostCollection(post: Post) {
+      this.log('debug', `Clear post_collection for post #${post.id}`);
+      this.run(`DELETE FROM post_collection WHERE post_id = ?`, [
+        post.id
+      ]);
+      if (!post.collections || post.collections.length === 0) {
+        return;
+      }
+      for (const collection of post.collections) {
+        // Normally, collection would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCollection(collection, post.campaign, false);
+        try {
+          this.run(
+            `
+            INSERT INTO post_collection (
+              collection_id,
+              campaign_id,
+              post_id,
+              post_created_at
+            )
+            VALUES (?, ?, ?, ?)
+            `,
+            [
+              collection.id,
+              post.campaign?.id || '-1',
+              post.id,
+              this.#publishedAtToTime(collection.createdAt)
+            ]
+          );
+        }
+        catch (error) {
+          this.log('error', `Failed to save post_collection for post #${post.id} -> collection #${collection.id}:`, error);
+        }
+      }
+    }
+
+    getCollectionList(params: GetCollectionListParams): CollectionList {
+      const { campaign, sortBy, limit, offset } = params;
+      const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+      let orderByClause: string;
+      switch (sortBy) {
+        case 'a-z':
+          orderByClause = 'collection.title ASC';
+          break;
+        case 'z-a':
+          orderByClause = 'collection.title DESC';
+          break;
+        case 'last_created':
+          orderByClause = 'created_at DESC';
+          break;
+        case 'last_updated':
+          orderByClause = 'edited_at DESC';
+          break;
+        default:
+          orderByClause = '';
+      }
+      if (orderByClause) {
+        orderByClause = `ORDER BY ${orderByClause}`;
+      }
+      let limitOffsetClause = '';
+      const limitOffsetValues: number[] = [];
+      if (limit !== undefined && offset !== undefined) {
+        limitOffsetClause = 'LIMIT ? OFFSET ?';
+        limitOffsetValues.push(limit, offset);
+      }
+      else if (limit !== undefined) {
+        limitOffsetClause = 'LIMIT ?';
+        limitOffsetValues.push(limit);
+      }
+      const rows = this.all(
+        `
+        SELECT
+          details, post_count
+        FROM collection
+          LEFT JOIN (SELECT COUNT(post_id) AS post_count, collection_id FROM post_collection GROUP BY collection_id) pcc ON pcc.collection_id = collection.collection_id
+        WHERE
+          campaign_id = ?
+        ${orderByClause}
+        ${limitOffsetClause}
+        `,
+        [campaignId, ...limitOffsetValues]
+      );
+      const totalResult = this.get(
+        `SELECT COUNT(*) AS collection_count FROM collection WHERE campaign_id = ?`,
+        [campaignId]
+      );
+      const total = totalResult ? (totalResult.collection_count as number) : 0;
+      const collections = rows.map((row) => {
+        const collection = JSON.parse(row.details) as Collection;
+        collection.numPosts = row.post_count || 0;
+        return collection;
+      });
+      return {
+        collections,
+        total
+      };
+    }
+
+    checkCollectionExists(id: string) {
+      this.log('debug', `Check if collection #${id} exists in DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT COUNT(*) as count
+          FROM collection
+          WHERE
+            collection_id = ?
+          `,
+          [ id ]
+        );
+        return result.count > 0;
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to check if collection #${id} exists in DB:`,
           error
         );
         return false;

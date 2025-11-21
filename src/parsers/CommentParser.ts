@@ -1,4 +1,4 @@
-import { type CommentReplyCollection, type CommentCollection } from '../entities/Comment.js';
+import { type CommentReplyList, type CommentList } from '../entities/Comment.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
 import { type User } from '../entities/User.js';
@@ -7,8 +7,8 @@ export default class CommentParser extends Parser {
 
   protected name = 'CommentParser';
 
-  parseCommentsAPIResponse(json: any, _url: string, replies: true): CommentReplyCollection;
-  parseCommentsAPIResponse(json: any, _url: string, replies?: false): CommentCollection;
+  parseCommentsAPIResponse(json: any, _url: string, replies: true): CommentReplyList;
+  parseCommentsAPIResponse(json: any, _url: string, replies?: false): CommentList;
   parseCommentsAPIResponse(json: any, _url: string, replies = false) {
 
     this.log('debug', `Parse API response of "${_url}"`);
@@ -89,11 +89,11 @@ export default class CommentParser extends Parser {
 
       if (replies) {
         this.log('debug', `Done parsing comment reply #${id}`);
-        (collection as CommentReplyCollection).items.push({ ...commentBase });
+        (collection as CommentReplyList).items.push({ ...commentBase });
       }
       else {
         this.log('debug', `Done parsing comment #${id}`);
-        (collection as CommentCollection).items.push({
+        (collection as CommentList).items.push({
           ...commentBase,
           replyCount: attributes.reply_count || 0,
           replies: []
