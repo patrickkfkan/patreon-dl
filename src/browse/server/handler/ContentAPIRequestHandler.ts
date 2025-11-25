@@ -22,7 +22,8 @@ export default class ContentAPIRequestHandler extends Basehandler {
       tier_ids,
       collection_id,
       post_types,
-      date_published
+      date_published,
+      search
     } = req.query;
     const postTypes = post_types ? (post_types as string).split(',') : undefined;
     const tiers = tier_ids ? (tier_ids as string).split(',') : undefined;
@@ -54,6 +55,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
       datePublished,
       tiers,
       collection: collection_id as string | undefined,
+      search: search as string | undefined,
       sortBy
     };
   }
@@ -68,6 +70,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
       datePublished,
       tiers,
       collection,
+      search,
       sortBy
     } = this.#getContext(req, campaignId, contentType);
     
@@ -81,6 +84,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
           datePublished,
           tiers,
           collection,
+          search,
           sortBy,
           limit,
           offset
@@ -92,6 +96,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
           type,
           isViewable,
           datePublished,
+          search,
           sortBy,
           limit,
           offset
@@ -118,6 +123,7 @@ export default class ContentAPIRequestHandler extends Basehandler {
     );
     const list = this.#api.getCollectionList({
       campaign: campaignId,
+      search: req.query.search as string | undefined,
       sortBy,
       limit,
       offset

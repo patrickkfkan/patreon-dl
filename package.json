@@ -118,6 +118,7 @@
     "semver": "^7.7.2",
     "slick-carousel": "^1.8.1",
     "speedometer": "^1.1.0",
+    "string-strip-html": "^13.5.0",
     "undici": "^7.3.0",
     "yargs-parser": "^21.1.1",
     "youtubei.js": "^16.0.1"

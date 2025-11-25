@@ -59,9 +59,15 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
     }
 
     getCollectionList(params: GetCollectionListParams) {
-      const { sortBy = DEFAULT_COLLECTION_LIST_SORT_BY, limit = DEFAULT_COLLECTION_LIST_SIZE, offset = 0 } = params;
+      const {
+        search = '',
+        sortBy = DEFAULT_COLLECTION_LIST_SORT_BY,
+        limit = DEFAULT_COLLECTION_LIST_SIZE,
+        offset = 0
+      } = params;
       return this.db.getCollectionList({
         campaign: params.campaign,
+        search,
         sortBy,
         limit,
         offset

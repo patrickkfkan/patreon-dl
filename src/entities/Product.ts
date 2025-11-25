@@ -29,6 +29,12 @@ export interface Product {
   isAccessible: boolean;
   name: string | null;
   description: string | null;
+  /**
+   * `description` converted to plain text.
+   * Used by FTS.
+   * @since 3.5.0
+   */
+  descriptionText?: string | null;
   price: string | null;
   publishedAt: string | null;
   // The URL depends on `productType`:

@@ -111,13 +111,17 @@ class API {
 
   async getCollectionList(params: {
     campaign: Campaign | string;
+    search?: string;
     sortBy?: CollectionListSortBy;
     page?: number;
     itemsPerPage: number;
   }): Promise<CollectionList> {
-    const { campaign, sortBy } = params;
+    const { campaign, search, sortBy } = params;
     const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
     const urlObj = new URL(`/api/campaigns/${campaignId}/collections`, window.location.href);
+    if (search) {
+      urlObj.searchParams.append('search', search);
+    }
     if (sortBy) {
       urlObj.searchParams.append('sort_by', sortBy);
     }

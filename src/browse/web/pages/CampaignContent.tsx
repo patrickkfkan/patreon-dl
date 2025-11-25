@@ -16,6 +16,7 @@ import { useBrowseSettings } from "../contexts/BrowseSettingsProvider";
 import { type Filter, type FilterData, type PostFilterSearchParams } from "../../types/Filter";
 import FilterModalButton from "../components/FilterModalButton";
 import ProductList from "../components/ProductList";
+import SearchInputBox, { type SearchInputBoxHandle } from "../components/SearchInputBox";
 
 interface CampaignContentProps<T extends ContentType> {
   type: T;
@@ -76,20 +77,32 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const isFirstLoadRef = useRef(true);
+  const searchInputBoxRef = useRef<SearchInputBoxHandle>(null);
   
   let subject: { singular: string; plural: string };
+  let searchInputBoxPlaceholder: string;
   switch (contentType) {
     case 'post':
       subject = { singular: 'post', plural: 'posts' };
+      searchInputBoxPlaceholder = 'Search posts';
       break;
     case 'product':
     default:
       subject = { singular: 'product', plural: 'products' };
+      searchInputBoxPlaceholder = 'Search products';
       break;
   }
-  if (getCollectionIdFromLocation()) {
-    subject.singular += ' in collection';
-    subject.plural += ' in collection';
+  if (contentType === 'post' && getCollectionIdFromLocation()) {
+    const w = ' in collection';
+    subject.singular += w;
+    subject.plural += w;
+    searchInputBoxPlaceholder += w;
+  }
+  const q = viewParams.filter?.options.find((opt) => opt.searchParam === 'search')?.value?.trim();
+  if (q) {
+    const w = ` with "${q}"`;
+    subject.singular += w;
+    subject.plural += w;
   }
 
   useEffect(() => {
@@ -261,20 +274,22 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   return (
     <div className={`campaign-content campaign-content--${contentType}`}>
       <Container fluid className="p-0">
-        <Row className="mb-2 g-0 justify-content-center align-items-center">
-          <Col className="w-auto flex-fill">
-            {list && list.items.length > 0 && viewParams.page ? <ShowingText
-              total={list.total}
-              page={viewParams.page}
-              itemsPerPage={viewParams.itemsPerPage}
-              subject={subject} /> : null}
-          </Col>
+        <Row className="mb-3 g-0 align-items-center">
           <Col className="w-auto d-flex justify-content-end">
+            <SearchInputBox ref={searchInputBoxRef} placeholder={searchInputBoxPlaceholder} />
             <FilterModalButton
               options={filterOptions}
               onFilter={applyFilter}
+              searchInputBox={searchInputBoxRef}
             />
           </Col>
+        </Row>
+        <Row className="mb-2 g-0">
+          {list && list.items.length > 0 && viewParams.page ? <ShowingText
+            total={list.total}
+            page={viewParams.page}
+            itemsPerPage={viewParams.itemsPerPage}
+            subject={subject}/> : null}
         </Row>
       </Container>
       {listEl}

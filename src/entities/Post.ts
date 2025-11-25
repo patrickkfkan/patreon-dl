@@ -44,6 +44,12 @@ export interface Post {
   url: string | null;
   title: string | null;
   content: string | null;
+  /**
+   * `content` converted to plain text.
+   * Used by FTS.
+   * @since 3.5.0
+   */
+  contentText?: string | null;
   teaserText: string | null;
   publishedAt: string | null;
   editedAt: string | null;

@@ -21,7 +21,8 @@ const CONTEXT_QS_PARAMS: UnionToTuple<PostFilterSearchParams | 'collection_id'> 
   'tier_ids',
   'collection_id',
   'sort_by',
-  'date_published'
+  'date_published',
+  'search'
 ];
 
 function getContextQS() {

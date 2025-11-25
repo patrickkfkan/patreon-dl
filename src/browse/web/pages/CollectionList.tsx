@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import copy from 'fast-copy';
 import deepEqual from "deep-equal";
 import { useAPI } from "../contexts/APIProvider";
@@ -11,8 +11,10 @@ import { useParams, useSearchParams } from "react-router";
 import { useScroll } from "../contexts/MainContentScrollProvider";
 import { type BrowseSettings } from "../../types/Settings";
 import { useBrowseSettings } from "../contexts/BrowseSettingsProvider";
+import SearchInputBox from "../components/SearchInputBox";
 
 interface ViewParams {
+  search: string;
   sortBy: CollectionListSortBy;
   page: number | null;
   itemsPerPage: number;
@@ -24,6 +26,7 @@ type ViewParamsValue = {
 
 function getInitialViewParams(settings: BrowseSettings): ViewParams {
   return {
+    search: '',
     sortBy: 'last_updated',
     page: null,
     itemsPerPage: settings.listItemsPerPage
@@ -35,6 +38,9 @@ const viewParamsReducer = (
   values: ViewParamsValue
 ) => {
   const newParams = copy(currentParams);
+  if (values.search !== undefined) {
+    newParams.search = values.search;
+  }
   if (values.sortBy !== undefined) {
     newParams.sortBy = values.sortBy;
   }
@@ -55,6 +61,12 @@ function CollectionList() {
   const [viewParams, setViewParams] = useReducer(viewParamsReducer, getInitialViewParams(settings));
   const [list, setList] = useState<CollectionList | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const search = useCallback((value: string) => {
+    setViewParams({
+      search: value
+    });
+  }, []);
 
   useEffect(() => {
     const { sortBy, page } = viewParams;
@@ -108,21 +120,36 @@ function CollectionList() {
     return;
   }
 
+  const subject = {
+    singular: 'collection',
+    plural: 'collections'
+  };
+  if (viewParams.search) {
+    const w = ` with "${viewParams.search}"`;
+    subject.singular += w;
+    subject.plural += w;
+  }
+
   return (
     <Container fluid>
       <Row className="g-0 justify-content-center">
         <Col md={10} sm={12} style={{maxWidth: '40.5em'}}>
           <Container fluid className="p-0">
+            <Row className="mb-3 g-0 justify-content-center align-items-center">
+              <Col className="w-auto flex-fill">
+                <SearchInputBox
+                  placeholder="Search collections"
+                  onConfirm={search}
+                />
+              </Col>
+            </Row>
             <Row className="mb-2 g-0 justify-content-center align-items-center">
               <Col className="w-auto flex-fill">
-                { viewParams.page ? <ShowingText
+                { viewParams.page && <ShowingText
                   total={list.total}
                   page={viewParams.page}
                   itemsPerPage={viewParams.itemsPerPage}
-                  subject={{
-                    singular: 'collection',
-                    plural: 'collections'
-                  }} /> : null }
+                  subject={subject} /> }
               </Col>
               <Col className="w-auto d-flex justify-content-end">
                 <Form.Select

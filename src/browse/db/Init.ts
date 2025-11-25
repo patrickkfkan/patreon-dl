@@ -4,8 +4,11 @@ import { existsSync } from 'fs';
 import { commonLog } from '../../utils/logging/Logger.js';
 import { updateDB } from './Update.js';
 import semver from 'semver';
+import { initDBPostFTS } from './PostFTS.js';
+import { initDBCollectionFTS } from './CollectionFTS.js';
+import { initDBProductFTS } from './ProductFTS.js';
 
-const DB_SCHEMA_VERSION = '1.1.0';
+const DB_SCHEMA_VERSION = '1.2.0';
 
 export async function openDB(file: string, dryRun = false, logger?: Logger | null): Promise<Database.Database> {
   const dbFileExists = dryRun ? false : existsSync(file);
@@ -36,9 +39,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
 
   try {
     db.exec('PRAGMA foreign_keys = OFF;');
+    db.exec(`BEGIN TRANSACTION;`);
     db.exec(`
-      BEGIN TRANSACTION;
-
       CREATE TABLE IF NOT EXISTS "user" (
         "user_id" TEXT,
         "full_name" TEXT,
@@ -168,6 +170,8 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
         FOREIGN KEY("post_id") REFERENCES "content"("content_id")
       );
 
+      -- Added v1.2.0 --
+
       CREATE TABLE IF NOT EXISTS "collection" (
         "collection_id" TEXT,
         "campaign_id" TEXT,
@@ -198,14 +202,21 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
 
       CREATE INDEX IF NOT EXISTS post_collection_by_created ON post_collection(collection_id, campaign_id, post_created_at);
 
+      ------------------
+
       CREATE TABLE IF NOT EXISTS "env" (
         "env_key" TEXT,
         "value" TEXT,
         PRIMARY KEY("env_key")
       );
-
-      COMMIT;
     `);
+
+    // FTS added v1.2.0
+    initDBPostFTS(db);
+    initDBProductFTS(db);
+    initDBCollectionFTS(db);
+
+    db.exec(`COMMIT;`);
   }
   catch (error: any) {
     let rollbackError: any = null;

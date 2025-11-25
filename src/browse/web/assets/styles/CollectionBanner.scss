@@ -4,6 +4,7 @@
   overflow: hidden;
   border: none;
   border-radius: 0;
+  max-width: 40.5em;
 
   &__thumbnail {
     z-index: 100; // This is to keep thumbnail above the fade-content overlay

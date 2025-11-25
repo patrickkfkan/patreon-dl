@@ -420,7 +420,8 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           break;
         }
         case 'latest':
-        case 'oldest': {
+        case 'oldest':
+        case 'best_match': {
           const older = `
             (
               (published_at < ?)
@@ -454,6 +455,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const previous = (this.getContentList(
         {
           ...context,
+          search: context.search,
           sortBy: previousSortBy,
           limit: 1, offset: 0
         },
@@ -466,6 +468,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const next = (this.getContentList(
         {
           ...context,
+          search: context.search,
           sortBy: nextSortBy,
           limit: 1, offset: 0
         },
@@ -487,7 +490,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       db?: { whereClauses: string[]; whereValues: any[]; },
       includeTotal = true
     ): ContentList<T> {
-      const { campaign, type: contentType, isViewable, datePublished, sortBy, limit, offset } = params;
+      const { campaign, type: contentType, isViewable, datePublished, search, sortBy, limit, offset } = params;
       const { whereClauses: extraWhereClauses = [], whereValues: extraWhereValues = [] } = db || {};
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
       const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
@@ -496,6 +499,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         campaign: campaignId,
         isViewable,
         datePublished,
+        search,
         tiers: params.type === 'post' ? JSON.stringify(tiers) : 'N/A',
         collection: params.type === 'post' ? JSON.stringify(collection) : 'N/A',
         sortBy,
@@ -505,6 +509,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const contentSubtypes = params.type === 'post' ? (params as GetContentListParams<'post'>).postTypes : null;
       if (tiers && tiers.length > 0 && !campaign) {
         throw Error('Invalid params: "tiers" must be used with "campaign"');
+      }
+      if (search && !contentType) {
+        throw Error('Invalid params: "search" must be used with "contentType"');
       }
       const joinParts: string[] = [];
       if (tiers && tiers.length > 0) {
@@ -558,6 +565,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       if (whereIns.length > 0) {
         whereClauseParts.push(...whereIns.map((wi) => `${wi.column} IN (${wi.values.map(() => '?').join(', ')})`));
       }
+      if (search) {
+        whereClauseParts.push(`${contentType}_fts MATCH ?`);
+      }
       whereClauseParts.push(...extraWhereClauses);
       const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
       const whereValues = [
@@ -565,9 +575,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         ...whereIns.reduce<(string | number)[]>((result, {values}) => {
           result.push(...values);
           return result;
-        }, []),
-        ...extraWhereValues
+        }, [])
       ];
+      if (search) {
+        whereValues.push(search);        
+      }
+      whereValues.push(...extraWhereValues);
       let orderByClause: string;
       switch (sortBy) {
         case 'a-z':
@@ -581,6 +594,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           break;
         case 'oldest':
           orderByClause = 'published_at ASC';
+          break;
+        case 'best_match':
+          orderByClause = `ORDER BY bm25(${contentType}_fts) DESC`;
           break;
         default:
           orderByClause = '';
@@ -598,14 +614,28 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         limitOffsetClause = 'LIMIT ?';
         limitOffsetValues.push(limit);
       }
+
+      let fromClause: string;
+      if (search) {
+        fromClause = `
+          FROM
+            ${contentType}_fts
+          LEFT JOIN
+            ${contentType}_fts_source ON ${contentType}_fts_source.fts_rowid = ${contentType}_fts.rowid
+          LEFT JOIN
+            content ON content.content_id = ${contentType}_fts_source.${contentType}_id
+        `;
+      } else {
+        fromClause = 'FROM content';
+      }
+
       const rows = this.all(
         `
         SELECT DISTINCT
           details,
           IFNULL(post_comments.comment_count, 0) AS comment_count,
           comments
-        FROM
-          content
+        ${fromClause}
         LEFT JOIN
           post_comments ON post_comments.post_id = content.content_id AND content.content_type = 'post'
         ${join}
@@ -617,7 +647,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       );
       const items = rows.map<T extends 'post' ? PostWithComments : T extends 'product' ? Product : PostWithComments | Product>((row) => this.#parseContentRowJoinedComments(row));
       const totalResult = includeTotal ? this.get(
-          `SELECT COUNT(*) AS content_count FROM content ${join} ${whereClause}`,
+          `SELECT COUNT(*) AS content_count ${fromClause} ${join} ${whereClause}`,
           [...whereValues]
       ) : null;
       const total = totalResult ? (totalResult.content_count as number) : 0;
@@ -916,8 +946,17 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
     }
 
     getCollectionList(params: GetCollectionListParams): CollectionList {
-      const { campaign, sortBy, limit, offset } = params;
+      const { campaign, search, sortBy, limit, offset } = params;
       const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+
+      const whereClauseParts: string[] = [ 'campaign_id = ?' ];
+      const whereValues: (string | number)[] = [ campaignId ];
+      if (search) {
+        whereClauseParts.push('collection_fts MATCH ?');
+        whereValues.push(search);
+      }
+      const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
+
       let orderByClause: string;
       switch (sortBy) {
         case 'a-z':
@@ -938,6 +977,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       if (orderByClause) {
         orderByClause = `ORDER BY ${orderByClause}`;
       }
+
       let limitOffsetClause = '';
       const limitOffsetValues: number[] = [];
       if (limit !== undefined && offset !== undefined) {
@@ -948,22 +988,37 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         limitOffsetClause = 'LIMIT ?';
         limitOffsetValues.push(limit);
       }
+
+      let fromClause: string;
+      if (search) {
+        fromClause = `
+          FROM
+            collection_fts
+          LEFT JOIN
+            collection_fts_source ON collection_fts_source.fts_rowid = collection_fts.rowid
+          LEFT JOIN
+            collection ON collection.collection_id = collection_fts_source.collection_id
+        `;
+      } else {
+        fromClause = 'FROM collection';
+      }
+
       const rows = this.all(
         `
         SELECT
           details, post_count
-        FROM collection
-          LEFT JOIN (SELECT COUNT(post_id) AS post_count, collection_id FROM post_collection GROUP BY collection_id) pcc ON pcc.collection_id = collection.collection_id
-        WHERE
-          campaign_id = ?
+        ${fromClause}
+        LEFT JOIN
+          (SELECT COUNT(post_id) AS post_count, collection_id FROM post_collection GROUP BY collection_id) pcc ON pcc.collection_id = collection.collection_id
+        ${whereClause}
         ${orderByClause}
         ${limitOffsetClause}
         `,
-        [campaignId, ...limitOffsetValues]
+        [...whereValues, ...limitOffsetValues]
       );
       const totalResult = this.get(
-        `SELECT COUNT(*) AS collection_count FROM collection WHERE campaign_id = ?`,
-        [campaignId]
+        `SELECT COUNT(*) AS collection_count ${fromClause} ${whereClause}`,
+        [...whereValues]
       );
       const total = totalResult ? (totalResult.collection_count as number) : 0;
       const collections = rows.map((row) => {

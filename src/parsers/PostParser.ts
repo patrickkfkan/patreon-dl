@@ -1,3 +1,4 @@
+import { stripHtml } from 'string-strip-html';
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
@@ -286,6 +287,7 @@ export default class PostParser extends Parser {
         url: attributes.url || null,
         title: attributes.title || null,
         content: attributes.content || null,
+        contentText: stripHtml(attributes.content || '').result,
         teaserText: attributes.teaser_text || null,
         publishedAt: attributes.published_at || null,
         editedAt: attributes.edited_at || null,

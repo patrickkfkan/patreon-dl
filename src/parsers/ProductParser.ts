@@ -1,3 +1,4 @@
+import { stripHtml } from 'string-strip-html';
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type ProductList } from '../entities/Product.js';
@@ -141,6 +142,7 @@ export default class ProductParser extends Parser {
         isAccessible,
         name,
         description,
+        descriptionText: stripHtml(description || '').result,
         price,
         publishedAt,
         url,

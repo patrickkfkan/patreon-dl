@@ -138,7 +138,14 @@ export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
         options: datePublishedOptions
       });
 
-      return { sections };
+      return {
+        sections,
+        external: [
+          {
+            searchParam: 'search'
+          }
+        ]
+      };
     }
 
     #getPostTypeTitle(postType: string) {
@@ -242,7 +249,14 @@ export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
         options: datePublishedOptions
       });
 
-      return { sections };
+      return {
+        sections,
+        external: [
+          {
+            searchParam: 'search'
+          }
+        ]
+      };
     }
 
     getMediaFilterData(
