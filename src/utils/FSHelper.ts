@@ -8,7 +8,7 @@ import { type Product } from '../entities/Product.js';
 import { type Campaign } from '../entities/Campaign.js';
 import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
-import { type Post } from '../entities/Post.js';
+import { type Collection, type Post } from '../entities/Post.js';
 import { type FileExistsAction } from '../downloaders/DownloaderOptions.js';
 import {type LogLevel} from './logging/Logger.js';
 import type Logger from './logging/Logger.js';
@@ -109,10 +109,16 @@ export default class FSHelper {
     };
   }
 
-  getCollectionsDir(campaign: Campaign) {
+  getCollectionsDir(campaign: Campaign, collection: Collection) {
     const campaignRootDir = this.getCampaignDirs(campaign).root;
+    const collectionsDir = this.createDir(path.resolve(campaignRootDir, COLLECTIONS_FIXED_DIR_NAMES.COLLECTIONS));
     return {
-      root: path.resolve(campaignRootDir, COLLECTIONS_FIXED_DIR_NAMES.COLLECTIONS)
+      root: path.resolve(
+        collectionsDir,
+        FilenameFormatHelper.getCollectionDirName(
+          collection, this.config.dirNameFormat.content
+        )
+      )
     };
   }
 

@@ -154,4 +154,5 @@ export interface Collection {
   numPosts: number | null;
   postIds: string[] | null;
   thumbnail: Downloadable<CollectionThumbnailMediaItem> | null;
+  raw: object;
 }

@@ -1032,7 +1032,7 @@ export default class PostDownloader extends Downloader<Post> {
         this.emit('phaseBegin', { target: collection, phase: 'saveInfo' });
   
         // Step 1: create collection directories
-        const collectionDirs = this.fsHelper.getCollectionsDir(campaign);
+        const collectionDirs = this.fsHelper.getCollectionsDir(campaign, collection);
         this.log('debug', 'Campaign directories: ', collectionDirs);
         this.fsHelper.createDir(collectionDirs.root);
   
@@ -1041,13 +1041,18 @@ export default class PostDownloader extends Downloader<Post> {
         const summaryFile = path.resolve(collectionDirs.root, 'info.txt');
         const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
         this.logWriteTextFileResult(saveSummaryResult, collection, 'collection summary');
-  
+
+        const collectionRawFile = path.resolve(collectionDirs.root, 'collection-api.json');
+        const saveCollectionRawResult = await this.fsHelper.writeTextFile(
+          collectionRawFile, collection.raw, this.config.fileExistsAction.infoAPI);
+        this.logWriteTextFileResult(saveCollectionRawResult, collection, 'collection API data');
+ 
+        this.emit('phaseEnd', { target: collection, phase: 'saveInfo' });
+
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
-  
-        this.emit('phaseEnd', { target: collection, phase: 'saveInfo' });
-  
+    
         // Step 3: download collection media items
         if (collection.thumbnail) {
           this.emit('phaseBegin', { target: collection, phase: 'saveMedia' });

@@ -3,8 +3,8 @@ import { type MediaLike } from '../entities/MediaItem.js';
 import { type Product } from '../entities/Product.js';
 import Formatter, { type FormatFieldName, type FormatFieldRules, type FormatFieldValues } from './Formatter.js';
 import URLHelper from './URLHelper.js';
-import { type Post } from '../entities/Post.js';
-import { toISODate } from './Misc.js';
+import { type Collection, type Post } from '../entities/Post.js';
+import { createSafeSlug, toISODate } from './Misc.js';
 import FSHelper from './FSHelper.js';
 
 type CampaignDirNameFormatFieldName =
@@ -87,6 +87,20 @@ export default class FilenameFormatHelper {
       dict['content.name'] = content.name;
     }
 
+    return this.#getFilename(format, dict, CONTENT_DIR_NAME_VALIDATION_SCHEMA, CONTENT_DIR_NAME_FALLBACK_FORMAT);
+  }
+
+  static getCollectionDirName(collection: Collection, format: string): string {
+    const slug = collection.title ?
+      `${createSafeSlug(collection.title)}-${collection.id}`
+      : `collection-${collection.id}`;
+    const dict: FormatFieldValues<ContentDirNameFormatFieldName> = {
+      'content.id': collection.id,
+      'content.type': collection.type,
+      'content.slug': slug,
+      'content.name': collection.title,
+      'content.publishDate': collection.createdAt ? toISODate(collection.createdAt) : null
+    };
     return this.#getFilename(format, dict, CONTENT_DIR_NAME_VALIDATION_SCHEMA, CONTENT_DIR_NAME_FALLBACK_FORMAT);
   }
 

@@ -578,6 +578,7 @@ export default abstract class Parser {
       numPosts: attributes.num_posts || null,
       postIds: Array.isArray(attributes.post_ids) ? attributes.post_ids : null,
       thumbnail,
+      raw: data
     };
     this.log('debug', `Done parsing collection #${id}`);
     return collection;
