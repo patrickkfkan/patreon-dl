@@ -4,27 +4,32 @@ import { useAPI } from "../contexts/APIProvider";
 import { useEffect, useState } from "react";
 import CampaignHeader from "../components/CampaignHeader";
 import { type CampaignWithCounts } from "../../types/Campaign";
+import CollectionBanner from "../components/CollectionBanner";
+import { type Collection } from "../../../entities/Post";
 
-function CampaignLayout() {
-  const { id: campaignId } = useParams();
+function CollectionLayout() {
+  const { id: collectionId } = useParams();
 
-  if (!campaignId) {
+  if (!collectionId) {
     return null;
   }
   const { api } = useAPI();
   const [campaign, setCampaign] = useState<CampaignWithCounts | null>(null);
+  const [collection, setCollection] = useState<Collection | null>(null);
 
   useEffect(() => {
     const abortController = new AbortController();
     void (async () => {
+      const { campaignId, collection } = await api.getCollection(collectionId);
       const campaign = await api.getCampaign({ id: campaignId, withCounts: true });
       if (!abortController.signal.aborted) {
         setCampaign(campaign);
+        setCollection(collection);
       };
     })();
 
     return () => abortController.abort();
-  }, [api, campaignId]);
+  }, [api, collectionId]);
 
   if (!campaign) {
     return null;
@@ -39,6 +44,7 @@ function CampaignLayout() {
       </Row>
       <Row className="justify-content-center g-0">
         <Col lg={8} md={10} sm={12} className="px-3 px-md-0 d-flex flex-column align-items-center justify-content-center">
+          {collection && <CollectionBanner collection={collection} />}
           <Outlet />
         </Col>
       </Row>
@@ -46,4 +52,4 @@ function CampaignLayout() {
   )
 }
 
-export default CampaignLayout;
+export default CollectionLayout;

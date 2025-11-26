@@ -14,8 +14,8 @@ import Theme from "./components/Theme";
 import { GlobalModalsProvider } from "./contexts/GlobalModalsProvider";
 import CampaignMedia from "./pages/CampaignMedia";
 import ProductContent from "./pages/ProductContent";
-import CollectionContent from "./pages/CollectionContent";
 import CollectionList from "./pages/CollectionList";
+import CollectionLayout from "./layouts/CollectionLayout";
 
 function App() {
   return (
@@ -37,7 +37,9 @@ function App() {
               </Route>
               <Route path="posts/:id" element={<PostContent />} />
               <Route path="products/:id" element={<ProductContent />} />
-              <Route path="collections/:id" element={<CollectionContent />} />
+              <Route path="collections/:id" element={<CollectionLayout />}>
+                <Route index element={<CampaignContent type="post" collection />} />
+              </Route>
             </Route>
           </Routes>
         </GlobalModalsProvider>

@@ -17,9 +17,11 @@ import { type Filter, type FilterData, type PostFilterSearchParams } from "../..
 import FilterModalButton from "../components/FilterModalButton";
 import ProductList from "../components/ProductList";
 import SearchInputBox, { type SearchInputBoxHandle } from "../components/SearchInputBox";
+import { type Collection } from "../../../entities/Post";
 
 interface CampaignContentProps<T extends ContentType> {
   type: T;
+  collection?: T extends 'post' ? (boolean | undefined) : undefined;
 }
 
 interface ViewParams {
@@ -31,11 +33,6 @@ interface ViewParams {
 type ViewParamsValues = {
   [T in keyof ViewParams]?: ViewParams[T];
 };
-
-function getCollectionIdFromLocation() {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get('collection_id');
-}
 
 function getInitialViewParams(settings: BrowseSettings): ViewParams {
   return {
@@ -63,15 +60,18 @@ const viewParamsReducer = (
 };
 
 function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) {
-  const { type: contentType } = props;
-  const { id: campaignId } = useParams();
+  const { type: contentType, collection: isCollection } = props;
+  const { id: domainId } = useParams(); // Campaign ID or collection ID
   const [ contextQS, setContextQS ] = useState('');
+  const [ campaignId, setCampaignId ] = useState(isCollection ? null : domainId);
+  const collectionId = isCollection ? domainId : null;
 
   const { api } = useAPI();
   const { settings } = useBrowseSettings();
   const { scrollTo } = useScroll();
   const [viewParams, setViewParams] = useReducer(viewParamsReducer, getInitialViewParams(settings));
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [collection, setCollection] = useState<Collection | null>(null);
   const [list, setList] = useState<ContentList<T> | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterData<PostFilterSearchParams> | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,7 +92,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
       searchInputBoxPlaceholder = 'Search products';
       break;
   }
-  if (contentType === 'post' && getCollectionIdFromLocation()) {
+  if (contentType === 'post' && isCollection) {
     const w = ' in collection';
     subject.singular += w;
     subject.plural += w;
@@ -106,7 +106,25 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   }
 
   useEffect(() => {
+    if (!collectionId) {
+      setCollection(null);
+      return;
+    }
+    const abortController = new AbortController();
+    void (async () => {
+      const { collection, campaignId } = await api.getCollection(collectionId);
+      if (!abortController.signal.aborted) {
+        setCollection(collection);
+        setCampaignId(campaignId);
+      }
+    })();
+
+    return () => abortController.abort();
+  }, [api, collectionId]);
+
+  useEffect(() => {
     if (!campaignId) {
+      setFilterOptions(null);
       return;
     }
     setFilterOptions(null);
@@ -143,6 +161,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
 
   useEffect(() => {
     if (!campaignId) {
+      setCampaign(null);
       return;
     }
     const abortController = new AbortController();
@@ -158,7 +177,8 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
 
   useEffect(() => {
     const { filter, page } = viewParams;
-    if (!campaign || !filter || page === null) {
+    if (!campaign || !filter || page === null || (isCollection && !collection)) {
+      setList(null);
       return;
     }
     const abortController = new AbortController();
@@ -167,7 +187,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
         campaign,
         type: contentType,
         ...viewParams,
-        collectionId: getCollectionIdFromLocation(),
+        collectionId: collection?.id,
         filter,
         page
       });
@@ -177,7 +197,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
     })();
 
     return () => abortController.abort();
-  }, [api, campaign, contentType, viewParams]);
+  }, [api, campaign, contentType, isCollection, collection, viewParams]);
 
   useEffect(() => {
     const page = Number(searchParams.get('p')) || 1;
@@ -223,9 +243,13 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   }, [viewParams, gotoPage]);
 
   useEffect(() => {
+    if (isCollection && !collection) {
+      setContextQS('');
+      return;
+    }
     const filter = viewParams.filter;
     const params = new URLSearchParams();
-    const collectionId = getCollectionIdFromLocation();
+    const collectionId = isCollection ? collection?.id : undefined;
     if (collectionId) {
       params.set('collection_id', collectionId);
     }
@@ -237,7 +261,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
       }
     }
     setContextQS(params.toString());
-  }, [viewParams.filter]);
+  }, [viewParams.filter, isCollection, collection]);
 
   const listEl = useMemo(() => {
     if (!list || list.items.length === 0) {
