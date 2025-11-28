@@ -202,6 +202,25 @@ export async function openDB(file: string, dryRun = false, logger?: Logger | nul
 
       CREATE INDEX IF NOT EXISTS post_collection_by_created ON post_collection(collection_id, campaign_id, post_created_at);
 
+      CREATE TABLE IF NOT EXISTS "post_tag" (
+        "post_tag_id" TEXT,
+        "campaign_id" TEXT,
+        "value" TEXT,
+        "details" TEXT NOT NULL,
+        PRIMARY KEY("post_tag_id", "campaign_id"),
+        FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id")
+      );
+
+      CREATE TABLE IF NOT EXISTS "post_tag_post" (
+        "post_tag_id" TEXT,
+        "campaign_id" TEXT,
+        "post_id" TEXT,
+        PRIMARY KEY("post_tag_id", "campaign_id", "post_id"),
+        FOREIGN KEY("post_id") REFERENCES "content"("content_id"),
+        FOREIGN KEY("campaign_id") REFERENCES "campaign"("campaign_id"),
+        FOREIGN KEY("post_tag_id", "campaign_id") REFERENCES "post_tag"("post_tag_id", "campaign_id")
+      );
+
       ------------------
 
       CREATE TABLE IF NOT EXISTS "env" (

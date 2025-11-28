@@ -138,6 +138,20 @@ export function FilterAPIMixin<TBase extends APIConstructor>(Base: TBase) {
         options: datePublishedOptions
       });
 
+      const { tags } = this.db.getPostTagList({ campaign: campaignId });
+      if (tags.length > 0) {
+        const tagOptions: FilterOption[] = tags.map((tag) => ({
+          title: tag.value,
+          value: tag.id
+        }));
+        sections.push({
+          title: 'Tagged',
+          displayHint: 'pill_small',
+          searchParam: 'tag_id',
+          options: tagOptions
+        });
+      }
+
       return {
         sections,
         external: [

@@ -8,8 +8,8 @@
   "scripts": {
     "build": "npm run build:core && npm run build:web",
     "build:core": "rm -rf dist && npx tsc -p tsconfig.json",
-    "lint": "npx eslint ./src",
-    "lint:fix": "npx eslint ./src --fix",
+    "lint": "npx --node-options='--max-old-space-size=4096' eslint ./src",
+    "lint:fix": "npx --node-options='--max-old-space-size=4096' eslint ./src --fix",
     "build:web": "vite build",
     "doc": "npx typedoc"
   },

@@ -11,7 +11,7 @@ import ObjectHelper from '../utils/ObjectHelper.js';
 import { type Reward, type Tier } from '../entities/Reward.js';
 import URLHelper from '../utils/URLHelper.js';
 import FSHelper from '../utils/FSHelper.js';
-import { type Collection, type LinkedAttachment } from '../entities/Post.js';
+import { type PostTag, type Collection, type LinkedAttachment } from '../entities/Post.js';
 
 const DOWNLOADABLE_TYPES = [ 'media' ] as const;
 
@@ -151,6 +151,7 @@ export default abstract class Parser {
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'user', asCreator?: boolean): User | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'campaign'): Campaign | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'collection'): Collection | null;
+  protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: 'post_tag'): PostTag | null;
   protected findInAPIResponseIncludedArray(included: Array<any>, id: string, matchType: string, ...args: any[]): any {
     this.log('debug', `Find ${matchType} item #${id} in API response`);
     for (const inc of included) {
@@ -177,6 +178,9 @@ export default abstract class Parser {
         }
         else if (_matchType === 'collection') {
           return this.parseCollectionAPIDataInIncludedArray(inc);
+        }
+        else if (_matchType === 'post_tag') {
+          return this.parsePostTagAPIDataInIncludedArray(inc);
         }
       }
     }
@@ -582,6 +586,28 @@ export default abstract class Parser {
     };
     this.log('debug', `Done parsing collection #${id}`);
     return collection;
+  }
+
+  protected parsePostTagAPIDataInIncludedArray(data: any) {
+    const { id, attributes } = data;
+    if (!id) {
+      this.log('error', 'Parse error: \'id\' field missing in API data of post_tag');
+      return null;
+    }
+    if (!attributes || typeof attributes !== 'object') {
+      this.log('error', `Parse error: 'attributes' field missing in API data of post_tag "${id}" or has incorrect type`);
+      return null;
+    }
+    if (!attributes.value) {
+      this.log('error', `Parse error: 'value' field missing or empty in API data of post_tag "${id}"`);
+      return null;
+    }
+    const tag: PostTag = {
+      type: 'postTag',
+      id,
+      value: attributes.value
+    };
+    return tag;
   }
 
   protected parseInlineMedia(postId: string, content: string, included: Array<any>) {

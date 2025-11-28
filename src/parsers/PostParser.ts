@@ -2,7 +2,7 @@ import { stripHtml } from 'string-strip-html';
 import { type Campaign } from '../entities/Campaign.js';
 import { type Downloadable } from '../entities/Downloadable.js';
 import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type MediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type VideoMediaItem } from '../entities/MediaItem.js';
-import { type LinkedAttachment, PostType, type Post, type PostList as PostList, type PostEmbed, type Collection } from '../entities/Post.js';
+import { type LinkedAttachment, PostType, type Post, type PostList as PostList, type PostEmbed, type Collection, type PostTag } from '../entities/Post.js';
 import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
@@ -279,6 +279,22 @@ export default class PostParser extends Parser {
         }, []);
       }
 
+      // Tags
+      let tags: PostTag[] = [];
+      const tagsData = ObjectHelper.getProperty(postJSON, 'relationships.user_defined_tags.data');
+      if (Array.isArray(tagsData)) {
+        tags = tagsData.reduce<PostTag[]>((result, t) => {
+          const id = ObjectHelper.getProperty(t, 'id');
+          if (id) {
+            const tag = this.findInAPIResponseIncludedArray(includedJSON, id, 'post_tag');
+            if (tag) {
+              result.push(tag);
+            }
+          }
+          return result;
+        }, []);
+      }
+
       const post: Post = {
         id,
         type: 'post',
@@ -296,6 +312,7 @@ export default class PostParser extends Parser {
         thumbnail,
         tiers,
         collections,
+        tags,
         embed,
         attachments,
         linkedAttachments,

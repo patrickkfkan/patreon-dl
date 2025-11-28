@@ -219,24 +219,29 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
           )
           break;
         }
-        case 'pill': {
+        case 'pill':
+        case 'pill_small': {
           // 'outline-primary' in Vapor theme sticks to the background - need to use secondary
           const variant = settings.theme.toLowerCase() === 'vapor' ? 'outline-secondary' : 'outline-primary';
+          const size = section.displayHint === 'pill_small' ? 'sm' : undefined;
           const optionEls = section.options.map((option) => (
-            <ToggleButton
-              key={`${section.searchParam}:${option.value}`}
-              type="checkbox"
-              id={`filter-select-${section.searchParam}:${option.value}`}
-              checked={isSelected(modalFilter, section, option)}
-              value={option.value || ''}
-              variant={variant}
-              onChange={() => handleFilterValueSelect(section, option, true)}
-            >
-              {option.title}
-            </ToggleButton>
+            <div>
+              <ToggleButton
+                key={`${section.searchParam}:${option.value}`}
+                type="checkbox"
+                size={size}
+                id={`filter-select-${section.searchParam}:${option.value}`}
+                checked={isSelected(modalFilter, section, option)}
+                value={option.value || ''}
+                variant={variant}
+                onChange={() => handleFilterValueSelect(section, option, true)}
+              >
+                {option.title}
+              </ToggleButton>
+            </div>
           ));
           mainContentEl = (
-            <Stack direction="horizontal" gap={2}>
+            <Stack direction="horizontal" gap={2} className="flex-wrap">
               {...optionEls}
             </Stack>
           )

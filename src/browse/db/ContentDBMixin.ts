@@ -1,7 +1,7 @@
 import { type Comment, type Downloadable, type Post, type Product, type Tier, type Campaign } from '../../entities';
-import { type Collection } from '../../entities/Post';
+import { type PostTag, type Collection } from '../../entities/Post';
 import { getYearMonthString, type KeysOfValue } from '../../utils/Misc.js';
-import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy, type GetCollectionListParams, type CollectionList } from '../types/Content.js';
+import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy, type GetCollectionListParams, type CollectionList, type GetPostTagListParams, type PostTagList } from '../types/Content.js';
 import { type CampaignDBConstructor } from './CampaignDBMixin.js';
 
 export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase) {
@@ -76,10 +76,11 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         // Save content media
         this.#saveContentMedia(content);
 
-        // Save tiers and collections
+        // Save tiers and collections and tags
         if (content.type === 'post') {
           this.#savePostTiers(content);
           this.#savePostCollection(content);
+          this.#savePostTags(content);
         }
 
         this.exec('COMMIT');
@@ -495,6 +496,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
       const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
       const collection = params.type === 'post' ? (params as GetContentListParams<'post'>).collection : null;
+      const tag = params.type === 'post' ? (params as GetContentListParams<'post'>).tag : null;
       this.log('debug', `Get ${contentType}s from DB:`, {
         campaign: campaignId,
         isViewable,
@@ -502,6 +504,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         search,
         tiers: params.type === 'post' ? JSON.stringify(tiers) : 'N/A',
         collection: params.type === 'post' ? JSON.stringify(collection) : 'N/A',
+        tag: params.type === 'post' ? JSON.stringify(tag) : 'N/A',
         sortBy,
         limit,
         offset
@@ -519,6 +522,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
       if (collection) {
         joinParts.push(`LEFT JOIN post_collection ON post_collection.post_id = content.content_id`);
+      }
+      if (tag) {
+        joinParts.push(`LEFT JOIN post_tag_post ON post_tag_post.post_id = content.content_id AND post_tag_post.campaign_id = content.campaign_id`);
       }
       const join = joinParts.join(' ');
       const whereEquals: { column: string; value: string | number; }[] = [];
@@ -548,6 +554,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         whereEquals.push({
           column: 'post_collection.collection_id',
           value: typeof collection === 'string' ? collection : collection.id
+        });
+      }
+      if (tag) {
+        whereEquals.push({
+          column: 'post_tag_post.post_tag_id',
+          value: typeof tag === 'string' ? tag : tag.id
         });
       }
       const whereIns: { column: string; values: (string | number)[] }[] = [];
@@ -877,6 +889,67 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
+    savePostTag(tag: PostTag, campaign: Campaign | null, overwriteIfExists = true) {
+      this.log('debug', `Save post_tag "${tag.id}" to DB`);
+      try {
+        // Normally, campaign would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCampaign(campaign, new Date(), false);
+
+        const tagExists = this.checkPostTagExists(tag.id, campaign);
+        if (tagExists && !overwriteIfExists) {
+          return;
+        }
+
+        if (!tagExists) {
+          this.log('debug', `INSERT post_tag "${tag.id}"`);
+          this.run(
+            `
+            INSERT INTO post_tag (
+              post_tag_id,
+              campaign_id,
+              value,
+              details
+            )
+            VALUES (?, ?, ?, ?)
+            `,
+            [
+              tag.id,
+              campaign?.id || '-1',
+              tag.value,
+              JSON.stringify(tag)
+            ]
+          );
+        } else {
+          this.log('debug', `post_tag "${tag.id}" already exists in DB - update record`);
+          this.run(`
+            UPDATE post_tag
+            SET
+              value = ?,
+              details = ?
+            WHERE
+              post_tag_id = ? AND
+              campaign_id = ?
+            `,
+            [
+              tag.value,
+              JSON.stringify(tag),
+              tag.id,
+              campaign?.id || '-1'
+            ]
+          );
+        }
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to save post_tag "${tag.id}" to DB:`,
+          error
+        );
+      }
+    }
+
     getCollection(id: string) {
       this.log('debug', `Get collection #${id} from DB`);
       try {
@@ -1055,6 +1128,30 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
+    checkPostTagExists(id: string, campaign: Campaign | null) {
+      this.log('debug', `Check if tag "${id}" exists in DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT COUNT(*) as count
+          FROM post_tag
+          WHERE
+            post_tag_id = ? AND
+            campaign_id = ?
+          `,
+          [ id, campaign?.id || '-1']
+        );
+        return result.count > 0;
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to check if post_tag "${id}" exists in DB:`,
+          error
+        );
+        return false;
+      }
+    }
+
     getPostComments(post: Post | string): Comment[] | null {
       const postId = typeof post === 'string' ? post : post.id;
       this.log('debug', `Get comments for post #${postId}`);
@@ -1063,6 +1160,73 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         [postId]
       );
       return result ? JSON.parse(result.comments) : null;      
+    }
+
+    #savePostTags(post: Post) {
+      this.log('debug', `Clear post_tag_post for post #${post.id}`);
+      this.run(`DELETE FROM post_tag_post WHERE post_id = ?`, [
+        post.id
+      ]);
+      if (!post.tags || post.tags.length === 0) {
+        return;
+      }
+      for (const tag of post.tags) {
+        this.savePostTag(tag, post.campaign, false);
+        try {
+          this.run(
+            `
+            INSERT INTO post_tag_post (
+              post_tag_id,
+              campaign_id,
+              post_id
+            )
+            VALUES (?, ?, ?)
+            `,
+            [
+              tag.id,
+              post.campaign?.id || '-1',
+              post.id
+            ]
+          );
+        }
+        catch (error) {
+          this.log('error', `Failed to save post_tag_post for post #${post.id} -> post_tag "${tag.id}":`, error);
+        }
+      }
+    }
+
+    getPostTagList(params: GetPostTagListParams): PostTagList {
+      const { campaign } = params;
+      const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+
+      const whereClauseParts: string[] = [ 'campaign_id = ?' ];
+      const whereValues: (string | number)[] = [ campaignId ];     
+      const whereClause = `WHERE ${whereClauseParts.join(' AND ')}`;
+      const orderByClause = 'ORDER BY post_tag.value ASC';
+      const fromClause = 'FROM post_tag';
+
+      const rows = this.all(
+        `
+        SELECT
+          details
+        ${fromClause}
+        ${whereClause}
+        ${orderByClause}
+        `,
+        [...whereValues]
+      );
+      const totalResult = this.get(
+        `SELECT COUNT(*) AS tag_count ${fromClause} ${whereClause}`,
+        [...whereValues]
+      );
+      const total = totalResult ? (totalResult.tag_count as number) : 0;
+      const tags = rows.map((row) => {
+        return JSON.parse(row.details) as PostTag;
+      });
+      return {
+        tags,
+        total
+      };
     }
   };
 }

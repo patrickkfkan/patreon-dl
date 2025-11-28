@@ -31,14 +31,6 @@ const SearchInputBox = forwardRef<SearchInputBoxHandle, SearchInputBoxProps>((pr
     onConfirm(input);
   }, [input, onConfirm]);
 
-  const clear = useCallback(() => {
-    if (input.trim() === '') {
-      return;
-    }
-    setInput('');
-    confirm();
-  }, [input, confirm])
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {

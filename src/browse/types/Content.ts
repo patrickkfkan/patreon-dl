@@ -1,5 +1,5 @@
 import { type Campaign, type Comment, type Post, type Product, type Tier } from "../../entities/index.js";
-import { type Collection } from "../../entities/Post.js";
+import { type PostTag, type Collection } from "../../entities/Post.js";
 
 export type ContentListSortBy = 'a-z' | 'z-a' | 'latest' | 'oldest';
 export type ContentType = 'post' | 'product';
@@ -22,6 +22,7 @@ export type GetContentListParams<T extends ContentType> =
     postTypes?: string[];
     tiers?: Tier[] | string[];
     collection?: Collection | string;
+    tag?: PostTag | string;
   }
   : T extends 'product' ? {}
   : never
@@ -69,6 +70,15 @@ export interface GetCollectionListParams {
 
 export interface CollectionList {
   collections: Collection[];
+  total: number;
+}
+
+export interface GetPostTagListParams {
+  campaign: Campaign | string;
+}
+
+export interface PostTagList {
+  tags: PostTag[];
   total: number;
 }
 

@@ -98,11 +98,25 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
     subject.plural += w;
     searchInputBoxPlaceholder += w;
   }
+  const withStrParts: string[] = [];
   const q = viewParams.filter?.options.find((opt) => opt.searchParam === 'search')?.value?.trim();
   if (q) {
-    const w = ` with "${q}"`;
-    subject.singular += w;
-    subject.plural += w;
+    withStrParts.push(`with "${q}"`);
+  }
+  const t = viewParams.filter?.options.find((opt) => opt.searchParam === 'tag_id')?.value?.trim();
+  if (t) {
+    let t2 = t;
+    if (t.startsWith('user_defined;')) {
+      t2 = t.substring('user_defined;'.length);
+    }
+    if (t2) {
+      withStrParts.push(`tagged "${t2}"`);
+    }
+  }
+  if (withStrParts.length > 0) {
+    const w = withStrParts.join(' and ');
+    subject.singular += ` ${w}`;
+    subject.plural += ` ${w}`;
   }
 
   useEffect(() => {

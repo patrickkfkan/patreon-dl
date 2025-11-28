@@ -9,7 +9,7 @@ export type FilterSearchParams = string;
 export interface FilterSection<S extends FilterSearchParams> {
   title?: string;
   searchParam: S;
-  displayHint: 'pill' | 'list';
+  displayHint: 'pill' | 'pill_small' | 'list';
   options: FilterOption[];
   enableCondition?: {
     searchParam: S;
@@ -24,7 +24,8 @@ export type PostFilterSearchParams =
   'tier_ids' |
   'sort_by' |
   'date_published' |
-  'search';
+  'search' |
+  'tag_id';
 
 export type ProductFilterSearchParams =
   'is_viewable' |

@@ -64,6 +64,11 @@ export interface Post {
   collections?: Collection[];
 
   /**
+   * @since 3.5.0
+   */
+  tags?: PostTag[];
+
+  /**
    * @privateRemarks
    * `data.attibutes.embed`
    */
@@ -155,4 +160,10 @@ export interface Collection {
   postIds: string[] | null;
   thumbnail: Downloadable<CollectionThumbnailMediaItem> | null;
   raw: object;
+}
+
+export interface PostTag {
+  id: string;
+  type: 'postTag';
+  value: string;
 }

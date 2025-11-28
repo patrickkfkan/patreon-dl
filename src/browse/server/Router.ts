@@ -51,7 +51,8 @@ class _Router {
       '/api/campaigns/:id/products',
       '/api/campaigns/:id/media',
       '/api/campaigns/:id/content',
-      '/api/campaigns/:id/collections'
+      '/api/campaigns/:id/collections',
+      '/api/campaigns/:id/post_tags'
     ], (req, res) => {
       const paramContentType = req.path.split('/')[4];
       const contentType =
@@ -59,12 +60,15 @@ class _Router {
         : paramContentType === 'products' ? 'product'
         : paramContentType === 'media' ? 'media'
         : paramContentType === 'collections' ? 'collections'
+        : paramContentType === 'post_tags' ? 'post_tags'
         : undefined;
       switch (contentType) {
         case 'media':
           return this.#handlers.mediaAPI.handleListRequest(req, res, req.params.id);
         case 'collections':
           return this.#handlers.contentAPI.handleCollectionListRequest(req, res, req.params.id);
+        case 'post_tags':
+          return this.#handlers.contentAPI.handlePostTagListRequest(req, res, req.params.id);
         default:
           return this.#handlers.contentAPI.handleListRequest(req, res, req.params.id, contentType)
       }

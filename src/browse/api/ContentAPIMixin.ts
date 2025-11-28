@@ -1,7 +1,7 @@
 import { load as cheerioLoad } from 'cheerio';
 import { type APIConstructor } from ".";
 import { type Product, type Post } from "../../entities";
-import { type GetContentContext, type ContentListSortBy, type ContentType, type GetContentListParams, type GetCollectionListParams, type CollectionListSortBy } from "../types/Content.js";
+import { type GetContentContext, type ContentListSortBy, type ContentType, type GetContentListParams, type GetCollectionListParams, type CollectionListSortBy, type GetPostTagListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
 import { URLHelper } from '../../utils/index.js';
 
@@ -71,6 +71,12 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
         sortBy,
         limit,
         offset
+      });
+    }
+
+    getPostTagList(params: GetPostTagListParams) {
+      return this.db.getPostTagList({
+        campaign: params.campaign,
       });
     }
 
