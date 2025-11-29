@@ -37,6 +37,7 @@ export interface DownloaderIncludeOptions {
   previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
   contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
   allMediaVariants?: boolean;
+  mediaThumbnails?: boolean;
   mediaByFilename?: {
     images?: string | null;
     audio?: string | null;
@@ -138,6 +139,7 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
     previewMedia: true,
     contentMedia: true,
     allMediaVariants: false,
+    mediaThumbnails: true,
     mediaByFilename: {
       images: null,
       audio: null,
@@ -211,6 +213,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),
       contentMedia: pickDefined(options?.include?.contentMedia, defaults.include.contentMedia),
       allMediaVariants: pickDefined(options?.include?.allMediaVariants, defaults.include.allMediaVariants),
+      mediaThumbnails: pickDefined(options?.include?.mediaThumbnails, defaults.include.mediaThumbnails),
       mediaByFilename: {
         images: pickDefined(options?.include?.mediaByFilename?.images, defaults.include.mediaByFilename.images),
         audio: pickDefined(options?.include?.mediaByFilename?.audio, defaults.include.mediaByFilename.audio),

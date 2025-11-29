@@ -233,7 +233,7 @@ export default class DownloadTaskFactory {
       tasks.push(...urlToTasks);
     }
 
-    if (dirs.thumbnails && isDownloadableWithThumbnail(item)) {
+    if (config.include.mediaThumbnails && dirs.thumbnails && isDownloadableWithThumbnail(item)) {
       const thumbnailURL = item.thumbnailURL;
       // Thumbnails in `dirs.thumbnails` are for browse function, so
       // no need to follow config's FileExistsAction.

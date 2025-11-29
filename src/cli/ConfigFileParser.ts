@@ -38,6 +38,7 @@ const CONFIG_FILE_PROPS = {
     previewMedia: 'include:preview.media',
     contentMedia: 'include:content.media',
     allMediaVariants: 'include:all.media.variants',
+    mediaThumbnails: 'include:media.thumbnails',
     imagesByFilename: 'include:images.by.filename',
     audioByFilename: 'include.audio.by.filename',
     attachmentsByFilename: 'include:attachments.by.filename',
@@ -133,6 +134,7 @@ export default class ConfigFileParser {
         previewMedia: __getValue(CONFIG_FILE_PROPS.include.previewMedia),
         contentMedia: __getValue(CONFIG_FILE_PROPS.include.contentMedia),
         allMediaVariants: __getValue(CONFIG_FILE_PROPS.include.allMediaVariants),
+        mediaThumbnails: __getValue(CONFIG_FILE_PROPS.include.mediaThumbnails),
         mediaByFilename: {
           images: __getValue(CONFIG_FILE_PROPS.include.imagesByFilename),
           audio: __getValue(CONFIG_FILE_PROPS.include.audioByFilename),

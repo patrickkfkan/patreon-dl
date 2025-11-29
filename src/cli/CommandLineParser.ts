@@ -187,7 +187,8 @@ export default class CommandLineParser {
         contentInfo: undefined,
         previewMedia: undefined,
         contentMedia: undefined,
-        allMediaVariants: undefined
+        allMediaVariants: undefined,
+        mediaThumbnails: undefined
       },
       request: {
         maxRetries: undefined,

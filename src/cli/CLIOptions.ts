@@ -165,6 +165,7 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
     previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
     contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
     allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants)),
+    mediaThumbnails: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.mediaThumbnails, configFileOptions?.include?.mediaThumbnails)),
     mediaByFilename: {
       images: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.images, configFileOptions?.include?.mediaByFilename?.images)) || null,
       audio: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.audio, configFileOptions?.include?.mediaByFilename?.audio)) || null,
@@ -208,6 +209,7 @@ function readTargetsFile(file: string) {
     previewMedia: 'include.preview.media',
     contentMedia: 'include.content.media',
     allMediaVariants: 'include.all.media.variants',
+    mediaThumbnails: 'include.media.thumbnails',
     imagesByFilename: 'include.images.by.filename',
     audioByFilename: 'include.audio.by.filename',
     attachmentsByFilename: 'include.attachments.by.filename',
