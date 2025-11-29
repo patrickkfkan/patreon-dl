@@ -1014,6 +1014,11 @@ export default class PostDownloader extends Downloader<Post> {
         if (this.checkAbortSignal(signal, resolve)) {
           return;
         }
+
+        if (!this.config.include.contentInfo) {
+          db.saveCollection(collection, campaign);
+          return resolve();
+        }
   
         let batch: DownloadTaskBatch | null = null;
         const abortHandler = () => {
