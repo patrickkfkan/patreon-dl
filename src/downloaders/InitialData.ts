@@ -20,42 +20,60 @@ export class InitialData {
   }
 
   async get(url: string, signal?: AbortSignal) {
-    this.log('debug', `Fetch initial data from "${url}"`);
-    let page;
+    let campaignId: string | null = null;
+    let currentUserId: string | undefined = undefined;
     let fetchCurrentUserIdFromAPI = false;
-    try {
-      const { html, lastUrl } = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal });
-      page = html;
-      if (new URL(lastUrl).pathname === '/login-sync-domains') {
-        this.log('debug', `Detected Cloudflare challenge flow at "${lastUrl}"`);
-        page = await this.#fetchPageWithPuppeteer(url);
-        // Because cookie not available to Puppeteer, we need to fetch 
-        // current user ID separately
-        fetchCurrentUserIdFromAPI = !!this.config.cookie;
-      }
+    if (this.config.type === 'post' &&
+      this.config.postFetch.type !== 'single' &&
+      this.config.postFetch.campaignId
+    ) {
+      campaignId = this.config.postFetch.campaignId;
+      fetchCurrentUserIdFromAPI = true;
     }
-    catch (error) {
-      if (signal?.aborted) {
-        throw error;
-      }
-      const e = Error(`Error requesting "${url}"`);
-      e.cause = error;
-      throw e;
+    else if (this.config.type === 'product' &&
+      this.config.productFetch.type === 'byShop' &&
+      this.config.productFetch.campaignId
+    ) {
+      campaignId = this.config.productFetch.campaignId;
+      fetchCurrentUserIdFromAPI = true;
     }
-    const pageParser = new PageParser(this.logger);
-    let initialData;
-    try {
-      initialData = pageParser.parseInitialData(page, url);
-    }
-    catch (error) {
-      const e = Error(`Error parsing initial data from "${url}"`);
-      e.cause = error;
-      throw e;
-    }
-    const campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
-    let currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
     if (!campaignId) {
-      throw Error(`Campaign ID not found in initial data of "${url}"`);
+      this.log('debug', `Fetch initial data from "${url}"`);
+      let page;
+      try {
+        const { html, lastUrl } = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal });
+        page = html;
+        if (new URL(lastUrl).pathname === '/login-sync-domains') {
+          this.log('debug', `Detected Cloudflare challenge flow at "${lastUrl}"`);
+          page = await this.#fetchPageWithPuppeteer(url);
+          // Because cookie not available to Puppeteer, we need to fetch 
+          // current user ID separately
+          fetchCurrentUserIdFromAPI = !!this.config.cookie;
+        }
+      }
+      catch (error) {
+        if (signal?.aborted) {
+          throw error;
+        }
+        const e = Error(`Error requesting "${url}"`);
+        e.cause = error;
+        throw e;
+      }
+      const pageParser = new PageParser(this.logger);
+      let initialData;
+      try {
+        initialData = pageParser.parseInitialData(page, url);
+      }
+      catch (error) {
+        const e = Error(`Error parsing initial data from "${url}"`);
+        e.cause = error;
+        throw e;
+      }
+      campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
+      currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
+      if (!campaignId) {
+        throw Error(`Campaign ID not found in initial data of "${url}"`);
+      }
     }
     if (fetchCurrentUserIdFromAPI) {
       this.log('debug', `Fetch current user ID from API`);

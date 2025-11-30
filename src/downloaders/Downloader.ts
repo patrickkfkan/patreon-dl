@@ -2,7 +2,7 @@ import fs from 'fs';
 import { EventEmitter } from 'events';
 import deepFreeze from 'deep-freeze';
 import Fetcher from '../utils/Fetcher.js';
-import Bootstrap, { type DownloaderBootstrapData, type DownloaderType } from './Bootstrap.js';
+import Bootstrap, { type PostDownloaderBootstrapData, type ProductDownloaderBootstrapData, type DownloaderBootstrapData, type DownloaderType } from './Bootstrap.js';
 import { type DownloaderInit, type DownloaderOptions, type FileExistsAction, getDownloaderInit } from './DownloaderOptions.js';
 import { TargetSkipReason, type DownloaderEvent, type DownloaderEventPayloadOf } from './DownloaderEvent.js';
 import {type LogLevel} from '../utils/logging/Logger.js';
@@ -273,8 +273,11 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
 
   abstract doStart(params: DownloaderStartParams): Promise<void>;
 
-  static async getInstance(url: string, options?: DownloaderOptions) {
-    const bootstrap = Bootstrap.getDownloaderBootstrapDataByURL(url);
+  static async getInstance(
+    target: string | ProductDownloaderBootstrapData | PostDownloaderBootstrapData,
+    options?: DownloaderOptions
+  ) {
+    const bootstrap = typeof target === 'string' ? Bootstrap.getDownloaderBootstrapDataByURL(target) : target;
     if (!bootstrap) {
       throw Error('Could not determine downloader type from URL');
     }

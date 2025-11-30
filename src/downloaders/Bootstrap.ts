@@ -17,6 +17,7 @@ export interface ProductDownloaderBootstrapData extends BootstrapData {
   } | {
     type: 'byShop';
     vanity: string;
+    campaignId?: string;
   };
 }
 
@@ -29,14 +30,17 @@ export interface PostDownloaderBootstrapData extends BootstrapData {
     type: 'byUser';
     vanity: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   } | {
     type: 'byUserId';
     userId: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   } | {
     type: 'byCollection';
     collectionId: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   };
 }
 
