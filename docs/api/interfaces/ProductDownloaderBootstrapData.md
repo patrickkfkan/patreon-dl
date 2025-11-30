@@ -6,7 +6,7 @@
 
 # Interface: ProductDownloaderBootstrapData
 
-Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L12)
+Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L12)
 
 ## Extends
 
@@ -14,11 +14,11 @@ Defined in: [src/downloaders/Bootstrap.ts:12](https://github.com/patrickkfkan/pa
 
 ## Properties
 
-### productId
+### productFetch
 
-> **productId**: `string`
+> **productFetch**: \{ `productId`: `string`; `type`: `"single"`; \} \| \{ `campaignId?`: `string`; `type`: `"byShop"`; `vanity`: `string`; \}
 
-Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L14)
+Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L14)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [src/downloaders/Bootstrap.ts:14](https://github.com/patrickkfkan/pa
 
 > **targetURL**: `string`
 
-Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L9)
+Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L9)
 
 #### Inherited from
 
@@ -38,7 +38,7 @@ Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/pat
 
 > **type**: `"product"`
 
-Defined in: [src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L13)
+Defined in: [src/downloaders/Bootstrap.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L13)
 
 #### Overrides
 

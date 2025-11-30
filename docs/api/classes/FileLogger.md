@@ -6,7 +6,7 @@
 
 # Class: FileLogger\<T\>
 
-Defined in: [src/utils/logging/FileLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L74)
+Defined in: [src/utils/logging/FileLogger.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L74)
 
 ## Extends
 
@@ -24,7 +24,7 @@ Defined in: [src/utils/logging/FileLogger.ts:74](https://github.com/patrickkfkan
 
 > **new FileLogger**\<`T`\>(`options`): `FileLogger`\<`T`\>
 
-Defined in: [src/utils/logging/FileLogger.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L81)
+Defined in: [src/utils/logging/FileLogger.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L81)
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [src/utils/logging/FileLogger.ts:81](https://github.com/patrickkfkan
 
 > **end**(): `Promise`\<`void`\>
 
-Defined in: [src/utils/logging/FileLogger.ts:247](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L247)
+Defined in: [src/utils/logging/FileLogger.ts:247](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L247)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [src/utils/logging/FileLogger.ts:247](https://github.com/patrickkfka
 
 > **getConfig**(): [`FileLoggerConfig`](../type-aliases/FileLoggerConfig.md)\<`T`\>
 
-Defined in: [src/utils/logging/FileLogger.ts:229](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L229)
+Defined in: [src/utils/logging/FileLogger.ts:229](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L229)
 
 #### Returns
 
@@ -78,7 +78,7 @@ Defined in: [src/utils/logging/FileLogger.ts:229](https://github.com/patrickkfka
 
 > **log**(`entry`): `void`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L75)
+Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/ConsoleLogger.ts#L75)
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:75](https://github.com/patrickkf
 
 > **setLevel**(`value`): `void`
 
-Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/ConsoleLogger.ts#L92)
+Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/ConsoleLogger.ts#L92)
 
 #### Parameters
 
@@ -122,7 +122,7 @@ Defined in: [src/utils/logging/ConsoleLogger.ts:92](https://github.com/patrickkf
 
 > `static` **getDefaultConfig**(): `object`
 
-Defined in: [src/utils/logging/FileLogger.ts:233](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L233)
+Defined in: [src/utils/logging/FileLogger.ts:233](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L233)
 
 #### Returns
 
@@ -190,7 +190,7 @@ Defined in: [src/utils/logging/FileLogger.ts:233](https://github.com/patrickkfka
 
 > `static` **getPathInfo**\<`T`\>(`type`, `params`): `object`
 
-Defined in: [src/utils/logging/FileLogger.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L102)
+Defined in: [src/utils/logging/FileLogger.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L102)
 
 #### Type Parameters
 

@@ -2,33 +2,17 @@
 
 ***
 
-[patreon-dl](../README.md) / DefaultImageMediaItem
+[patreon-dl](../README.md) / CollectionThumbnailMediaItem
 
-# Interface: DefaultImageMediaItem
+# Interface: CollectionThumbnailMediaItem
 
-Defined in: [src/entities/MediaItem.ts:23](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L23)
+Defined in: [src/entities/MediaItem.ts:74](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L74)
 
 ## Extends
 
 - [`MediaLike`](MediaLike.md)
 
 ## Properties
-
-### createdAt
-
-> **createdAt**: `null` \| `string`
-
-Defined in: [src/entities/MediaItem.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L26)
-
-***
-
-### downloadURL
-
-> **downloadURL**: `null` \| `string`
-
-Defined in: [src/entities/MediaItem.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L27)
-
-***
 
 ### filename
 
@@ -56,9 +40,9 @@ Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreo
 
 ### imageType
 
-> **imageType**: `"default"`
+> **imageType**: `"collectionThumbnail"`
 
-Defined in: [src/entities/MediaItem.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L25)
+Defined in: [src/entities/MediaItem.ts:76](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L76)
 
 ***
 
@@ -66,11 +50,19 @@ Defined in: [src/entities/MediaItem.ts:25](https://github.com/patrickkfkan/patre
 
 > **imageURLs**: `object`
 
-Defined in: [src/entities/MediaItem.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L28)
+Defined in: [src/entities/MediaItem.ts:77](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L77)
 
 #### default
 
 > **default**: `null` \| `string`
+
+#### defaultBlurred
+
+> **defaultBlurred**: `null` \| `string`
+
+#### defaultLarge
+
+> **defaultLarge**: `null` \| `string`
 
 #### defaultSmall
 
@@ -92,6 +84,10 @@ Defined in: [src/entities/MediaItem.ts:28](https://github.com/patrickkfkan/patre
 
 > **thumbnailSmall**: `null` \| `string`
 
+#### url
+
+> **url**: `null` \| `string`
+
 ***
 
 ### mimeType
@@ -106,19 +102,11 @@ Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreo
 
 ***
 
-### thumbnailURL
-
-> **thumbnailURL**: `null` \| `string`
-
-Defined in: [src/entities/MediaItem.ts:36](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L36)
-
-***
-
 ### type
 
 > **type**: `"image"`
 
-Defined in: [src/entities/MediaItem.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L24)
+Defined in: [src/entities/MediaItem.ts:75](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L75)
 
 #### Overrides
 

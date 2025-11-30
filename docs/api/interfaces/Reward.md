@@ -6,7 +6,7 @@
 
 # Interface: Reward
 
-Defined in: [src/entities/Reward.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L3)
+Defined in: [src/entities/Reward.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L3)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/entities/Reward.ts:3](https://github.com/patrickkfkan/patreon-d
 
 > **amount**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L8)
+Defined in: [src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L8)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/entities/Reward.ts:8](https://github.com/patrickkfkan/patreon-d
 
 > **createdAt**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L9)
+Defined in: [src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L9)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/entities/Reward.ts:9](https://github.com/patrickkfkan/patreon-d
 
 > **description**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L7)
+Defined in: [src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L7)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/entities/Reward.ts:7](https://github.com/patrickkfkan/patreon-d
 
 > **editedAt**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L11)
+Defined in: [src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L11)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/entities/Reward.ts:11](https://github.com/patrickkfkan/patreon-
 
 > **id**: `string`
 
-Defined in: [src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L5)
+Defined in: [src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L5)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [src/entities/Reward.ts:5](https://github.com/patrickkfkan/patreon-d
 
 > **image**: `null` \| [`Downloadable`](../type-aliases/Downloadable.md)
 
-Defined in: [src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L12)
+Defined in: [src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L12)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [src/entities/Reward.ts:12](https://github.com/patrickkfkan/patreon-
 
 > **publishedAt**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L10)
+Defined in: [src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L10)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [src/entities/Reward.ts:10](https://github.com/patrickkfkan/patreon-
 
 > **title**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L6)
+Defined in: [src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L6)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [src/entities/Reward.ts:6](https://github.com/patrickkfkan/patreon-d
 
 > **type**: `"reward"`
 
-Defined in: [src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L4)
+Defined in: [src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L4)
 
 ***
 
@@ -86,4 +86,4 @@ Defined in: [src/entities/Reward.ts:4](https://github.com/patrickkfkan/patreon-d
 
 > **url**: `null` \| `string`
 
-Defined in: [src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/Reward.ts#L13)
+Defined in: [src/entities/Reward.ts:13](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/Reward.ts#L13)
