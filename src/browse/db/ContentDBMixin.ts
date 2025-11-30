@@ -681,7 +681,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
       switch (details.type) {
         case 'post': {
-          const commentCount = row.comment_count;
+          // `comment_count` column somehow created as string type
+          // Cast it back to number as some were saved as decimals (e.g. "2.0")
+          const commentCount = Number(row.comment_count) || 0;
           const comments = row.comments !== null ? JSON.parse(row.comments) : null;
           return {
             ...details,
