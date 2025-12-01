@@ -122,10 +122,12 @@ export default class ProductsFetcher extends EventEmitter {
     const productFetch = this.config.productFetch;
     let productsAPIURL: string;
     let campaign: Campaign | null;
+    let obtainCampaignFromProduct: boolean;
     try {
       const ctx = await this.#getInitialContext();
       productsAPIURL = ctx.productsAPIURL;
-      campaign = ctx.campaign;
+      obtainCampaignFromProduct = ctx.campaign.obtainFromProduct;
+      campaign = ctx.campaign.data;
     }
     catch (error) {
       this.#handleError(error);
@@ -150,7 +152,11 @@ export default class ProductsFetcher extends EventEmitter {
     }
 
     const productsParser = new ProductParser(this.logger);
-    const list = productsParser.parseProductsAPIResponse(json, productsAPIURL, campaign);
+    const list = productsParser.parseProductsAPIResponse(
+      json,
+      productsAPIURL,
+      obtainCampaignFromProduct ? undefined : campaign
+    );
     this.#fetched = [ list ];
     this.#pointers.lastFetched = this.#pointers.fetching;
     this.#pointers.fetching = null;
@@ -238,27 +244,32 @@ export default class ProductsFetcher extends EventEmitter {
 
   async #getInitialContext() {
     const productFetch = this.config.productFetch;
-    const pageURL = this.#getInitialDataPageURL();
-    const { campaignId } = await this.getInitialData(pageURL);
-    const apiURL = this.#isFetchingMultipleProducts(productFetch) ? 
-      URLHelper.constructShopAPIURL({ campaignId })
-      : URLHelper.constructProductAPIURL(productFetch.productId);
-    // Products API does not return full campaign data (missing creator and rewards info),
-    // so we fetch campaign separately.
-    const campaign = await Downloader.getCampaign({ campaignId }, this.signal, this.config);
-    return {
-      productsAPIURL: apiURL,
-      campaign
-    };
-  }
-
-  #getInitialDataPageURL() {
-    const productFetch = this.config.productFetch;
+    let apiURL: string;
     switch (productFetch.type) {
-      case 'byShop':
-        return URLHelper.constructCampaignPageURL({ vanity: productFetch.vanity });
-      default:
-        throw Error(`productFetch type mismatch: expecting 'byShop' but got '${productFetch.type}'`);
+      case 'byShop': {
+        // Shop API does not return full campaign info (missing creator and rewards),
+        // so we fetch separately.
+        const initialDataPageURL = URLHelper.constructCampaignPageURL({ vanity: productFetch.vanity });
+        const { campaignId } = await this.getInitialData(initialDataPageURL);
+        const campaign = await Downloader.getCampaign({ campaignId }, this.signal, this.config);
+        return {
+          productsAPIURL: URLHelper.constructShopAPIURL({ campaignId }),
+          campaign: {
+            obtainFromProduct: false as const,
+            data: campaign
+          }
+        };
+      }
+      case 'single': {
+        apiURL = URLHelper.constructProductAPIURL(productFetch.productId);
+        return {
+          productsAPIURL: apiURL,
+          campaign: {
+            obtainFromProduct: true as const,
+            data: null
+          }
+        };
+      }
     }
   }
 
