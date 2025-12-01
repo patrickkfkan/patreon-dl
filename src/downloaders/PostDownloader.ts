@@ -51,267 +51,262 @@ export default class PostDownloader extends Downloader<Post> {
   }
 
   doStart(params?: DownloaderStartParams): Promise<void> {
-
     if (this.#startPromise) {
       throw Error('Downloader already running');
     }
+    this.#startPromise = this.#doStart(params)
+      .finally(() => {
+        this.#startPromise = null;
+      });
+    return this.#startPromise;
+  }
 
-    this.#startPromise = new Promise<void>((resolve) => {
-      void (async () => {
-        const { signal } = params || {};
-        const postFetch = this.config.postFetch;
-        const db = await this.db();
-  
-        if (this.checkAbortSignal(signal, resolve)) {
+  async #doStart(params?: DownloaderStartParams): Promise<void> {
+    try {
+      const { signal } = params || {};
+      const postFetch = this.config.postFetch;
+      const db = await this.db();
+
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+
+      if (postFetch.type === 'byUser') {
+        this.log('info', `Targeting posts by '${postFetch.vanity}'`);
+      }
+      else if (postFetch.type === 'byUserId') {
+        this.log('info', `Targeting posts by user #${postFetch.userId}`);
+      }
+      else if (postFetch.type === 'byCollection') {
+        this.log('info', `Targeting posts in collection #${postFetch.collectionId}`);
+      }
+      else { // Single
+        this.log('info', `Targeting post #${postFetch.postId}`);
+      }
+      if (this.#isFetchingMultiplePosts(postFetch) && postFetch.filters) {
+        const filterStr = Object.entries(postFetch.filters).map(([ key, value ]) => `${key}=${value}`).join('; ');
+        if (filterStr) {
+          this.log('info', `Filters: ${filterStr}`);
+        }
+      }
+
+      // Step 1: Get posts (if by user) or target post
+      const postsFetcher = new PostsFetcher({
+        config: this.config,
+        fetcher: this.fetcher,
+        logger: this.logger,
+        signal
+      });
+      postsFetcher.on('statusChange', ({current}) => {
+        if (current.status === 'running') {
+          this.emit('fetchBegin', { targetType: postsFetcher.getTargetType() });
+        }
+      });
+      postsFetcher.begin();
+
+      // Step 2: download posts in each fetched list
+      let downloaded = 0;
+      let skippedUnviewable = 0;
+      let skippedRedundant = 0;
+      let skippedUnmetMediaTypeCriteria = 0;
+      let skippedNotInTier = 0;
+      let skippedPublishDateOutOfRange = 0;
+      let campaignSaved = false;
+      let stopConditionMet = false;
+      const savedCollectionIds: string[] = [];
+      const postsParser = new PostParser(this.logger);
+      while (postsFetcher.hasNext()) {
+        const { list, aborted, error } = await postsFetcher.next();
+        if (!list || aborted) {
+          break;
+        }
+        if (!list && error) {
+          this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
           return;
         }
-  
-        if (postFetch.type === 'byUser') {
-          this.log('info', `Targeting posts by '${postFetch.vanity}'`);
-        }
-        else if (postFetch.type === 'byUserId') {
-          this.log('info', `Targeting posts by user #${postFetch.userId}`);
-        }
-        else if (postFetch.type === 'byCollection') {
-          this.log('info', `Targeting posts in collection #${postFetch.collectionId}`);
-        }
-        else { // Single
-          this.log('info', `Targeting post #${postFetch.postId}`);
-        }
-        if (this.#isFetchingMultiplePosts(postFetch) && postFetch.filters) {
-          const filterStr = Object.entries(postFetch.filters).map(([ key, value ]) => `${key}=${value}`).join('; ');
-          if (filterStr) {
-            this.log('info', `Filters: ${filterStr}`);
-          }
-        }
-  
-        // Step 1: Get posts (if by user) or target post
-        const postsFetcher = new PostsFetcher({
-          config: this.config,
-          fetcher: this.fetcher,
-          logger: this.logger,
-          signal
-        });
-        postsFetcher.on('statusChange', ({current}) => {
-          if (current.status === 'running') {
-            this.emit('fetchBegin', { targetType: postsFetcher.getTargetType() });
-          }
-        });
-        postsFetcher.begin();
-  
-        // Step 2: download posts in each fetched list
-        let downloaded = 0;
-        let skippedUnviewable = 0;
-        let skippedRedundant = 0;
-        let skippedUnmetMediaTypeCriteria = 0;
-        let skippedNotInTier = 0;
-        let skippedPublishDateOutOfRange = 0;
-        let campaignSaved = false;
-        let stopConditionMet = false;
-        const savedCollectionIds: string[] = [];
-        const postsParser = new PostParser(this.logger);
-        while (postsFetcher.hasNext()) {
-          const { list, aborted, error } = await postsFetcher.next();
-          if (!list || aborted) {
-            break;
-          }
-          if (!list && error) {
-            this.emit('end', { aborted: false, error, message: 'PostsFetcher error' });
-            resolve();
+        if (!this.#context.skipSaveCampaign && !campaignSaved && list.items[0]?.campaign) {
+          await this.saveCampaignInfo(list.items[0].campaign, signal);
+          campaignSaved = true;
+          if (this.checkAbortSignal(signal)) {
             return;
           }
-          if (!this.#context.skipSaveCampaign && !campaignSaved && list.items[0]?.campaign) {
-            await this.saveCampaignInfo(list.items[0].campaign, signal);
-            campaignSaved = true;
-            if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-          }
-  
-          for (const _post of list.items) {
-  
-            if (stopConditionMet) {
-              break;
-            }
+        }
 
-            let post = _post;
-
-            // Collections
-            if (post.campaign && post.collections) {
-              for (const collection of post.collections) {
-                if (!savedCollectionIds.includes(collection.id)) {
-                  try {
-                    await this.#saveCollection(collection, post.campaign);
-                    savedCollectionIds.push(collection.id);
-                  }
-                  catch (error) {
-                    this.log('error', `Failed to save collection #${collection.id}:`, error);
-                  }
-                }
-                else {
-                  this.log('debug', `Collection #${collection.id} already processed`);
-                }
-              }
-            }
-  
-            if (this.#isFetchingMultiplePosts(postFetch)) {
-              // Refresh to ensure media links have not expired
-              this.log('debug', `Refresh post #${_post.id}`);
-              const postURL = URLHelper.constructPostsAPIURL({ postId: _post.id });
-              const { json } = await this.commonFetchAPI(postURL, signal);
-              let refreshed: Post | null = null;
-              if (json) {
-                refreshed = postsParser.parsePostsAPIResponse(json, postURL).items[0] || null;
-                if (!refreshed) {
-                  this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
-                }
-                else if (refreshed.id !== _post.id) {
-                  this.log('warn', `Refreshed post #${_post.id} but ID mismatch - going to use existing data`);
-                  refreshed = null;
-                }
-              }
-              else if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-              else {
-                this.log('warn', `Failed to refresh post #${_post.id} - going to use existing data`);
-              }
-              if (refreshed) {
-                this.log('debug', `Use refreshed post data #${refreshed.id}`);
-                post = refreshed;
-              }
-            }
-  
-            this.emit('targetBegin', { target: post });
-  
-            // Step 4.1: post directories
-            const postDirs = this.fsHelper.getPostDirs(post);
-            this.log('debug', 'Post directories:', postDirs);
-  
-            // Step 4.2: Check with status cache
-            const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
-            const statusCacheValidation = statusCache.validate(post, postDirs.root, this.config)
-            if (!statusCacheValidation.invalidated) {
-              this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
-              this.emit('targetEnd', {
-                target: post,
-                isSkipped: true,
-                skipReason: TargetSkipReason.AlreadyDownloaded,
-                skipMessage: 'Target already downloaded and nothing has changed since last download'
-              });
-              skippedRedundant++;
-              if (this.config.stopOn === 'postPreviouslyDownloaded' || 
-                this.config.stopOn === 'previouslyDownloaded'
-              ) {
-                stopConditionMet = true;
-              }
-              continue;
-            }
-            
-            switch ((await this.#doDownload(
-              post,
-              postDirs,
-              statusCacheValidation.scope,
-              statusCache,
-              db,
-              resolve,
-              signal
-            )).status) {
-              case 'aborted':
-                return;
-              case 'downloaded':
-                downloaded++;
-                break;
-              case 'skippedNotInTier':
-                skippedNotInTier++;
-                break;
-              case 'skippedPublishDateOutOfRange':
-                skippedPublishDateOutOfRange++;
-                if (this.config.stopOn === 'postPublishDateOutOfRange' ||
-                  this.config.stopOn === 'publishDateOutOfRange'
-                ) {
-                  stopConditionMet = true;
-                }
-                break;
-              case 'skippedUnmetMediaTypeCriteria':
-                skippedUnmetMediaTypeCriteria++;
-                break;
-              case 'skippedUnviewable':
-                skippedUnviewable++;
-                break;
-            }
-
-            if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-          }
+        for (const _post of list.items) {
 
           if (stopConditionMet) {
             break;
           }
-        }
-  
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
+
+          let post = _post;
+
+          // Collections
+          if (post.campaign && post.collections) {
+            for (const collection of post.collections) {
+              if (!savedCollectionIds.includes(collection.id)) {
+                try {
+                  await this.#saveCollection(collection, post.campaign);
+                  savedCollectionIds.push(collection.id);
+                }
+                catch (error) {
+                  this.log('error', `Failed to save collection #${collection.id}:`, error);
+                }
+              }
+              else {
+                this.log('debug', `Collection #${collection.id} already processed`);
+              }
+            }
+          }
+
+          if (this.#isFetchingMultiplePosts(postFetch)) {
+            // Refresh to ensure media links have not expired
+            this.log('debug', `Refresh post #${_post.id}`);
+            const postURL = URLHelper.constructPostsAPIURL({ postId: _post.id });
+            const { json } = await this.commonFetchAPI(postURL, signal);
+            let refreshed: Post | null = null;
+            if (json) {
+              refreshed = postsParser.parsePostsAPIResponse(json, postURL).items[0] || null;
+              if (!refreshed) {
+                this.log('warn', `Refreshed post #${_post.id} but got empty value - going to use existing data`);
+              }
+              else if (refreshed.id !== _post.id) {
+                this.log('warn', `Refreshed post #${_post.id} but ID mismatch - going to use existing data`);
+                refreshed = null;
+              }
+            }
+            else if (this.checkAbortSignal(signal)) {
+              return;
+            }
+            else {
+              this.log('warn', `Failed to refresh post #${_post.id} - going to use existing data`);
+            }
+            if (refreshed) {
+              this.log('debug', `Use refreshed post data #${refreshed.id}`);
+              post = refreshed;
+            }
+          }
+
+          this.emit('targetBegin', { target: post });
+
+          // Step 4.1: post directories
+          const postDirs = this.fsHelper.getPostDirs(post);
+          this.log('debug', 'Post directories:', postDirs);
+
+          // Step 4.2: Check with status cache
+          const statusCache = StatusCache.getInstance(this.config, postDirs.statusCache, this.logger);
+          const statusCacheValidation = statusCache.validate(post, postDirs.root, this.config)
+          if (!statusCacheValidation.invalidated) {
+            this.log('info', `Skipped downloading post #${post.id}: already downloaded and nothing has changed since last download`);
+            this.emit('targetEnd', {
+              target: post,
+              isSkipped: true,
+              skipReason: TargetSkipReason.AlreadyDownloaded,
+              skipMessage: 'Target already downloaded and nothing has changed since last download'
+            });
+            skippedRedundant++;
+            if (this.config.stopOn === 'postPreviouslyDownloaded' || 
+              this.config.stopOn === 'previouslyDownloaded'
+            ) {
+              stopConditionMet = true;
+            }
+            continue;
+          }
+          
+          switch ((await this.#doDownload(
+            post,
+            postDirs,
+            statusCacheValidation.scope,
+            statusCache,
+            db,
+            signal
+          )).status) {
+            case 'aborted':
+              return;
+            case 'downloaded':
+              downloaded++;
+              break;
+            case 'skippedNotInTier':
+              skippedNotInTier++;
+              break;
+            case 'skippedPublishDateOutOfRange':
+              skippedPublishDateOutOfRange++;
+              if (this.config.stopOn === 'postPublishDateOutOfRange' ||
+                this.config.stopOn === 'publishDateOutOfRange'
+              ) {
+                stopConditionMet = true;
+              }
+              break;
+            case 'skippedUnmetMediaTypeCriteria':
+              skippedUnmetMediaTypeCriteria++;
+              break;
+            case 'skippedUnviewable':
+              skippedUnviewable++;
+              break;
+          }
+
+          if (this.checkAbortSignal(signal)) {
+            return;
+          }
         }
 
-        if (stopConditionMet && this.#isFetchingMultiplePosts(postFetch)) {
-          this.log('info', `Stop downloader: stop condition "${this.config.stopOn}" met`)
+        if (stopConditionMet) {
+          break;
         }
-  
-        // Done
-        if (postFetch.type === 'byUser') {
-          this.log('info', `Done downloading posts by '${postFetch.vanity}'`);
-        }
-        else if (postFetch.type === 'byUserId') {
-          this.log('info', `Done downloading posts by user #${postFetch.userId}`);
-        }
-        else if (postFetch.type === 'byCollection') {
-          this.log('info', `Done downloading posts in collection #${postFetch.collectionId}`);
-        }
-        else {
-          this.log('info', `Done downloading post #${postFetch.postId}`);
-        }
-        let endMessage = 'Done';
-        if (this.#isFetchingMultiplePosts(postFetch)) {
-          const skippedStrParts: string[] = [];
-          if (skippedUnviewable) {
-            skippedStrParts.push(`${skippedUnviewable} unviewable`);
-          }
-          if (skippedRedundant) {
-            skippedStrParts.push(`${skippedRedundant} redundant`);
-          }
-          if (skippedUnmetMediaTypeCriteria) {
-            skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
-          }
-          if (skippedNotInTier) {
-            skippedStrParts.push(`${skippedNotInTier} not in tier`);
-          }
-          if (skippedPublishDateOutOfRange) {
-            skippedStrParts.push(`${skippedPublishDateOutOfRange} with publish date out of range`);
-          }
-          const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
-          endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;
-          this.log('info', endMessage);
-        }
-        this.emit('end', { aborted: false, message: endMessage });
-        this.#startPromise = null;
-        resolve();
-      })();
-    })
-    .finally(() => {
-      void (async () => {
-        if (!this.#context.keepDBOpen) {
-          await this.closeDB();
-        }
-        if (this.logger && !this.#context.keepLoggerOpen) {
-          await this.logger.end();
-        }
-        this.#startPromise = null;
-      })();
-    });
+      }
 
-    return this.#startPromise;
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+
+      if (stopConditionMet && this.#isFetchingMultiplePosts(postFetch)) {
+        this.log('info', `Stop downloader: stop condition "${this.config.stopOn}" met`)
+      }
+
+      // Done
+      if (postFetch.type === 'byUser') {
+        this.log('info', `Done downloading posts by '${postFetch.vanity}'`);
+      }
+      else if (postFetch.type === 'byUserId') {
+        this.log('info', `Done downloading posts by user #${postFetch.userId}`);
+      }
+      else if (postFetch.type === 'byCollection') {
+        this.log('info', `Done downloading posts in collection #${postFetch.collectionId}`);
+      }
+      else {
+        this.log('info', `Done downloading post #${postFetch.postId}`);
+      }
+      let endMessage = 'Done';
+      if (this.#isFetchingMultiplePosts(postFetch)) {
+        const skippedStrParts: string[] = [];
+        if (skippedUnviewable) {
+          skippedStrParts.push(`${skippedUnviewable} unviewable`);
+        }
+        if (skippedRedundant) {
+          skippedStrParts.push(`${skippedRedundant} redundant`);
+        }
+        if (skippedUnmetMediaTypeCriteria) {
+          skippedStrParts.push(`${skippedUnmetMediaTypeCriteria} with unmet media type criteria`);
+        }
+        if (skippedNotInTier) {
+          skippedStrParts.push(`${skippedNotInTier} not in tier`);
+        }
+        if (skippedPublishDateOutOfRange) {
+          skippedStrParts.push(`${skippedPublishDateOutOfRange} with publish date out of range`);
+        }
+        const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
+        endMessage = `Total ${downloaded} / ${postsFetcher.getTotal()} posts processed${skippedStr}`;
+        this.log('info', endMessage);
+      }
+      this.emit('end', { aborted: false, message: endMessage });
+    }
+    finally {
+      if (!this.#context.keepDBOpen) {
+        await this.closeDB();
+      }
+      if (this.logger && !this.#context.keepLoggerOpen) {
+        await this.logger.end();
+      }
+    }
   }
 
   async #doDownload(
@@ -320,7 +315,6 @@ export default class PostDownloader extends Downloader<Post> {
     scope: StatusCacheValidationScope<Post>,
     statusCache: StatusCache,
     db: DBInstance,
-    resolve: () => void,
     signal?: AbortSignal
   ): Promise<{status: 'skippedUnviewable' | 'skippedUnmetMediaTypeCriteria' | 'skippedNotInTier' | 'skippedPublishDateOutOfRange' | 'aborted' | 'downloaded' }> {
     this.log('info', `Download post #${post.id} (${post.title})`);
@@ -458,7 +452,7 @@ export default class PostDownloader extends Downloader<Post> {
           signal
         );
 
-        if (this.checkAbortSignal(signal, resolve)) {
+        if (this.checkAbortSignal(signal)) {
           return {
             status: 'aborted'
           };
@@ -527,7 +521,7 @@ export default class PostDownloader extends Downloader<Post> {
         }
 
         try {
-          if (this.checkAbortSignal(signal, resolve)) {
+          if (this.checkAbortSignal(signal)) {
             return {
               status: 'aborted'
             };
@@ -559,7 +553,7 @@ export default class PostDownloader extends Downloader<Post> {
             }
           }
     
-          if (this.checkAbortSignal(signal, resolve)) {
+          if (this.checkAbortSignal(signal)) {
             return {
               status: 'aborted'
             };
@@ -589,7 +583,7 @@ export default class PostDownloader extends Downloader<Post> {
       }
     }
 
-    if (this.checkAbortSignal(signal, resolve)) {
+    if (this.checkAbortSignal(signal)) {
       return {
         status: 'aborted'
       };
@@ -599,8 +593,8 @@ export default class PostDownloader extends Downloader<Post> {
     let comments: Comment[] | null = null;
     if (downloadComments && this.config.include.comments && post.isViewable) {
       if (post.commentCount > 0) {
-        comments = await this.#fetchComments(post, resolve, signal);
-        if (this.checkAbortSignal(signal, resolve)) {
+        comments = await this.#fetchComments(post, signal);
+        if (this.checkAbortSignal(signal)) {
           return {
             status: 'aborted'
           };
@@ -897,9 +891,12 @@ export default class PostDownloader extends Downloader<Post> {
     }
   }
 
-  async #fetchComments(post: Post, resolve: () => void, signal?: AbortSignal, accumulated?: CommentList & { nextURL: string; }): Promise<Comment[]> {
+  async #fetchComments(post: Post, signal?: AbortSignal, accumulated?: CommentList & { nextURL: string; }): Promise<Comment[]> {
     if (!post.commentCount) {
       this.log('debug', `Comment count is zero for post #${post.id}`);
+      return [];
+    }
+    if (this.checkAbortSignal(signal)) {
       return [];
     }
     let commentsURL;
@@ -932,20 +929,20 @@ export default class PostDownloader extends Downloader<Post> {
           _acc.items.push(...comments.items);
           _acc.nextURL = comments.nextURL;
         }
-        return this.#fetchComments(post, resolve, signal, _acc);
+        return this.#fetchComments(post, signal, _acc);
       }
       else {
         const result = accumulated ? [ ...accumulated.items, ...comments.items ] : comments.items;
         this.log('debug', `Total ${result.length} comments fetched for post #${post.id}`);
         for (const comment of result) {
           if (comment.replyCount > 0) {
-            comment.replies = await this.#fetchCommentReplies(comment, resolve, signal);
+            comment.replies = await this.#fetchCommentReplies(comment, signal);
           }
         }
         return result;
       }
     }
-    else if (this.checkAbortSignal(signal, resolve)) {
+    else if (this.checkAbortSignal(signal)) {
       return [];
     }
     else {
@@ -954,9 +951,12 @@ export default class PostDownloader extends Downloader<Post> {
     }
   }
 
-  async #fetchCommentReplies(comment: Comment, resolve: () => void, signal?: AbortSignal, accumulated?: CommentReplyList & { nextURL: string; }): Promise<CommentReply[]> {
+  async #fetchCommentReplies(comment: Comment, signal?: AbortSignal, accumulated?: CommentReplyList & { nextURL: string; }): Promise<CommentReply[]> {
     if (!comment.replyCount) {
       this.log('debug', `Reply count is zero for comment #${comment.id}`);
+      return [];
+    }
+    if (this.checkAbortSignal(signal)) {
       return [];
     }
     let repliesURL;
@@ -989,7 +989,7 @@ export default class PostDownloader extends Downloader<Post> {
           _acc.items.push(...replies.items);
           _acc.nextURL = replies.nextURL;
         }
-        return this.#fetchCommentReplies(comment, resolve, signal, _acc);
+        return this.#fetchCommentReplies(comment, signal, _acc);
       }
       else {
         const result = accumulated ? [ ...accumulated.items, ...replies.items ] : replies.items;
@@ -997,7 +997,7 @@ export default class PostDownloader extends Downloader<Post> {
         return result;
       }
     }
-    else if (this.checkAbortSignal(signal, resolve)) {
+    else if (this.checkAbortSignal(signal)) {
       return [];
     }
     else {
@@ -1006,107 +1006,99 @@ export default class PostDownloader extends Downloader<Post> {
     }
   }
 
-  #saveCollection(collection: Collection, campaign: Campaign, signal?: AbortSignal) {
-    return new Promise<void>((resolve) => {
+  async #saveCollection(collection: Collection, campaign: Campaign, signal?: AbortSignal) {
+    const db = await this.db();
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+
+    if (!this.config.include.contentInfo) {
+      db.saveCollection(collection, campaign);
+      return;
+    }
+
+    let batch: DownloadTaskBatch | null = null;
+    const abortHandler = () => {
       void (async () => {
-        const db = await this.db();
-
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
+        if (batch) {
+          await batch.abort();
         }
-
-        if (!this.config.include.contentInfo) {
-          db.saveCollection(collection, campaign);
-          return resolve();
-        }
-  
-        let batch: DownloadTaskBatch | null = null;
-        const abortHandler = () => {
-          void (async () => {
-            if (batch) {
-              await batch.abort();
-            }
-          })();
-        };
-        if (signal) {
-          signal.addEventListener('abort', abortHandler, { once: true });
-        }
-
-        this.log('info', `Save collection info #${collection.id}`);
-        this.emit('targetBegin', { target: collection });
-        this.emit('phaseBegin', { target: collection, phase: 'saveInfo' });
-  
-        // Step 1: create collection directories
-        const collectionDirs = this.fsHelper.getCollectionsDir(campaign, collection);
-        this.log('debug', 'Campaign directories: ', collectionDirs);
-        this.fsHelper.createDir(collectionDirs.root);
-  
-        // Step 2: save summary and raw json
-        const summary = generateCollectionSummary(collection);
-        const summaryFile = path.resolve(collectionDirs.root, 'info.txt');
-        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-        this.logWriteTextFileResult(saveSummaryResult, collection, 'collection summary');
-
-        const collectionRawFile = path.resolve(collectionDirs.root, 'collection-api.json');
-        const saveCollectionRawResult = await this.fsHelper.writeTextFile(
-          collectionRawFile, collection.raw, this.config.fileExistsAction.infoAPI);
-        this.logWriteTextFileResult(saveCollectionRawResult, collection, 'collection API data');
- 
-        this.emit('phaseEnd', { target: collection, phase: 'saveInfo' });
-
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
-        }
-    
-        // Step 3: download collection media items
-        if (collection.thumbnail) {
-          this.emit('phaseBegin', { target: collection, phase: 'saveMedia' });
-          const collectionMedia: Downloadable[] = [
-            collection.thumbnail
-          ];
-          batch = (await this.createDownloadTaskBatch(
-            `Collection #${collection.id} (${collection.title})`,
-            signal,
-            {
-              target: collectionMedia,
-              targetName: `collection #${campaign.id} -> thumbnail`,
-              dirs: {
-                campaign: this.fsHelper.getCampaignDirs(campaign).root,
-                main: collectionDirs.root,
-                thumbnails: null
-              },
-              fileExistsAction: this.config.fileExistsAction.info
-            }
-          )).batch;
-          if (this.checkAbortSignal(signal, resolve)) {
-            return;
-          }
-          batch.prestart();
-          this.emit('phaseBegin', { target: collection, phase: 'batchDownload', batch });
-          await batch.start();
-          await batch.destroy();
-          this.emit('phaseEnd', { target: collection, phase: 'batchDownload' });
-          this.emit('phaseEnd', { target: collection, phase: 'saveMedia' });
-    
-          if (signal) {
-            signal.removeEventListener('abort', abortHandler);
-          }
-          if (this.checkAbortSignal(signal, resolve)) {
-            return;
-          }
-        }
-
-        // Step 4: save to DB
-        db.saveCollection(collection, campaign);
-  
-        // Done
-        this.log('info', 'Done saving collection info');
-        this.emit('targetEnd', { target: collection, isSkipped: false });
-  
-        resolve();
       })();
-    });
+    };
+    if (signal) {
+      signal.addEventListener('abort', abortHandler, { once: true });
+    }
 
+    this.log('info', `Save collection info #${collection.id}`);
+    this.emit('targetBegin', { target: collection });
+    this.emit('phaseBegin', { target: collection, phase: 'saveInfo' });
+
+    // Step 1: create collection directories
+    const collectionDirs = this.fsHelper.getCollectionsDir(campaign, collection);
+    this.log('debug', 'Campaign directories: ', collectionDirs);
+    this.fsHelper.createDir(collectionDirs.root);
+
+    // Step 2: save summary and raw json
+    const summary = generateCollectionSummary(collection);
+    const summaryFile = path.resolve(collectionDirs.root, 'info.txt');
+    const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+    this.logWriteTextFileResult(saveSummaryResult, collection, 'collection summary');
+
+    const collectionRawFile = path.resolve(collectionDirs.root, 'collection-api.json');
+    const saveCollectionRawResult = await this.fsHelper.writeTextFile(
+      collectionRawFile, collection.raw, this.config.fileExistsAction.infoAPI);
+    this.logWriteTextFileResult(saveCollectionRawResult, collection, 'collection API data');
+
+    this.emit('phaseEnd', { target: collection, phase: 'saveInfo' });
+
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+
+    // Step 3: download collection media items
+    if (collection.thumbnail) {
+      this.emit('phaseBegin', { target: collection, phase: 'saveMedia' });
+      const collectionMedia: Downloadable[] = [
+        collection.thumbnail
+      ];
+      batch = (await this.createDownloadTaskBatch(
+        `Collection #${collection.id} (${collection.title})`,
+        signal,
+        {
+          target: collectionMedia,
+          targetName: `collection #${campaign.id} -> thumbnail`,
+          dirs: {
+            campaign: this.fsHelper.getCampaignDirs(campaign).root,
+            main: collectionDirs.root,
+            thumbnails: null
+          },
+          fileExistsAction: this.config.fileExistsAction.info
+        }
+      )).batch;
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+      batch.prestart();
+      this.emit('phaseBegin', { target: collection, phase: 'batchDownload', batch });
+      await batch.start();
+      await batch.destroy();
+      this.emit('phaseEnd', { target: collection, phase: 'batchDownload' });
+      this.emit('phaseEnd', { target: collection, phase: 'saveMedia' });
+
+      if (signal) {
+        signal.removeEventListener('abort', abortHandler);
+      }
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+    }
+
+    // Step 4: save to DB
+    db.saveCollection(collection, campaign);
+
+    // Done
+    this.log('info', 'Done saving collection info');
+    this.emit('targetEnd', { target: collection, isSkipped: false });
   }
 
 }

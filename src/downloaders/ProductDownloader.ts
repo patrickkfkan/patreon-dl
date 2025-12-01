@@ -26,212 +26,210 @@ export default class ProductDownloader extends Downloader<Product> {
       throw Error('Downloader already running');
     }
 
-    this.#startPromise = new Promise<void>((resolve) => {
-      void (async () => {
-        const { signal } = params || {};
-        const productFetch = this.config.productFetch;
-        const db = await this.db();
-  
-        if (this.checkAbortSignal(signal, resolve)) {
+    this.#startPromise = this.#doStart(params)
+      .finally(() => {
+        this.#startPromise = null;
+      });
+
+    return this.#startPromise;
+  }
+
+  async #doStart(params?: DownloaderStartParams): Promise<void> {
+    try {
+      const { signal } = params || {};
+      const productFetch = this.config.productFetch;
+      const db = await this.db();
+
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+
+      if (productFetch.type === 'byShop') {
+        this.log('info', `Targeting products by '${productFetch.vanity}'`);
+      }
+      else {
+        this.log('info', `Targeting product #${productFetch.productId}`);
+      }
+
+      // Step 1: get products (if by shop) or target product
+      const productsFetcher = new ProductsFetcher({
+        config: this.config,
+        fetcher: this.fetcher,
+        logger: this.logger,
+        signal
+      });
+      productsFetcher.on('statusChange', ({current}) => {
+        if (current.status === 'running') {
+          this.emit('fetchBegin', { targetType: productsFetcher.getTargetType() });
+        }
+      });
+      productsFetcher.begin();
+
+      // Step 2: download products in each fetched list
+      let downloaded = 0;
+      let skippedUnviewable = 0;
+      let skippedRedundant = 0;
+      let skippedPublishDateOutOfRange = 0;
+      let campaignSaved = false;
+      let stopConditionMet = false;
+      const productsParser = new ProductParser(this.logger);
+      while (productsFetcher.hasNext()) {
+        const { list, aborted, error } = await productsFetcher.next();
+        if (!list || aborted) {
+          break;
+        }
+        if (!list && error) {
+          this.emit('end', { aborted: false, error, message: 'ProductsFetcher error' });
           return;
         }
-  
-        if (productFetch.type === 'byShop') {
-          this.log('info', `Targeting products by '${productFetch.vanity}'`);
-        }
-        else {
-          this.log('info', `Targeting product #${productFetch.productId}`);
-        }
-  
-        // Step 1: get products (if by shop) or target product
-        const productsFetcher = new ProductsFetcher({
-          config: this.config,
-          fetcher: this.fetcher,
-          logger: this.logger,
-          signal
-        });
-        productsFetcher.on('statusChange', ({current}) => {
-          if (current.status === 'running') {
-            this.emit('fetchBegin', { targetType: productsFetcher.getTargetType() });
-          }
-        });
-        productsFetcher.begin();
-
-        // Step 2: download products in each fetched list
-        let downloaded = 0;
-        let skippedUnviewable = 0;
-        let skippedRedundant = 0;
-        let skippedPublishDateOutOfRange = 0;
-        let campaignSaved = false;
-        let stopConditionMet = false;
-        const productsParser = new ProductParser(this.logger);
-        while (productsFetcher.hasNext()) {
-          const { list, aborted, error } = await productsFetcher.next();
-          if (!list || aborted) {
-            break;
-          }
-          if (!list && error) {
-            this.emit('end', { aborted: false, error, message: 'ProductsFetcher error' });
-            resolve();
+        if (!campaignSaved && list.items[0]?.campaign) {
+          await this.saveCampaignInfo(list.items[0].campaign, signal);
+          campaignSaved = true;
+          if (this.checkAbortSignal(signal)) {
             return;
           }
-          if (!campaignSaved && list.items[0]?.campaign) {
-            await this.saveCampaignInfo(list.items[0].campaign, signal);
-            campaignSaved = true;
-            if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-          }
-  
-          for (const _product of list.items) {
-  
-            if (stopConditionMet) {
-              break;
-            }
+        }
 
-            let product = _product;
-  
-            if (this.#isFetchingMultipleProducts(productFetch)) {
-              // Refresh to ensure media links have not expired
-              this.log('debug', `Refresh product #${_product.id}`);
-              const productURL = URLHelper.constructProductAPIURL(product.id);
-              const { json } = await this.commonFetchAPI(productURL, signal);
-              let refreshed: Product | null = null;
-              if (json) {
-                refreshed = productsParser.parseProductsAPIResponse(json, productURL).items[0] || null;
-                if (!refreshed) {
-                  this.log('warn', `Refreshed product #${_product.id} but got empty value - going to use existing data`);
-                }
-                else if (refreshed.id !== _product.id) {
-                  this.log('warn', `Refreshed product #${_product.id} but ID mismatch - going to use existing data`);
-                  refreshed = null;
-                }
-                else {
-                  // Refreshed data does not have productType - reinstate it
-                  refreshed.productType = _product.productType;
-                }
-              }
-              else if (this.checkAbortSignal(signal, resolve)) {
-                return;
-              }
-              else {
-                this.log('warn', `Failed to refresh product #${_product.id} - going to use existing data`);
-              }
-              if (refreshed) {
-                this.log('debug', `Use refreshed product data #${refreshed.id}`);
-                product = refreshed;
-              }
-            }
-  
-            this.emit('targetBegin', { target: product });
-  
-            // Step 4.1: product directories
-            const productDirs = this.fsHelper.getProductDirs(product);
-            this.log('debug', 'Product directories:', productDirs);
-  
-            // Step 4.2: Check with status cache
-            const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
-            if (!product.productType || product.productType === ProductType.DigitalCommerce) {
-              const statusCacheValidation = statusCache.validate(product, productDirs.root, this.config)
-              if (!statusCacheValidation.invalidated) {
-                this.log('info', `Skipped downloading product #${product.id}: already downloaded`);
-                this.emit('targetEnd', {
-                  target: product,
-                  isSkipped: true,
-                  skipReason: TargetSkipReason.AlreadyDownloaded,
-                  skipMessage: 'Target already downloaded'
-                });
-                skippedRedundant++;
-                if (this.config.stopOn === 'previouslyDownloaded') {
-                  stopConditionMet = true;
-                }
-                continue;
-              }
-            }
-            
-            switch ((await this.#doDownload(
-              product,
-              productDirs,
-              statusCache,
-              db,
-              resolve,
-              signal
-            )).status) {
-              case 'aborted':
-                return;
-              case 'downloaded':
-                downloaded++;
-                break;
-              case 'skippedPublishDateOutOfRange':
-                skippedPublishDateOutOfRange++;
-                if (this.config.stopOn === 'postPublishDateOutOfRange' ||
-                  this.config.stopOn === 'publishDateOutOfRange'
-                ) {
-                  stopConditionMet = true;
-                }
-                break;
-              case 'skippedUnviewable':
-                skippedUnviewable++;
-                break;
-            }
-
-            if (this.checkAbortSignal(signal, resolve)) {
-              return;
-            }
-          }
+        for (const _product of list.items) {
 
           if (stopConditionMet) {
             break;
           }
-        }
-  
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
+
+          let product = _product;
+
+          if (this.#isFetchingMultipleProducts(productFetch)) {
+            // Refresh to ensure media links have not expired
+            this.log('debug', `Refresh product #${_product.id}`);
+            const productURL = URLHelper.constructProductAPIURL(product.id);
+            const { json } = await this.commonFetchAPI(productURL, signal);
+            let refreshed: Product | null = null;
+            if (json) {
+              refreshed = productsParser.parseProductsAPIResponse(json, productURL).items[0] || null;
+              if (!refreshed) {
+                this.log('warn', `Refreshed product #${_product.id} but got empty value - going to use existing data`);
+              }
+              else if (refreshed.id !== _product.id) {
+                this.log('warn', `Refreshed product #${_product.id} but ID mismatch - going to use existing data`);
+                refreshed = null;
+              }
+              else {
+                // Refreshed data does not have productType - reinstate it
+                refreshed.productType = _product.productType;
+              }
+            }
+            else if (this.checkAbortSignal(signal)) {
+              return;
+            }
+            else {
+              this.log('warn', `Failed to refresh product #${_product.id} - going to use existing data`);
+            }
+            if (refreshed) {
+              this.log('debug', `Use refreshed product data #${refreshed.id}`);
+              product = refreshed;
+            }
+          }
+
+          this.emit('targetBegin', { target: product });
+
+          // Step 4.1: product directories
+          const productDirs = this.fsHelper.getProductDirs(product);
+          this.log('debug', 'Product directories:', productDirs);
+
+          // Step 4.2: Check with status cache
+          const statusCache = StatusCache.getInstance(this.config, productDirs.statusCache, this.logger);
+          if (!product.productType || product.productType === ProductType.DigitalCommerce) {
+            const statusCacheValidation = statusCache.validate(product, productDirs.root, this.config)
+            if (!statusCacheValidation.invalidated) {
+              this.log('info', `Skipped downloading product #${product.id}: already downloaded`);
+              this.emit('targetEnd', {
+                target: product,
+                isSkipped: true,
+                skipReason: TargetSkipReason.AlreadyDownloaded,
+                skipMessage: 'Target already downloaded'
+              });
+              skippedRedundant++;
+              if (this.config.stopOn === 'previouslyDownloaded') {
+                stopConditionMet = true;
+              }
+              continue;
+            }
+          }
+          
+          switch ((await this.#doDownload(
+            product,
+            productDirs,
+            statusCache,
+            db,
+            signal
+          )).status) {
+            case 'aborted':
+              return;
+            case 'downloaded':
+              downloaded++;
+              break;
+            case 'skippedPublishDateOutOfRange':
+              skippedPublishDateOutOfRange++;
+              if (this.config.stopOn === 'postPublishDateOutOfRange' ||
+                this.config.stopOn === 'publishDateOutOfRange'
+              ) {
+                stopConditionMet = true;
+              }
+              break;
+            case 'skippedUnviewable':
+              skippedUnviewable++;
+              break;
+          }
+
+          if (this.checkAbortSignal(signal)) {
+            return;
+          }
         }
 
-        if (stopConditionMet && this.#isFetchingMultipleProducts(productFetch)) {
-          this.log('info', `Stop downloader: stop condition "${this.config.stopOn}" met`)
+        if (stopConditionMet) {
+          break;
         }
-  
-        // Done
-        if (productFetch.type === 'byShop') {
-          this.log('info', `Done downloading products by '${productFetch.vanity}'`);
-        }
-        else {
-          this.log('info', `Done downloading product #${productFetch.productId}`);
-        }
-        let endMessage = 'Done';
-        if (this.#isFetchingMultipleProducts(productFetch)) {
-          const skippedStrParts: string[] = [];
-          if (skippedUnviewable) {
-            skippedStrParts.push(`${skippedUnviewable} unviewable`);
-          }
-          if (skippedRedundant) {
-            skippedStrParts.push(`${skippedRedundant} redundant`);
-          }
-          if (skippedPublishDateOutOfRange) {
-            skippedStrParts.push(`${skippedPublishDateOutOfRange} with publish date out of range`);
-          }
-          const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
-          endMessage = `Total ${downloaded} / ${productsFetcher.getTotal()} products processed${skippedStr}`;
-          this.log('info', endMessage);
-        }
-        this.emit('end', { aborted: false, message: endMessage });
-        this.#startPromise = null;
-        resolve();
-      })();
-    })
-    .finally(() => {
-      void (async () => {
-        await this.closeDB();
-        if (this.logger) {
-          await this.logger.end();
-        }
-        this.#startPromise = null;
-      })();
-    });
+      }
 
-    return this.#startPromise;
+      if (this.checkAbortSignal(signal)) {
+        return;
+      }
+
+      if (stopConditionMet && this.#isFetchingMultipleProducts(productFetch)) {
+        this.log('info', `Stop downloader: stop condition "${this.config.stopOn}" met`)
+      }
+
+      // Done
+      if (productFetch.type === 'byShop') {
+        this.log('info', `Done downloading products by '${productFetch.vanity}'`);
+      }
+      else {
+        this.log('info', `Done downloading product #${productFetch.productId}`);
+      }
+      let endMessage = 'Done';
+      if (this.#isFetchingMultipleProducts(productFetch)) {
+        const skippedStrParts: string[] = [];
+        if (skippedUnviewable) {
+          skippedStrParts.push(`${skippedUnviewable} unviewable`);
+        }
+        if (skippedRedundant) {
+          skippedStrParts.push(`${skippedRedundant} redundant`);
+        }
+        if (skippedPublishDateOutOfRange) {
+          skippedStrParts.push(`${skippedPublishDateOutOfRange} with publish date out of range`);
+        }
+        const skippedStr = skippedStrParts.length > 0 ? ` (skipped: ${skippedStrParts.join(', ')})` : '';
+        endMessage = `Total ${downloaded} / ${productsFetcher.getTotal()} products processed${skippedStr}`;
+        this.log('info', endMessage);
+      }
+      this.emit('end', { aborted: false, message: endMessage });
+    }
+    finally {
+      await this.closeDB();
+      if (this.logger) {
+        await this.logger.end();
+      }
+    }
   }
 
   async #doDownload(
@@ -239,7 +237,6 @@ export default class ProductDownloader extends Downloader<Product> {
     productDirs: ProductDirectories,
     statusCache: StatusCache,
     db: DBInstance,
-    resolve: () => void,
     signal?: AbortSignal
   ): Promise<{status: 'skippedUnviewable' | 'skippedPublishDateOutOfRange' | 'aborted' | 'downloaded' }> {
     // Step 1: Check whether we should download product
@@ -351,7 +348,7 @@ export default class ProductDownloader extends Downloader<Product> {
       }
       
       try {
-        if (this.checkAbortSignal(signal, resolve)) {
+        if (this.checkAbortSignal(signal)) {
           return {
             status: 'aborted'
           };
@@ -378,7 +375,7 @@ export default class ProductDownloader extends Downloader<Product> {
       this.emit('phaseEnd', { target: product, phase: 'saveMedia' });
     }
 
-    if (this.checkAbortSignal(signal, resolve)) {
+    if (this.checkAbortSignal(signal)) {
       return {
         status: 'aborted'
       };

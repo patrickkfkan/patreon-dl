@@ -398,139 +398,129 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return true;
   }
 
-  protected saveCampaignInfo(campaign: Campaign | null, signal?: AbortSignal) {
-
-    return new Promise<void>((resolve) => {
-      void (async () => {
-        const db = await this.db();
-        if (!this.config.include.campaignInfo) {
-          if (campaign) {
-            db.saveCampaign(campaign, new Date());
-          }
-          resolve();
-          return;
-        }
-  
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
-        }
-  
-        let batch: DownloadTaskBatch | null = null;
-        const abortHandler = () => {
-          void (async () => {
-            if (batch) {
-              await batch.abort();
-            }
-          })();
-        };
-        if (signal) {
-          signal.addEventListener('abort', abortHandler, { once: true });
-        }
-  
-        if (!campaign) {
-          this.log('warn', 'Skipped saving campaign info: target unavailable');
-          resolve();
-          return;
-        }
-  
-        this.log('info', `Save campaign info #${campaign.id}`);
-        this.emit('targetBegin', { target: campaign });
-        this.emit('phaseBegin', { target: campaign, phase: 'saveInfo' });
-  
-        // Step 1: create campaign directories
-        const campaignDirs = this.fsHelper.getCampaignDirs(campaign);
-        this.log('debug', 'Campaign directories: ', campaignDirs);
-        this.fsHelper.createDir(campaignDirs.root);
-        this.fsHelper.createDir(campaignDirs.info);
-  
-        // Step 2: save summary and raw json
-        const summary = generateCampaignSummary(campaign);
-        const summaryFile = path.resolve(campaignDirs.info, 'info.txt');
-        const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
-        this.logWriteTextFileResult(saveSummaryResult, campaign, 'campaign summary');
-  
-        // Campaign / creator raw data might not be complete. Fetch directly from API.
-        // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
-        const { json: fetchedCampaignAPIData } = await this.fetchCampaign(campaign.id, signal);
-        const { json: fetchedCreatorAPIData } = campaign.creator ? await this.fetchUser(campaign.creator.id, signal) : { json: null };
-  
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
-        }
-  
-        const campaignRawFile = path.resolve(campaignDirs.info, 'campaign-api.json');
-        const saveCampaignRawResult = await this.fsHelper.writeTextFile(
-          campaignRawFile, fetchedCampaignAPIData || campaign.raw, this.config.fileExistsAction.infoAPI);
-        this.logWriteTextFileResult(saveCampaignRawResult, campaign, 'campaign API data');
-  
-        if (campaign.creator) {
-          const creatorRawFile = path.resolve(campaignDirs.info, 'creator-api.json');
-          const saveCreatorRawResult = await this.fsHelper.writeTextFile(
-            creatorRawFile, fetchedCreatorAPIData || campaign.creator.raw, this.config.fileExistsAction.infoAPI);
-          this.logWriteTextFileResult(saveCreatorRawResult, campaign.creator, 'creator API data');
-        }
-  
-        this.emit('phaseEnd', { target: campaign, phase: 'saveInfo' });
-  
-        // Step 3: download campaign media items
-        this.emit('phaseBegin', { target: campaign, phase: 'saveMedia' });
-        const campaignMedia: Downloadable[] = [
-          campaign.avatarImage,
-          campaign.coverPhoto
-        ];
-        if (campaign.creator) {
-          campaignMedia.push(
-            campaign.creator.image,
-            campaign.creator.thumbnail
-          );
-        }
-        for (const reward of campaign.rewards) {
-          if (reward.image) {
-            campaignMedia.push(reward.image);
-          }
-        }
-        batch = (await this.createDownloadTaskBatch(
-          `Campaign #${campaign.id} (${campaign.name})`,
-          signal,
-          {
-            target: campaignMedia,
-            targetName: `campaign #${campaign.id} -> images`,
-            dirs: {
-              campaign: campaignDirs.root,
-              main: campaignDirs.info,
-              thumbnails: null
-            },
-            fileExistsAction: this.config.fileExistsAction.info
-          }
-        )).batch;
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
-        }
-        batch.prestart();
-        this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
-        await batch.start();
-        await batch.destroy();
-        this.emit('phaseEnd', { target: campaign, phase: 'batchDownload' });
-        this.emit('phaseEnd', { target: campaign, phase: 'saveMedia' });
-  
-        if (signal) {
-          signal.removeEventListener('abort', abortHandler);
-        }
-        if (this.checkAbortSignal(signal, resolve)) {
-          return;
-        }
-
-        // Step 4: save to DB
+  protected async saveCampaignInfo(campaign: Campaign | null, signal?: AbortSignal) {
+    const db = await this.db();
+    if (!this.config.include.campaignInfo) {
+      if (campaign) {
         db.saveCampaign(campaign, new Date());
-  
-        // Done
-        this.log('info', 'Done saving campaign info');
-        this.emit('targetEnd', { target: campaign, isSkipped: false });
-  
-        resolve();
-      })();
-    });
+      }
+      return;
+    }
 
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+
+    let batch: DownloadTaskBatch | null = null;
+    const abortHandler = () => {
+      void (async () => {
+        if (batch) {
+          await batch.abort();
+        }
+      })();
+    };
+    if (signal) {
+      signal.addEventListener('abort', abortHandler, { once: true });
+    }
+
+    if (!campaign) {
+      this.log('warn', 'Skipped saving campaign info: target unavailable');
+      return;
+    }
+
+    this.log('info', `Save campaign info #${campaign.id}`);
+    this.emit('targetBegin', { target: campaign });
+    this.emit('phaseBegin', { target: campaign, phase: 'saveInfo' });
+
+    // Step 1: create campaign directories
+    const campaignDirs = this.fsHelper.getCampaignDirs(campaign);
+    this.log('debug', 'Campaign directories: ', campaignDirs);
+    this.fsHelper.createDir(campaignDirs.root);
+    this.fsHelper.createDir(campaignDirs.info);
+
+    // Step 2: save summary and raw json
+    const summary = generateCampaignSummary(campaign);
+    const summaryFile = path.resolve(campaignDirs.info, 'info.txt');
+    const saveSummaryResult = await this.fsHelper.writeTextFile(summaryFile, summary, this.config.fileExistsAction.info);
+    this.logWriteTextFileResult(saveSummaryResult, campaign, 'campaign summary');
+
+    // Campaign / creator raw data might not be complete. Fetch directly from API.
+    // Strictly speaking, we should check for 'error' in results, but since it's not going to be fatal we'll just skip it.
+    const { json: fetchedCampaignAPIData } = await this.fetchCampaign(campaign.id, signal);
+    const { json: fetchedCreatorAPIData } = campaign.creator ? await this.fetchUser(campaign.creator.id, signal) : { json: null };
+
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+
+    const campaignRawFile = path.resolve(campaignDirs.info, 'campaign-api.json');
+    const saveCampaignRawResult = await this.fsHelper.writeTextFile(
+      campaignRawFile, fetchedCampaignAPIData || campaign.raw, this.config.fileExistsAction.infoAPI);
+    this.logWriteTextFileResult(saveCampaignRawResult, campaign, 'campaign API data');
+
+    if (campaign.creator) {
+      const creatorRawFile = path.resolve(campaignDirs.info, 'creator-api.json');
+      const saveCreatorRawResult = await this.fsHelper.writeTextFile(
+        creatorRawFile, fetchedCreatorAPIData || campaign.creator.raw, this.config.fileExistsAction.infoAPI);
+      this.logWriteTextFileResult(saveCreatorRawResult, campaign.creator, 'creator API data');
+    }
+
+    this.emit('phaseEnd', { target: campaign, phase: 'saveInfo' });
+
+    // Step 3: download campaign media items
+    this.emit('phaseBegin', { target: campaign, phase: 'saveMedia' });
+    const campaignMedia: Downloadable[] = [
+      campaign.avatarImage,
+      campaign.coverPhoto
+    ];
+    if (campaign.creator) {
+      campaignMedia.push(
+        campaign.creator.image,
+        campaign.creator.thumbnail
+      );
+    }
+    for (const reward of campaign.rewards) {
+      if (reward.image) {
+        campaignMedia.push(reward.image);
+      }
+    }
+    batch = (await this.createDownloadTaskBatch(
+      `Campaign #${campaign.id} (${campaign.name})`,
+      signal,
+      {
+        target: campaignMedia,
+        targetName: `campaign #${campaign.id} -> images`,
+        dirs: {
+          campaign: campaignDirs.root,
+          main: campaignDirs.info,
+          thumbnails: null
+        },
+        fileExistsAction: this.config.fileExistsAction.info
+      }
+    )).batch;
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+    batch.prestart();
+    this.emit('phaseBegin', { target: campaign, phase: 'batchDownload', batch });
+    await batch.start();
+    await batch.destroy();
+    this.emit('phaseEnd', { target: campaign, phase: 'batchDownload' });
+    this.emit('phaseEnd', { target: campaign, phase: 'saveMedia' });
+
+    if (signal) {
+      signal.removeEventListener('abort', abortHandler);
+    }
+    if (this.checkAbortSignal(signal)) {
+      return;
+    }
+
+    // Step 4: save to DB
+    db.saveCampaign(campaign, new Date());
+
+    // Done
+    this.log('info', 'Done saving campaign info');
+    this.emit('targetEnd', { target: campaign, isSkipped: false });
   }
 
   protected log(level: LogLevel, ...msg: any[]) {
@@ -541,13 +531,12 @@ export default abstract class Downloader<T extends DownloaderType> extends Event
     return deepFreeze(this.config);
   }
 
-  protected checkAbortSignal(signal: AbortSignal | undefined, resolve: () => void) {
+  protected checkAbortSignal(signal: AbortSignal | undefined) {
     if (signal && signal.aborted) {
       if (!this.#hasEmittedEndEventOnAbort) {
         this.emit('end', { aborted: true, message: 'Download aborted' });
         this.#hasEmittedEndEventOnAbort = true;
       }
-      resolve();
       return true;
     }
     return false;
