@@ -600,6 +600,7 @@ export default class PostDownloader extends Downloader<Post> {
           };
         }
         if (comments.length > 0) {
+          this.fsHelper.createDir(postDirs.info);
           const commentsFile = path.resolve(postDirs.info, 'comments.txt');
           const commentsSummary = generatePostCommentsSummary(comments);
           const saveCommentsResult = await this.fsHelper.writeTextFile(commentsFile, commentsSummary, this.config.fileExistsAction.info);
