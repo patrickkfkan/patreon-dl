@@ -293,6 +293,15 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.5.0
+- Add support for downloading from "shop" URLs (e.g. `https://www.patreon.com/<creator>/shop`). This will download all products from a creator's shop.
+  - Add `productsPublished` / `products.published.after` / `products.published.before` option to set publish date criteria of products included in download.
+  - Since `stopOn` / `stop.on` option now also applies to products, the `postPreviouslyDownloaded` and `postPublishDateOutOfRange` values have been deprecated in favor of `previouslyDownloaded` and `publishDateOutOfRange`, respectively.
+- Add Collections support. Collection info is now saved when downloading posts. This means you can browse posts by collection. ([#107](https://github.com/patrickkfkan/patreon-dl/issues/107))
+- (Browse) Add search functionality ([#106](https://github.com/patrickkfkan/patreon-dl/issues/106))
+- Add Tags support. Tag info is now saved when downloading posts. This means you can filter posts by tag.
+- Add `include.mediaThumbnails` option
+
 v3.4.0
 - Fix "no posts found" on "cw" pages ([patreon-dl-gui#30](https://github.com/patrickkfkan/patreon-dl-gui/issues/30))
 - Fix YouTube streams returning 403 error ([patreon-dl-gui#31](https://github.com/patrickkfkan/patreon-dl-gui/issues/31))
