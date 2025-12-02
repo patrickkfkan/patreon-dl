@@ -1,0 +1,42 @@
+@use "./mixins";
+
+.collection-banner {
+  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  max-width: 40.5em;
+
+  &__thumbnail {
+    z-index: 100; // This is to keep thumbnail above the fade-content overlay
+  }
+
+  &__thumbnail > img {
+    border-radius: var(--bs-border-radius);
+    height: 8em;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  &__title {
+    @include mixins.line-clamp();
+    color: var(--bs-link-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .fade-content__toggle {
+    margin-bottom: 0.5em;
+  }
+}
+
+.collection-banner--nodesc {
+  .collection-banner__thumbnail > img {
+    height: 4em;
+  }
+
+  .collection-banner__title {
+    flex: 1 auto;
+    align-items: center;
+    font-size: 1.5rem;
+  }
+}

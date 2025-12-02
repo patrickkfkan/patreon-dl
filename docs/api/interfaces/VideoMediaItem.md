@@ -6,7 +6,7 @@
 
 # Interface: VideoMediaItem
 
-Defined in: [src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L81)
+Defined in: [src/entities/MediaItem.ts:99](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L99)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [src/entities/MediaItem.ts:81](https://github.com/patrickkfkan/patre
 
 > **createdAt**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:83](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L83)
+Defined in: [src/entities/MediaItem.ts:101](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L101)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [src/entities/MediaItem.ts:83](https://github.com/patrickkfkan/patre
 
 > **displayURL**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:90](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L90)
+Defined in: [src/entities/MediaItem.ts:108](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L108)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [src/entities/MediaItem.ts:90](https://github.com/patrickkfkan/patre
 
 > **downloadURL**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:89](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L89)
+Defined in: [src/entities/MediaItem.ts:107](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L107)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [src/entities/MediaItem.ts:89](https://github.com/patrickkfkan/patre
 
 > **duration**: `null` \| `number`
 
-Defined in: [src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L88)
+Defined in: [src/entities/MediaItem.ts:106](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L106)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [src/entities/MediaItem.ts:88](https://github.com/patrickkfkan/patre
 
 > **filename**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L4)
+Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L4)
 
 #### Inherited from
 
@@ -62,7 +62,7 @@ Defined in: [src/entities/MediaItem.ts:4](https://github.com/patrickkfkan/patreo
 
 > **id**: `string`
 
-Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L3)
+Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L3)
 
 #### Inherited from
 
@@ -74,7 +74,7 @@ Defined in: [src/entities/MediaItem.ts:3](https://github.com/patrickkfkan/patreo
 
 > **mimeType**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L5)
+Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L5)
 
 #### Inherited from
 
@@ -86,7 +86,7 @@ Defined in: [src/entities/MediaItem.ts:5](https://github.com/patrickkfkan/patreo
 
 > **size**: `object`
 
-Defined in: [src/entities/MediaItem.ts:84](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L84)
+Defined in: [src/entities/MediaItem.ts:102](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L102)
 
 #### height
 
@@ -102,7 +102,7 @@ Defined in: [src/entities/MediaItem.ts:84](https://github.com/patrickkfkan/patre
 
 > **thumbnailURL**: `null` \| `string`
 
-Defined in: [src/entities/MediaItem.ts:91](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L91)
+Defined in: [src/entities/MediaItem.ts:109](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L109)
 
 ***
 
@@ -110,7 +110,7 @@ Defined in: [src/entities/MediaItem.ts:91](https://github.com/patrickkfkan/patre
 
 > **type**: `"video"`
 
-Defined in: [src/entities/MediaItem.ts:82](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/entities/MediaItem.ts#L82)
+Defined in: [src/entities/MediaItem.ts:100](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/entities/MediaItem.ts#L100)
 
 #### Overrides
 

@@ -4,6 +4,7 @@ import path from 'path';
 import dateFormat from 'dateformat';
 import type Logger from '../../utils/logging/Logger.js';
 import { DBUpdater_1_1_0 } from './updaters/DBUpdater_1_1_0.js';
+import { DBUpdater_1_2_0 } from './updaters/DBUpdater_1_2_0.js';
 import { commonLog } from '../../utils/logging/Logger.js';
 
 export interface DBUpdater {
@@ -12,7 +13,8 @@ export interface DBUpdater {
 }
 
 const updaters: DBUpdater[] = [
-  DBUpdater_1_1_0
+  DBUpdater_1_1_0,
+  DBUpdater_1_2_0
 ];
 
 function getUpdaterByClosestHigherVersion(currentVersion: string) {

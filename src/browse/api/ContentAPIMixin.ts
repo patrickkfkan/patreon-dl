@@ -1,12 +1,15 @@
 import { load as cheerioLoad } from 'cheerio';
 import { type APIConstructor } from ".";
 import { type Product, type Post } from "../../entities";
-import { type GetContentContext, type ContentListSortBy, type ContentType, type GetContentListParams } from "../types/Content.js";
+import { type GetContentContext, type ContentListSortBy, type ContentType, type GetContentListParams, type GetCollectionListParams, type CollectionListSortBy, type GetPostTagListParams } from "../types/Content.js";
 import RawDataExtractor from '../web/utils/RawDataExtractor.js';
 import { URLHelper } from '../../utils/index.js';
 
 const DEFAULT_CONTENT_LIST_SIZE = 10;
 const DEFAULT_CONTENT_LIST_SORT_BY: ContentListSortBy = 'a-z';
+
+const DEFAULT_COLLECTION_LIST_SIZE = 10;
+const DEFAULT_COLLECTION_LIST_SORT_BY: CollectionListSortBy = 'a-z';
 
 export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
   return class ContentAPI extends Base {
@@ -49,6 +52,32 @@ export function ContentAPIMixin<TBase extends APIConstructor>(Base: TBase) {
 
     getPreviousNextContent<T extends ContentType>(content: Post | Product, context: GetContentContext<T>) {
       return this.db.getPreviousNextContent(content, context);
+    }
+
+    getCollection(id: string) {
+      return this.db.getCollection(id);
+    }
+
+    getCollectionList(params: GetCollectionListParams) {
+      const {
+        search = '',
+        sortBy = DEFAULT_COLLECTION_LIST_SORT_BY,
+        limit = DEFAULT_COLLECTION_LIST_SIZE,
+        offset = 0
+      } = params;
+      return this.db.getCollectionList({
+        campaign: params.campaign,
+        search,
+        sortBy,
+        limit,
+        offset
+      });
+    }
+
+    getPostTagList(params: GetPostTagListParams) {
+      return this.db.getPostTagList({
+        campaign: params.campaign,
+      });
     }
 
     #processPostContentInlineMedia(post: Post) {

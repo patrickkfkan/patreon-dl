@@ -6,7 +6,7 @@
 
 # Interface: DownloaderFileLoggerOptions
 
-Defined in: [src/utils/logging/FileLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L24)
+Defined in: [src/utils/logging/FileLogger.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L24)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/utils/logging/FileLogger.ts:24](https://github.com/patrickkfkan
 
 > `optional` **fileExistsAction**: `"append"` \| `"overwrite"`
 
-Defined in: [src/utils/logging/FileLogger.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L28)
+Defined in: [src/utils/logging/FileLogger.ts:28](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L28)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/utils/logging/FileLogger.ts:28](https://github.com/patrickkfkan
 
 > **init**: [`DownloaderFileLoggerInit`](DownloaderFileLoggerInit.md)
 
-Defined in: [src/utils/logging/FileLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L25)
+Defined in: [src/utils/logging/FileLogger.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L25)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/utils/logging/FileLogger.ts:25](https://github.com/patrickkfkan
 
 > `optional` **logDir**: `string`
 
-Defined in: [src/utils/logging/FileLogger.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L26)
+Defined in: [src/utils/logging/FileLogger.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L26)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [src/utils/logging/FileLogger.ts:26](https://github.com/patrickkfkan
 
 > `optional` **logFilename**: `string`
 
-Defined in: [src/utils/logging/FileLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/logging/FileLogger.ts#L27)
+Defined in: [src/utils/logging/FileLogger.ts:27](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/logging/FileLogger.ts#L27)

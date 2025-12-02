@@ -8,7 +8,7 @@
 
 > **getDefaultDownloaderOptions**(): `object`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:220](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L220)
+Defined in: [src/downloaders/DownloaderOptions.ts:246](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/DownloaderOptions.ts#L246)
 
 ## Returns
 
@@ -106,6 +106,10 @@ Defined in: [src/downloaders/DownloaderOptions.ts:220](https://github.com/patric
 
 > **images**: `null` \| `string`
 
+#### include.mediaThumbnails
+
+> **mediaThumbnails**: `boolean`
+
 #### include.postsInTier
 
 > **postsInTier**: `"any"` \| `string`[]
@@ -129,6 +133,18 @@ Defined in: [src/downloaders/DownloaderOptions.ts:220](https://github.com/patric
 #### include.previewMedia
 
 > **previewMedia**: `boolean` \| (`"audio"` \| `"video"` \| `"image"`)[]
+
+#### include.productsPublished
+
+> **productsPublished**: `object`
+
+#### include.productsPublished.after
+
+> **after**: `null` \| [`DateTime`](../classes/DateTime.md)
+
+#### include.productsPublished.before
+
+> **before**: `null` \| [`DateTime`](../classes/DateTime.md)
 
 ### logger
 

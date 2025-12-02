@@ -6,7 +6,7 @@
 
 # Class: URLHelper
 
-Defined in: [src/utils/URLHelper.ts:171](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L171)
+Defined in: [src/utils/URLHelper.ts:295](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L295)
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: [src/utils/URLHelper.ts:171](https://github.com/patrickkfkan/patreon
 
 > `static` **analyzeURL**(`url`): `null` \| [`URLAnalysis`](../type-aliases/URLAnalysis.md)
 
-Defined in: [src/utils/URLHelper.ts:297](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L297)
+Defined in: [src/utils/URLHelper.ts:457](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L457)
 
 #### Parameters
 
@@ -42,7 +42,7 @@ Defined in: [src/utils/URLHelper.ts:297](https://github.com/patrickkfkan/patreon
 
 > `static` **constructCampaignAPIURL**(`campaignId`): `string`
 
-Defined in: [src/utils/URLHelper.ts:217](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L217)
+Defined in: [src/utils/URLHelper.ts:341](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L341)
 
 #### Parameters
 
@@ -60,7 +60,7 @@ Defined in: [src/utils/URLHelper.ts:217](https://github.com/patrickkfkan/patreon
 
 > `static` **constructCampaignPageURL**(`user`): `string`
 
-Defined in: [src/utils/URLHelper.ts:193](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L193)
+Defined in: [src/utils/URLHelper.ts:317](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L317)
 
 #### Parameters
 
@@ -78,7 +78,7 @@ Defined in: [src/utils/URLHelper.ts:193](https://github.com/patrickkfkan/patreon
 
 > `static` **constructCollectionURL**(`collectionId`): `string`
 
-Defined in: [src/utils/URLHelper.ts:209](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L209)
+Defined in: [src/utils/URLHelper.ts:333](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L333)
 
 #### Parameters
 
@@ -96,7 +96,7 @@ Defined in: [src/utils/URLHelper.ts:209](https://github.com/patrickkfkan/patreon
 
 > `static` **constructCurrentUserAPIURL**(): `string`
 
-Defined in: [src/utils/URLHelper.ts:173](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L173)
+Defined in: [src/utils/URLHelper.ts:297](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L297)
 
 #### Returns
 
@@ -108,7 +108,7 @@ Defined in: [src/utils/URLHelper.ts:173](https://github.com/patrickkfkan/patreon
 
 > `static` **constructPostCommentsAPIURL**(`params`): `string`
 
-Defined in: [src/utils/URLHelper.ts:261](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L261)
+Defined in: [src/utils/URLHelper.ts:385](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L385)
 
 #### Parameters
 
@@ -126,7 +126,7 @@ Defined in: [src/utils/URLHelper.ts:261](https://github.com/patrickkfkan/patreon
 
 > `static` **constructPostsAPIURL**(`params`): `string`
 
-Defined in: [src/utils/URLHelper.ts:221](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L221)
+Defined in: [src/utils/URLHelper.ts:345](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L345)
 
 #### Parameters
 
@@ -162,7 +162,7 @@ Defined in: [src/utils/URLHelper.ts:221](https://github.com/patrickkfkan/patreon
 
 > `static` **constructProductAPIURL**(`productId`): `string`
 
-Defined in: [src/utils/URLHelper.ts:183](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L183)
+Defined in: [src/utils/URLHelper.ts:307](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L307)
 
 #### Parameters
 
@@ -176,11 +176,35 @@ Defined in: [src/utils/URLHelper.ts:183](https://github.com/patrickkfkan/patreon
 
 ***
 
+### constructShopAPIURL()
+
+> `static` **constructShopAPIURL**(`params`): `string`
+
+Defined in: [src/utils/URLHelper.ts:421](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L421)
+
+#### Parameters
+
+##### params
+
+###### campaignId
+
+`string`
+
+###### offset?
+
+`number`
+
+#### Returns
+
+`string`
+
+***
+
 ### constructUserAPIURL()
 
 > `static` **constructUserAPIURL**(`userId`): `string`
 
-Defined in: [src/utils/URLHelper.ts:213](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L213)
+Defined in: [src/utils/URLHelper.ts:337](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L337)
 
 #### Parameters
 
@@ -198,7 +222,7 @@ Defined in: [src/utils/URLHelper.ts:213](https://github.com/patrickkfkan/patreon
 
 > `static` **constructUserPostsURL**(`user`): `string`
 
-Defined in: [src/utils/URLHelper.ts:201](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L201)
+Defined in: [src/utils/URLHelper.ts:325](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L325)
 
 #### Parameters
 
@@ -216,7 +240,7 @@ Defined in: [src/utils/URLHelper.ts:201](https://github.com/patrickkfkan/patreon
 
 > `static` **getExtensionFromURL**(`url`): `string`
 
-Defined in: [src/utils/URLHelper.ts:411](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L411)
+Defined in: [src/utils/URLHelper.ts:581](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L581)
 
 #### Parameters
 
@@ -234,7 +258,7 @@ Defined in: [src/utils/URLHelper.ts:411](https://github.com/patrickkfkan/patreon
 
 > `static` **isAttachmentLink**(`url`): \{ `mediaId`: `string`; `ownerId`: `string`; `validated`: `true`; \} \| \{ `mediaId?`: `undefined`; `ownerId?`: `undefined`; `validated`: `false`; \}
 
-Defined in: [src/utils/URLHelper.ts:428](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L428)
+Defined in: [src/utils/URLHelper.ts:598](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L598)
 
 #### Parameters
 
@@ -252,7 +276,7 @@ Defined in: [src/utils/URLHelper.ts:428](https://github.com/patrickkfkan/patreon
 
 > `static` **stripSearchParamsFromURL**(`url`): `string`
 
-Defined in: [src/utils/URLHelper.ts:402](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L402)
+Defined in: [src/utils/URLHelper.ts:572](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L572)
 
 #### Parameters
 
@@ -270,7 +294,7 @@ Defined in: [src/utils/URLHelper.ts:402](https://github.com/patrickkfkan/patreon
 
 > `static` **validateURL**(`url`): `boolean`
 
-Defined in: [src/utils/URLHelper.ts:416](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/utils/URLHelper.ts#L416)
+Defined in: [src/utils/URLHelper.ts:586](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/utils/URLHelper.ts#L586)
 
 #### Parameters
 

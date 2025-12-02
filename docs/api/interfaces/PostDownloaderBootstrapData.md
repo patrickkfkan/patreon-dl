@@ -6,7 +6,7 @@
 
 # Interface: PostDownloaderBootstrapData
 
-Defined in: [src/downloaders/Bootstrap.ts:17](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L17)
+Defined in: [src/downloaders/Bootstrap.ts:24](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L24)
 
 ## Extends
 
@@ -16,9 +16,9 @@ Defined in: [src/downloaders/Bootstrap.ts:17](https://github.com/patrickkfkan/pa
 
 ### postFetch
 
-> **postFetch**: \{ `postId`: `string`; `type`: `"single"`; \} \| \{ `filters?`: `Record`\<`string`, `any`\>; `type`: `"byUser"`; `vanity`: `string`; \} \| \{ `filters?`: `Record`\<`string`, `any`\>; `type`: `"byUserId"`; `userId`: `string`; \} \| \{ `collectionId`: `string`; `filters?`: `Record`\<`string`, `any`\>; `type`: `"byCollection"`; \}
+> **postFetch**: \{ `postId`: `string`; `type`: `"single"`; \} \| \{ `campaignId?`: `string`; `filters?`: `Record`\<`string`, `any`\>; `type`: `"byUser"`; `vanity`: `string`; \} \| \{ `campaignId?`: `string`; `filters?`: `Record`\<`string`, `any`\>; `type`: `"byUserId"`; `userId`: `string`; \} \| \{ `campaignId?`: `string`; `collectionId`: `string`; `filters?`: `Record`\<`string`, `any`\>; `type`: `"byCollection"`; \}
 
-Defined in: [src/downloaders/Bootstrap.ts:19](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L19)
+Defined in: [src/downloaders/Bootstrap.ts:26](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L26)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [src/downloaders/Bootstrap.ts:19](https://github.com/patrickkfkan/pa
 
 > **targetURL**: `string`
 
-Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L9)
+Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L9)
 
 #### Inherited from
 
@@ -38,7 +38,7 @@ Defined in: [src/downloaders/Bootstrap.ts:9](https://github.com/patrickkfkan/pat
 
 > **type**: `"post"`
 
-Defined in: [src/downloaders/Bootstrap.ts:18](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/Bootstrap.ts#L18)
+Defined in: [src/downloaders/Bootstrap.ts:25](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/Bootstrap.ts#L25)
 
 #### Overrides
 

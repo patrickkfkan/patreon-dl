@@ -4,12 +4,11 @@ import { type Logger } from '../utils/logging/index.js';
 import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
 import { type DownloaderConfig } from './Downloader.js';
 import URLHelper, { PostSortOrder } from '../utils/URLHelper.js';
-import ObjectHelper from '../utils/ObjectHelper.js';
-import PageParser from '../parsers/PageParser.js';
 import type Fetcher from '../utils/Fetcher.js';
 import PostParser from '../parsers/PostParser.js';
-import { type PostCollection } from '../entities/Post.js';
+import { type PostList } from '../entities/Post.js';
 import Sleeper from '../utils/Sleeper.js';
+import { InitialData } from './InitialData.js';
 
 export type PostsFetcherStatus = {
   status: 'ready' | 'running' | 'completed' | 'aborted';
@@ -22,7 +21,7 @@ export type PostsFetcherStatus = {
 export type PostsFetcherEvent = 'fetched' | 'statusChange';
 export type PostsFetcherEventPayload<T extends PostsFetcherEvent> =
   T extends 'fetched' ? {
-    collection: PostCollection;
+    list: PostList;
     index: number;
   } :
   T extends 'statusChange' ? {
@@ -32,7 +31,7 @@ export type PostsFetcherEventPayload<T extends PostsFetcherEvent> =
   never;
 
 export interface PostsFetcherResult {
-  collection: PostCollection | null;
+  list: PostList | null;
   error?: any;
   aborted: boolean;
 }
@@ -55,7 +54,7 @@ export default class PostsFetcher extends EventEmitter {
     returning: number | null;
     lastReturned: number | null; // Last returned in next()
   };
-  #fetched: PostCollection[];
+  #fetched: PostList[];
   #total: number | null;
   #nextPromises: Array<Promise<PostsFetcherResult> | undefined>;
   #sleeper: Sleeper | null;
@@ -148,11 +147,11 @@ export default class PostsFetcher extends EventEmitter {
     }
 
     const postsParser = new PostParser(this.logger);
-    const collection = postsParser.parsePostsAPIResponse(json, postsAPIURL);
-    this.#fetched = [ collection ];
+    const list = postsParser.parsePostsAPIResponse(json, postsAPIURL);
+    this.#fetched = [ list ];
     this.#pointers.lastFetched = this.#pointers.fetching;
     this.#pointers.fetching = null;
-    this.emit('fetched', { collection, index: 0 });
+    this.emit('fetched', { list, index: 0 });
 
     const total = this.#total = this.#fetched[0].total;
     if (this.#isFetchingMultiplePosts(postFetch)) {
@@ -186,15 +185,15 @@ export default class PostsFetcher extends EventEmitter {
           nextURL = null;
         }
         else {
-          const collection = postsParser.parsePostsAPIResponse(json, nextURL);
-          this.#fetched.push(collection);
-          const fetched = collection.items.length;
+          const list = postsParser.parsePostsAPIResponse(json, nextURL);
+          this.#fetched.push(list);
+          const fetched = list.items.length;
           totalFetched += fetched;
           this.log('info', `Fetched posts: ${totalFetched} / ${total}`);
-          nextURL = collection.nextURL;
+          nextURL = list.nextURL;
           this.#pointers.lastFetched = this.#pointers.fetching;
           this.#pointers.fetching = null;
-          this.emit('fetched', { collection, index: this.#fetched.length - 1 });
+          this.emit('fetched', { list, index: this.#fetched.length - 1 });
         }
       }
       if (!this.checkAbortSignal()) {
@@ -269,61 +268,9 @@ export default class PostsFetcher extends EventEmitter {
     }
   }
 
-  async getInitialData(url: string) {
-    this.log('debug', `Fetch initial data from "${url}"`);
-    let page;
-    let fetchCurrentUserIdFromAPI = false;
-    try {
-      const { html, lastUrl } = await this.fetcher.get({ url, type: 'html', maxRetries: this.config.request.maxRetries, signal: this.signal });
-      page = html;
-      if (new URL(lastUrl).pathname === '/login-sync-domains') {
-        this.log('debug', `Detected Cloudflare challenge flow at "${lastUrl}"`);
-        page = await this.#fetchPageWithPuppeteer(url);
-        // Because cookie not available to Puppeteer, we need to fetch 
-        // current user ID separately
-        fetchCurrentUserIdFromAPI = !!this.config.cookie;
-      }
-    }
-    catch (error) {
-      if (this.signal?.aborted) {
-        throw error;
-      }
-      const e = Error(`Error requesting "${url}"`);
-      e.cause = error;
-      throw e;
-    }
-    const pageParser = new PageParser(this.logger);
-    let initialData;
-    try {
-      initialData = pageParser.parseInitialData(page, url);
-    }
-    catch (error) {
-      const e = Error(`Error parsing initial data from "${url}"`);
-      e.cause = error;
-      throw e;
-    }
-    const campaignId = ObjectHelper.getProperty(initialData, 'pageBootstrap.campaign.data.id');
-    let currentUserId = ObjectHelper.getProperty(initialData, 'commonBootstrap.currentUser.data.id');
-    if (!campaignId) {
-      throw Error(`Campaign ID not found in initial data of "${url}"`);
-    }
-    if (fetchCurrentUserIdFromAPI) {
-      this.log('debug', `Fetch current user ID from API`);
-      const currentUserAPIURL = URLHelper.constructCurrentUserAPIURL();
-      const { json: currentUserJson } = await this.fetcher.get({
-        url: currentUserAPIURL,
-        type: 'json',
-        maxRetries: this.config.request.maxRetries,
-        signal: this.signal
-      });
-      currentUserId = ObjectHelper.getProperty(currentUserJson, 'data.id') || undefined;
-    }
-    this.log('debug', `Initial data: campaign ID '${campaignId}'; current user ID '${currentUserId}'`);
-    return { campaignId, currentUserId };
-  }
-
-  async #fetchPageWithPuppeteer(url: string) {
-    return this.fetcher.getPageWithPuppeteer(url);
+  getInitialData(url: string) {
+    const id = new InitialData(this.config, this.fetcher, this.logger);
+    return id.get(url, this.signal);
   }
 
   async #fetchAPI(url: string) {
@@ -344,30 +291,30 @@ export default class PostsFetcher extends EventEmitter {
     const ptr = this.#pointers.returning;
     this.log('debug', `next() requested (${ptr})`);
     const __parseStatus = (status: PostsFetcherStatus) => {
-      let collection: PostCollection | null | undefined;
+      let list: PostList | null | undefined;
       let aborted = false;
       let error: any;
       switch (status.status) {
         case 'aborted':
-          collection = null;
+          list = null;
           aborted = true;
           break;
         case 'error':
           if (this.#fetched[ptr]) {
-            collection = this.#fetched[ptr];
+            list = this.#fetched[ptr];
           }
           else {
-            collection = null;
+            list = null;
             error = status.error;
           }
           break;
         case 'completed':
-          collection = this.#fetched[ptr] || null;
+          list = this.#fetched[ptr] || null;
           break;
         default:
-          collection = this.#fetched[ptr] || undefined;
+          list = this.#fetched[ptr] || undefined;
       }
-      return { collection, aborted, error };
+      return { list, aborted, error };
     };
     if (this.#isRunning() && !this.#fetched[ptr]) {
       let result = this.#nextPromises[ptr];
@@ -383,7 +330,7 @@ export default class PostsFetcher extends EventEmitter {
               this.off('fetched', fetchedListener);
               resolved = true;
               resolve({
-                collection: this.#fetched[ptr],
+                list: this.#fetched[ptr],
                 aborted: false
               });
             }
@@ -393,11 +340,11 @@ export default class PostsFetcher extends EventEmitter {
               this.off('statusChange', statusListener);
               return;
             }
-            const { collection, aborted, error } = __parseStatus(args.current);
-            if (collection !== undefined) {
+            const { list, aborted, error } = __parseStatus(args.current);
+            if (list !== undefined) {
               this.off('statusChange', statusListener);
               resolved = true;
-              resolve({ collection, aborted, error });
+              resolve({ list, aborted, error });
             }
           };
           this.on('fetched', fetchedListener);

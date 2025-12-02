@@ -8,7 +8,7 @@ import { type Product } from '../entities/Product.js';
 import { type Campaign } from '../entities/Campaign.js';
 import { type DownloaderConfig } from '../downloaders/Downloader.js';
 import FilenameFormatHelper from './FilenameFormatHelper.js';
-import { type Post } from '../entities/Post.js';
+import { type Collection, type Post } from '../entities/Post.js';
 import { type FileExistsAction } from '../downloaders/DownloaderOptions.js';
 import {type LogLevel} from './logging/Logger.js';
 import type Logger from './logging/Logger.js';
@@ -16,6 +16,10 @@ import { commonLog } from './logging/Logger.js';
 
 const CAMPAIGN_FIXED_DIR_NAMES = {
   INFO: 'campaign_info'
+};
+
+const COLLECTIONS_FIXED_DIR_NAMES = {
+  COLLECTIONS: 'collections'
 };
 
 const PRODUCT_FIXED_DIR_NAMES = {
@@ -51,6 +55,15 @@ export interface PostDirectories {
   imagePreviews: string;
   attachments: string;
   embed: string;
+  thumbnails: string;
+  statusCache: string;
+}
+
+export interface ProductDirectories {
+  root: string;
+  info: string;
+  contentMedia: string;
+  previewMedia: string;
   thumbnails: string;
   statusCache: string;
 }
@@ -96,6 +109,19 @@ export default class FSHelper {
     };
   }
 
+  getCollectionsDir(campaign: Campaign, collection: Collection) {
+    const campaignRootDir = this.getCampaignDirs(campaign).root;
+    const collectionsDir = this.createDir(path.resolve(campaignRootDir, COLLECTIONS_FIXED_DIR_NAMES.COLLECTIONS));
+    return {
+      root: path.resolve(
+        collectionsDir,
+        FilenameFormatHelper.getCollectionDirName(
+          collection, this.config.dirNameFormat.content
+        )
+      )
+    };
+  }
+
   getPostDirs(post: Post): PostDirectories {
     const dirName = FilenameFormatHelper.getContentDirName(post, this.config.dirNameFormat.content);
     let postRootPath: string;
@@ -126,7 +152,7 @@ export default class FSHelper {
     };
   }
 
-  getProductDirs(product: Product) {
+  getProductDirs(product: Product): ProductDirectories {
     const dirName = FilenameFormatHelper.getContentDirName(product, this.config.dirNameFormat.content);
     let productRootPath: string;
     let statusCachePath: string;

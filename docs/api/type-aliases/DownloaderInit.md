@@ -8,7 +8,7 @@
 
 > **DownloaderInit** = [`DeepRequired`](DeepRequired.md)\<`Pick`\<[`DownloaderOptions`](../interfaces/DownloaderOptions.md), `"outDir"` \| `"useStatusCache"` \| `"stopOn"` \| `"pathToFFmpeg"` \| `"pathToYouTubeCredentials"` \| `"pathToDeno"` \| `"dirNameFormat"` \| `"filenameFormat"` \| `"include"` \| `"request"` \| `"fileExistsAction"` \| `"embedDownloaders"` \| `"dryRun"`\>\> & `object`
 
-Defined in: [src/downloaders/DownloaderOptions.ts:77](https://github.com/patrickkfkan/patreon-dl/blob/7690929cb7736c1dae2cc87f10284ea119ba8714/src/downloaders/DownloaderOptions.ts#L77)
+Defined in: [src/downloaders/DownloaderOptions.ts:93](https://github.com/patrickkfkan/patreon-dl/blob/99df673b92ef4ce3aebc4c26b094ba3e47fad262/src/downloaders/DownloaderOptions.ts#L93)
 
 ## Type declaration
 

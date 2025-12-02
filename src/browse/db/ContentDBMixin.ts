@@ -1,6 +1,7 @@
 import { type Comment, type Downloadable, type Post, type Product, type Tier, type Campaign } from '../../entities';
+import { type PostTag, type Collection } from '../../entities/Post';
 import { getYearMonthString, type KeysOfValue } from '../../utils/Misc.js';
-import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy } from '../types/Content.js';
+import { type GetContentContext, type GetPreviousNextContentResult, type ContentList, type ContentType, type GetContentListParams, type PostWithComments, type ContentListSortBy, type GetCollectionListParams, type CollectionList, type GetPostTagListParams, type PostTagList } from '../types/Content.js';
 import { type CampaignDBConstructor } from './CampaignDBMixin.js';
 
 export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase) {
@@ -19,7 +20,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         this.exec('BEGIN TRANSACTION');
 
         if (!contentExists) {
-          this.log('debug', `INSERT post "${title}" (${content.id})`);
+          this.log('debug', `INSERT ${content.type} "${title}" (${content.id})`);
           this.run(
             `
             INSERT INTO content (
@@ -39,7 +40,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
               content.type,
               content.campaign?.id || '-1',
               title,
-              content.type === 'post' ? content.postType : null,
+              content.type === 'post' ? content.postType : content.productType || null,
               (content.type === 'post' ? content.isViewable : content.isAccessible) ? 1 : 0,
               this.#publishedAtToTime(content.publishedAt),
               JSON.stringify(content)
@@ -63,7 +64,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
               content.type,
               content.campaign?.id || '-1',
               title,
-              content.type === 'post' ? content.postType : null,
+              content.type === 'post' ? content.postType : content.productType || null,
               (content.type === 'post' ? content.isViewable : content.isAccessible) ? 1 : 0,
               this.#publishedAtToTime(content.publishedAt),
               JSON.stringify(content),
@@ -75,9 +76,11 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         // Save content media
         this.#saveContentMedia(content);
 
-        // Save tiers
+        // Save tiers and collections and tags
         if (content.type === 'post') {
           this.#savePostTiers(content);
+          this.#savePostCollection(content);
+          this.#savePostTags(content);
         }
 
         this.exec('COMMIT');
@@ -418,7 +421,8 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           break;
         }
         case 'latest':
-        case 'oldest': {
+        case 'oldest':
+        case 'best_match': {
           const older = `
             (
               (published_at < ?)
@@ -452,6 +456,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const previous = (this.getContentList(
         {
           ...context,
+          search: context.search,
           sortBy: previousSortBy,
           limit: 1, offset: 0
         },
@@ -464,6 +469,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       const next = (this.getContentList(
         {
           ...context,
+          search: context.search,
           sortBy: nextSortBy,
           limit: 1, offset: 0
         },
@@ -485,23 +491,42 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       db?: { whereClauses: string[]; whereValues: any[]; },
       includeTotal = true
     ): ContentList<T> {
-      const { campaign, type: contentType, isViewable, datePublished, sortBy, limit, offset } = params;
+      const { campaign, type: contentType, isViewable, datePublished, search, sortBy, limit, offset } = params;
       const { whereClauses: extraWhereClauses = [], whereValues: extraWhereValues = [] } = db || {};
       const campaignId = !campaign ? null : (typeof campaign === 'string' ? campaign : campaign.id);
+      const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
+      const collection = params.type === 'post' ? (params as GetContentListParams<'post'>).collection : null;
+      const tag = params.type === 'post' ? (params as GetContentListParams<'post'>).tag : null;
       this.log('debug', `Get ${contentType}s from DB:`, {
         campaign: campaignId,
         isViewable,
         datePublished,
+        search,
+        tiers: params.type === 'post' ? JSON.stringify(tiers) : 'N/A',
+        collection: params.type === 'post' ? JSON.stringify(collection) : 'N/A',
+        tag: params.type === 'post' ? JSON.stringify(tag) : 'N/A',
         sortBy,
         limit,
         offset
       });
-      const tiers = params.type === 'post' ? (params as GetContentListParams<'post'>).tiers : null;
       const contentSubtypes = params.type === 'post' ? (params as GetContentListParams<'post'>).postTypes : null;
       if (tiers && tiers.length > 0 && !campaign) {
         throw Error('Invalid params: "tiers" must be used with "campaign"');
       }
-      const join = tiers && tiers.length > 0 ? 'LEFT JOIN post_tier ON post_tier.post_id = content.content_id' : '';
+      if (search && !contentType) {
+        throw Error('Invalid params: "search" must be used with "contentType"');
+      }
+      const joinParts: string[] = [];
+      if (tiers && tiers.length > 0) {
+        joinParts.push('LEFT JOIN post_tier ON post_tier.post_id = content.content_id');
+      }
+      if (collection) {
+        joinParts.push(`LEFT JOIN post_collection ON post_collection.post_id = content.content_id`);
+      }
+      if (tag) {
+        joinParts.push(`LEFT JOIN post_tag_post ON post_tag_post.post_id = content.content_id AND post_tag_post.campaign_id = content.campaign_id`);
+      }
+      const join = joinParts.join(' ');
       const whereEquals: { column: string; value: string | number; }[] = [];
       if (campaignId) {
         whereEquals.push({ column: 'content.campaign_id', value: campaignId });
@@ -525,6 +550,18 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           value: datePublished
         });
       }
+      if (collection) {
+        whereEquals.push({
+          column: 'post_collection.collection_id',
+          value: typeof collection === 'string' ? collection : collection.id
+        });
+      }
+      if (tag) {
+        whereEquals.push({
+          column: 'post_tag_post.post_tag_id',
+          value: typeof tag === 'string' ? tag : tag.id
+        });
+      }
       const whereIns: { column: string; values: (string | number)[] }[] = [];
       if (contentSubtypes && contentSubtypes.length > 0) {
         whereIns.push({ column: 'content_subtype', values: contentSubtypes})
@@ -540,6 +577,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       if (whereIns.length > 0) {
         whereClauseParts.push(...whereIns.map((wi) => `${wi.column} IN (${wi.values.map(() => '?').join(', ')})`));
       }
+      if (search) {
+        whereClauseParts.push(`${contentType}_fts MATCH ?`);
+      }
       whereClauseParts.push(...extraWhereClauses);
       const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
       const whereValues = [
@@ -547,9 +587,12 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         ...whereIns.reduce<(string | number)[]>((result, {values}) => {
           result.push(...values);
           return result;
-        }, []),
-        ...extraWhereValues
+        }, [])
       ];
+      if (search) {
+        whereValues.push(search);        
+      }
+      whereValues.push(...extraWhereValues);
       let orderByClause: string;
       switch (sortBy) {
         case 'a-z':
@@ -563,6 +606,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
           break;
         case 'oldest':
           orderByClause = 'published_at ASC';
+          break;
+        case 'best_match':
+          orderByClause = `ORDER BY bm25(${contentType}_fts) DESC`;
           break;
         default:
           orderByClause = '';
@@ -580,14 +626,28 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         limitOffsetClause = 'LIMIT ?';
         limitOffsetValues.push(limit);
       }
+
+      let fromClause: string;
+      if (search) {
+        fromClause = `
+          FROM
+            ${contentType}_fts
+          LEFT JOIN
+            ${contentType}_fts_source ON ${contentType}_fts_source.fts_rowid = ${contentType}_fts.rowid
+          LEFT JOIN
+            content ON content.content_id = ${contentType}_fts_source.${contentType}_id
+        `;
+      } else {
+        fromClause = 'FROM content';
+      }
+
       const rows = this.all(
         `
         SELECT DISTINCT
           details,
           IFNULL(post_comments.comment_count, 0) AS comment_count,
           comments
-        FROM
-          content
+        ${fromClause}
         LEFT JOIN
           post_comments ON post_comments.post_id = content.content_id AND content.content_type = 'post'
         ${join}
@@ -599,7 +659,7 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       );
       const items = rows.map<T extends 'post' ? PostWithComments : T extends 'product' ? Product : PostWithComments | Product>((row) => this.#parseContentRowJoinedComments(row));
       const totalResult = includeTotal ? this.get(
-          `SELECT COUNT(*) AS content_count FROM content ${join} ${whereClause}`,
+          `SELECT COUNT(*) AS content_count ${fromClause} ${join} ${whereClause}`,
           [...whereValues]
       ) : null;
       const total = totalResult ? (totalResult.content_count as number) : 0;
@@ -621,7 +681,9 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
       switch (details.type) {
         case 'post': {
-          const commentCount = row.comment_count;
+          // `comment_count` column somehow created as string type
+          // Cast it back to number as some were saved as decimals (e.g. "2.0")
+          const commentCount = Number(row.comment_count) || 0;
           const comments = row.comments !== null ? JSON.parse(row.comments) : null;
           return {
             ...details,
@@ -756,6 +818,342 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
       }
     }
 
+    saveCollection(collection: Collection, campaign: Campaign | null, overwriteIfExists = true) {
+      this.log('debug', `Save collection #${collection.id} (${collection.title}) to DB`);
+      try {
+        // Normally, campaign would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCampaign(campaign, new Date(), false);
+
+        const collectionExists = this.checkCollectionExists(collection.id);
+        if (collectionExists && !overwriteIfExists) {
+          return;
+        }
+
+        if (collection.thumbnail) {
+          this.saveMedia(collection.thumbnail);
+        }
+
+        if (!collectionExists) {
+          this.log('debug', `INSERT collection "${collection.title}" (${collection.id})`);
+          this.run(
+            `
+            INSERT INTO collection (
+              collection_id,
+              campaign_id,
+              title,
+              created_at,
+              edited_at,
+              details
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            `,
+            [
+              collection.id,
+              campaign?.id || '-1',
+              collection.title,
+              this.#publishedAtToTime(collection.createdAt),
+              this.#publishedAtToTime(collection.editedAt),
+              JSON.stringify(collection)
+            ]
+          );
+        } else {
+          this.log('debug', `Collection #${collection.id} already exists in DB - update record`);
+          this.run(`
+            UPDATE collection
+            SET
+              title = ?,
+              created_at = ?,
+              edited_at = ?,
+              details = ?
+            WHERE
+              collection_id = ? AND
+              campaign_id = ?
+            `,
+            [
+              collection.title,
+              this.#publishedAtToTime(collection.createdAt),
+              this.#publishedAtToTime(collection.editedAt),
+              JSON.stringify(collection),
+              collection.id,
+              campaign?.id || '-1'
+            ]
+          );
+        }
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to save collection "${collection.title}" (${collection.id}) to DB:`,
+          error
+        );
+      }
+    }
+
+    savePostTag(tag: PostTag, campaign: Campaign | null, overwriteIfExists = true) {
+      this.log('debug', `Save post_tag "${tag.id}" to DB`);
+      try {
+        // Normally, campaign would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCampaign(campaign, new Date(), false);
+
+        const tagExists = this.checkPostTagExists(tag.id, campaign);
+        if (tagExists && !overwriteIfExists) {
+          return;
+        }
+
+        if (!tagExists) {
+          this.log('debug', `INSERT post_tag "${tag.id}"`);
+          this.run(
+            `
+            INSERT INTO post_tag (
+              post_tag_id,
+              campaign_id,
+              value,
+              details
+            )
+            VALUES (?, ?, ?, ?)
+            `,
+            [
+              tag.id,
+              campaign?.id || '-1',
+              tag.value,
+              JSON.stringify(tag)
+            ]
+          );
+        } else {
+          this.log('debug', `post_tag "${tag.id}" already exists in DB - update record`);
+          this.run(`
+            UPDATE post_tag
+            SET
+              value = ?,
+              details = ?
+            WHERE
+              post_tag_id = ? AND
+              campaign_id = ?
+            `,
+            [
+              tag.value,
+              JSON.stringify(tag),
+              tag.id,
+              campaign?.id || '-1'
+            ]
+          );
+        }
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to save post_tag "${tag.id}" to DB:`,
+          error
+        );
+      }
+    }
+
+    getCollection(id: string) {
+      this.log('debug', `Get collection #${id} from DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT
+            campaign_id,
+            details,
+            (SELECT COUNT(post_id) AS post_count FROM post_collection WHERE collection_id = ?) AS post_count
+          FROM collection
+          WHERE collection_id = ?;
+          `,
+          [id, id]
+        );
+        if (result) {
+          const collection = JSON.parse(result.details) as Collection;
+          collection.numPosts = result.post_count || 0;
+          return {
+            collection,
+            campaignId: result.campaign_id as string
+          };
+        }
+        return null;
+      } catch (error) {
+        this.log('error', `Failed to get collection #${id} from DB:`, error);
+        return null;
+      }
+    }
+
+    #savePostCollection(post: Post) {
+      this.log('debug', `Clear post_collection for post #${post.id}`);
+      this.run(`DELETE FROM post_collection WHERE post_id = ?`, [
+        post.id
+      ]);
+      if (!post.collections || post.collections.length === 0) {
+        return;
+      }
+      for (const collection of post.collections) {
+        // Normally, collection would have already been saved to DB via
+        // downloader logic, but we should still save it one more
+        // time just in case. Difference is, we do not overwrite 
+        // DB entry if it already exists.
+        this.saveCollection(collection, post.campaign, false);
+        try {
+          this.run(
+            `
+            INSERT INTO post_collection (
+              collection_id,
+              campaign_id,
+              post_id,
+              post_created_at
+            )
+            VALUES (?, ?, ?, ?)
+            `,
+            [
+              collection.id,
+              post.campaign?.id || '-1',
+              post.id,
+              this.#publishedAtToTime(collection.createdAt)
+            ]
+          );
+        }
+        catch (error) {
+          this.log('error', `Failed to save post_collection for post #${post.id} -> collection #${collection.id}:`, error);
+        }
+      }
+    }
+
+    getCollectionList(params: GetCollectionListParams): CollectionList {
+      const { campaign, search, sortBy, limit, offset } = params;
+      const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+
+      const whereClauseParts: string[] = [ 'campaign_id = ?' ];
+      const whereValues: (string | number)[] = [ campaignId ];
+      if (search) {
+        whereClauseParts.push('collection_fts MATCH ?');
+        whereValues.push(search);
+      }
+      const whereClause = whereClauseParts.length > 0 ? 'WHERE ' + whereClauseParts.join(' AND ') : '';
+
+      let orderByClause: string;
+      switch (sortBy) {
+        case 'a-z':
+          orderByClause = 'collection.title ASC';
+          break;
+        case 'z-a':
+          orderByClause = 'collection.title DESC';
+          break;
+        case 'last_created':
+          orderByClause = 'created_at DESC';
+          break;
+        case 'last_updated':
+          orderByClause = 'edited_at DESC';
+          break;
+        default:
+          orderByClause = '';
+      }
+      if (orderByClause) {
+        orderByClause = `ORDER BY ${orderByClause}`;
+      }
+
+      let limitOffsetClause = '';
+      const limitOffsetValues: number[] = [];
+      if (limit !== undefined && offset !== undefined) {
+        limitOffsetClause = 'LIMIT ? OFFSET ?';
+        limitOffsetValues.push(limit, offset);
+      }
+      else if (limit !== undefined) {
+        limitOffsetClause = 'LIMIT ?';
+        limitOffsetValues.push(limit);
+      }
+
+      let fromClause: string;
+      if (search) {
+        fromClause = `
+          FROM
+            collection_fts
+          LEFT JOIN
+            collection_fts_source ON collection_fts_source.fts_rowid = collection_fts.rowid
+          LEFT JOIN
+            collection ON collection.collection_id = collection_fts_source.collection_id
+        `;
+      } else {
+        fromClause = 'FROM collection';
+      }
+
+      const rows = this.all(
+        `
+        SELECT
+          details, post_count
+        ${fromClause}
+        LEFT JOIN
+          (SELECT COUNT(post_id) AS post_count, collection_id FROM post_collection GROUP BY collection_id) pcc ON pcc.collection_id = collection.collection_id
+        ${whereClause}
+        ${orderByClause}
+        ${limitOffsetClause}
+        `,
+        [...whereValues, ...limitOffsetValues]
+      );
+      const totalResult = this.get(
+        `SELECT COUNT(*) AS collection_count ${fromClause} ${whereClause}`,
+        [...whereValues]
+      );
+      const total = totalResult ? (totalResult.collection_count as number) : 0;
+      const collections = rows.map((row) => {
+        const collection = JSON.parse(row.details) as Collection;
+        collection.numPosts = row.post_count || 0;
+        return collection;
+      });
+      return {
+        collections,
+        total
+      };
+    }
+
+    checkCollectionExists(id: string) {
+      this.log('debug', `Check if collection #${id} exists in DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT COUNT(*) as count
+          FROM collection
+          WHERE
+            collection_id = ?
+          `,
+          [ id ]
+        );
+        return result.count > 0;
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to check if collection #${id} exists in DB:`,
+          error
+        );
+        return false;
+      }
+    }
+
+    checkPostTagExists(id: string, campaign: Campaign | null) {
+      this.log('debug', `Check if tag "${id}" exists in DB`);
+      try {
+        const result = this.get(
+          `
+          SELECT COUNT(*) as count
+          FROM post_tag
+          WHERE
+            post_tag_id = ? AND
+            campaign_id = ?
+          `,
+          [ id, campaign?.id || '-1']
+        );
+        return result.count > 0;
+      } catch (error) {
+        this.log(
+          'error',
+          `Failed to check if post_tag "${id}" exists in DB:`,
+          error
+        );
+        return false;
+      }
+    }
+
     getPostComments(post: Post | string): Comment[] | null {
       const postId = typeof post === 'string' ? post : post.id;
       this.log('debug', `Get comments for post #${postId}`);
@@ -764,6 +1162,73 @@ export function ContentDBMixin<TBase extends CampaignDBConstructor>(Base: TBase)
         [postId]
       );
       return result ? JSON.parse(result.comments) : null;      
+    }
+
+    #savePostTags(post: Post) {
+      this.log('debug', `Clear post_tag_post for post #${post.id}`);
+      this.run(`DELETE FROM post_tag_post WHERE post_id = ?`, [
+        post.id
+      ]);
+      if (!post.tags || post.tags.length === 0) {
+        return;
+      }
+      for (const tag of post.tags) {
+        this.savePostTag(tag, post.campaign, false);
+        try {
+          this.run(
+            `
+            INSERT INTO post_tag_post (
+              post_tag_id,
+              campaign_id,
+              post_id
+            )
+            VALUES (?, ?, ?)
+            `,
+            [
+              tag.id,
+              post.campaign?.id || '-1',
+              post.id
+            ]
+          );
+        }
+        catch (error) {
+          this.log('error', `Failed to save post_tag_post for post #${post.id} -> post_tag "${tag.id}":`, error);
+        }
+      }
+    }
+
+    getPostTagList(params: GetPostTagListParams): PostTagList {
+      const { campaign } = params;
+      const campaignId = typeof campaign === 'string' ? campaign : campaign.id;
+
+      const whereClauseParts: string[] = [ 'campaign_id = ?' ];
+      const whereValues: (string | number)[] = [ campaignId ];     
+      const whereClause = `WHERE ${whereClauseParts.join(' AND ')}`;
+      const orderByClause = 'ORDER BY post_tag.value ASC';
+      const fromClause = 'FROM post_tag';
+
+      const rows = this.all(
+        `
+        SELECT
+          details
+        ${fromClause}
+        ${whereClause}
+        ${orderByClause}
+        `,
+        [...whereValues]
+      );
+      const totalResult = this.get(
+        `SELECT COUNT(*) AS tag_count ${fromClause} ${whereClause}`,
+        [...whereValues]
+      );
+      const total = totalResult ? (totalResult.tag_count as number) : 0;
+      const tags = rows.map((row) => {
+        return JSON.parse(row.details) as PostTag;
+      });
+      return {
+        tags,
+        total
+      };
     }
   };
 }

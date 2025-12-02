@@ -11,6 +11,7 @@ const USER_API_URL = `${SITE_URL}/api/user`;
 const CAMPAIGN_API_URL = `${SITE_URL}/api/campaigns`;
 const POST_COMMENTS_API_URL = `${SITE_URL}/api/posts/{POST_ID}/comments2`
 const POST_COMMENT_REPLIES_API_URL = `${SITE_URL}/api/comments/{COMMENT_ID}/replies2`
+const SHOP_API_URL = `${SITE_URL}/api/campaigns/{CAMPAIGN_ID}/products`
 
 const PRODUCT_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop\/(([^/]+)-(\d+))$/;
 const POSTS_BY_USER_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/posts$/;
@@ -18,6 +19,8 @@ const POSTS_BY_USER_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/(?:c|cw)\/([^/]+
 const COLLECTION_URL_REGEX = /https:\/\/www\.patreon\.com\/collection\/(\d+)$/;
 const POST_URL_REGEX = /https:\/\/www\.patreon\.com\/posts\/(([^/]+)-(\d+))$/;
 const POST_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/posts\/(\d+)$/; // No slug
+const SHOP_URL_REGEX = /https:\/\/www\.patreon\.com\/([^/]+?)\/shop$/;
+const SHOP_URL_REGEX_2 = /https:\/\/www\.patreon\.com\/(?:c|cw)\/([^/]+?)\/shop$/;
 
 const PRODUCT_API_URL_SEARCH_PARAMS = {
   PRODUCT_VARIANT: [
@@ -44,6 +47,7 @@ const PRODUCT_API_URL_SEARCH_PARAMS = {
 
 const POSTS_API_URL_SEARCH_PARAMS = {
   INCLUDE: [
+    'collections',
     'campaign',
     'access_rules',
     'access_rules.tier.null',
@@ -140,6 +144,123 @@ const POST_COMMENT_REPLIES_API_URL_SEARCH_PARAMS = {
   SORT: 'created'
 }
 
+const SHOP_API_URL_SEARCH_PARAMS = {
+  include: [
+    'product-variant',
+    'preview_media',
+    'preview_media_no_fallback',
+    'content_media',
+    'content_media.custom_thumbnail_media',
+    'post',
+    'collection',
+    'post.images',
+    'post.embedv2',
+    'post.video',
+    'post.primary_image',
+    'campaign',
+    'access_rules',
+    'access_rules.tier.null',
+    'post.audio',
+    'post.drop'
+  ],
+  fields: {
+    'product-variant': [
+      'name',
+      'id',
+      'price_cents',
+      'checkout_url',
+      'currency_code',
+      'description',
+      'description_rich_text',
+      'is_hidden',
+      'published_at_datetime',
+      'url',
+      'share_url',
+      'access_metadata',
+      'moderation_status',
+      'reward_ids',
+      'content_type',
+      'is_featured',
+      'live_sale_discounted_price_info'
+    ],
+    'content-unlock-option': [
+      'content_unlock_type',
+      'is_current_user_eligible'
+    ],
+    post: [
+      'change_visibility_at',
+      'comment_count',
+      'content',
+      'content_teaser_text',
+      'cleaned_teaser_text',
+      'image',
+      'is_paid',
+      'is_suspended',
+      'moderation_status',
+      'like_count',
+      'media_file_duration_seconds',
+      'min_cents_pledged_to_view',
+      'post_file',
+      'post_metadata',
+      'post_type',
+      'published_at',
+      'pledge_url',
+      'smart_navigation_media_id',
+      'thumbnail',
+      'thumbnail_url',
+      'title',
+      'url',
+      'current_user_can_view',
+      'external_embed_domain',
+      'teaser_text',
+      'teaser_text_json_string',
+      'has_custom_thumbnail'
+    ],
+    collection: [
+      'created_at',
+      'current_user_access_context',
+      'current_user_num_locked_posts',
+      'description',
+      'edited_at',
+      'id',
+      'moderation_status',
+      'num_draft_posts',
+      'num_posts',
+      'num_posts_visible_for_creation',
+      'num_scheduled_posts',
+      'post_ids',
+      'post_sort_type',
+      'thumbnail',
+      'title',
+      'type',
+      'share_images'
+    ],
+    'primary-image': [
+      'image_icon',
+      'image_small',
+      'image_medium',
+      'image_large',
+      'primary_image_type',
+      'alt_text',
+      'image_colors'
+    ]
+  },
+  filter: {
+    'is_hidden': ['active'],
+    'include_suspended': ['false'],
+    'search_query': [],
+    'include_featured': ['all_products']
+  },
+  page: {
+    count: '24',
+    pageType: 'offset',
+    offset: '0'
+  },
+  sort: '-published_at',
+  'json-api-version': '1.0',
+  'json-api-use-default-includes': 'false'
+};
+
 export enum PostSortOrder {
   PublisedAtDesc = '-published_at',
   PublishedAtAsc = 'published_at',
@@ -166,6 +287,9 @@ export type URLAnalysis = {
   type: 'post';
   postId: string;
   slug?: string;
+} | {
+  type: 'shop';
+  vanity: string;
 }
 
 export default class URLHelper {
@@ -294,6 +418,42 @@ export default class URLHelper {
     return urlObj.toString();
   }
 
+  static constructShopAPIURL(params: {
+    campaignId: string;
+    offset?: number;
+  }) {
+    const urlObj = new URL(SHOP_API_URL.replace('{CAMPAIGN_ID}', params.campaignId));
+    const fields: Record<string, string> = {};
+    for (const [k, v] of Object.entries(SHOP_API_URL_SEARCH_PARAMS.fields)) {
+      fields[`fields[${k}]`] = v.join(',');
+    }
+    const filter: Record<string, string> = {};
+    filter['filter[campaign_id]'] = params.campaignId;
+    for (const [k, v] of Object.entries(SHOP_API_URL_SEARCH_PARAMS.filter)) {
+      filter[`filter[${k}]`] = v.join(',');
+    }
+    const page: Record<string, string> = {};
+    page['page[offset]'] = String(params.offset ?? 0);
+    for (const [k, v] of Object.entries(SHOP_API_URL_SEARCH_PARAMS.page)) {
+      page[`page[${k}]`] = v;
+    }
+    const searchParams: Record<string, any> = {
+      ...fields,
+      'include': SHOP_API_URL_SEARCH_PARAMS.include.join(','),
+      ...filter,
+      ...page,
+      'sort': SHOP_API_URL_SEARCH_PARAMS.sort,
+      'json-api-version': SHOP_API_URL_SEARCH_PARAMS['json-api-version'],
+      'json-api-use-default-includes': SHOP_API_URL_SEARCH_PARAMS['json-api-use-default-includes'],
+    };
+    for (const [ key, value ] of Object.entries(searchParams)) {
+      urlObj.searchParams.set(key, value);
+    }
+
+    return urlObj.toString();
+  }
+
+
   static analyzeURL(url: string): URLAnalysis | null {
 
     const base = this.stripSearchParamsFromURL(url);
@@ -323,7 +483,7 @@ export default class URLHelper {
       };
     }
 
-    const __getPostsURLMatchVanity = (regex: RegExp) => {
+    const __urlMatchVanity = (regex: RegExp) => {
       const match = regex.exec(base);
       if (match && match[1]) {
         return match[1];
@@ -331,8 +491,8 @@ export default class URLHelper {
       return null;
     }
     const postsURLMatchVanity =
-      __getPostsURLMatchVanity(POSTS_BY_USER_URL_REGEX) ||
-      __getPostsURLMatchVanity(POSTS_BY_USER_URL_REGEX_2);
+      __urlMatchVanity(POSTS_BY_USER_URL_REGEX) ||
+      __urlMatchVanity(POSTS_BY_USER_URL_REGEX_2);
     if (postsURLMatchVanity) {
       const vanity = postsURLMatchVanity;
       const filters = __getFiltersFromSearchParams(searchParams);
@@ -393,6 +553,16 @@ export default class URLHelper {
       return {
         type: 'post',
         postId
+      };
+    }
+
+    const shopURLMatchVanity =
+      __urlMatchVanity(SHOP_URL_REGEX) ||
+      __urlMatchVanity(SHOP_URL_REGEX_2);
+    if (shopURLMatchVanity) {
+      return {
+        type: 'shop',
+        vanity:shopURLMatchVanity
       };
     }
 

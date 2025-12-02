@@ -7,7 +7,18 @@ const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKi
 
 
 export type FileExistsAction = 'overwrite' | 'skip' | 'saveAsCopy' | 'saveAsCopyIfNewer';
-export type StopOnCondition = 'never' | 'postPreviouslyDownloaded' | 'postPublishDateOutOfRange';
+export type StopOnCondition =
+  'never'
+  | 'previouslyDownloaded'
+  | 'publishDateOutOfRange'
+  /**
+   * @deprecated
+   */
+  | 'postPreviouslyDownloaded'
+  /**
+   * @deprecated
+   */
+  | 'postPublishDateOutOfRange';
 
 export interface DownloaderIncludeOptions {
   lockedContent?: boolean;
@@ -16,12 +27,17 @@ export interface DownloaderIncludeOptions {
   postsPublished?: {
     after?: DateTime | null;
     before?: DateTime | null;
+  }
+  productsPublished?: {
+    after?: DateTime | null;
+    before?: DateTime | null;
   };
   campaignInfo?: boolean;
   contentInfo?: boolean;
   previewMedia?: boolean | Array<'image' | 'video' | 'audio'>;
   contentMedia?: boolean | Array<'image' | 'video' | 'audio' | 'attachment' | 'file'>;
   allMediaVariants?: boolean;
+  mediaThumbnails?: boolean;
   mediaByFilename?: {
     images?: string | null;
     audio?: string | null;
@@ -114,11 +130,16 @@ const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
       after: null,
       before: null
     },
+    productsPublished: {
+      after: null,
+      before: null
+    },
     campaignInfo: true,
     contentInfo: true,
     previewMedia: true,
     contentMedia: true,
     allMediaVariants: false,
+    mediaThumbnails: true,
     mediaByFilename: {
       images: null,
       audio: null,
@@ -183,11 +204,16 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
         after: pickDefined(options?.include?.postsPublished?.after, defaults.include.postsPublished.after),
         before: pickDefined(options?.include?.postsPublished?.before, defaults.include.postsPublished.before)
       },
+      productsPublished: {
+        after: pickDefined(options?.include?.productsPublished?.after, defaults.include.productsPublished.after),
+        before: pickDefined(options?.include?.productsPublished?.before, defaults.include.productsPublished.before)
+      },
       campaignInfo: pickDefined(options?.include?.campaignInfo, defaults.include.campaignInfo),
       contentInfo: pickDefined(options?.include?.contentInfo, defaults.include.contentInfo),
       previewMedia: pickDefined(options?.include?.previewMedia, defaults.include.previewMedia),
       contentMedia: pickDefined(options?.include?.contentMedia, defaults.include.contentMedia),
       allMediaVariants: pickDefined(options?.include?.allMediaVariants, defaults.include.allMediaVariants),
+      mediaThumbnails: pickDefined(options?.include?.mediaThumbnails, defaults.include.mediaThumbnails),
       mediaByFilename: {
         images: pickDefined(options?.include?.mediaByFilename?.images, defaults.include.mediaByFilename.images),
         audio: pickDefined(options?.include?.mediaByFilename?.audio, defaults.include.mediaByFilename.audio),

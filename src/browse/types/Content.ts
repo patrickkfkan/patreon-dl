@@ -1,4 +1,5 @@
 import { type Campaign, type Comment, type Post, type Product, type Tier } from "../../entities/index.js";
+import { type PostTag, type Collection } from "../../entities/Post.js";
 
 export type ContentListSortBy = 'a-z' | 'z-a' | 'latest' | 'oldest';
 export type ContentType = 'post' | 'product';
@@ -13,7 +14,6 @@ export type GetContentListParams<T extends ContentType> =
   type?: T;
   isViewable?: boolean;
   datePublished?: string; // 'YYYY' or 'YYYY-mm' (e.g. '2025-06')
-  sortBy?: ContentListSortBy;
   limit?: number;
   offset?: number;
 } & 
@@ -21,9 +21,19 @@ export type GetContentListParams<T extends ContentType> =
   T extends 'post' ? {
     postTypes?: string[];
     tiers?: Tier[] | string[];
+    collection?: Collection | string;
+    tag?: PostTag | string;
   }
   : T extends 'product' ? {}
   : never
+) & (
+  {
+    search: string;
+    sortBy?: ContentListSortBy | 'best_match';
+  } | {
+    search?: undefined;
+    sortBy?: ContentListSortBy;
+  }
 );
 
 export interface ContentList<T extends ContentType> {
@@ -47,3 +57,42 @@ export type GetPreviousNextContentResult<T extends ContentType> =
     next: Product | null;
   }
   : never;
+
+export type CollectionListSortBy = 'a-z' | 'z-a' | 'last_created' | 'last_updated';
+
+export interface GetCollectionListParams {
+  campaign: Campaign | string;
+  search?: string;
+  sortBy?: CollectionListSortBy;
+  limit?: number;
+  offset?: number;
+}
+
+export interface CollectionList {
+  collections: Collection[];
+  total: number;
+}
+
+export interface GetPostTagListParams {
+  campaign: Campaign | string;
+}
+
+export interface PostTagList {
+  tags: PostTag[];
+  total: number;
+}
+
+export type SearchContentParams = {
+  campaign?: Campaign | string;
+  query: string;
+} & ({
+  type: 'post';
+  collection?: Collection;
+  sortBy: ContentListSortBy | 'best_match';
+} | {
+  type: 'product';
+  sortBy: ContentListSortBy | 'best_match';
+} | {
+  type: 'collection';
+  sortBy: CollectionListSortBy | 'best_match';
+})

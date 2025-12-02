@@ -16,9 +16,12 @@ import { useBrowseSettings } from "../contexts/BrowseSettingsProvider";
 import { type Filter, type FilterData, type PostFilterSearchParams } from "../../types/Filter";
 import FilterModalButton from "../components/FilterModalButton";
 import ProductList from "../components/ProductList";
+import SearchInputBox, { type SearchInputBoxHandle } from "../components/SearchInputBox";
+import { type Collection } from "../../../entities/Post";
 
 interface CampaignContentProps<T extends ContentType> {
   type: T;
+  collection?: T extends 'post' ? (boolean | undefined) : undefined;
 }
 
 interface ViewParams {
@@ -57,33 +60,85 @@ const viewParamsReducer = (
 };
 
 function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) {
-  const { type: contentType } = props;
-  const { id: campaignId } = useParams();
+  const { type: contentType, collection: isCollection } = props;
+  const { id: domainId } = useParams(); // Campaign ID or collection ID
   const [ contextQS, setContextQS ] = useState('');
+  const [ campaignId, setCampaignId ] = useState(isCollection ? null : domainId);
+  const collectionId = isCollection ? domainId : null;
 
-  let subject: { singular: string; plural: string };
-  switch (contentType) {
-    case 'post':
-      subject = { singular: 'post', plural: 'posts' };
-      break;
-    case 'product':
-    default:
-      subject = { singular: 'product', plural: 'products' };
-      break;
-  }
   const { api } = useAPI();
   const { settings } = useBrowseSettings();
   const { scrollTo } = useScroll();
   const [viewParams, setViewParams] = useReducer(viewParamsReducer, getInitialViewParams(settings));
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [collection, setCollection] = useState<Collection | null>(null);
   const [list, setList] = useState<ContentList<T> | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterData<PostFilterSearchParams> | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const isFirstLoadRef = useRef(true);
+  const searchInputBoxRef = useRef<SearchInputBoxHandle>(null);
+  
+  let subject: { singular: string; plural: string };
+  let searchInputBoxPlaceholder: string;
+  switch (contentType) {
+    case 'post':
+      subject = { singular: 'post', plural: 'posts' };
+      searchInputBoxPlaceholder = 'Search posts';
+      break;
+    case 'product':
+    default:
+      subject = { singular: 'product', plural: 'products' };
+      searchInputBoxPlaceholder = 'Search products';
+      break;
+  }
+  if (contentType === 'post' && isCollection) {
+    const w = ' in collection';
+    subject.singular += w;
+    subject.plural += w;
+    searchInputBoxPlaceholder += w;
+  }
+  const withStrParts: string[] = [];
+  const q = viewParams.filter?.options.find((opt) => opt.searchParam === 'search')?.value?.trim();
+  if (q) {
+    withStrParts.push(`with "${q}"`);
+  }
+  const t = viewParams.filter?.options.find((opt) => opt.searchParam === 'tag_id')?.value?.trim();
+  if (t) {
+    let t2 = t;
+    if (t.startsWith('user_defined;')) {
+      t2 = t.substring('user_defined;'.length);
+    }
+    if (t2) {
+      withStrParts.push(`tagged "${t2}"`);
+    }
+  }
+  if (withStrParts.length > 0) {
+    const w = withStrParts.join(' and ');
+    subject.singular += ` ${w}`;
+    subject.plural += ` ${w}`;
+  }
+
+  useEffect(() => {
+    if (!collectionId) {
+      setCollection(null);
+      return;
+    }
+    const abortController = new AbortController();
+    void (async () => {
+      const { collection, campaignId } = await api.getCollection(collectionId);
+      if (!abortController.signal.aborted) {
+        setCollection(collection);
+        setCampaignId(campaignId);
+      }
+    })();
+
+    return () => abortController.abort();
+  }, [api, collectionId]);
 
   useEffect(() => {
     if (!campaignId) {
+      setFilterOptions(null);
       return;
     }
     setFilterOptions(null);
@@ -120,6 +175,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
 
   useEffect(() => {
     if (!campaignId) {
+      setCampaign(null);
       return;
     }
     const abortController = new AbortController();
@@ -135,7 +191,8 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
 
   useEffect(() => {
     const { filter, page } = viewParams;
-    if (!campaign || !filter || page === null) {
+    if (!campaign || !filter || page === null || (isCollection && !collection)) {
+      setList(null);
       return;
     }
     const abortController = new AbortController();
@@ -144,6 +201,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
         campaign,
         type: contentType,
         ...viewParams,
+        collectionId: collection?.id,
         filter,
         page
       });
@@ -153,7 +211,7 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
     })();
 
     return () => abortController.abort();
-  }, [api, campaign, contentType, viewParams]);
+  }, [api, campaign, contentType, isCollection, collection, viewParams]);
 
   useEffect(() => {
     const page = Number(searchParams.get('p')) || 1;
@@ -199,19 +257,25 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   }, [viewParams, gotoPage]);
 
   useEffect(() => {
-    const filter = viewParams.filter;
-    if (!filter) {
+    if (isCollection && !collection) {
       setContextQS('');
       return;
     }
+    const filter = viewParams.filter;
     const params = new URLSearchParams();
-    for (const { searchParam, value } of filter.options) {
-      if (value) {
-        params.set(searchParam, value);
+    const collectionId = isCollection ? collection?.id : undefined;
+    if (collectionId) {
+      params.set('collection_id', collectionId);
+    }
+    if (filter) {
+      for (const { searchParam, value } of filter.options) {
+        if (value) {
+          params.set(searchParam, value);
+        }
       }
     }
     setContextQS(params.toString());
-  }, [viewParams.filter]);
+  }, [viewParams.filter, isCollection, collection]);
 
   const listEl = useMemo(() => {
     if (!list || list.items.length === 0) {
@@ -248,20 +312,22 @@ function CampaignContent<T extends ContentType>(props: CampaignContentProps<T>) 
   return (
     <div className={`campaign-content campaign-content--${contentType}`}>
       <Container fluid className="p-0">
-        <Row className="mb-2 g-0 justify-content-center align-items-center">
-          <Col className="w-auto flex-fill">
-            {list && list.items.length > 0 && viewParams.page ? <ShowingText
-              total={list.total}
-              page={viewParams.page}
-              itemsPerPage={viewParams.itemsPerPage}
-              subject={subject} /> : null}
-          </Col>
+        <Row className="mb-3 g-0 align-items-center">
           <Col className="w-auto d-flex justify-content-end">
+            <SearchInputBox ref={searchInputBoxRef} placeholder={searchInputBoxPlaceholder} />
             <FilterModalButton
               options={filterOptions}
               onFilter={applyFilter}
+              searchInputBox={searchInputBoxRef}
             />
           </Col>
+        </Row>
+        <Row className="mb-2 g-0">
+          {list && list.items.length > 0 && viewParams.page ? <ShowingText
+            total={list.total}
+            page={viewParams.page}
+            itemsPerPage={viewParams.itemsPerPage}
+            subject={subject}/> : null}
         </Row>
       </Container>
       {listEl}

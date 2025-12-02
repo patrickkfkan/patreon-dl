@@ -1,5 +1,7 @@
 import { execSync } from "child_process";
-import type DateTime from "./DateTime";
+import type DateTime from "./DateTime.js";
+import {transliterate} from 'transliteration';
+import slugify from 'slugify';
 import os from 'os';
 
 export type NoDeepTypes = DateTime;
@@ -117,4 +119,39 @@ export function isDenoInstalled(pathToDeno?: string): DenoInstallStatus {
     ...di
   });
   return di;
+}
+
+export function createSafeSlug(
+  input: string,
+  maxSegments = 5,
+  maxLength = 24,
+  separator = "-"
+): string {
+  const slug = slugify(
+    transliterate(input, {trim: true, fixChineseSpacing: true }),
+    {
+      lower: true,
+      strict: true,
+      replacement: separator,
+      trim: true
+    }
+  );
+
+  const segments = slug.split(separator);
+  const result: string[] = [];
+
+  for (const seg of segments) {
+    if (result.length >= maxSegments) {
+      break;
+    }
+
+    const candidate = [...result, seg].join(separator);
+    if (candidate.length > maxLength) {
+      break;
+    }
+
+    result.push(seg);
+  }
+
+  return result.join(separator);
 }

@@ -62,7 +62,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
   const options = {
     cookie: CLIOptionValidator.validateString(pickDefined(commandLineOptions.cookie, configFileOptions?.cookie)),
     useStatusCache: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.useStatusCache, configFileOptions?.useStatusCache)),
-    stopOn: CLIOptionValidator.validateString(pickDefined(commandLineOptions.stopOn, configFileOptions?.stopOn), 'never', 'postPreviouslyDownloaded', 'postPublishDateOutOfRange'),
+    stopOn: CLIOptionValidator.validateString(pickDefined(commandLineOptions.stopOn, configFileOptions?.stopOn), 'never', 'postPreviouslyDownloaded', 'postPublishDateOutOfRange', 'previouslyDownloaded', 'publishDateOutOfRange'),
     pathToFFmpeg: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToFFmpeg, configFileOptions?.pathToFFmpeg)),
     pathToDeno: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToDeno, configFileOptions?.pathToDeno)),
     outDir: CLIOptionValidator.validateString(pickDefined(commandLineOptions.outDir, configFileOptions?.outDir)),
@@ -156,11 +156,16 @@ function getCLIIncludeOptions(commandLineOptions: CommandLineParseResult, config
       after: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.postsPublished?.after, configFileOptions?.include?.postsPublished?.after)) || null,
       before: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.postsPublished?.before, configFileOptions?.include?.postsPublished?.before)) || null,
     },
+    productsPublished: {
+      after: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.productsPublished?.after, configFileOptions?.include?.productsPublished?.after)) || null,
+      before: CLIOptionValidator.validateDateTime(pickDefined(commandLineOptions.include?.productsPublished?.before, configFileOptions?.include?.productsPublished?.before)) || null,
+    },
     campaignInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.campaignInfo, configFileOptions?.include?.campaignInfo)),
     contentInfo: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.contentInfo, configFileOptions?.include?.contentInfo)),
     previewMedia: CLIOptionValidator.validateIncludePreviewMedia(pickDefined(commandLineOptions.include?.previewMedia, configFileOptions?.include?.previewMedia)),
     contentMedia: CLIOptionValidator.validateIncludeContentMedia(pickDefined(commandLineOptions.include?.contentMedia, configFileOptions?.include?.contentMedia)),
     allMediaVariants: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.allMediaVariants, configFileOptions?.include?.allMediaVariants)),
+    mediaThumbnails: CLIOptionValidator.validateBoolean(pickDefined(commandLineOptions.include?.mediaThumbnails, configFileOptions?.include?.mediaThumbnails)),
     mediaByFilename: {
       images: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.images, configFileOptions?.include?.mediaByFilename?.images)) || null,
       audio: CLIOptionValidator.validateString(pickDefined(commandLineOptions.include?.mediaByFilename?.audio, configFileOptions?.include?.mediaByFilename?.audio)) || null,
@@ -197,11 +202,14 @@ function readTargetsFile(file: string) {
     postsInTier: 'include.posts.in.tier',
     postsPublishedAfter: 'include.posts.published.after',
     postsPublishedBefore: 'include.posts.published.before',
+    productsPublishedAfter: 'include.products.published.after',
+    productsPublishedBefore: 'include.products.published.before',
     campaignInfo: 'include.campaign.info',
     contentInfo: 'include.content.info',
     previewMedia: 'include.preview.media',
     contentMedia: 'include.content.media',
     allMediaVariants: 'include.all.media.variants',
+    mediaThumbnails: 'include.media.thumbnails',
     imagesByFilename: 'include.images.by.filename',
     audioByFilename: 'include.audio.by.filename',
     attachmentsByFilename: 'include.attachments.by.filename',
@@ -247,6 +255,17 @@ function readTargetsFile(file: string) {
               }
               else {
                 target.include.postsPublished.before = entry;
+              }
+            }
+            else if (matchKey === includeKeys.productsPublishedAfter || matchKey === includeKeys.productsPublishedBefore) {
+              if (!target.include.productsPublished) {
+                target.include.productsPublished = {};
+              }
+              if (matchKey === includeKeys.productsPublishedAfter) {
+                target.include.productsPublished.after = entry;
+              }
+              else {
+                target.include.productsPublished.before = entry;
               }
             }
             else if (matchKey === includeKeys.imagesByFilename || matchKey === includeKeys.audioByFilename ||

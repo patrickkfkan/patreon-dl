@@ -7,10 +7,12 @@ import { type Filter, type FilterOption, type FilterSearchParams, type FilterSec
 import { Button, Modal, Form, Stack, ToggleButton } from "react-bootstrap";
 import { useSearchParams } from "react-router";
 import { useBrowseSettings } from "../contexts/BrowseSettingsProvider";
+import { type SearchInputBoxHandle } from "./SearchInputBox";
 
 interface FilterModalButtonProps<S extends FilterSearchParams> {
   options: FilterData<S>;
   onFilter: (filter: Filter<S>) => void;
+  searchInputBox?: React.RefObject<SearchInputBoxHandle | null>;
 }
 
 function getFilterValuesFromSearchParams<S extends FilterSearchParams>(searchParams: URLSearchParams): Filter<S>['options'] {
@@ -38,6 +40,14 @@ function getInitialFilterValues<S extends FilterSearchParams>(options: FilterDat
       searchParam: section.searchParam,
       value
     });
+  }
+  if (options.external) {
+    for (const ext of options.external) {
+      result.push({
+        searchParam: ext.searchParam,
+        value: null
+      });
+    }
   }
   return result;
 }
@@ -70,7 +80,7 @@ const contentFilterReducer = <S extends FilterSearchParams>(currentFilter: Filte
 };
 
 function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButtonProps<S>) {
-  const { options: filterOptions, onFilter } = props;
+  const { options: filterOptions, onFilter, searchInputBox } = props;
   const { settings } = useBrowseSettings();
   const [ searchParams, setSearchParams ] = useSearchParams();
   const [modalFilter, setModalFilterValues] = useReducer(contentFilterReducer, null);
@@ -98,6 +108,46 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
     setModalFilterValues(initialValues);
     setAppliedFilterValues(initialValues);
   }, [filterOptions, searchParams]);
+
+  useEffect(() => {
+    if (!searchInputBox?.current) {
+      return;
+    }
+    const box = searchInputBox.current;
+    box.onConfirm((value) => {
+      setAppliedFilterValues([
+        {searchParam: 'search', value: value || null}
+      ]);
+    });
+
+    return () => box.onConfirm(null);
+  }, [searchInputBox]);
+
+  useEffect(() => {
+    const initialValues = initialFilterValuesRef.current;
+    if (!appliedFilter || !initialValues) {
+      return;
+    }
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      for (const option of appliedFilter.options) {
+        const paramName = `filter_${option.searchParam}`;
+        const optionValue = option.value;
+        const iv = initialValues.find((o) => o.searchParam === option.searchParam);
+        if (optionValue && (iv === undefined || iv.value !== optionValue)) {
+          params.set(paramName, optionValue);
+        }
+        else {
+          params.delete(paramName);
+        }
+      }
+      return params;
+    });
+    if (searchInputBox?.current) {
+      const q = appliedFilter.options.find((opt) => opt.searchParam === 'search')?.value || '';
+      searchInputBox.current.setInput(q);
+    }
+  }, [searchInputBox, appliedFilter]);
 
   useEffect(() => {
     const initialValues = initialFilterValuesRef.current;
@@ -169,24 +219,29 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
           )
           break;
         }
-        case 'pill': {
+        case 'pill':
+        case 'pill_small': {
           // 'outline-primary' in Vapor theme sticks to the background - need to use secondary
           const variant = settings.theme.toLowerCase() === 'vapor' ? 'outline-secondary' : 'outline-primary';
+          const size = section.displayHint === 'pill_small' ? 'sm' : undefined;
           const optionEls = section.options.map((option) => (
-            <ToggleButton
-              key={`${section.searchParam}:${option.value}`}
-              type="checkbox"
-              id={`filter-select-${section.searchParam}:${option.value}`}
-              checked={isSelected(modalFilter, section, option)}
-              value={option.value || ''}
-              variant={variant}
-              onChange={() => handleFilterValueSelect(section, option, true)}
-            >
-              {option.title}
-            </ToggleButton>
+            <div>
+              <ToggleButton
+                key={`${section.searchParam}:${option.value}`}
+                type="checkbox"
+                size={size}
+                id={`filter-select-${section.searchParam}:${option.value}`}
+                checked={isSelected(modalFilter, section, option)}
+                value={option.value || ''}
+                variant={variant}
+                onChange={() => handleFilterValueSelect(section, option, true)}
+              >
+                {option.title}
+              </ToggleButton>
+            </div>
           ));
           mainContentEl = (
-            <Stack direction="horizontal" gap={2}>
+            <Stack direction="horizontal" gap={2} className="flex-wrap">
               {...optionEls}
             </Stack>
           )
@@ -229,33 +284,17 @@ function FilterModalButton<S extends FilterSearchParams>(props: FilterModalButto
       return;
     }
     const sanitizedOptions = copy(modalFilter.options);
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      for (const option of modalFilter.options) {
-        const iv = initialValues.find((o) => o.searchParam === option.searchParam);
-        const paramName = `filter_${option.searchParam}`;
-        // Check if option belongs to a disabled section
-        const section = filterOptions.sections.find((s) => s.searchParam === option.searchParam);
-        let optionValue: string | null | undefined;
-        if (section && isSectionDisabled(section) && iv) {
-          optionValue = iv.value;
-          const so = sanitizedOptions.find((s) => s.searchParam === option.searchParam);
-          if (so) {
-            so.value = iv.value;
-          }
-        }
-        else {
-          optionValue = option.value;
-        }
-        if (optionValue && (iv === undefined || iv.value !== optionValue)) {
-          params.set(paramName, optionValue);
-        }
-        else {
-          params.delete(paramName);
+    for (const option of modalFilter.options) {
+      const iv = initialValues.find((o) => o.searchParam === option.searchParam);
+      // Check if option belongs to a disabled section
+      const section = filterOptions.sections.find((s) => s.searchParam === option.searchParam);
+      if (section && isSectionDisabled(section) && iv) {
+        const so = sanitizedOptions.find((s) => s.searchParam === option.searchParam);
+        if (so) {
+          so.value = iv.value;
         }
       }
-      return params;
-    });
+    }
     setAppliedFilterValues(sanitizedOptions);
     setModalVisible(false);
   }, [modalFilter, setSearchParams, filterOptions, isSectionDisabled]);

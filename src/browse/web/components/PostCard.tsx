@@ -1,9 +1,9 @@
 import "../assets/styles/PostCard.scss";
 import { type Downloadable, type Post } from "../../../entities";
-import { Card, Stack } from "react-bootstrap";
+import { Badge, Card, Stack } from "react-bootstrap";
 import MediaGrid from "./MediaGrid";
 import path from "path";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router";
 import MediaImage from "./MediaImage";
 import LightGallery from "lightgallery/react";
@@ -147,8 +147,25 @@ function PostCard(props: PostCardProps) {
   const hasInlineMedia = inlineMediaRegex.test(post.content || '');
   const hasGallery = mediaItems.length > 0 || hasInlineMedia;
 
+  const tagsEl = post.tags && post.tags.length > 0 && post.campaign && (
+    <Stack direction="horizontal" gap={2} className="mb-3 flex-wrap">
+      {post.tags.map((tag) => {
+        const tagUrl = new URL(`/campaigns/${post.campaign!.id}/posts`, window.location.href);
+        tagUrl.searchParams.set('filter_tag_id', tag.id);
+        return (
+          <Badge key={tag.id} bg="secondary">
+            <Link to={tagUrl.toString()} style={{color: 'inherit'}}>
+              {tag.value}
+            </Link>
+          </Badge>
+        )
+      })}
+    </Stack>
+  );
+
   let body = (
     <Stack>
+      {tagsEl}
       <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
         <Card.Title className="m-0">{titleEl}</Card.Title>
         {

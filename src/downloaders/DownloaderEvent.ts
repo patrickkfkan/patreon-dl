@@ -1,5 +1,5 @@
 import { type Campaign } from '../entities/Campaign.js';
-import { type Post } from '../entities/Post.js';
+import { type Collection, type Post } from '../entities/Post.js';
 import { type Product } from '../entities/Product.js';
 import { type IDownloadTaskBatch } from './task/DownloadTaskBatch.js';
 
@@ -23,15 +23,15 @@ export enum TargetSkipReason {
 export interface DownloaderEventPayload {
 
   'fetchBegin': {
-    targetType: 'product' | 'post' | 'posts';
+    targetType: 'product' | 'products' | 'post' | 'posts';
   }
 
   'targetBegin': {
-    target: Campaign | Product | Post;
+    target: Campaign | Product | Post | Collection;
   };
 
   'targetEnd': {
-    target: Campaign | Product | Post;
+    target: Campaign | Product | Post | Collection;
   } & ({
     isSkipped: false;
   } | {
@@ -41,7 +41,7 @@ export interface DownloaderEventPayload {
   });
 
   'phaseBegin': {
-    target: Campaign | Product | Post;
+    target: Campaign | Product | Post | Collection;
   } & ({
     phase: 'saveInfo' | 'saveMedia';
   } | {
@@ -50,7 +50,7 @@ export interface DownloaderEventPayload {
   });
 
   'phaseEnd': {
-    target: Campaign | Product | Post;
+    target: Campaign | Product | Post | Collection;
     phase: 'saveInfo' | 'saveMedia' | 'batchDownload';
   };
 

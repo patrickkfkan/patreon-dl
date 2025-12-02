@@ -1,6 +1,6 @@
 import "../assets/styles/ProductCard.scss";
 import { type Downloadable, type Product } from "../../../entities";
-import { Card, Col, Nav, Row, Stack, Tab } from "react-bootstrap";
+import { Badge, Card, Col, Nav, Row, Stack, Tab } from "react-bootstrap";
 import { useCallback, useMemo } from "react";
 import MediaGrid from "./MediaGrid";
 import MediaGallery from "./MediaGallery";
@@ -9,6 +9,7 @@ import { Link, useLocation } from "react-router";
 import ObjectHelper from "../../../utils/ObjectHelper";
 import path from "path";
 import MediaImage from "./MediaImage";
+import { ProductType } from "../../../entities/Product";
 
 interface ProductCardProps {
   product: Product;
@@ -213,7 +214,16 @@ function ProductCard(props: ProductCardProps) {
   }, [product, showCampaign]);
 
   const titleEl = useMemo(() => {
-    const url = new URL(`/products/${product.id}`, window.location.href);
+    let url: URL;
+    if (product.productType === ProductType.Post && product.referencedEntityId) {
+      url = new URL(`/posts/${product.referencedEntityId}`, window.location.href);
+    }
+    else if (product.productType === ProductType.Collection && product.referencedEntityId) {
+      url = new URL(`/collections/${product.referencedEntityId}`, window.location.href);
+    }
+    else {
+      url = new URL(`/products/${product.id}`, window.location.href);
+    }
     if (location.pathname === url.pathname) {
       return product.name;
     }
@@ -227,6 +237,9 @@ function ProductCard(props: ProductCardProps) {
       {campaignEl}
       {coverImageEl}
       <Card.Body className="d-flex flex-column">
+        <div>
+          { product.productType === ProductType.Collection && <Badge bg="secondary">Collection</Badge>}
+        </div>
         <Stack>
           <Stack direction="horizontal" className="mb-3 justify-content-between gap-4">
             <Card.Title className="m-0 product-card__title">

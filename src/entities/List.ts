@@ -1,4 +1,4 @@
-export interface Collection<T> {
+export interface List<T> {
   url: string; // API URL
   items: T[];
   total: number | null;

@@ -11,7 +11,14 @@ export interface BootstrapData {
 
 export interface ProductDownloaderBootstrapData extends BootstrapData {
   type: 'product';
-  productId: string;
+  productFetch: {
+    type: 'single';
+    productId: string;
+  } | {
+    type: 'byShop';
+    vanity: string;
+    campaignId?: string;
+  };
 }
 
 export interface PostDownloaderBootstrapData extends BootstrapData {
@@ -23,14 +30,17 @@ export interface PostDownloaderBootstrapData extends BootstrapData {
     type: 'byUser';
     vanity: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   } | {
     type: 'byUserId';
     userId: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   } | {
     type: 'byCollection';
     collectionId: string;
     filters?: Record<string, any>;
+    campaignId?: string;
   };
 }
 
@@ -51,7 +61,21 @@ export default class Bootstrap {
       return {
         type: 'product',
         targetURL: url,
-        productId: analysis.productId
+        productFetch: {
+          type: 'single',
+          productId: analysis.productId
+        }
+      } as ProductDownloaderBootstrapData;
+    }
+
+    if (analysis.type === 'shop') {
+      return {
+        type: 'product',
+        targetURL: url,
+        productFetch: {
+          type: 'byShop',
+          vanity: analysis.vanity
+        }
       } as ProductDownloaderBootstrapData;
     }
 

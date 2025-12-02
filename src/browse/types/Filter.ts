@@ -9,7 +9,7 @@ export type FilterSearchParams = string;
 export interface FilterSection<S extends FilterSearchParams> {
   title?: string;
   searchParam: S;
-  displayHint: 'pill' | 'list';
+  displayHint: 'pill' | 'pill_small' | 'list';
   options: FilterOption[];
   enableCondition?: {
     searchParam: S;
@@ -23,12 +23,15 @@ export type PostFilterSearchParams =
   'is_viewable' |
   'tier_ids' |
   'sort_by' |
-  'date_published';
+  'date_published' |
+  'search' |
+  'tag_id';
 
 export type ProductFilterSearchParams =
   'is_viewable' |
   'sort_by' |
-  'date_published';
+  'date_published' |
+  'search';
 
 export type MediaFilterSearchParams = 
   'source_type' |
@@ -39,6 +42,9 @@ export type MediaFilterSearchParams =
 
 export interface FilterData<S extends FilterSearchParams> {
   sections: FilterSection<S>[];
+  external?: {
+    searchParam: S;
+  }[]
 };
 
 export interface Filter<S extends FilterSearchParams> {

@@ -38,7 +38,7 @@ function CampaignLayout() {
         </Col>
       </Row>
       <Row className="justify-content-center g-0">
-        <Col lg={8} md={10} sm={12} className="px-3 px-md-0 d-flex justify-content-center">
+        <Col lg={8} md={10} sm={12} className="px-3 px-md-0 d-flex flex-column align-items-center justify-content-center">
           <Outlet />
         </Col>
       </Row>

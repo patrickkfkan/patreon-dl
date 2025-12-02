@@ -1,8 +1,8 @@
-import { type Collection } from "./Collection.js";
+import { type List } from "./List.js";
 import { type User } from "./User.js";
 
-export type CommentCollection = Collection<Comment>;
-export type CommentReplyCollection = Collection<CommentReply>;
+export type CommentList = List<Comment>;
+export type CommentReplyList = List<CommentReply>;
 
 export interface Comment {
   type: 'comment';
