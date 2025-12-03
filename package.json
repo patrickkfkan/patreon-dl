@@ -106,7 +106,7 @@
     "path-browserify": "^1.0.1",
     "path-to-regexp": "^8.2.0",
     "prompt-sync": "^4.2.0",
-    "puppeteer": "^24.18.0",
+    "puppeteer": "^24.31.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-custom-scrollbars-4": "^4.5.1",
