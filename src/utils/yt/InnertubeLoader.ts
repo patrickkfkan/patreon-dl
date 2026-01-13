@@ -153,8 +153,9 @@ export default class InnertubeLoader {
     return new Promise<any>((resolve, reject) => {
       this.log('debug', 'Begin Deno eval');
       const safeCode = code
-        .replace(/`/g, '\\`')
-        .replace(/\\/g, '\\\\');
+        .replace(/\\/g, '\\\\')
+        .replace(/\$\{/g, '\\${')
+        .replace(/`/g, '\\`');
       const wrappedCode = `
         try {
           const result = await new Function(\`${safeCode}\`)();
