@@ -1,6 +1,14 @@
 @use "./mixins";
 
 .post-nav {
+  &__wrapper.fixed {
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid var(--bs-secondary);
+    padding-top: 0.5rem;
+    background:  var(--bs-body-bg);
+  }
+
   &__previous,
   &__next {
     display: flex;
