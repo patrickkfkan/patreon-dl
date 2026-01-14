@@ -22,7 +22,8 @@ const CONTEXT_QS_PARAMS: UnionToTuple<PostFilterSearchParams | 'collection_id'> 
   'collection_id',
   'sort_by',
   'date_published',
-  'search'
+  'search',
+  'tag_id'
 ];
 
 function getContextQS() {
