@@ -279,11 +279,20 @@ export default class PatreonDownloaderCLI {
 
     const __checkDeno = () => {
       const ytExternalDownloader = options.embedDownloaders && options.embedDownloaders.find((downloader) => downloader.provider === 'YouTube' && downloader.exec);
-      if(!ytExternalDownloader && !isDenoInstalled(options.pathToDeno || undefined).installed) {
-        commonLog(logger, 'warn', null,
-          `WARNING: Deno (https://deno.com) is not found on this system. For embedded YouTube videos, the downloader needs to run code obtained from YouTube / Google servers. Without Deno, such code will be executed without sandboxing. Running un-sandboxed code exposes your system to potential security vulnerabilities, including unauthorized access, data corruption, or malicious operations.`,
-          EOL
-        );
+      if(!ytExternalDownloader) {
+        const di = isDenoInstalled(options.pathToDeno || undefined);
+        if (!di.installed) {
+          commonLog(logger, 'warn', null,
+            `WARNING: Deno (https://deno.com) is not found on this system. For embedded YouTube videos, the downloader needs to run code obtained from YouTube / Google servers. Without Deno, such code will be executed without sandboxing. Running un-sandboxed code exposes your system to potential security vulnerabilities, including unauthorized access, data corruption, or malicious operations.`,
+            EOL
+          );
+        }
+        else if (di.version) {
+          commonLog(logger, 'info', null, `Deno ${di.version} installed`, EOL);
+        }
+        else {
+          commonLog(logger, 'info', null, `Deno installed`, EOL);
+        }
       }
     }
 
