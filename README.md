@@ -74,7 +74,7 @@ $ patreon-dl --configure-youtube
 
 You can specify external programs to download embedded videos or from embedded links. For YouTube videos, this will replace the built-in downloader.
 
-See the [example config](./example-embed.conf) on how to configure an external downloader to fetch YouTube and Vimeo videos through [yt-dlp](https://github.com/yt-dlp/yt-dlp). For Vimeo videos, a [helper script](./bin/patreon-dl-vimeo.js) bundled with `patreon-dl` is used.
+See the [example config](./example-embed.conf) on how to configure an external downloader to fetch YouTube, Vimeo and SproutVideo content through [yt-dlp](https://github.com/yt-dlp/yt-dlp). Helper scripts bundled with `patreon-dl` are used in the case of Vimeo and SproutVideo ([patreon-dl-vimeo.js](./bin/patreon-dl-vimeo.js) and [patreon-dl-sprout.js](./bin/patreon-dl-sprout.js) respectively).
 
 ## Installation
 
