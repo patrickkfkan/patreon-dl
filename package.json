@@ -16,6 +16,7 @@
   "bin": {
     "patreon-dl": "./bin/patreon-dl.js",
     "patreon-dl-vimeo": "./bin/patreon-dl-vimeo.js",
+    "patreon-dl-sprout": "./bin/patreon-dl-sprout.js",
     "patreon-dl-server": "./bin/patreon-dl-server.js"
   },
   "author": "Patrick Kan <patrickkfkan@gmail.com> (https://github.com/patrickkfkan)",
