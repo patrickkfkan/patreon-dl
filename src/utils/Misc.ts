@@ -109,9 +109,13 @@ export function isDenoInstalled(pathToDeno?: string): DenoInstallStatus {
       throw Error(`Command exited with non-zero code: ${result.status}${output ? ` - ${output}` : ''}`);
     }
     const output = result.stdout.toString();
+    let version = output.trim().split(/\r?\n/)[0];
+    if (version.toLowerCase().startsWith('deno ')) {
+      version = version.substring('deno '.length);
+    }
     di = {
       installed: true,
-      version: output.trim().split(/\r?\n/)[0]
+      version
     };
   } catch (error) {
     di = {
