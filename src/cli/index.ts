@@ -278,7 +278,7 @@ export default class PatreonDownloaderCLI {
     }
 
     const __checkDeno = () => {
-      const ytExternalDownloader = options.embedDownloaders && options.embedDownloaders.find((downloader) => downloader.provider === 'YouTube' && downloader.exec);
+      const ytExternalDownloader = options.embedDownloaders && options.embedDownloaders.find((downloader) => downloader.provider.toLowerCase() === 'youtube' && downloader.exec);
       if(!ytExternalDownloader) {
         const di = isDenoInstalled(options.pathToDeno || undefined);
         if (!di.installed) {
