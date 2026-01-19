@@ -9,10 +9,12 @@ import { createProxyAgent } from '../Proxy.js';
 import { spawn } from 'child_process';
 import ObjectHelper from '../ObjectHelper.js';
 import { isDenoInstalled } from '../Misc.js';
+import { PoTokenMinter } from './PoToken.js';
 
 export interface InnertubeLoaderGetInstanceResult {
   innertube: Innertube;
   getVideoInfo: (videoId: string) => Promise<InnertubeLib.YT.VideoInfo>
+  dispose: () => void;
 };
 
 Platform.shim.eval = (data: InnertubeLib.Types.BuildScriptResult, env: Record<string, InnertubeLib.Types.VMPrimative>) => {
@@ -123,9 +125,25 @@ export default class InnertubeLoader {
   static #resolveGetInstanceResult(innertube: Innertube, resolve: (value: InnertubeLoaderGetInstanceResult) => void) {
     this.#pendingPromise = null;
     const signedIn = innertube.session.logged_in;
+    this.log('debug', 'Create YouTube PO token minter');
+    const minter = PoTokenMinter.createInstance({ proxyAgent: this.#proxy });
     this.#instanceResult = {
       innertube,
-      getVideoInfo: (videoId) => innertube.getBasicInfo(videoId, { client: 'TV'})
+      getVideoInfo: async (videoId) => {
+        let pot;
+        try {
+          pot = await minter.pot(videoId);
+          this.log('debug', `Obtained PO token for YouTube video ${videoId}: `, pot);
+        }
+        catch (error) {
+          this.log('warn', `Could not obtain PO token for YouTube video ${videoId}:`, error);
+          pot = undefined;
+        }
+        return innertube.getBasicInfo(videoId, { client: 'WEB_EMBEDDED', po_token: pot })
+      },
+      dispose: () => {
+        minter.dispose();
+      }
     };
     this.log('info', `YouTube downloader initialized (signed-in: ${signedIn ? 'yes' : 'no'})`);
     resolve(this.#instanceResult);
@@ -226,7 +244,11 @@ export default class InnertubeLoader {
   }
 
   static reset() {
-    this.#instanceResult = null;
+    if (this.#instanceResult) {
+      this.#instanceResult.dispose();
+      this.#instanceResult = null;
+    }
+    this.#proxy = undefined;
     this.#pendingPromise = null;
     this.#denoInstalled = undefined;
   }
