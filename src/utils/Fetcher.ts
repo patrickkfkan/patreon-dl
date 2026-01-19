@@ -345,7 +345,7 @@ export default class Fetcher {
     this.log('debug', `Fetch "${url}" with Puppeteer`);
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.setUserAgent(this.#userAgent);
+    await page.setUserAgent({ userAgent: this.#userAgent });
     await page.goto(url, { waitUntil: 'networkidle2' });
     const html = await page.evaluate(() => document.documentElement.innerHTML);
     await browser.close();

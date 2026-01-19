@@ -1,5 +1,5 @@
 import "../assets/styles/PostContent.scss";
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { NavLink, useParams } from "react-router";
 import { Container, Row, Col, Stack } from "react-bootstrap";
 import { useAPI } from "../contexts/APIProvider";
@@ -22,7 +22,8 @@ const CONTEXT_QS_PARAMS: UnionToTuple<PostFilterSearchParams | 'collection_id'> 
   'collection_id',
   'sort_by',
   'date_published',
-  'search'
+  'search',
+  'tag_id'
 ];
 
 function getContextQS() {
@@ -43,12 +44,31 @@ const contentReducer = (currentContent: PostWithComments | null, newContent: Pos
   return newContent;
 }
 
+const ContentColumn = forwardRef<
+  HTMLDivElement,
+  { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>
+>(({children, ...props}, ref) => {
+  return (
+    <Container fluid ref={ref} {...props}>
+      <Row className="justify-content-center">
+        <Col lg={8} md={10} sm={12} className="p-0" style={{maxWidth: '40.5em'}}>
+          {children}
+        </Col>
+      </Row>
+    </Container>
+  );
+});
+
 function PostContent() {
   const {id: postId} = useParams();
   const { api } = useAPI();
   const { scrollTo } = useScroll();
   const [post, setContent] = useReducer(contentReducer, null);;
   const [postNav, setPostNav] = useState<PostNav>({ previous: null, next: null });
+  const contentRef = useRef<HTMLDivElement>(null);
+  const commentsRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const [stickyNav, setStickyNav] = useState(false);
 
   useEffect(() => {
     if (!postId) {
@@ -65,6 +85,29 @@ function PostContent() {
 
     return () => abortController.abort();
   }, [api, postId]);
+
+  const updateNavStickiness = useCallback(() => {
+    if (!postNav.previous && !postNav.next) {
+      return;
+    }
+    let h = 72;  // Assumed nav height
+    const viewportHeight = window.innerHeight;
+    if (contentRef.current) {
+      const rect = contentRef.current.getBoundingClientRect();
+      h += rect.bottom;
+    }
+    if (commentsRef.current) {
+      h += commentsRef.current.scrollHeight;
+    }
+    setStickyNav(h > viewportHeight);
+  }, [postNav, postId]);
+
+  useEffect(() => {
+    updateNavStickiness();
+    window.addEventListener("resize", updateNavStickiness);
+
+    return () => window.removeEventListener("resize", updateNavStickiness);
+  }, [updateNavStickiness]);
 
   const nav = useMemo(() => {
     const { previous, next } = postNav;
@@ -100,39 +143,41 @@ function PostContent() {
         previous && next ? 'justify-content-between'
         : next ? 'justify-content-end'
         : '';
+      const fixed = stickyNav ? 'fixed' : '';
       return (
-        <Stack direction="horizontal" className={`post-nav mt-2 mb-3 ${justify}`}>
-          { previousLink }
-          { nextLink }
-        </Stack>
+        <ContentColumn ref={navRef} className={`post-nav__wrapper ${fixed}`}>
+          <Stack direction="horizontal" className={`post-nav mt-2 mb-3 ${justify}`}>
+            { previousLink }
+            { nextLink }
+          </Stack>
+        </ContentColumn>
       );
     }
     return null;
-  }, [postNav, scrollTo]);
+  }, [postNav, scrollTo, stickyNav]);
 
   if (!post) {
     return null;
   }
 
   return (
-    <Container fluid>
-      <Row className="justify-content-center">
-        <Col lg={8} md={10} sm={12} className="p-0" style={{maxWidth: '40.5em'}}>
-          <div className="my-4">
-            <PostCard post={post} showCampaign />
-            { nav }
-            {
-              post.comments ? (
-                <div className="mt-4">
-                  <h5 className="mb-3">{post.commentCount} {post.comments.length > 1 ? 'comments' : 'comment'}</h5>
-                  <CommentsPanel comments={post.comments} />
-                </div>
-              ) : null
-            }
-          </div>
-        </Col>
-      </Row>
-    </Container>
+    <>
+      <ContentColumn ref={contentRef}>
+        <div className={!nav || stickyNav ? 'py-4' : 'pt-4'}>
+          <PostCard post={post} showCampaign />
+        </div>
+      </ContentColumn>
+      { !stickyNav && nav }
+      {
+        post.comments && (
+          <ContentColumn ref={commentsRef} className="pt-2 pb-4 px-4">
+            <h5 className="mb-3">{post.commentCount} {post.comments.length > 1 ? 'comments' : 'comment'}</h5>
+            <CommentsPanel comments={post.comments} />
+          </ContentColumn>
+        )
+      }
+      { stickyNav && nav }
+    </>
   )
 }
 

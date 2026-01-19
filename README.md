@@ -74,7 +74,7 @@ $ patreon-dl --configure-youtube
 
 You can specify external programs to download embedded videos or from embedded links. For YouTube videos, this will replace the built-in downloader.
 
-See the [example config](./example-embed.conf) on how to configure an external downloader to fetch YouTube and Vimeo videos through [yt-dlp](https://github.com/yt-dlp/yt-dlp). For Vimeo videos, a [helper script](./bin/patreon-dl-vimeo.js) bundled with `patreon-dl` is used.
+See the [example config](./example-embed.conf) on how to configure an external downloader to fetch YouTube, Vimeo and SproutVideo content through [yt-dlp](https://github.com/yt-dlp/yt-dlp). Helper scripts bundled with `patreon-dl` are used in the case of Vimeo and SproutVideo ([patreon-dl-vimeo.js](./bin/patreon-dl-vimeo.js) and [patreon-dl-sprout.js](./bin/patreon-dl-sprout.js) respectively).
 
 ## Installation
 
@@ -292,6 +292,12 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 > Keep in mind that the web server is in no way secure. It is meant for local browsing and should not be exposed to outside parties!
 
 ## Changelog
+
+v3.6.0
+- Browse: affix nav links (previous / next post) to viewport bottom if post content overflows ([patreon-dl-gui#41](https://github.com/patrickkfkan/patreon-dl-gui/issues/41))
+- Fix error when Deno path contains spaces ([patreon-dl-gui#42](https://github.com/patrickkfkan/patreon-dl-gui/issues/42))
+- Add SproutVideo download script ([patreon-dl-gui#43](https://github.com/patrickkfkan/patreon-dl-gui/issues/43))
+- Fix YouTube download returning "auth required" error
 
 v3.5.0
 - Add support for downloading from "shop" URLs (e.g. `https://www.patreon.com/<creator>/shop`). This will download all products from a creator's shop.

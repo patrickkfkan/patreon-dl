@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { sync as spawnSync } from "@patrickkfkan/cross-spawn";
 import type DateTime from "./DateTime.js";
 import {transliterate} from 'transliteration';
 import slugify from 'slugify';
@@ -101,12 +101,21 @@ export function isDenoInstalled(pathToDeno?: string): DenoInstallStatus {
   let di: DenoInstallStatus;
   try {
     const cmd = pathToDeno || 'deno';
-    const output = execSync(`${cmd} --version`, {
-      encoding: 'utf-8'
-    });
+    const result = spawnSync(cmd, ['--version']);
+    if (result.error) {
+      throw result.error;
+    } else if (result.status !== 0) {
+      const output = result.stderr.toString();
+      throw Error(`Command exited with non-zero code: ${result.status}${output ? ` - ${output}` : ''}`);
+    }
+    const output = result.stdout.toString();
+    let version = output.trim().split(/\r?\n/)[0];
+    if (version.toLowerCase().startsWith('deno ')) {
+      version = version.substring('deno '.length);
+    }
     di = {
       installed: true,
-      version: output.trim().split(/\r?\n/)[0]
+      version
     };
   } catch (error) {
     di = {
