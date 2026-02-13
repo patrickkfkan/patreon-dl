@@ -165,7 +165,7 @@ export default class EmbedlyDownloader {
     let code = await this.download(_url, o, videoPassword, ytdlpPath, ytdlpArgs);
     if (code !== 0 && _url !== embedURL && embedURL) {
       console.log(`Download failed - retrying with embed URL "${embedURL}"`);
-      return await this.download(embedURL);
+      return await this.download(embedURL, o, videoPassword, ytdlpPath, ytdlpArgs);
     }
 
     return code;
