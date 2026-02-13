@@ -293,6 +293,9 @@ Note the URL shown in the output. Open this URL in a web browser to begin viewin
 
 ## Changelog
 
+v3.6.1
+- Fix Embedly download script error on retrying with alternative URL.
+
 v3.6.0
 - Browse: affix nav links (previous / next post) to viewport bottom if post content overflows ([patreon-dl-gui#41](https://github.com/patrickkfkan/patreon-dl-gui/issues/41))
 - Fix error when Deno path contains spaces ([patreon-dl-gui#42](https://github.com/patrickkfkan/patreon-dl-gui/issues/42))
