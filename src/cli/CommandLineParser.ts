@@ -8,6 +8,7 @@ import { getPackageInfo } from '../utils/PackageInfo.js';
 export interface CommandLineParseResult extends RecursivePropsTo<DeepPartial<Omit<CLIOptions, 'targetURLs'>>, CLIOptionParserEntry> {
   targetURLs?: CLIOptionParserEntry;
   configFile?: CLIOptionParserEntry;
+  debugAPI?: CLIOptionParserEntry;
 }
 
 const COMMAND_LINE_ARGS = {
@@ -23,7 +24,8 @@ const COMMAND_LINE_ARGS = {
   noPrompt: 'no-prompt',
   dryRun: 'dry-run',
   listTiers: 'list-tiers',
-  listTiersByUserId: 'list-tiers-uid'
+  listTiersByUserId: 'list-tiers-uid',
+  debugAPI: 'debug-api'
 } as const;
 
 const OPT_DEFS = [
@@ -108,6 +110,11 @@ const OPT_DEFS = [
     name: COMMAND_LINE_ARGS.configureYouTube,
     description: 'Configure YouTube connection',
     type: Boolean
+  },
+  {
+    name: COMMAND_LINE_ARGS.debugAPI,
+    description: 'Process target URL as local API data file ; internal - for debugging purposes.',
+    type: Boolean
   }
 ];
 
@@ -134,7 +141,8 @@ export default class CommandLineParser {
 
       const booleanTypeArgs = [
         COMMAND_LINE_ARGS.noPrompt,
-        COMMAND_LINE_ARGS.dryRun
+        COMMAND_LINE_ARGS.dryRun,
+        COMMAND_LINE_ARGS.debugAPI
       ];
       if (booleanTypeArgs.includes(key as any) && value !== undefined) {
         value = '1';
@@ -168,6 +176,7 @@ export default class CommandLineParser {
     return {
       configFile: __getValue(COMMAND_LINE_ARGS.configFile),
       targetURLs: __getValue(COMMAND_LINE_ARGS.targetURL),
+      debugAPI: __getValue(COMMAND_LINE_ARGS.debugAPI),
       cookie: __getValue(COMMAND_LINE_ARGS.cookie),
       useStatusCache: undefined,
       pathToFFmpeg: __getValue(COMMAND_LINE_ARGS.ffmpeg),
@@ -240,7 +249,7 @@ export default class CommandLineParser {
         {
           header: 'Options',
           optionList: OPT_DEFS,
-          hide: 'target-url'
+          hide: ['target-url', COMMAND_LINE_ARGS.debugAPI]
         },
         {
           content: content.join(EOL)

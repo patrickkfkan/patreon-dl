@@ -7,14 +7,15 @@ import { type Tier } from '../entities/Reward.js';
 import { pickDefined } from '../utils/Misc.js';
 import ObjectHelper from '../utils/ObjectHelper.js';
 import Parser from './Parser.js';
+import URLHelper from '../utils/URLHelper.js';
 
 export default class PostParser extends Parser {
 
   protected name = 'PostParser';
 
-  parsePostsAPIResponse(json: any, _url: string): PostList {
+  parsePostsAPIResponse(json: any, src: string): PostList {
 
-    this.log('debug', `Parse API response of "${_url}"`);
+    this.log('debug', `Parse API data obtained from "${src}"`);
 
     /*If (json.errors) {
       this.log('error', `API response error:`, json.errors);
@@ -38,20 +39,20 @@ export default class PostParser extends Parser {
       postsJSONArray = [];
     }
     const collection: PostList = {
-      url: _url,
       items: [],
       total: ObjectHelper.getProperty(json, 'meta.pagination.total') || null,
-      nextURL: this.parseCollectionNextURL(json, _url)
+      // src could be a file, in which case there'll be no nextURL.
+      nextURL: URLHelper.validateURL(src) ? this.parseCollectionNextURL(json, src) : null
     };
 
     let hasIncludedJSON = true;
     if (!includedJSON || !Array.isArray(includedJSON)) {
-      this.log('warn', `'included' field missing in API response of "${_url}" or has incorrect type - no media items and campaign info will be returned`);
+      this.log('warn', `'included' field missing in API data obtained from "${src}" or has incorrect type - no media items and campaign info will be returned`);
       hasIncludedJSON = false;
     }
 
     if (postsJSONArray.length === 0) {
-      this.log('warn', `No posts found in API response of "${_url}"`);
+      this.log('warn', `No posts found in API data obtained from "${src}"`);
       return collection;
     }
     if (postsJSONArray.length > 1) {

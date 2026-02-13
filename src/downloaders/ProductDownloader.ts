@@ -47,6 +47,9 @@ export default class ProductDownloader extends Downloader<Product> {
       if (productFetch.type === 'byShop') {
         this.log('info', `Targeting products by '${productFetch.vanity}'`);
       }
+      else if (productFetch.type === 'byFile') {
+        this.log('info', `Target product given by API data in "${productFetch.filePath}"`);
+      }
       else {
         this.log('info', `Targeting product #${productFetch.productId}`);
       }
@@ -202,6 +205,9 @@ export default class ProductDownloader extends Downloader<Product> {
       // Done
       if (productFetch.type === 'byShop') {
         this.log('info', `Done downloading products by '${productFetch.vanity}'`);
+      }
+      else if (productFetch.type === 'byFile') {
+        this.log('info', `Done downloading product given in "${productFetch.filePath}"`);
       }
       else {
         this.log('info', `Done downloading product #${productFetch.productId}`);

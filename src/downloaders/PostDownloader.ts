@@ -80,6 +80,9 @@ export default class PostDownloader extends Downloader<Post> {
       else if (postFetch.type === 'byCollection') {
         this.log('info', `Targeting posts in collection #${postFetch.collectionId}`);
       }
+      else if (postFetch.type === 'byFile') {
+        this.log('info', `Target post given by API data in "${postFetch.filePath}"`);
+      }
       else { // Single
         this.log('info', `Targeting post #${postFetch.postId}`);
       }
@@ -271,6 +274,9 @@ export default class PostDownloader extends Downloader<Post> {
       }
       else if (postFetch.type === 'byCollection') {
         this.log('info', `Done downloading posts in collection #${postFetch.collectionId}`);
+      }
+      else if (postFetch.type === 'byFile') {
+        this.log('info', `Done downloading post given in "${postFetch.filePath}"`);
       }
       else {
         this.log('info', `Done downloading post #${postFetch.postId}`);

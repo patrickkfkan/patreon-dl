@@ -41,9 +41,19 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
   const commandLineOptions = CommandLineParser.parse();
 
   const configFileOptions = commandLineOptions.configFile?.value ? ConfigFileParser.parse(commandLineOptions.configFile.value) : null;
-
   let targetURLs: CLITargetURLEntry[] = [];
-  if (!skipTargetURLs) {
+
+  if (commandLineOptions.debugAPI) {
+    const apiDataFile = commandLineOptions.targetURLs?.value;
+    if (!apiDataFile ||
+      !fs.existsSync(apiDataFile) ||
+      !['post-api.json', 'product-api.json'].includes(path.basename(apiDataFile))
+    ) {
+      throw Error(`${commandLineOptions.debugAPI.key}: target is not a local API data file`);
+    }
+    targetURLs = [{ url: apiDataFile }];
+  }
+  else if (!skipTargetURLs) {
     const targetURLValue = CLIOptionValidator.validateRequired(pickDefined(commandLineOptions.targetURLs, configFileOptions?.targetURLs), 'No target URL specified');
     const targetsFile = path.resolve(targetURLValue);
     if (fs.existsSync(targetsFile)) {

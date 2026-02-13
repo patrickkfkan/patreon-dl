@@ -2,7 +2,7 @@ import { type Campaign } from './Campaign.js';
 import { type List } from './List.js';
 import { type Downloadable } from './Downloadable.js';
 
-export type ProductList = List<Product>;
+export type ProductList = Omit<List<Product>, 'url'>;
 
 // Known productType values
 export const ProductType = {

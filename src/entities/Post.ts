@@ -4,7 +4,7 @@ import { type Downloadable } from './Downloadable.js';
 import { type AttachmentMediaItem, type AudioMediaItem, type DefaultImageMediaItem, type VideoMediaItem, type PostCoverImageMediaItem, type PostThumbnailMediaItem, type CollectionThumbnailMediaItem } from './MediaItem.js';
 import { type Tier } from './Reward.js';
 
-export type PostList = List<Post>;
+export type PostList = Omit<List<Post>, 'url'>;
 
 // Known postType values
 export const PostType = {

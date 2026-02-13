@@ -9,9 +9,9 @@ export default class ProductParser extends Parser {
 
   protected name = 'ProductParser';
 
-  parseProductsAPIResponse(json: any, _url: string, _campaign?: Campaign | null): ProductList {
+  parseProductsAPIResponse(json: any, src: string, _campaign?: Campaign | null): ProductList {
 
-    this.log('debug', `Parse API response of "${_url}"`);
+    this.log('debug', `Parse API data obtained from "${src}"`);
 
     /*If (json.errors) {
       this.log('error', `API response error:`, json.errors);
@@ -35,7 +35,6 @@ export default class ProductParser extends Parser {
       productsJSONArray = [];
     }
     const collection: ProductList = {
-      url: _url,
       items: [],
       total: ObjectHelper.getProperty(json, 'meta.count') || null,
       nextURL: ObjectHelper.getProperty(json, 'links.next') || null
@@ -43,12 +42,12 @@ export default class ProductParser extends Parser {
 
     let hasIncludedJSON = true;
     if (!includedJSON || !Array.isArray(includedJSON)) {
-      this.log('warn', `'included' field missing in API response of "${_url}" or has incorrect type - no media items and campaign info will be returned`);
+      this.log('warn', `'included' field missing in API data obtained from "${src}" or has incorrect type - no media items and campaign info will be returned`);
       hasIncludedJSON = false;
     }
 
     if (productsJSONArray.length === 0) {
-      this.log('warn', `No products found in API response of "${_url}"`);
+      this.log('warn', `No products found in API data obtained from "${src}"`);
       return collection;
     }
     if (productsJSONArray.length > 1) {
@@ -124,7 +123,7 @@ export default class ProductParser extends Parser {
         name = null,
         description = null,
         published_at_datetime: publishedAt = null,
-        url = _url
+        url = src
       } = attributes;
 
       let price: string | null = null;

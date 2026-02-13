@@ -1,6 +1,8 @@
+import { existsSync } from 'fs';
 import { type Post } from '../entities/Post.js';
 import { type Product } from '../entities/Product.js';
 import URLHelper from '../utils/URLHelper.js';
+import path from 'path';
 
 export type DownloaderType = Product | Post;
 
@@ -18,6 +20,9 @@ export interface ProductDownloaderBootstrapData extends BootstrapData {
     type: 'byShop';
     vanity: string;
     campaignId?: string;
+  } | {
+    type: 'byFile';
+    filePath: string;
   };
 }
 
@@ -41,6 +46,9 @@ export interface PostDownloaderBootstrapData extends BootstrapData {
     collectionId: string;
     filters?: Record<string, any>;
     campaignId?: string;
+  } | {
+    type: 'byFile';
+    filePath: string;
   };
 }
 
@@ -52,6 +60,32 @@ export type DownloaderBootstrapData<T extends DownloaderType> =
 export default class Bootstrap {
 
   static getDownloaderBootstrapDataByURL(url: string) {
+    // Check if url points to local API data file.
+    // This is for debugging purposes.
+    const fileExists = existsSync(url);
+    if (fileExists && path.basename(url) === 'post-api.json') {
+      return {
+        type: 'post',
+        targetURL: url,
+        postFetch: {
+          type: 'byFile',
+          filePath: path.resolve(url)
+        }
+      } satisfies PostDownloaderBootstrapData;
+    }
+
+    // Likewise for 'product-api.json'
+    if (fileExists && path.basename(url) === 'product-api.json') {
+      return {
+        type: 'product',
+        targetURL: url,
+        productFetch: {
+          type: 'byFile',
+          filePath: path.resolve(url)
+        }
+      } satisfies ProductDownloaderBootstrapData;
+    }
+
     const analysis = URLHelper.analyzeURL(url);
     if (!analysis) {
       return null;

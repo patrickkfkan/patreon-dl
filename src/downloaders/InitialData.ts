@@ -25,6 +25,7 @@ export class InitialData {
     let fetchCurrentUserIdFromAPI = false;
     if (this.config.type === 'post' &&
       this.config.postFetch.type !== 'single' &&
+      this.config.postFetch.type !== 'byFile' &&
       this.config.postFetch.campaignId
     ) {
       campaignId = this.config.postFetch.campaignId;

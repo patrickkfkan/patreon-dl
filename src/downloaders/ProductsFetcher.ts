@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
-import { type Campaign, type Product } from '../entities/index.js';
+import fse from 'fs-extra';
+import { type Product } from '../entities/index.js';
 import { type Logger } from '../utils/logging/index.js';
 import { type LogLevel, commonLog } from '../utils/logging/Logger.js';
 import Downloader, { type DownloaderConfig } from './Downloader.js';
@@ -9,6 +10,7 @@ import ProductParser from '../parsers/ProductParser.js';
 import { type ProductList } from '../entities/Product.js';
 import Sleeper from '../utils/Sleeper.js';
 import { InitialData } from './InitialData.js';
+import path from 'path';
 
 export type ProductsFetcherStatus = {
   status: 'ready' | 'running' | 'completed' | 'aborted';
@@ -120,31 +122,36 @@ export default class ProductsFetcher extends EventEmitter {
 
     this.#pointers.fetching = 0;
     const productFetch = this.config.productFetch;
-    let productsAPIURL: string;
-    let campaign: Campaign | null;
-    let obtainCampaignFromProduct: boolean;
+    let ctx;
     try {
-      const ctx = await this.#getInitialContext();
-      productsAPIURL = ctx.productsAPIURL;
-      obtainCampaignFromProduct = ctx.campaign.obtainFromProduct;
-      campaign = ctx.campaign.data;
+      ctx = await this.#getInitialContext();
     }
     catch (error) {
       this.#handleError(error);
       return;
     }
+    const obtainCampaignFromProduct = ctx.campaign.obtainFromProduct;
+    const campaign = ctx.campaign.data;
     if (this.#isFetchingMultipleProducts(productFetch)) {
       this.log('info', 'Fetch products');
-      this.log('debug', `Request initial products from API URL "${productsAPIURL}"`);
+      this.log('debug', `Request initial products from API URL "${ctx.src}"`);
+    }
+    else if (productFetch.type === 'byFile') {
+      this.log('info', `Read product data from "${ctx.src}"`);
     }
     else {
       this.log('info', 'Fetch target product');
-      this.log('debug', `Request product #${productFetch.productId} from API URL "${productsAPIURL}`);
+      this.log('debug', `Request product #${productFetch.productId} from API URL "${ctx.src}`);
     }
 
     let json;
     try {
-      json = await this.#fetchAPI(productsAPIURL);
+      if (ctx.srcType === 'url') {
+        json = await this.#fetchAPI(ctx.src);
+      }
+      else {
+        json = fse.readJsonSync(ctx.src);
+      }
     }
     catch (error) {
       this.#handleError(error);
@@ -154,7 +161,7 @@ export default class ProductsFetcher extends EventEmitter {
     const productsParser = new ProductParser(this.logger);
     const list = productsParser.parseProductsAPIResponse(
       json,
-      productsAPIURL,
+      ctx.src,
       obtainCampaignFromProduct ? undefined : campaign
     );
     this.#fetched = [ list ];
@@ -244,7 +251,6 @@ export default class ProductsFetcher extends EventEmitter {
 
   async #getInitialContext() {
     const productFetch = this.config.productFetch;
-    let apiURL: string;
     switch (productFetch.type) {
       case 'byShop': {
         // Shop API does not return full campaign info (missing creator and rewards),
@@ -253,17 +259,28 @@ export default class ProductsFetcher extends EventEmitter {
         const { campaignId } = await this.getInitialData(initialDataPageURL);
         const campaign = await Downloader.getCampaign({ campaignId }, this.signal, this.config);
         return {
-          productsAPIURL: URLHelper.constructShopAPIURL({ campaignId }),
+          src: URLHelper.constructShopAPIURL({ campaignId }),
+          srcType: 'url' as const,
           campaign: {
             obtainFromProduct: false as const,
             data: campaign
           }
         };
       }
-      case 'single': {
-        apiURL = URLHelper.constructProductAPIURL(productFetch.productId);
+      case 'byFile': {
         return {
-          productsAPIURL: apiURL,
+          src: path.resolve(productFetch.filePath),
+          srcType: 'file' as const,
+          campaign: {
+            obtainFromProduct: true as const,
+            data: null
+          }
+        };
+      }
+      case 'single': {
+        return {
+          src: URLHelper.constructProductAPIURL(productFetch.productId),
+          srcType: 'url' as const,
           campaign: {
             obtainFromProduct: true as const,
             data: null

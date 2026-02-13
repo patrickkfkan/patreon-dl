@@ -9,6 +9,7 @@ import PostParser from '../parsers/PostParser.js';
 import { type PostList } from '../entities/Post.js';
 import Sleeper from '../utils/Sleeper.js';
 import { InitialData } from './InitialData.js';
+import fse from 'fs-extra';
 
 export type PostsFetcherStatus = {
   status: 'ready' | 'running' | 'completed' | 'aborted';
@@ -120,26 +121,41 @@ export default class PostsFetcher extends EventEmitter {
 
     this.#pointers.fetching = 0;
     const postFetch = this.config.postFetch;
-    let postsAPIURL: string;
-    try {
-      postsAPIURL = await this.#getInitialPostsAPIUL();
+    
+    let postsSrc: string;
+    if (postFetch.type !== 'byFile') {
+      try {
+        postsSrc = await this.#getInitialPostsAPIURL();
+      }
+      catch (error) {
+        this.#handleError(error);
+        return;
+      }
     }
-    catch (error) {
-      this.#handleError(error);
-      return;
+    else {
+      postsSrc = postFetch.filePath;
     }
+    
     if (this.#isFetchingMultiplePosts(postFetch)) {
       this.log('info', 'Fetch posts');
-      this.log('debug', `Request initial posts from API URL "${postsAPIURL}"`);
+      this.log('debug', `Request initial posts from API URL "${postsSrc}"`);
+    }
+    else if (postFetch.type === 'byFile') {
+      this.log('info', `Read post data from "${postFetch.filePath}"`);
     }
     else {
       this.log('info', 'Fetch target post');
-      this.log('debug', `Request post #${postFetch.postId} from API URL "${postsAPIURL}`);
+      this.log('debug', `Request post #${postFetch.postId} from API URL "${postsSrc}`);
     }
 
     let json;
     try {
-      json = await this.#fetchAPI(postsAPIURL);
+      if (postFetch.type !== 'byFile') {
+        json = await this.#fetchAPI(postsSrc);
+      }
+      else {
+        json = fse.readJSONSync(postFetch.filePath);
+      }
     }
     catch (error) {
       this.#handleError(error);
@@ -147,7 +163,7 @@ export default class PostsFetcher extends EventEmitter {
     }
 
     const postsParser = new PostParser(this.logger);
-    const list = postsParser.parsePostsAPIResponse(json, postsAPIURL);
+    const list = postsParser.parsePostsAPIResponse(json, postsSrc);
     this.#fetched = [ list ];
     this.#pointers.lastFetched = this.#pointers.fetching;
     this.#pointers.fetching = null;
@@ -233,7 +249,10 @@ export default class PostsFetcher extends EventEmitter {
     return postFetch.type === 'byUser' || postFetch.type === 'byUserId' || postFetch.type === 'byCollection';
   }
 
-  async #getInitialPostsAPIUL() {
+  async #getInitialPostsAPIURL() {
+    if (this.config.postFetch.type === 'byFile') {
+      throw Error('Posts API URL cannot be obtained from file');
+    }
     const postFetch = this.config.postFetch;
     if (this.#isFetchingMultiplePosts(postFetch)) {
       const pageURL = this.#getInitialDataPageURL();
