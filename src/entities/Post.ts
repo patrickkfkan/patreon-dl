@@ -36,7 +36,7 @@ export interface Post {
    *   - only embedded link info is saved. Link is not followed / downloaded (except YouTube).
    * - video_embed
    *   - only embedded video info is saved. Video itself is not downloaded (except YouTube or
-   *     Vimeo through patreon-dl-vimeo.js).
+   *     Vimeo through patreon-dl-vimeo.js, or Streamable through patreon-dl-streamable.js).
    * - podcast
    */
   postType: string;

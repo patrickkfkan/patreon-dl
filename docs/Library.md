@@ -142,7 +142,7 @@ You can specify external downloaders for embedded videos / links. Each entry in 
 
 | Proprety | Description |
 |----------|-------------|
-| `provider` | Name of the provider of embedded content. E.g. `youtube`, `vimeo` (case-insensitive) |
+| `provider` | Name of the provider of embedded content. E.g. `youtube`, `vimeo`, `streamable` (case-insensitive) |
 | `exec`  | The command to run to download the embedded content |
 
 `exec` can contain fields enclosed in curly braces. They will be replaced with actual values at runtime:
