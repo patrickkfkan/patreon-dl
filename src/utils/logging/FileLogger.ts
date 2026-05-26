@@ -68,6 +68,7 @@ const DEFAULT_SERVER_LOGGER_FILE_EXISTS_ACTION = 'append';
 export interface DownloaderFileLoggerInit {
   targetURL: string;
   outDir?: string;
+  dbDir?: string;
   date?: Date;
 }
 

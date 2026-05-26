@@ -115,6 +115,7 @@ $ patreon-dl [OPTION]... URL
 | `--ffmpeg <path>` | `-f` | Path to FFmpeg executable |
 | `--deno <path>` | `-d` | Path to Deno executable |
 | `--out-dir <path>` |`-o` | Directory to save content |
+| `--db-dir <path>` | `-o` | Directory to save SQLite database |
 | `--log-level <level>` | `-l` | Log level of the console logger: `info`, `debug`, `warn` or `error`; set to `none` to disable the logger. |
 | `--no-prompt` | `-y` | Do not prompt for confirmation to proceed |
 | `--dry-run`   |      | Run without writing files to disk (except logs, if any). Intended for testing / debugging. |

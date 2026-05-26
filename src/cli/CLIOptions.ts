@@ -76,6 +76,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
     pathToFFmpeg: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToFFmpeg, configFileOptions?.pathToFFmpeg)),
     pathToDeno: CLIOptionValidator.validateString(pickDefined(commandLineOptions.pathToDeno, configFileOptions?.pathToDeno)),
     outDir: CLIOptionValidator.validateString(pickDefined(commandLineOptions.outDir, configFileOptions?.outDir)),
+    dbDir: CLIOptionValidator.validateString(pickDefined(commandLineOptions.dbDir, configFileOptions?.dbDir)),
     dirNameFormat: {
       campaign: CLIOptionValidator.validateString(pickDefined(commandLineOptions.dirNameFormat?.campaign, configFileOptions?.dirNameFormat?.campaign)),
       content: CLIOptionValidator.validateString(pickDefined(commandLineOptions.dirNameFormat?.content, configFileOptions?.dirNameFormat?.content))
@@ -104,7 +105,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
     fileLoggers
   } satisfies Omit<CLIOptions, 'targetURLs'>;
 
-  if (skipTargetURLs) {
+                                                                                                                                                                              if (skipTargetURLs) {
     return options;
   }
 

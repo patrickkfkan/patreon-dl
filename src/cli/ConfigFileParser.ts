@@ -13,6 +13,7 @@ const CONFIG_FILE_PROPS = {
   pathToDeno: 'downloader:path.to.deno',
   dryRun: 'downloader:dry.run',
   outDir: 'output:out.dir',
+  dbDir: 'output:db.dir',
   dirNameFormat: {
     campaign: 'output:campaign.dir.name.format',
     content: 'output:content.dir.name.format'
@@ -111,6 +112,7 @@ export default class ConfigFileParser {
       maxVideoResolution: __getValue(CONFIG_FILE_PROPS.maxVideoResolution),
       pathToDeno: __getValue(CONFIG_FILE_PROPS.pathToDeno),
       outDir: __getValue(CONFIG_FILE_PROPS.outDir),
+      dbDir: __getValue(CONFIG_FILE_PROPS.dbDir),
       dirNameFormat: {
         campaign: __getValue(CONFIG_FILE_PROPS.dirNameFormat.campaign),
         content: __getValue(CONFIG_FILE_PROPS.dirNameFormat.content)

@@ -65,6 +65,7 @@ export interface DownloaderOptions {
   pathToYouTubeCredentials?: string | null;
   pathToDeno?: string | null;
   outDir?: string;
+  dbDir?: string;
   dirNameFormat?: {
     campaign?: string;
     content?: string;
@@ -93,6 +94,7 @@ export interface DownloaderOptions {
 
 export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
   'outDir' |
+  'dbDir' |
   'useStatusCache' |
   'stopOn' |
   'pathToFFmpeg' |
@@ -111,6 +113,7 @@ export type DownloaderInit = DeepRequired<Pick<DownloaderOptions,
 
 const DEFAULT_DOWNLOADER_INIT: DownloaderInit = {
   outDir: process.cwd(),
+  dbDir: process.cwd(),
   useStatusCache: true,
   stopOn: 'never',
   pathToFFmpeg: null,
@@ -186,6 +189,7 @@ export function getDownloaderInit(options?: DownloaderOptions): DownloaderInit {
   return {
     cookie: options?.cookie,
     outDir: options?.outDir ? path.resolve(options.outDir) : defaults.outDir,
+    dbDir: options?.dbDir ? path.resolve(options.dbDir) : defaults.dbDir,
     useStatusCache: pickDefined(options?.useStatusCache, defaults.useStatusCache),
     stopOn: pickDefined(options?.stopOn, defaults.stopOn),
     pathToFFmpeg: pickDefined(options?.pathToFFmpeg, defaults.pathToFFmpeg),
