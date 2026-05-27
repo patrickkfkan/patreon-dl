@@ -96,7 +96,7 @@ export default class FSHelper {
   }
 
   getDBFilePath() {
-    const dbDir = this.createDir(path.resolve(this.config.outDir, INTERNAL_DATA_DIR_NAME));
+    const dbDir = this.createDir(path.resolve(this.config.dbDir, INTERNAL_DATA_DIR_NAME));
     return path.resolve(dbDir, DB_FILENAME);
   }
 

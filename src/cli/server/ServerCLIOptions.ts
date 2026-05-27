@@ -23,6 +23,7 @@ export function getServerCLIOptions(): ServerCLIOptions {
 
   const options: ServerCLIOptions = {
     dataDir: CLIOptionValidator.validateString(commandLineOptions.dataDir),
+    dbDir: CLIOptionValidator.validateString(commandLineOptions.dbDir),
     port: CLIOptionValidator.validateNumber(commandLineOptions.port),
     consoleLogger,
     fileLogger

@@ -20,6 +20,7 @@ const COMMAND_LINE_ARGS = {
   ffmpeg: 'ffmpeg',
   deno: 'deno',
   outDir: 'out-dir',
+  dbDir: 'db-dir',
   logLevel: 'log-level',
   noPrompt: 'no-prompt',
   dryRun: 'dry-run',
@@ -75,6 +76,13 @@ const OPT_DEFS = [
     name: COMMAND_LINE_ARGS.outDir,
     description: 'Path to directory where content is saved',
     alias: 'o',
+    type: String,
+    typeLabel: '<dir>'
+  },
+  {
+    name: COMMAND_LINE_ARGS.dbDir,
+    description: 'Path to directory where database is saved',
+    alias: 'D',
     type: String,
     typeLabel: '<dir>'
   },
@@ -196,6 +204,7 @@ export default class CommandLineParser {
       pathToFFmpeg: __getValue(COMMAND_LINE_ARGS.ffmpeg),
       pathToDeno: __getValue(COMMAND_LINE_ARGS.deno),
       outDir: __getValue(COMMAND_LINE_ARGS.outDir),
+      dbDir: __getValue(COMMAND_LINE_ARGS.dbDir),
       dirNameFormat: {
         campaign: undefined,
         content: undefined
