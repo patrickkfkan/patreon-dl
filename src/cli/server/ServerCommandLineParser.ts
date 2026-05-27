@@ -14,6 +14,7 @@ export interface ServerCommandLineParseResult extends RecursivePropsTo<DeepParti
 const COMMAND_LINE_ARGS = {
   help: 'help',
   dataDir: 'data-dir',
+  dbDir: 'db-dir',
   port: 'port',
   logLevel: 'log-level',
   logFile: 'log-file'
@@ -30,6 +31,13 @@ const OPT_DEFS = [
     name: COMMAND_LINE_ARGS.dataDir,
     description: 'Directory containing downloaded content. Default: current working directory',
     alias: 'i',
+    type: String,
+    typeLabel: '<dir>'
+  },
+  {
+    name: COMMAND_LINE_ARGS.dbDir,
+    description: 'Directory containing the database. Default: current working directory',
+    alias: 'd',
     type: String,
     typeLabel: '<dir>'
   },
@@ -91,6 +99,7 @@ export default class ServerCommandLineParser {
 
     return {
       dataDir: __getValue(COMMAND_LINE_ARGS.dataDir),
+      dbDir: __getValue(COMMAND_LINE_ARGS.dbDir),
       port: __getValue(COMMAND_LINE_ARGS.port),
       logLevel: __getValue(COMMAND_LINE_ARGS.logLevel),
       logFile: __getValue(COMMAND_LINE_ARGS.logFile)

@@ -51,6 +51,7 @@ export default class ServerCLI {
     try {
       server = new WebServer({
         dataDir: options.dataDir,
+        dbDir: options.dbDir,
         port: options.port,
         logger
       });

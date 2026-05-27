@@ -12,6 +12,7 @@ export const DEFAULT_WEB_SERVER_PORT = 3000;
 
 export interface WebServerConfig {
   dataDir?: string;
+  dbDir?: string;
   port?: number | null;
   logger?: Logger | null;
 }
@@ -42,6 +43,7 @@ export class WebServer {
     }
 
     const dataDir = this.#config.dataDir || process.cwd();
+    const dbDir = this.#config.dbDir || process.cwd();
     if (!fs.existsSync(dataDir)) {
       throw Error(`Data directory "${this.#config.dataDir}" does not exist`);
     }
@@ -49,7 +51,7 @@ export class WebServer {
       throw Error(`"${this.#config.dataDir}" is not a directory`);
     }
 
-    const dbFile = path.resolve(dataDir, '.patreon-dl', 'db.sqlite');
+    const dbFile = path.resolve(dbDir, '.patreon-dl', 'db.sqlite');
     if (!fs.existsSync(dbFile)) {
       throw Error(`DB file "${dbFile}" does not exist`);
     }

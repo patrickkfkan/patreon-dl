@@ -455,26 +455,20 @@ export default class PatreonDownloaderCLI {
   }
 
   #confirmProceed(prompt?: PromptSync.Prompt): boolean {
-    try {
-      if (!prompt) {
-        prompt = PromptSync({ sigint: true });
-        console.log();
-      }
-      const confirmProceed = prompt('Proceed (Y/n)? ');
-      if (!confirmProceed.trim() || confirmProceed.trim().toLowerCase() === 'y') {
-        console.log('Proceeding...', EOL);    
-        return true;
-      }
-      else if (confirmProceed.trim().toLowerCase() === 'n') {
-        return false;
-      }
-
-      return this.#confirmProceed(prompt);
+    if (!prompt) {
+      prompt = PromptSync({ sigint: true });
+      console.log();
     }
-    catch (error) {
-      console.error('Error obtaining user input: ', error instanceof Error ? error.message : error);
+    const confirmProceed = prompt('Proceed (Y/n)? ');
+    if (!confirmProceed.trim() || confirmProceed.trim().toLowerCase() === 'y') {
+      console.log('Proceeding...', EOL);    
+      return true;
+    }
+    else if (confirmProceed.trim().toLowerCase() === 'n') {
       return false;
     }
+
+    return this.#confirmProceed(prompt);
   }
 
   #createLoggers(targetURL: string, options: CLIOptions) {
@@ -482,7 +476,6 @@ export default class PatreonDownloaderCLI {
     const fileLoggerInit: DownloaderFileLoggerInit = {
       targetURL,
       outDir: options.outDir,
-      dbDir: options.dbDir,
       date: new Date()
     };
     const fileLoggers = options.fileLoggers?.reduce<FileLogger[]>((result, fileLoggerOptions) => {

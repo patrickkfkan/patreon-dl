@@ -105,7 +105,7 @@ export function getCLIOptions(skipTargetURLs = false): CLIOptions | Omit<CLIOpti
     fileLoggers
   } satisfies Omit<CLIOptions, 'targetURLs'>;
 
-                                                                                                                                                                              if (skipTargetURLs) {
+  if (skipTargetURLs) {
     return options;
   }
 
