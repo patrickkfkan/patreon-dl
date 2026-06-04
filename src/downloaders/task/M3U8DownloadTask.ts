@@ -81,10 +81,6 @@ export default class M3U8DownloadTask extends FFmpegDownloadTaskBase<VideoMediaI
       '-headers',
       `Referer: ${SITE_URL}`
     ];
-    // `extension_picky` introduced in v7.1.1
-    if (semver.satisfies(this.getFFmpegVersion(), '>=7.1.1')) {
-      inputOptions.push('-extension_picky', '0');
-    }
     let output = this.#unresolvedDestFilePath;
     if (input.src) {
       if (input.protected || input.resolution) {
