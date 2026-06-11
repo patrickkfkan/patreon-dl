@@ -17,8 +17,8 @@ const PRODUCT_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/([^/]+?)\/shop\/(([
 const POSTS_BY_USER_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/([^/]+?)\/posts$/;
 const POSTS_BY_USER_URL_REGEX_2 = /https:\/\/(?:www\.)?patreon\.com\/(?:c|cw)\/([^/]+?)\/posts$/;
 const COLLECTION_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/collection\/(\d+)$/;
-const POST_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/posts\/(([^/]+)-(\d+))$/;
-const POST_URL_REGEX_2 = /https:\/\/(?:www\.)?patreon\.com\/posts\/(\d+)$/; // No slug
+const POST_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/(?:\w+\/)?posts\/(([^/]+)-(\d+))$/;
+const POST_URL_REGEX_2 = /https:\/\/(?:www\.)?patreon\.com\/(?:\w+\/)?posts\/(\d+)$/; // No slug
 const SHOP_URL_REGEX = /https:\/\/(?:www\.)?patreon\.com\/([^/]+?)\/shop$/;
 const SHOP_URL_REGEX_2 = /https:\/\/(?:www\.)?patreon\.com\/(?:c|cw)\/([^/]+?)\/shop$/;
 
