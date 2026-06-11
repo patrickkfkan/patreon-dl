@@ -319,6 +319,11 @@ export default class URLHelper {
 
   static constructCampaignPageURL(user: UserIdOrVanityParam) {
     if (user.vanity) {
+      // u{digits} vanity means no custom vanity — it's a user ID embedded in the URL path.
+      // /c/ prefix is required to reach the creator page; /{vanity} is just the user profile.
+      if (/^u\d+$/.test(user.vanity)) {
+        return `${SITE_URL}/c/${user.vanity}`;
+      }
       return `${SITE_URL}/${user.vanity}`;
     }
 
